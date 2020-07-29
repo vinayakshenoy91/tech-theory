@@ -1,0 +1,6 @@
+@Test -> This is to mark it as a junit test.
+
+
+Assertions:
+------------
+assertEquals
