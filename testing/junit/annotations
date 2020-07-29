@@ -3,4 +3,9 @@
 
 Assertions:
 ------------
-assertEquals
+assertEquals(expected,actual)
+assertTrue(condition)
+assertFalse(condition)
+assertNull(condition)
+assertNotNull(condition)
+assertArrayEquals(expected, actual)
