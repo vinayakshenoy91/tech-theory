@@ -1,1 +1,11 @@
-test
+- Contiguous memeory location
+- Cache friendliness
+- Random access
+- Wastage of space
+
+Time complexity:
+-----------------
+insert -> O(1)
+delete -> O(1)
+
+
