@@ -1,2 +1,19 @@
-test`:wq~
+- It is a partitioned B-tree structure.
+- It is immediately consistent and hihgly durable.
+
+
+Trade-off while choosing:
+------------------------
+- You need to pull the data and do the processing at app end. (Ex: Finding value of all orders for a customer)
+- Storing 1TB data is 10 times as that stored in S3
+- Cost optimization: On-demand costs $1.25 per million writes, and $0.25 per million reads
+- Provisioned capacity: On paper, that same workload that cost $1/day to serve 1 million pages would only cost $0.14/day 
+with provisioned capacity, which seems like a very spectacular cost reduction. However, this calculation assumes that:
+
+1)Requests are evenly distributed over the course of the day
+2)There is absolutely zero capacity headroom. (You would get throttled if there were a million and one requests in a day.)
+Obviously, both of these assumptions are impractical. In reality, you’re going to have to provide abundant headroom in order to deal 
+with the peak request rate,as well as to handle any general uncertainty in demand. With provisioned capacity, 
+you will have the burden to monitor your utilization and proactively provision the necessary capacity.
+
 
