@@ -16,4 +16,27 @@ Obviously, both of these assumptions are impractical. In reality, you’re going
 with the peak request rate,as well as to handle any general uncertainty in demand. With provisioned capacity, 
 you will have the burden to monitor your utilization and proactively provision the necessary capacity.
 
+- move from on-demand to provisioned
+
+- DynamoDb indexes:
+1) Local index:
+
+The only advantage of local indexes is that they’re immediately consistent, but they do come with a very insidious downside. 
+Once you create a local index on a table, the property that allows a table to keep growing indefinitely goes away. Local indexes come with the 
+constraint that all the records that share the same partition key need to fit in 10 GB, 
+and once that allocation gets exhausted, all write operations with that partition key will start failing.
+
+2)Global index:global indexes don’t constrain your table size in any way, but reading from them is eventually consistent 
+(although the delay is almost always unnoticeable). 
+
+DynamoDB has an internal queue-like system between the main table and the global index, and this queue has a fixed (but opaque) size. 
+Therefore, if the provisioned throughput of a global index happens to be insufficient to keep up with updates on the main table, then 
+that queue can get full. When that happens, disaster strikes: All write operations on the main table start failing.
+
+The most problematic part of this behavior is that there’s no way to monitor the state of this internal queue. So, the only way to prevent it is:
+
+To monitor the throttled request count on all your global indexes, and then to react quickly to any throttling by provisioning 
+additional capacity on the affected indexes.
+
+
 
