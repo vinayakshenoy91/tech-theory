@@ -1,0 +1,5 @@
+- Route 53 is a DNS service. It lets you translate domain names to IP addresses.
+- The lack of support for ALIAS records (unless they point to AWS resources).
+- The lack of DNSSEC support.
+- There is a significant benefit in having CloudFormation automatically set up your load balancer together with the DNS records for your custom domain. 
+Route 53 makes this possible, whereas if you were to use a different DNS provider, you’d likely have to manage your DNS records manually.
