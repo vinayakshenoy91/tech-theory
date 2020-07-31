@@ -31,4 +31,10 @@ Max number of edges = |v|*|v-1|
 5)Adjacency list:
 -----------------
 - It is an array of list and list representations are: a) dynamic sized arrays (they have cache friendliness) b) Linked list
+- space theta(V+E) for directed and theta(V+2*E) for undirected.
+- Add edge: Theta(1)
+- Remove edge: Theta(v)
+- Find degree of u : theta(1)
+- Find all adjacent of u : theta(degree(u))
+- Check if there is an edge from u to v -> (O(v))
 - You can find nodes that are adjacent to a given vertex in O(1) time complexity.
