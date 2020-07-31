@@ -1,0 +1,43 @@
+Load balancers:
+---------------
+
+ELB is a load balancer service and comes in three variants:
+- Classic - Legacy
+- Application (ALB) - proper reverse proxies that sit between the internet and your application
+- Network (NLB) - NLBs behave like load balancers, but they work by routing network packets rather than by proxying HTTP requests. 
+An NLB is more like a very sophisticated network router. 
+When a client connects to a server through an NLB, the server would see the client as if it were connected to the client directly.
+- Both ALBs and NLBs support TLS/HTTPS, and they integrate very well with the AWS Certificate Manager. This lets you set up TLS certificates and 
+forget about them. 
+The certificates get renewed automatically and deployed to your load balancers without any downtime. And all the certificates are free.
+The fact that ALBs and NLBs don’t validate certificates might seem concerning. However, since these load balancers run in a VPC, 
+Amazon authenticates each network packet and guarantees that the 
+packets go only to the hosts you configured in your load balancer. The protection from spoofing and man-in-the-middle is provided by Amazon.
+
+## Note ##
+By installing TLS certificates on your load balancers, you’re letting Amazon become a man-in-the-middle itself. 
+Amazon’s hardware and software will be decrypting your network traffic and re-encrypting it when forwarding it to your application 
+(if you enable TLS on your application).
+
+If you’d rather not trust Amazon with this responsibility, you must use:
+
+an NLB with TCP passthrough (without enabling TLS on the load balancer). But in that case, you must keep a valid TLS certificate on 
+your application host and deal with certificate renewals yourself.
+
+NLB vs ALB:
+-----------
+- Only NLBs support TCP passthrough, but since NLBs work on the network layer, they also lack support for many of the features found in ALBs. 
+ALBs have two main disadvantages:
+- First, their proxy approach adds a few milliseconds to each request, so they’re slightly slower than NLBs.
+- Second, they may not scale quickly enough to handle a big burst of traffic.
+
+- An ALB behaves like a single-tenant system. AWS keeps track of your request rates and then automatically scales your ALB up 
+or down based on the demand it sees. The exact logic of this behavior is opaque, so the only way to be assured that 
+your ALB’s elasticity meets your demands is:
+1) To test it yourself.
+2) Or, if you know a certain amount of traffic is on the way, you can ask AWS (through a support ticket) to preemptively provide sufficient capacity for you.
+On the other hand, NLBs behave like a multi-tenant system and are scaled up and down in aggregate, rather than per individual load balancer. Therefore, in theory, 
+you should never have an NLB fail to scale to your needs (unless you exhaust all of Amazon’s capacity).
+
+NLBs are also slightly less expensive than ALBs. But a single ALB can be used to handle multiple domains (via host-based routing) while an NLB cannot,
+so in some situations, an ALB can be more cost-effective
