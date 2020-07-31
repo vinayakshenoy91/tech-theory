@@ -1,0 +1,12 @@
+# Managed by CloudFormation:
+- VPC configurations
+- Security groups
+- Load balancers
+- Deployment pipelines
+- IAM roles
+
+# Managed Elsewhere:
+- DynamoDB tables
+- Kinesis streams
+- Autoscale settings
+- S3 buckets
