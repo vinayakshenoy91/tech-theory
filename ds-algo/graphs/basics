@@ -30,4 +30,5 @@ Max number of edges = |v|*|v-1|
 
 5)Adjacency list:
 -----------------
+- It is an array of list and list representations are: a) dynamic sized arrays b) Linked list
 - You can find nodes that are adjacent to a given vertex in O(1) time complexity.
