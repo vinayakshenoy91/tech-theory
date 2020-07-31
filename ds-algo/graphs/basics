@@ -22,3 +22,12 @@ Max number of edges = |v|*|v-1|
 4) Adjacency matrix:
 ---------------------
 - For undirected graph, it is a symnetric matrix
+- For directed graph, you mark 1 for outgoing edges and imcoming it is 0.
+- Requires : Theta(vxv) space
+- Find all vertices adjacent to u and degree of vertex, both take theta(v) time
+- Add or remove an edge: theta(1) time
+- Add or remove a vertex: theta(v^2) time
+
+5)Adjacency list:
+-----------------
+- You can find nodes that are adjacent to a given vertex in O(1) time complexity.
