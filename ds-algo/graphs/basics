@@ -15,3 +15,10 @@ sum of indegrees = |E|
 sum of outdegrees = |E|
 Max number of edges = |v|*|v-1|
 
+3) Bridges in a graph:
+----------------------
+- It is an edge which when removed increases the number of components.
+
+4) Adjacency matrix:
+---------------------
+- For undirected graph, it is a symnetric matrix
