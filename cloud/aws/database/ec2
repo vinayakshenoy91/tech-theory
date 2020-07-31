@@ -1,1 +1,11 @@
 - Reserved instances
+- Consider cost-usage ratio.
+- keep some capacity headroom if region goes down, etc
+- If all the above costs matter only then go for autoscaling
+- If the fluctuations are not significant, or they are too abrupt, or they are not very smooth, Auto Scaling will almost certainly not work well for you.
+- You should almost always use Auto Scaling if you’re using EC2! Even if you only have one instance.
+- If you are already using a load balancer, you can use the same health checks for both the load balancer and Auto Scaling.
+- You can also send health check signals using the Auto Scaling API, either directly from your instances (which isn’t necessarily a reliable way to 
+send unhealthy signals) or from something that monitors your instances from the outside.
+- Auto Scaling becomes a launch template for your EC2 instances, and you get a dial that you can turn up 
+or down depending on how many running instances you need.
