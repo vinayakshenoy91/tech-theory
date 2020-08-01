@@ -1,0 +1,27 @@
+
+- Kinesis stream as a highly-durable linked list in the cloud.
+- you would typically use either Kinesis or SQS when you want to enqueue records for asynchronous processing.
+
+Kinesis vs SQS:
+--------------
+- SQS can only have one consumer, while Kinesis can have many.
+- Once an SQS message gets consumed, it gets deleted from the queue. But Kinesis records get added to a list in a stable order, 
+and any number of consumers can read a copy of the stream by keeping a cursor over this never-ending list.
+- Multiple consumers don’t affect each other, and if one falls behind, it doesn’t slow down the other consumers.
+Whenever consumers read data out of Kinesis, they will always get their records in the same order.
+- Putting 1 KB messages in SQS at an average rate of 500 messages per second will cost you $34.56 per day. 
+A Kinesis stream with 50% capacity headroom can handle that same volume for just $0.96 per day. So there can be about a massive difference in cost.'
+
+Features of Kinesis:
+----------------------
+- Kinesis streams are optimized for sequential reads and sequential writes.
+- Records get added to the end of a file and read always happens sequentially from a pointer on that file.
+- Unlike SQS, records in a Kinesis stream don’t get deleted when consumed, so it’s a pure append-only data structure behind the scenes.
+- Data simply ages out of a Kinesis stream once it exceeds its retention period, which is 24 hours by default.
+
+# Not easy to use:
+------------------
+On the other hand, Kinesis is not as easy to use as SQS. While with SQS you can simply enqueue as many messages as you want without having to 
+worry about capacity or throttling limits, a Kinesis stream is made up of slices of capacity called shards, and it’s up to you to figure out how 
+many shards you need, monitor shard utilization, add shards, and figure out the best way to route records to shards 
+so that they get approximately an equivalent amount of traffic. And unfortunately, all of this is a significant operational burden.
