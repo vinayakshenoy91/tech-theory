@@ -33,3 +33,24 @@ aws cloudformation deploy \
   --capabilities CAPABILITY_NAMED_IAM \
   --parameter-overrides \ 
     EC2InstanceType=$EC2_INSTANCE_TYPE
+
+
+# Creating cloud formation stack:
+
+1) Parameters:
+These are the input parameters for the template. They give us the flexibility to change some settings without having to modify the template code.
+
+
+2) Resources:
+This is the bulk of the template. Here is where we define and configure the resources that CloudFormation will manage for us.
+
+
+3) Outputs:
+These are like return values for the template. We use them to make it easy to find some of the resources that CloudFormation will create for us.
+
+
+
+
+
+
+
