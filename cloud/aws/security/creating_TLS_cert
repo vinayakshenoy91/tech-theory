@@ -1,0 +1,10 @@
+Steps to create TLS cert:
+--------------------------
+1) AWS Certificate Manager (ACM) console
+2) select the public certificate option
+3) Next, let’s enter our bare domain (e.g., the-good-parts.com) as well as a wildcard version 
+of the domain (e.g., *.the-good-parts.com). The wildcard will cover our prod and staging subdomains.
+4)If you chose DNS validation, you will reach a Validation step that asks you to add a CNAME record to your DNS hosted zone.
+If you registered your domain through Route 53, you can simply click the Create record in Route 53 button to complete the validation process. 
+Otherwise, you have to add the requested record to your DNS hosting service.
+5)It usually takes a few minutes for the certificate to be validated. Once it is validated, you should see your issued certificate in the ACM console.
