@@ -1,0 +1,1 @@
+SELECT ENCODED_SIZE(test) FROM bucketname;

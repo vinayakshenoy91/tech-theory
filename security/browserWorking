@@ -1,0 +1,15 @@
+https://github.com/alex/what-happens-when
+- The browser is a rendering engine. Its job is to download a web page and render it in a way that’s understandable to a human being.
+- A browser’s job consists of:
+
+a) DNS resolution: DNS resolution makes sure that once the user enters a URL, the browser knows which server it should connect to. 
+The browser contacts a DNS server to find that google.ae translates to 216.58.207.110 which is an IP address the browser 
+can connect to.
+
+b) HTTP exchange #
+Once the browser has identified which server is going to serve our request, it will initiate a TCP connection and begin 
+the HTTP exchange.
+
+c) Rendering
+
+- Chrome reward program-> Bounty program.

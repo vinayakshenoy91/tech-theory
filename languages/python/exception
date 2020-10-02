@@ -1,0 +1,12 @@
+raise Exception("Error message")
+
+try:                                      # try block
+    raise Exception("Error message")      # raise an exception
+except Exception as e:                    # catch the exception
+    print(e)                              # print the exception
+
+
+//Best practis eis to use custom exception 
+https://docs.python.org/3/tutorial/errors.html
+
+such as NameError or TypeError.

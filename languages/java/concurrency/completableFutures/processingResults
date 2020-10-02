@@ -1,0 +1,192 @@
+1) thenApply():
+---------------
+- The thenApply() method accepts a Function<T, R> instance as parameter. 
+As we have discussed earlier, the Function<T, R> interface takes in a parameter of type T and returns a result of type R.
+
+- The thenApply() method uses the Function<T, R> instance to process the result and returns a Future that 
+holds a value returned by the function, i.e., CompletableFuture<R>
+
+- Drawback of this:
+the same thread executes the code in supplyAsync() and thenApply(). 
+Moreover, if supplyAsync() completes very fast then thenApply() executes in the main thread.
+
+import java.util.concurrent.*;
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+
+        // Create a future which returns an integer.
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println(Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+            return 50;
+        });
+
+        // Calling thenApply() which takes a Function as parameter. 
+        // It takes a number as input and returns double of number.
+        CompletableFuture<Integer> resultFuture = future.thenApply(num -> {
+            System.out.println(Thread.currentThread().getName());
+            return num * 2;
+        });
+
+        try {
+            System.out.println(resultFuture.get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+2) thenApplyAsync(Function<T, R> function):
+-------------------------------------------
+To achieve actual asynchronous behavior, all the operations should be executed by a different thread. 
+We can achieve this by using the thenApplyAsync() method.
+
+This method executes, the code in a common thread created by ForkJoinPool.
+
+import java.util.concurrent.*;
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+
+        // Create a future which returns an integer.
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println(Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+            return 50;
+        });
+
+        // Calling thenApply() which takes a Function as parameter. 
+        // It takes a number as input and returns double of number.
+        CompletableFuture<Integer> resultFuture = future.thenApplyAsync(num -> {
+            System.out.println(Thread.currentThread().getName());
+            return num *2;
+        });
+
+        try {
+            System.out.println(resultFuture.get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+3) thenApplyAsync(Function<T, R> function, Executor executor) with executor:
+-----------------------------------------------------------------------------
+import java.util.concurrent.*;
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+
+        ExecutorService executor = Executors.newFixedThreadPool(5);
+
+        // Create a future which returns an integer.
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println(Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+            return 50;
+        });
+
+        // Calling thenApply() which takes a Function as parameter. 
+        // It takes a number as input and returns double of number.
+        CompletableFuture<Integer> resultFuture = future.thenApplyAsync(num -> {
+            System.out.println(Thread.currentThread().getName());
+            return num *2;
+        }, executor);
+
+        try {
+            System.out.println(resultFuture.get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+4) thenAccept():
+-----------------
+The thenAccept() method is used if we don’t want to return anything from our callback function.
+This method takes a Consumer<T> as a parameter and returns a CompletableFuture<Void>.
+
+import java.util.concurrent.*;
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+
+        // Create a future which returns an integer.
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println(Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+            return 50;
+        });
+
+        // Calling thenApply() which takes a Function as parameter. 
+        // It takes a number as input and returns double of number.
+        future.thenAccept(num -> {
+            System.out.println(Thread.currentThread().getName());
+            System.out.println("The value is "+  num);
+        });
+
+    }
+}
+
+5) thenRun():
+--------------
+The thenRun() method is also used if we don’t want to return anything from our callback function.
+
+This method takes a Runnable as a parameter and returns a CompletableFuture.
+
+The difference between thenAccept() and thenRun() is that the thenAccept() method has access to the result of the 
+CompletableFuture on which it is attached. Whereas thenRun() doesn’t even have access to the Future’s result.
+
+import java.util.concurrent.*;
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+
+        // Create a future which returns an integer.
+        CompletableFuture<Integer> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println(Thread.currentThread().getName());
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+            return 50;
+        });
+
+        // Calling thenApply() which takes a Function as parameter. 
+        // It takes a number as input and returns double of number.
+        future.thenRun(() -> {
+            System.out.println(Thread.currentThread().getName());
+            System.out.println("Hello");
+        });
+    }
+}

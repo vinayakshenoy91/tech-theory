@@ -1,0 +1,14 @@
+- They have magnitude and direction
+[1,2]+[3,5]=[4,7]
+
+Eucledian space:
+---------------
+- 2/3 dim space where the axioms and postulates of Eucledian geometry apply is a Eucledian space.
+
+L2 Norm: shortest distance between origin of standard basis vectors and point.
+--------
+- sqrt(x1^2+x2^2+x3^2)
+
+Dot product of vector:
+---------------------
+dot(u,v) = u.v = uT v  

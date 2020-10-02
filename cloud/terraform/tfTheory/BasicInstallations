@@ -1,0 +1,21 @@
+- Using terraform 12.5 with hashicorp
+export PATH = $PATH:/opt -> Exporting terraform after unzip
+- terraform --version
+
+Add extension in vs code:
+--------------------------
+- terraform
+- bash debug
+
+For azure:
+----------
+- Install azure cli
+- Do a az login and login to it
+
+
+For plan, apply and destroy file use:
+
+chmod u+x apply
+
+https://marketplace.visualstudio.com/items?itemName=HashiCorp.terraform
+https://learn.hashicorp.com/tutorials/terraform/install-cli

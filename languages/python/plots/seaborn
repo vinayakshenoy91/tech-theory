@@ -1,0 +1,27 @@
+
+#required
+import seaborn as sns
+sns.set()
+
+
+
+!pip install seaborn==0.9.0
+
+sns.lineplot(x,y)
+plt,show()
+
+ax=sns.scatterplot(x="stand_by_time",y="battery_capacity", data=data)
+ax=sns.scatterplot(x="stand_by_time",y="battery_capacity",hue="thickness" data=data)
+
+ax=sns.distplot(data["stand_by_time"])
+ax=sns.distplot(data["stand_by_time"], kde=False,rug=True, bins=20)
+
+ax=sns.boxplot(x="is_liked",y="battery_capacity", data=data)
+
+sns.heatmap(np.random.rand(10,12), camp="YlGnBu")
+
+sns.pairplot(df_thin,diag_kind='hist', hue='is_liked') ##VVIP multiple thigns in one screen
+
+
+
+

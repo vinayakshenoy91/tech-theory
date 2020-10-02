@@ -1,0 +1,4 @@
+When combined with JWT, OAuth2.0 can be a highly scalable authentication and authorization mechanism, 
+which is critical when it comes to securing microservices
+
+The client_credentials grant type is used mainly for system-to-system authentication.

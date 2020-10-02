@@ -1,0 +1,12 @@
+- In Java, Char data type s UTF-16 [Unicode impl]
+- Char has 16 bit
+
+//Get integer value of a character
+char x = 'a';
+System.out.println((int)x);
+
+count[str.charAt(i)-'a'];
+(char) i+'a' //Casting
+
+- Every character in java stored usign 16 bits
+

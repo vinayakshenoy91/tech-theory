@@ -1,0 +1,34 @@
+- in the case of a parallel stream, two threads are spawned simultaneously, and the stream internally uses ForkJoinPool to create and 
+manage threads. Parallel streams create a ForkJoinPool instance via the static ForkJoinPool.commonPool() method.
+
+- Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
+                .parallel()
+                .forEach(num -> System.out.println(num + " " + Thread.currentThread().getName()));
+
+A parallel stream has a lot of overhead compared to a sequential one. Coordinating the threads takes a significant amount of time. 
+We should always use serial stream and consider using a parallel Stream in the following cases:
+
+1) We have a large amount of data to process.
+2) We already have a performance problem in the first place.
+3) All the shared resources between threads need to be synchronized properly otherwise it might produce unexpected results.
+
+The following things should be considered before going for parallelization:
+
+- Splitting is not more expensive than doing the work.
+- Task dispatch or management costs between the threads is not too high.
+-The result combination cost must not be too high.
+- Use the NQ formula to decide if you want to use parallelism.
+
+NQ Model:
+ 
+N x Q > 10000
+ 
+where,
+N = number of data items
+Q = amount of work per item
+
+
+Lazy evaluation in stream:
+--------------------------
+Each intermediate operation creates a new stream, stores the provided operation/function, and returns the new stream. 
+When a terminal operation is called, the traversal of streams begins and the associated function is performed one by one on each element.

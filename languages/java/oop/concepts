@@ -1,0 +1,18 @@
+Why static?
+-------------
+The static keyword signifies that there will be only one copy of this attribute for all the objects instantiated by this class. 
+
+Static methods promote strong coupling to classes. You cannot abstract a static method. You cannot mock a static method or static class. 
+You cannot provide a static interface. The only time it is reasonable to use static classes (within application development—framework 
+development is a bit different) is if you're working with some sort of helper class or extension method that does not produce side 
+effects. For example, a static class to add numbers is fine. 
+A static class that interacts with a database or a web service is not.
+
+
+- Java provides an interface called Serializable that provides serialisation and deserialisation
+
+
+Inheritance represents the is-a relationship
+
+Composition involves using other classes to build more complex classes
+Composition represents a has-a relationship. For example, a car has an engine.

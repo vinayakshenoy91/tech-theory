@@ -1,0 +1,14 @@
+1) Async operations:
+---------------------
+- Dont wait for long ops
+
+2) Caching:
+------------
+- Expiry and invalidation
+
+3) Rate limit:
+---------------
+
+4) Quota:
+---------
+- Number of request a specific client can make.

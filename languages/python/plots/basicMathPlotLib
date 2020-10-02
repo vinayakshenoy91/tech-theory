@@ -1,0 +1,36 @@
+Commands:
+----------
+from matplotlib import pyplot as plt -> Import plt library
+plt.plot(x_values,y_values) -> plotting x and y values
+plt.plot(x_values,y_values,label="Aditya")  //plt.legend() -> This is to add legend, otherwise label wont be displayed
+plt.plot(x_values,'*') 
+plt.plot(x_values,'*-') 
+plt.show() -> show plot
+plt.xlabel("Letter") -> x-label
+plt.ylabel("Frequency") -> y-label
+plt.title("Ransom notes letter", fontsize=20, color="green", linewidth=1,linestyle="- or :", marker="x") -> y
+-label, colors here are web colors
+plt.text(xcord,ycord,"Text message") -> add an arbitrary text to plot [Placing a random text]
+plt.style.use("ggplot")//seaborn, default,"fivethirtyeight"
+
+
+Interpolation:
+---------------
+- np.linspace(0,100,100)
+- np.power(x,0.5)
+
+------------------Plot for images ----------------
+
+import matplotlib.image as mpimg
+
+img=mpimg.imread('onefour.png')
+
+print(img)
+
+plt.imshow(img)
+
+-------------------Plot vectors-----------------
+plt.quiver(0,0,3,4, scale_units='xy', angles='xy',scale=1, color='r') #plot vectors
+plt.xlim(-10,10)
+plt.ylim(-10,10)
+

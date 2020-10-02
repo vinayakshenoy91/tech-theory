@@ -1,0 +1,53 @@
+Hybrid Code Flow for Authentication:
+-------------------------------------
+- As the name suggests, this flow is a mix of Authorization code flow and Implicit code flow.
+- In the hybrid flow, the client gets immediate access to the identity token from the authorization endpoint itself. 
+The client also gets the authorization code from the authorization endpoint. 
+Later, it fetches the access token from the token endpoint which can be used to get further user info.
+
+Hybrid flow type:
+
+In hybrid flows, the response_type field should contain code as one of the values 
+and token or id_token or token+id_token as the other value
+
+1) response_type="code id_token"
+
+When the value of response_type is code id_token, an authorization code and an ID token are issued from the authorization endpoint, 
+and an access token and ID token are issued from the token endpoint.
+
+Both the authorization endpoint and the token endpoint issue an ID token, but the contents of the ID tokens are not always the same.
+It is possible that the ID token issued by the authorization server has fewer claims due to security reasons.
+When an authorization code is issued together with an ID token from the authorization endpoint, the hash value of the 
+authorization code calculated in a certain way has to be embedded in the ID token.
+
+steps:
+a) Send an Authorization endpoint.The reponse type field contains "code id_token"
+b) Authorization code and Idneitty toekn returned
+c) Send request on token endpoint.
+d) Access token and id token is returned
+
+
+2) response_type=“code token”:
+
+When the value of response_type is code token, an authorization code and an access token are issued from the authorization endpoint, 
+and an access token is issued from the token endpoint
+
+The token endpoint also issues the ID token if openid is included in the scope request parameter.
+
+steps:
+a) Send an Authorization endpoint.The reponse type field contains "code token"
+b) Authorization code and Access token returned
+c) Send request on token endpoint.
+d) Access token and id token is returned
+
+3) response_type=“code token id_token”:
+
+When the value of response_type is code id_token token, an authorization code, an access token, and an ID token are 
+issued from the authorization endpoint, 
+and an access token and an ID token are issued from the token endpoint.
+
+Note: 
+
+When an ID token is issued from the authorization endpoint, the hash value of the access token has to be embedded in the 
+ID token if an access token is also issued. Similarly, 
+the hash value of the authorization code has to be embedded in the ID token if an authorization code is also issued.

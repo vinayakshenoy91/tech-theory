@@ -1,0 +1,29 @@
+Same origin requests #
+On the browser HTTP requests can only be triggered across the same origin through JavaScript. Simply put, an AJAX request from 
+example.com can only connect to example.com.
+
+This is because your browser contains useful information for an attacker, cookies, which are generally used to keep track of the 
+user’s session. Imagine if an attacker would set up a malicious 
+page at win-a-hummer.com that immediately triggers an AJAX request to your-bank.com. If you’re logged in on the bank’s website, 
+the attacker would then be able to execute HTTP requests with your credentials, potentially stealing your information or, worse, 
+wiping your bank account out.
+
+Cross origin resource sharing directives #
+There might be some cases, though, that require you to execute cross-origin AJAX requests, and that is why browsers implement 
+Cross Origin Resource Sharing (CORS), a set of directives that allow you to execute cross-domain requests.
+
+The mechanics behind CORS are quite complex, and it wouldn’t be practical for us to go over the whole specification, so I am 
+going to focus on a stripped down version of CORS. All you need to know for now is that by using the Access-Control-Allow-Origin header, your application tells the browser that it’s ok to receive requests from other origins.
+
+The most relaxed form of this header is Access-Control-Allow-Origin: *, which allows any origin to access our application, 
+but we can restrict it by simply adding the URL we want to whitelist with Access-Control-Allow-Origin: https://example.com.
+
+Instead of directly executing our POST request, which could potentially cause some serious trouble on the server, 
+the browser sent a preflight request. This is nothing but an OPTIONS request to the server, asking it to validate whether 
+our origin is allowed. In this case, the server did not respond positively, 
+so the browser stops the process, and our POST request never reaches the target.
+
+- Never expose APIs that change state via GET. 
+An attacker can trigger those requests without a preflight request, meaning there’s no protection at all.
+
+https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS

@@ -1,0 +1,12 @@
+Mac:
+----
+- python3 --version
+- pip3 --version
+- pip install locust //pip3 install locust
+- locust --version
+
+Running a load script: locust -f filename.py
+
+- qamilestone.com -> Get steps from there
+
+

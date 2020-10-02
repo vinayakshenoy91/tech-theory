@@ -1,0 +1,28 @@
+Print functions:
+----------------
+- echo $x , echo x
+- type <command> -> See if it is internal or external command
+- pwd
+- mkdir, mkdir -p x/y (creates parent and child dir)
+- cp
+- mv
+- rm, rm -r
+- whatis <command name>, name date, <command> --help, apropos modpr
+- alias dt=date 
+- history
+
+Working with env variables:
+--------------------------
+- env //Checking env variables
+- export OFFICE=xyz
+- Make variables persistant, add thenm in: ~/.profile  or ~/.pam_environment
+- echo $PATH 
+- which obs-studio //Checking path
+- export PATH=$PATH:/opt/obs/bin //Adding command to path variable
+
+Setting host name and username in prompt:
+------------------------------------------
+- echo $PS1
+- PS1="ubuntu-server:"
+- PS1="[\d \t \u @\h:\w] $ "
+PS1='[\d]\u@\h:\w$

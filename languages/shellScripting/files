@@ -1,0 +1,30 @@
+File types in linux:
+---------------------
+- Regular file
+- Directory
+- Special files -> Character files(/dev), Block files(block devices, socket file(enable comms between two process), 
+links(hardlink /soft link), named pipes
+
+Command:
+-------
+
+- cat xyz/t.txt, cat > y/z.txt[write something and save]
+- touch -> Create a new file
+- more file.txt
+- less x.txt
+- file <filenmae> -> gives file types
+- df -hp -> details about all mounted file systems
+echo $SHELL
+
+
+Where to put what programs:
+-----------------------------
+- /opt -> put 3rd party programs here
+- /mnt -> shared files
+- /tmp -> used to store temporary data
+- /media -> all external devices are mounted here like the usb
+- /bin -> command binaries
+- /etc -> used to save config files in linux
+- /lib -> shared library to be imported in your programs
+- /usr -> all use application lies
+- /var -> store log files

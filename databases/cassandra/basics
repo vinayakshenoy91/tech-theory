@@ -1,0 +1,23 @@
+- open source nosql DB
+
+How data is stored in cassandra?
+--------------------------------
+- All daa stored in cassandra is associated with a token.(-2^63 to + 2^63). Each node added takes data associated with contiguous
+set of token values
+- Storing data with virtual nodes. Each nodes have number of virtual nodes
+6 instance each having 4 virtual nodes
+- Cassandra is a partition row store. Data is read or written with a partition key. Partition key is hashed into a token 
+when data is inserted.Token determines which vnode and actual physical node will be responsible for the data.
+
+
+Snitch: Used to gain understanding the env in whihc the cluster is going to run.
+Used to route request and used for consulting when storing multiple copies of data.
+
+Simple Snitch
+GossipingPropertyFileSnitch -> Take and keep everyone upto date on the status
+Property file snitch
+Ec2 snitch
+Ec2 multiregion snitch
+
+
+

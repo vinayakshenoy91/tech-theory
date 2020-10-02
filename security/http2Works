@@ -1,0 +1,5 @@
+- H2 was geared towards speeding the process up. H2 uses binary rather than plaintext messages, supports multiplexing, 
+and uses the HPACK algorithm to compress headers. To make a long story short, H2 was a performance boost to HTTP/1.1.
+
+- With H2, which is encrypted by default, there are no more excuses as features like multiplexing and server push make 
+it perform better than plain HTTP/1.1.

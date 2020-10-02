@@ -1,0 +1,9 @@
+- Java doc create -> /** then press enter
+- Parsing to type -> Long.parseLong(items[0])
+- COmment -> cmd + /
+- Character.isLetter()
+- Double.isNaN();
+- Integer.toBinaryString(8)
+- Integer.MAX_VALUE
+
+System.nanoTime()/1000000 -> ms

@@ -1,6 +1,9 @@
+- Set of vertices(nodes) that are connected to each other via edges in the form of a network.
 - Connects to multiple nodes
 - G(V,E)
 
+There are two common types of graphs:
+--------------------------------------
 1) Undirected graph:
 --------------------
 - degree(v) = number of edges going through it
@@ -14,6 +17,10 @@ outdegree(v) = number of edges going out of that vertex
 sum of indegrees = |E|
 sum of outdegrees = |E|
 Max number of edges = |v|*|v-1|
+
+
+Terminologies in a graph:
+-------------------------
 
 3) Bridges in a graph:
 ----------------------

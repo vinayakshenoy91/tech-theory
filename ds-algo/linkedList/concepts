@@ -1,0 +1,36 @@
+Three problemas where LL can work well:
+- Round Robin Scheduling
+- We have multiple sorted sequences and we need to merge them frequently
+- Given a sequence of items, Whenever we see an item x in the sequence, we need to replace it 
+with 5 instance of another.
+
+
+About Linkedlist:
+------------------
+- Elements do not need to be contiguous
+
+Some important applications of Linked Lists include:
+----------------------------------------------------
+Implementing HashMaps, File System and Adjacency Lists
+Dynamic memory allocation: We use linked lists of free blocks
+Performing arithmetic operations on long integers
+Maintaining a directory of names
+
+Operations	Descriptions
+insertAtEnd(data)	Inserts an element at the end of the linked list
+insertAtHead(data)	Inserts an element at the start/head of the linked list
+delete(data)	Deletes an element from the linked list
+deleteAtHead()	Deletes the first element of the list
+deleteAtEnd()	Deletes the last element of the list
+Search(data)	Searches an element from the linked list
+isEmpty()	Returns True if the linked list is empty, otherwise returns False
+
+
+Doubly linked list operation:
+-----------------------------
+- Browser ops
+
+Circular linked list:
+---------------------
+- used for queue impl [Inserting at beginning or end is O(1)]
+- Round robin

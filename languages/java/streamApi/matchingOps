@@ -1,0 +1,42 @@
+1) anyMatch():
+--------------
+boolean anyMatch(Predicate<? super T> predicate)
+
+It takes a predicate as input and returns:
+true if at least one element matches the criteria.
+false if no element matches the criteria.
+false if the stream is empty.
+
+boolean anyCanadian = list.stream()
+                .anyMatch(p -> p.getCountry().equals("Canada"));
+
+2) allMatch():
+---------------
+boolean allMatch(Predicate<? super T> predicate)
+
+It takes a predicate as input and returns
+
+true if all elements match the criteria.
+
+true if the stream is empty.
+
+false if even a single element does not match the criteria.
+
+oolean anyCanadian = list.stream()
+                .allMatch(p -> p.getCountry().equals("Canada"));
+
+3) noneMatch():
+----------------
+boolean noneMatch(Predicate<? super T> predicate)
+
+It takes a predicate as input and returns
+
+true if no elements of the stream match the provided predicate.
+
+true if the stream is empty.
+
+false if even a single element matches the criteria.
+
+boolean anyRussian = list.stream()
+                .noneMatch(p -> p.getCountry().equals("Russia"));
+

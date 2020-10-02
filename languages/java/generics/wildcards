@@ -1,0 +1,34 @@
+- Depict the g
+- Arrays are covariant[Assign child class to parents, but child class cannot be assigned between them. Also if child is assigned, then parent type cannot be added].
+Lists are not[Parent accepts child class in list, but at any give point the type used can only be one ie either parent or child]
+This problem of list solved by upper bounded wildcards
+
+Upper bounded Wildcards://This way you can pass any child of that class
+-------------------------
+- If you want to accept a parent type or any subclass of that parent type , use:
+public void save(final List<? extends Person> persons) [Has more readability]
+OR 
+public List<? extends Person>  void save(final List<T> persons)
+
+
+T extends Person -> use this at class level
+
+? extends Person -> Parameter on a method
+
+Lower bounded windcards://This way you can pass any parent of that class
+------------------------
+
+public void load(final List<? super Person> persons)  //Then only you can do xyz.losd(List<Objects> )
+//This way you can pass any parent of that class
+
+
+Principle: Use extends while getting things(Covariance) and super when putting things (Contravariance)
+
+
+Unbounded wildcards:
+--------------------
+
+List<?> , Class<?> -> It is like any class. Expanded version is : List<? extends Object> -> it can be only class other than object.
+Only value that youcan add in List<?> is null
+
+Class<?> xyz =Class.forName(Class.name)

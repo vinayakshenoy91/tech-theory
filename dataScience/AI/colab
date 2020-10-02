@@ -1,0 +1,7 @@
+!ls -> This will let you execute shell commands in google colab
+!cat /proc/cpuinfo
+!cat /proc/meminfo
+
+Get to write formulas in text:
+
+$\LaTeX$ -> Then click shift+enter

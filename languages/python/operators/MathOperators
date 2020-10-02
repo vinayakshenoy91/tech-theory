@@ -1,0 +1,5 @@
+a**b -> power operator
+a<>b -> a!=b
+a // b -> integer division
+int(a) -> helps in concat with an integer
+

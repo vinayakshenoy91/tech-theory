@@ -1,0 +1,36 @@
+SVM: Supervised  ML approach to build linear , non-probabilistic and binary classifiers
+- Used to build binary classifiers
+- Does not require priro knowledge of probablility distribution of points
+- Make classification decision on basis of a "linear function" of a point's coordinate.
+- Has a training stage
+
+How does it work?
+-----------------
+1) SVM finds an n-1 dimensional hyperplane in an n-dimensional space to separate points into two categories
+Ax + By+Cz = D 
+
+points on oneside of hyperplane: Ax+By+Cz>D and other side is Ax+By+Cz=D
+
+2) Distance from point and hyperplane obtained using:
+Ax1+By1+Cz1-D /(A^2+B^2+C^2)^1/2 
+Best hyperplane maximises the sum of distance of the nearest points on either side of hyperplane. [Optimisation problem]
+
+
+What is hyperplane not abel to separate spam from ham?
+- A soft margin method finds a hyperplane which performs as clean a separation of points as possible.
+
+
+- SVM can also be used to perform non-linear classification using kernel trick
+
+- Linear classification does a dot product if vectors with many elements
+- Kernel is a non-linear function which is used instead of a dot product.
+
+
+
+Kernel trick work?
+
+- operate in a feature space which may have many more dimensions than original feature space
+- Finds max margin hyperplane in the modified feature space.
+- It is a linear function int he modified feature space.
+- This allows a way to solve problems where the data is not linearly separable by projecting such data into a higher dimensional space.
+

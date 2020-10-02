@@ -1,0 +1,11 @@
+- optimisation over plain recursion
+1)Memoization -> Top down
+2) Tabulation (bottom up)
+
+Applications:
+--------------
+- Bellman ford algo
+- Floyd warshall algo
+- Diff utility (Longest common subsequence)
+- Search closest word (Edit distance)
+- Resource allocation(knapsack)

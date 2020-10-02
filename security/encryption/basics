@@ -1,0 +1,25 @@
+Types of encryptions are:
+------------------------
+1) Symmetric Encryption:
+- In symmetric encryption, the same key is used for both encryption and decryption. 
+- as the max length is 256 bits.
+
+2)Asymmetric Encryption:
+- the sender and receiver use a separate key to encrypt and decrypt the message. 
+This is also known as PKI (Public Key Infrastructure).
+
+The recipient sends a public key to all the senders. The senders then encrypt the messages using this public key. 
+When the receiver receives the message, it uses its private key to decrypt the message. 
+The keys used in asymmetric encryption are fairly large and can be around 2048 bits.
+
+Since the asymmetric encryption is very slow, it is normally used once to exchange the encryption key safely. 
+After that, all the communication is done using symmetric encryption.
+
+
+Some encryption algorithms are:
+
+AES
+DES
+Blowfish
+TwoFish
+RC4, RC5, RC6

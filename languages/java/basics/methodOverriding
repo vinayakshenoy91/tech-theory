@@ -1,0 +1,17 @@
+Rule:1
+------
+- Same parameters + compatible return types 
+//In case of primitive, it must be same primitive types. Incase of objects, it can be subtype or same type
+
+Rule:2
+--------
+- Cant be less accessible
+
+- Super keyword is overriden
+
+void postAReview(){
+    super.postAReview();
+    //behaviour extension code
+}
+
+- Can't use in static method 

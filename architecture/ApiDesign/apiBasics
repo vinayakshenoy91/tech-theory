@@ -1,0 +1,104 @@
+1) Web Apis:
+-----------
+- An api exposed by web component allowing other components to interact with it.
+- over http
+- req/res
+
+2) SOAP: Simple Object Access Protocol:
+---------------------------------------
+- XML based
+- When client calls a server, it calls a specific method.RPC style
+- extensible
+
+3) REST:
+--------
+- transfer of representation of resource state
+- PUT /api/entity?family=y
+
+4)GraphQL:
+-----------
+- Flexible querying, updating and subscribing to data changes.
+- Requires some upfront dev effort
+- Requires perf optimisation
+- ex: github
+
+
+5)gRPC:
+--------
+- dev by google in 2015
+- using http/2
+- Uses protobuf
+- supports bidirectional and streamiing messaging
+- Quiet performant
+- Requires specialized libraries at both ends
+
+Tools: Postman & beeceptor
+
+- PUT should be idempotent.
+
+PATCH -> similar to put but with partial updates
+HEAD
+OPTIONS 
+
+URL structure:
+--------------
+- Self explanatory
+- consistent across api
+- predicatable
+- Should have a FQDN (Fully Qualified Domain Name) -> Should have api in its name: api.tesco.com
+- Must be https
+- Word api should be part of domain name or the path
+- Version: /api/v1
+- /api/v1/order/17/items
+- With query param, we may get any number of entity. But with ID parameter, we should get only one entity.
+If id param not found, throw error. But Query param, empty result should be fine.
+
+- POST /student/15/grades
+
+Response codes:
+---------------
+1XX -Info
+2XX- Success
+3XX-Redirection
+4xx - client errors
+5xx - server error
+
+200 -> request was successful
+201 -> Created (Contains pointer to location of entity)
+202 -> Accepted
+204 -> request was fulfilled but no content sent back. Used when updating large entity
+
+400- Bad request
+
+{
+
+type: "https://example.net/validation-error",
+"title": "Your request parm didnt validate",
+"invalid-params":[
+   {
+       "name":"age",
+       "reason":"it must be a positive integer"
+   } 
+]
+}
+
+
+
+401-> Not authorised
+
+403-> Failed authorization
+
+Client Request -> 401 Unauth -> Authorise -> 403
+
+404 -> Used when specific entity was looked for not with query parameter
+
+500 - Internal server error -> something bad happened
+
+207 -> multi status
+
+APi types:
+----------
+1) OS api
+2) Library api
+3) Remote Api -> Both side smae platform is drawback
+4) Web api 

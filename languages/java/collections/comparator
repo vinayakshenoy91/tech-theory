@@ -1,0 +1,57 @@
+Before:
+
+Collections.sort(personList, new Comparator<Person>() {
+        @Override
+            public int compare(Person o1, Person o2) {
+                return o1.getName().compareTo(o2.getName());
+    }
+});
+
+
+
+- Comparator is still a functional interface as it has only one abstract method, i.e., compare()
+
+a) comparing():
+----------------
+ Collections.sort(personList, Comparator.comparing(Person::getName));
+
+b) thenComparing(): 
+-------------------
+- Using thenComparing() method to sort the List on the basis of two criterias.
+
+ Collections.sort(personList, Comparator.comparing(Person::getName).thenComparing(Person::getAge));
+
+c) naturalOrder():
+-------------------
+- This is a static method that returns a comparator, which sorts in the natural order.
+
+Collections.sort(fruits, Comparator.naturalOrder());
+
+
+d) reverseOrder():
+-------------------
+- Collections.sort(fruits, Comparator.reverseOrder());
+
+e) nullsFirst:
+---------------
+Comparator's nullsFirst() method takes in a comparator as input and returns a comparator, which considers null values lesser than non-null values.
+
+List<String> fruits = new ArrayList<>();
+        fruits.add("guava");
+        fruits.add(null);
+        fruits.add("apple");
+        fruits.add("banana");
+
+// Sorting the List keeping nulls first.
+Collections.sort(fruits, Comparator.nullsFirst(Comparator.naturalOrder()));
+
+f) nullsLast:
+-------------
+List<String> fruits = new ArrayList<>();
+fruits.add("guava");
+fruits.add(null);
+fruits.add("apple");
+fruits.add("banana");
+
+// Sorting the List keeping nulls last.
+Collections.sort(fruits, Comparator.nullsLast(Comparator.naturalOrder()));

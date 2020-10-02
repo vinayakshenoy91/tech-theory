@@ -1,0 +1,21 @@
+Implicit code flow for authentication:
+--------------------------------------
+- This flow is used for single-page JavaScript apps or those apps which do not have a backend.
+- In Implicit flow, the response_type field can either take token or id_token or token_id_token as value.
+- This flow uses the authorization endpoint only. It does not use the token endpoint.
+
+There are different implicit flows for different values of the response_type and scope field.:
+
+1) response_type=token :
+
+When the value of response_type is token, then only the access token is returned. 
+Even if openid is included in the scope request parameter, an ID token is not issued.
+
+2) response_type=id_token:
+
+When the value of response_type is id_token, then only the identity token is returned. The scope field must contain openid
+
+3) response_type="token id_token" :
+
+When the value of response_type is token id_token, then both access token and identity token is returned. 
+The value of the scope field must contain openid, otherwise the identity token will not be returned.

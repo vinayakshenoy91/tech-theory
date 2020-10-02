@@ -1,11 +1,22 @@
 - Contiguous memeory location
 - Cache friendliness
 - Random access
-- Wastage of space
+- Wastage of space as the spaace needs to be pre-allocated.
+- Deletion and Insertion in middle is costly.
+
+
 
 Time complexity:
 -----------------
 insert -> O(1)
 delete -> O(1)
+
+
+Convert arrays to list:
+- Arrays.asList(array); 
+- Collections.addAll(list1, array);
+
+
+- If you store key in strted form the search is O(log n)
 
 

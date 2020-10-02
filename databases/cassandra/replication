@@ -1,0 +1,14 @@
+- Data is organised into key spaces -> and each keyspace contains one or more tables -> partition -> Data within partition may be prepresented by one or more rows
+- Partiotion is primary interaction point while reading or writing data to cassandra
+- Specifics of replication strategy are determined at keyspace level. Determine number of copies of data and where they are stored.
+
+
+1) Simple Strategy:
+-------------------
+- Used in dev or single DC
+- create keyspace pluralsight with replicate = { 'class':'SimpleStrategy','repplication_factor':3};
+
+2) Network topology strategy:
+------------------------------
+- create keyspace pluralsight with replicate = { 'class':'NetworkTopologyStrategy','DC1':3,'DC2':1};
+- Associate with respective cluster topology to setup respective snitch like gossip protocol

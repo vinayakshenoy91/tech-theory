@@ -1,0 +1,13 @@
+Declare a variable
+-------------------
+variable = "prefix"{
+    default = "tfvmex"
+}
+
+Reference a variable:
+---------------------
+resource "azure_resource_group" "main"{
+    name = "${var.prefix}-network"         //Note: You can remove ${} since terraform 12
+} 
+
+- You can put all variables in a spearate file but in same folder as your planned script

@@ -1,0 +1,39 @@
+- Method references are shortened versions of lambda expressions that call a specific method
+
+Four kinds of method references:
+---------------------------------
+1. Static methods:  [ClassName::MethodName]
+------------------ 
+
+// Code with method reference.
+        list.stream()
+                .mapToInt(StreamDemo::getLength)
+                .forEach(System.out::println);
+
+2. Instance method of a particular object:
+-------------------------------------------
+The syntax to use the instance method as a method reference is ReferenceVariable::MethodName
+
+ list.stream()
+        .mapToInt(demo::getLength)
+        .forEach(System.out::println);
+
+3. Instance method of an arbitrary object:
+-------------------------------------------
+int totalSalary = list.stream()
+                .mapToInt(Employee::getSalary)
+                .sum();
+
+4. Constructor references:
+---------------------------
+We can refer to a constructor in the same way we reference a static method. The only difference is that we need to use a new keyword.
+
+   // Code without constructor reference
+        list.stream()
+                .map(name -> new Employee(name))
+                .forEach(System.out::println);
+
+        // Code with constructor reference
+        list.stream()
+                .map(Employee::new)
+                .forEach(System.out::println);

@@ -1,0 +1,16 @@
+export TF_LOG=TRACE
+export TF_LOG_PATH=terraform.txt
+terraform destroy --auto-approve -target azurerm_storage_blob.blob
+
+## Importing  modules:
+
+module "virtual_machine"{
+    source ="../../virtual_machine"
+    location="UK WEST"
+    prefix="moduletestprefix"
+}
+
+
+#Creating a subscription:
+
+az ad sp create-for-rbac --name "test-udemy-sp" --role="Contributor" --scopes="/subscriptions/<YOUR ID>"

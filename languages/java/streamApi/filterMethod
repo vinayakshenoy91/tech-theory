@@ -1,0 +1,6 @@
+- Stream filter(Predicate<? super T> predicate)
+- Original list is not modified
+
+- list.stream()                     // Created a stream from the list
+    .filter(num -> num > 10)        //filter operation to get only numbers greater than 10
+    .forEach(System.out::println);  // Printing each number in the list after filtering.

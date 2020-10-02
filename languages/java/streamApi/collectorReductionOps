@@ -1,0 +1,17 @@
+Some of the important reduction operations already implemented in the Collectors class are listed below:
+
+Method	Purpose
+toList()	Collects stream elements in a List.
+toSet()	Collects stream elements in a Set.
+toMap()	Returns a Collector that accumulates elements into a Map whose keys and values are the result of applying the provided 
+        mapping functions to the input elements.
+collectingAndThen()	Collects stream elements and then transforms them using a Function
+summingDouble(), summingLong(), summingInt()	Sums-up stream elements after mapping them to a Double/Long/Integer value 
+                                                using specific type Function
+reducing()	Reduces elements of stream based on the BinaryOperator function provided
+partitioningBy()	Partitions stream elements into a Map based on the Predicate provided
+counting()	Counts the number of stream elements
+groupingBy()	Produces Map of elements grouped by grouping criteria provided
+mapping()	Applyies a mapping operation to all stream elements being collected
+joining()	For concatenation of stream elements into a single String
+minBy()/maxBy()	Finds the minimum/maximum of all stream elements based on the Comparator provided

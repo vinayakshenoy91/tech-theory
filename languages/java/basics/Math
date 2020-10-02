@@ -1,0 +1,12 @@
+Math class -> Static method
+---------------------------
+Math.random() //0.0-1.0
+int winner = (int)(random*100)+1 
+Math.round()
+Math.floor()
+Math.ceil()
+Math.max()
+Math.abs()
+Math.pow(2,4)
+Math.sqrt(16) //Returns NaN if negative value or 0/0 
+double inverDocumentFrequency = Math.log(100/8)

@@ -1,0 +1,16 @@
+8 primitive types:
+------------------
+- int
+- long
+- byte
+- short
+- float
+- double
+- boolean
+- char
+
+Boxed primitive:
+----------------
+- Integer.valueOf(8) //Improving performance by caching values
+
+Getting value -> boxedInt.intValue()

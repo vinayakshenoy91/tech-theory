@@ -1,0 +1,47 @@
+Hashing:
+-------
+- Search,Insert,Delete in O(1) time undert eh assumption that input keys are uniformly distributed
+by hash function
+
+- hashSet, hashmap, linkedHashset and linkedHashmap
+
+HashSet -> Doesn't have duplicate but maintains no order
+linkedHashSet -> Doesn't have duplicate but maintains insertion order
+linkedHashmap -> maintains insertion order
+
+- For count of elements add everything to hashset and then provide it
+
+Technique:
+---------
+- Do a module with prime number to get a ficxed value. Collisions will be there
+
+Collision handling:
+-------------------
+1) Linear chaining:
+- Save in Self balancing BST chained
+
+2) Open addressing:
+
+- See if space empty if not move to next available space.
+
+Open address is cache friendly and linear chaining is not.
+Open address sensitive to # function.
+
+Improve sensitiveness using linear and quadratic probing
+
+
+Probing:
+--------
+- Linear
+- Quadratic
+
+i-> number of attempts to resolve the collision
+(hash(x)+i^2)% prime_num 
+
+
+
+
+
+
+
+

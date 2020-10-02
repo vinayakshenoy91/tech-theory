@@ -1,0 +1,113 @@
+Basic commands:
+---------------
+git --version
+git config --global user.email "educative_learner@example.com"
+git config --global user.name "Educative Learner"
+
+git config user.email
+git config user.name
+
+Creating a git project:
+-----------------------
+git init - What git init does, however, is create a .git directory. The .git directory will contain all the metadata that Git will 
+require for tracking the project.The subdirectory .git will contain several files and more subdirectories that Git will use 
+to keep track of changes in the project.
+
+git add .
+git status
+
+git commit -> As soon as you create a new commit, it will directly link to the HEAD. However, 
+since the latest commit is now the most recent one, it will be considered the HEAD instead, replacing the previous one.
+The commit hash uses the cryptographic hash function SHA-1. 
+
+git log -> One more critical piece of information that the log will show is the 40-characters-long unique hash. 
+The hash is vital because it helps identify commits and acts as an excellent way to secure the commit.
+The commit hash uses the cryptographic hash function SHA-1.
+
+If you want to modify or update your changes from the previous commit but don’t want to remove them completely, 
+you can use the following command.The --soft flag changes the state of the committed files to “staged."
+
+git reset --soft HEAD~1
+
+If you want to completely get rid of the changes that were part of the recent commit, you can use the --hard flag instead. 
+It will reset the changes and not preserve them.
+
+git reset --hard HEAD~1 //Give number on how many you want to revert
+
+- Adding remove repository tracking:
+
+git remote add <name> <url_to_remote_repository>
+ex: git remote add origin <url_to_remote_repository>
+
+Shallow cloning:
+---------------
+Sometimes, we might come across a remote repository that we want to clone, but its commit history might be too long, resulting 
+in longer times to download and clone. This occurs when the project is very large and has a very large commit history. 
+You can opt to clone the commit history up to a certain point by using the --depth flag.
+
+git clone <repository_url> --depth 1
+
+git fetch:
+----------
+The benefit of git fetch is that it merely downloads the latest changes and does not affect your local codebase and updates.
+
+git pull:
+---------
+the git pull command also downloads the latest updates from the remote repository.
+
+Rename branch:
+-------------
+git branch -m authentication_feature
+
+Rename branch without switching over:
+------------------------------------
+- git branch -m new_branch authentication_feature
+
+Deleting a branch:
+------------------
+- git branch -d <branch_name>
+
+Stash:
+-----
+- git stash & git stash apply
+
+Rebase:
+------
+- Rebasing is useful for making sure that the branch you are working on diverges from the latest version of the parent branch.
+Let’s say you took out a new branch from master and continued working on it, adding new commits. During this time, 
+the master branch ends up with new commits and updates from other contributors who merged their code with it. 
+Ideally, you would want to make sure that the branch you have been working on links to the latest version of the parent branch. 
+This concern is what rebasing will allow you to manage.
+
+git rebase master //git rebase <parent_branch>
+
+It will point your branch to tip of master.
+
+conflict resolution in rebase:
+
+git add file1.txt
+git rebase --continue
+
+What is the difference between rebasing and merging? #
+
+The significant differences to note between the two operations are as follows:
+
+1) Merging results in a new merge commit for the branch with which another is merged.
+2) Rebasing doesn’t result in any new commits. It updates the rebased branch’s commit history to look 
+like it was taken out from a more recent version of the parent branch.
+
+
+When should you merge and when should you rebase? #
+
+If more than one person is working on a particular branch, then, in that case, rebasing it would not be a good idea. Other 
+collaborators will be routinely pulling the latest version of the branch on their local machines, unaware that someone rebased it, 
+fundamentally altering its state and leading to inconsistent branches for everyone. However, if you’re the only person working on 
+the branch, then rebasing is a very viable option to make sure that your branch is taken from the latest version of the parent branch.
+
+If you don’t want to alter the commit history of a branch, you should use git merge. git merge will retain the commit history 
+as it is and add a new merge commit instead, while rebasing a branch will alter the commit history for that branch. This will be a 
+less intense change for people collaborating on a branch since one person merging another branch with it would result in a new commit 
+that others can then simply pull locally from a remote repository. If the branch were rebased and pushed to the remote repository, 
+when others pull it, the updated branch would conflict with the local one even though it would be the same branch.
+
+

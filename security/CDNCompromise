@@ -1,0 +1,27 @@
+Using integrity hashes to protect users #
+Browser vendors have a solution for you, called sub-resource integrity (SRI). SRI allows your main 
+application to generate cryptographic hashes of your static files and tell the browser which file is mapped to what hash. 
+When the browser downloads the static asset from the CDN, it will calculate the asset’s hash on-the-fly and make sure that it 
+matches the one provided in the main document. If the hashes don’t match, the browser will simply refuse to execute or render 
+the asset.
+
+This is how you can include an asset with an integrity hash in your document.
+
+...
+<script 
+  src="https://my.cdn.com/asset.js" 
+  integrity="sha256-Y34u3VVVcO2pZtmdTnfZ+7OquEpJj/VawhuWPB4Fwq3ftcFc0gceft1HNZ14eUHT"
+></script>
+...
+The integrity hash can be computed with a simple command.
+
+cat $ASSET_FILE_NAME | openssl dgst -sha384 -binary | openssl base64 -A
+
+This is what our HTML looks like when SRI is turned on.
+
+<html>
+<body>
+    <script src="/asset.js" integrity="sha256-Z67eKNNu3z1gzgMcRCqRQo4f4gtT6pM0y6BHe/r5OGY="></script>
+    <script src="/attack.js" integrity="sha256-AN_INTEGRITY_THAT_DOESNT_MATCH"></script>
+</body>
+</html>

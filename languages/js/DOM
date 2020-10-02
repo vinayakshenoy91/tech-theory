@@ -1,0 +1,2 @@
+const para = document.querySelector('div.error'); //div with a class of error
+const para = document.querySelectorAll('p'); //div with a class of error

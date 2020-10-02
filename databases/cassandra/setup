@@ -1,0 +1,27 @@
+Local setup:
+------------
+1) Docker desktop and in advaned otpion do below: 
+RAM 4G
+CPU 2
+SWAP 1.5G
+
+Use below docker compose file
+dokcer-compose up -d n1
+docker compose exec n1  nodetool status -> Tokens here means v nodes presented by this node
+docker compose exec n1  nodetool ring -> Display token ranges allocated across nodes
+docker compose exec n1 more /etc/cassandra/cassandra.yml
+docker compose exec n1  nodetool help
+dokcer-compose up -d n2 _> Start second node
+
+docker ps
+
+docker-compose down
+
+docker compose exec n1 cqlsh
+
+docker compose exec n1  nodetool describering pluralsight
+drop keyspace pluralsight
+
+
+Multi datacenter cassandra:
+---------------------------

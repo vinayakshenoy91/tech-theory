@@ -1,0 +1,14 @@
+What to monitor?
+
+- Req/Sec
+- # of failures
+- Latency
+- CPU
+- Num of users
+- session number
+- Geographic distribution
+- RAM
+
+beeceptor monitor -> used as runscope -> configured on Azure
+
+

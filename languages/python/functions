@@ -1,0 +1,2 @@
+def add(x, y):         # define a function that takes two arguments
+    return x + y

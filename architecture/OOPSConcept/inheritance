@@ -1,0 +1,10 @@
+- Minimize multability by preventing inheritance
+
+Prevent inheritance using:
+---------------------------
+- final constructor
+- private constructor
+- Not extansible, not instantiable using private constructor
+
+
+

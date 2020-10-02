@@ -1,0 +1,51 @@
+- OAuth 2.0 is the industry-standard protocol for authorization. 
+- OAuth is a protocol that simplifies the process of providing authorization to clients to access secured resources.
+- OAuth is an authorization framework that allows a client app (PicsArt App) to retrieve information from another system 
+using a token which is valid for a limited time. The application users authorize the client app to retrieve information 
+on their behalf.
+- OAuth should only be used for authorization.
+
+Resource owner:
+--------------
+The resource owner is the owner of the resource that is being accessed. When you log in to PicsArt App using your 
+Facebook account, you are granting access to PicsArt to access your images. In this case, you are the resource owner.
+
+Client:
+-------
+The client is an application that accesses protected resources on behalf of the resource owner. 
+
+Resource server:
+----------------
+The server that is hosting the protected resources and is capable of accepting 
+and responding to requests by clients using access tokens.
+
+Authorization server:
+---------------------
+The server which issues access tokens after successfully authenticating a client and resource owner is called authorization server.
+
+Authorization grant:
+--------------------
+An authorization grant is a credential representing the resource owner’s authorization (to access its protected resources) 
+used by the client to obtain an access token. The OAuth specification defines four grant types,
+
+Authorization code:
+-------------------
+In our example, we showed that the Facebook App shared a token with the client. In some OAuth flows, the authorization 
+server does not give the access token directly. It first issues an authorization grant. The client then sends this grant 
+with the client secret  to the authorization server. After this, the authorization server gives access token to the client.
+
+Access token:
+-------------
+An access token is a string representing an authorization issued to the client. Tokens represent specific scopes and 
+durations of access, granted by the resource owner, and enforced by the resource server and authorization server.
+
+Scope:
+------
+Scope defines the permissions of a token. It defines what resources can be accessed using a given access token. 
+In our example, the client app wants to access only images, so the images are scope.
+
+Grant type:
+-----------
+In OAuth 2.0, the term grant type refers to the way an application gets an access token. Each grant type is optimized for 
+a particular use, whether that’s a web app, a native app, a device without the ability to launch a web browser, 
+or server-to-server applications.

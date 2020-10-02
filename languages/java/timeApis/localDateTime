@@ -1,0 +1,18 @@
+1) Getting the current date and time:
+--------------------------------------
+- LocalDateTime date = LocalDateTime.now();
+
+2) Getting a specific date and time using of() method:
+------------------------------------------------------
+- LocalDateTime date = LocalDateTime.of(2019, 05, 03, 12, 34);
+- date = LocalDateTime.of(2019, Month.AUGUST, 03, 23, 34);
+
+3) Getting a specific date and time using parse() method:
+----------------------------------------------------------
+- LocalDateTime date = LocalDateTime.parse("2020-06-20T07:54:00");
+
+4) Modifying a given date and time:
+------------------------------------
+- LocalDateTime date = LocalDateTime.parse("2020-05-12T08:30:00").plusDays(4);
+- date = LocalDateTime.parse("2020-05-12T08:30:00").plus(4, ChronoUnit.MONTHS);
+- date = LocalDateTime.parse("2020-05-12T08:30:00").minusMonths(4);

@@ -1,0 +1,129 @@
+- Cookies are limited to 4kb in size, which means they cannot store large amounts of data.
+- small text files that store small pieces of information.
+
+A cookie generally contains:
+
+name - A website or a third-party server identifies a cookie using its name.
+value - A random alphanumeric character, and it stores data like a unique identifier to identify the user 
+and other information.
+attribute – A set of characteristics such as the expiration date, domain, path, and flags.
+
+Cookie flow works:
+------------------
+1) A server can send a cookie using the Set-Cookie header.
+HTTP/1.1 200 Ok
+Set-Cookie: access_token=1234
+
+2)A client will then store this data and send it in subsequent requests through the Cookie header.
+
+GET / HTTP/1.1
+Host: example.com
+Cookie: access_token=1234
+
+3) Note that servers can send multiple cookies at once,
+
+HTTP/1.1 200 Ok
+Set-Cookie: access_token=1234
+Set-Cookie: user_id=10
+...
+4) and clients can do the same in their request.
+
+GET / HTTP/1.1
+Host: example.com
+Cookie: access_token=1234; user_id=10
+
+Cookie attributes:
+------------------
+Expires #
+Specifies when a cookie should expire, so that browsers do not store and transmit it indefinitely. 
+A clear example is a session ID, which usually expires after some time. This directive is expressed as a date 
+in the form of Date: <day-name>, <day> <month> <year> <hour>:<minute>:<second> GMT, like Date: Fri, 24 
+Aug 2018 04:33:00 GMT. Here’s a full example of a cookie that expires on the first of January, 2018: 
+access_token=1234;Expires=Fri, 24 Aug 2018 04:33:00 GMT
+
+Max-Age #
+Similar to the Expires directive, Max-Age specifies the number of seconds until the cookie should expire. 
+A cookie that should last one hour would look like the following: access_token=1234;Max-Age=3600
+
+Domain #
+This directive defines which hosts the cookie should be sent to. Remember, cookies generally contain sensitive 
+data, so it’s important for browsers not to leak them to untrusted hosts. A cookie with the directive 
+Domain=trusted.example.com will not be sent along with requests to any domain other than trusted.example.com, not 
+even the root domain, example.com. Here’s a valid example of a cookie limited to a particular subdomain: 
+access_token=1234;Domain=trusted.example.com
+
+Path #
+Path is similar to the Domain directive but applies to the URL path (/some/path). This directive prevents a cookie 
+from being shared with untrusted paths, such as in the following example: access_token=1234;Path=/trusted/path.
+
+
+Based on the source, the cookies can be classified into two types:
+-------------------------------------------------------------------
+
+1)First-party cookies #
+These are installed by the website that the user is currently on.
+They are normally used to determine whether a user is logged in.
+
+2)Third-party cookies #
+These are installed by other websites or third-party servers that are not being viewed by the users.
+Third-party cookies are used to track users’ browsing patterns and interests to show relevant advertisements.
+You may have noticed that when you search for a product on an eCommerce website, then you start seeing the ads for that product on other websites. 
+This is achieved through third party cookies.
+
+Based on the validity, the cookies can be classified into two types:
+---------------------------------------------------------------------
+1) Session cookies #
+Session cookies are created for a single session and vanish once you close the browser.
+These cookies are created by the website and the user cannot disable them from the browser.
+These cookies are used to save session information while users browse a website. As soon as we close the browser, these cookies expire
+When a server sends a cookie without setting its Expires or Max-Age, browsers treat it as a session cookie. Rather than 
+guessing its time-to-live or applying funny heuristics, the browser deletes it when it shuts down.
+
+2) Permanent cookies #
+Permanent cookies don’t expire even after we close the browser or even shut down the computer.
+They have a specific expiration date set by the website and remain valid until then.
+Suppose we log in to a website and after a few days, when we try to login again, then we don’t need to re-enter the 
+username and password. This becomes possible because of permanent cookies.
+Since these cookies store sensitive information, it’s not safe and can be risky if people with malicious intentions 
+somehow get access to our computer.
+A persistent cookie, on the contrary, is stored on the client until the deadline set by its Expires or Max-Age directives.
+
+
+
+- Cookies contain very sensitive information. 
+If attackers can get a hold of a session ID, they can impersonate users by hijacking their sessions.
+
+
+Best practises:
+---------------
+- Secure: Marking sensitive cookies as Secure is an incredibly important aspect of cookie security. Even if you serve all of your 
+traffic to HTTPS, attackers could find a way to set up a plain old HTTP page under your domain and redirect users there.
+
+- HttpOnly: the HTTP spec took care of this with the HttpOnly flag. By using this directive we can instruct the browser not to share the 
+cookie with JavaScript. The browser then removes the cookie from the window.cookie variable, making it impossible to 
+access the cookie via JS. The HttpOnly flag helps mitigate XSS attacks by denying access to critical information stored in a cookie: 
+using it makes it harder for an attacker to hijack a session.
+
+- SameSite: SameSite cookies aim to supersede the solutions mentioned above once and for all. When you tag a cookie with this flag, 
+you tell the browser not to include the cookie in requests that were generated by different origins. When the browser 
+initiates a request to your server and a cookie is tagged as SameSite, the browser will first check whether the origin of the request 
+is the same origin that issued the cookie. If it’s not, the browser will not include the cookie in the request.
+This ingenious flag has two main variants, Lax and Strict. Our example uses the former variant, as 
+it allows top-level navigation to a website to include the cookie; when you tag a cookie as SameSite=Strict instead, 
+the browser will not send the cookie across any cross-origin request, including top-level navigation: this means that 
+if you click a link to a website that uses strict cookies you won’t be logged in at all – an extremely high amount of protection that, 
+on the other hand, might surprise users. The Lax mode allows these cookies to be sent across requests using safe methods (such as GET),
+creating a very useful mix between security and user experience
+
+Why you should not use TRACE:
+
+In 2003, researchers found an interesting vulnerability around the HttpOnly flag, Cross-Site Tracing (XST).
+
+In a nutshell, browsers wouldn’t prevent access to HttpOnly cookies when using the TRACE request method. While most browsers 
+have now disabled this method, 
+my recommendation would be to disable TRACE at your webserver’s level, returning the 405 Not allowed status code
+
+https://scotthelme.co.uk/csrf-is-really-dead/
+
+- Attack sheets:  https://github.com/OWASP/CheatSheetSeries/tree/master/cheatsheets
+

@@ -1,0 +1,60 @@
+from mathplotlib import pyplot
+import pandas as pd
+
+Packages availabe at:
+
+https://pypi.org/
+https://docs.python.org/3/library/
+
+
+
+Way 1:
+-------
+import mymodule          # import the module just created
+mymodule.test()          # call the test function from mymodule
+
+Way 2:
+------
+from mymodule import test # only import the test function
+test()                    # call the test function from mymodule
+
+- Python standard modules library: Python Standard Library
+
+math for math functions
+
+csv for CSV reading and writing
+
+sys and os for system related functions
+
+urllib for working with URLs
+
+Steps to create packages:
+--------------------------
+1) Packages are a means for distributing larger chunks of code. So, a package would contain 1 or more modules.
+To create a package, we make a directory with the same name as our package and create an empty __init__.py file inside 
+the directory. We then add any modules we want to include inside the directory. The result should look something like this:
+
+mypackage
+├── __init__.py
+├── module1.py
+└── module2.py
+
+2) use it as :
+import mypackage              # import the package
+mypackage.module1.func()      # call func from module1 in mypackage
+
+from mypackage import module2 # import module 2 from mypackage
+module2.func()                # call func from module 2
+
+Packages are:
+-------------
+import math
+
+math.sqrt()
+math.pow(100,0.5)
+
+from math import factorial
+
+factorial comes as part of math package
+
+from math import *

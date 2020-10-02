@@ -1,0 +1,30 @@
+1) Getting current time:
+-------------------------
+LocalTime time = LocalTime.now();
+
+2) specific time using of() method:
+------------------------------------
+LocalTime time = LocalTime.of(11, 25);
+time = LocalTime.of(11, 25, 03);
+time = LocalTime.of(11, 25, 04, 323);
+
+3) Specific time using parse() method:
+---------------------------------------
+LocalTime time = LocalTime.parse("08:27");
+time = LocalTime.parse("08:27", DateTimeFormatter.ofPattern("HH:mm"));
+
+4) Adding seconds, minutes and hours to a given time:
+------------------------------------------------------
+LocalTime time = LocalTime.parse("12:54:53").plusSeconds(4);
+time = LocalTime.parse("12:54:53").plusMinutes(10);
+time = LocalTime.parse("12:54:53").plusHours(2);
+time = LocalTime.parse("12:54:53").plus(4, ChronoUnit.MINUTES);
+
+5) Getting minute from time: 
+-----------------------------
+LocalTime.parse("07:45").getMinute();
+
+6) Checking if time is before or after a given time:
+-----------------------------------------------------
+boolean isBefore = LocalTime.parse("06:23").isBefore(LocalTime.parse("07:50"));
+boolean isAfter = LocalTime.parse("06:23").isAfter(LocalTime.parse("07:50"));

@@ -1,0 +1,207 @@
+- A CompletableFuture is a class in Java that belongs to the java.util.concurrent package.
+- It is used for asynchronous computation. The code is executed as a non-blocking call in a separate thread, 
+and the result is made available when it is ready.
+- The CompletableFuture class implements the CompletionStage and Future interface. The CompletionStage is a promise. 
+It promises that the computation eventually will be done.
+- CompletableFuture has lots of different methods for composing, combining, executing asynchronous computation 
+steps, and handling errors.
+
+Limitations of Future interface #
+The Future interface provides an isDone() method to check if computation is done, the get() method to get the result of 
+computation, and the cancel() method to cancel the computation.
+
+However, there are some limitations of the Future interface, which we will discuss here:
+
+We cannot perform further action on a Future's result without blocking. We have a get() method, which blocks until 
+the computation is complete.
+
+Future chaining is not possible. If you want to execute one Future and then trigger another future once the first one is complete, 
+this is not possible.
+
+We cannot combine multiple Future together. If we want to run five different futures in parallel and then combine their result 
+then this is not possible.
+
+Future does not have any exception handling mechanism.
+
+
+1) Creating a CompletableFuture:
+---------------------------------
+
+Completing a completable future:
+
+public Future<String> getSquareAsynchronously(int num) throws InterruptedException {
+        CompletableFuture<Integer> completableFuture
+                = new CompletableFuture<>();
+
+        Executors.newCachedThreadPool().submit(() -> {
+            Thread.sleep(500);
+            // The complete() call will complete this CompetableFuture. 
+            completableFuture.complete(num * num);
+            return null;
+        });
+
+        return completableFuture;
+    }
+
+If we are sure about the result of computation, we can use the static completedFuture() method with an argument 
+that represents a result of this computation.
+
+The get() method of the Future will never block.
+
+import java.util.concurrent.CompletableFuture;
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+        CompletableFuture<String> completableFuture = CompletableFuture.completedFuture("Hello World");
+        try {
+            System.out.println(completableFuture.get());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+}
+
+
+Asynchronous computation using runAsync():
+------------------------------------------
+The runAsync() is a static method that runs some background tasks asynchronously and returns a CompletableFuture<Void>. 
+This method takes a Runnable as a parameter.
+
+This method is particularly useful if we just need to run some code in parallel but do not want any result in return.
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+        // Passing a runnable to runAsync() method. 
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+            System.out.println("Doing some processing " + Thread.currentThread().getName());
+        });
+
+        System.out.println("This will print immediately " + Thread.currentThread().getName());
+
+        try {
+            future.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("This will print after 5 seconds " + Thread.currentThread().getName());
+
+    }
+}
+
+runAsync using executor:
+------------------------
+By default, asynchronous execution uses ForkJoinPool.commonPool(), which uses daemon threads to execute the Runnable task.
+
+However, if we want, we can provide our own Executor to the runAsync() method as well. Here is the code for it.
+
+import java.util.concurrent.*;
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+
+        Executor executor = Executors.newFixedThreadPool(5);
+
+        // Passing a runnable and executor as parameter to runAsync() method.
+        CompletableFuture<Void> future = CompletableFuture.runAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+            System.out.println("Doing some processing");
+        }, executor);
+
+        System.out.println("This will print immediately");
+
+        try {
+            future.get();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("This will print after 5 seconds");
+
+    }
+}
+
+Asynchronous computation using supplyAsync():
+-----------------------------------------------
+If we need to get the result of the computation, we should use supplyAsync(). It takes a Supplier<T> as input and returns 
+CompletableFuture<T> where T is the type of the value obtained by calling the given supplier
+
+import java.util.concurrent.*;
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+            return "Hello World";
+        });
+
+        System.out.println("This will print immediately");
+
+        try {
+            System.out.println(future.get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("This will print after 5 seconds");
+
+    }
+}
+
+
+With executor:
+
+import java.util.concurrent.*;
+
+public class CompletableFutureDemo {
+
+    public static void main(String args[]) {
+        
+        Executor executor = Executors.newFixedThreadPool(5);
+        CompletableFuture<String> future = CompletableFuture.supplyAsync(() -> {
+            try {
+                TimeUnit.SECONDS.sleep(5);
+            } catch (InterruptedException e) {
+                throw new IllegalStateException(e);
+            }
+            return "Hello World";
+        }, executor);
+
+        System.out.println("This will print immediately");
+
+        try {
+            System.out.println(future.get());
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        } catch (ExecutionException e) {
+            e.printStackTrace();
+        }
+
+        System.out.println("This will print after 5 seconds");
+
+    }
+}

@@ -1,0 +1,91 @@
+#Data types:
+-----------
+
+1) Numeric types #
+-------------------
+The main numeric types are:
+
+int: holding an arbitrary length signed integer
+float: normally being implemented internally using a C IEEE 754 64-bit double
+
+x = pow(2, 255)       # generate a 256-bit int and assign to x
+y = x.bit_length()
+
+Note: Internally computers cannot represent all floating point numbers precisely. 
+For example only even numbers can be represented between pow(2,53) and pow(2,54), odd numbers are rounded.
+
+2) String types:
+----------------
+Strings are immutable sequences of Unicode characters. 
+Python uses UTF-8 encoding by default. The actual type for Python strings is str.
+
+"""               
+Multi-line
+""" 
+As a sequence type, individual elements in a string can be accessed using a square brace 
+syntax that you will be familiar with from other languages.
+print('hello'.capitalize())
+
+3) Tuples and ranges:
+----------------------------------
+- Tuples hold data in the order we supply it
+- Other immutable sequence types are tuple and range
+- Tuples can be used for storing sequences of any type, and ranges store contiguous sequences of int.
+Note:  range(10, 1, -1) will create a reversed range from 10 to 2
+x = range(1,4)     # create a range from 1 (inclusive) to 4 (exclusive)
+x = (1, 2, 3, 4)   # a tuple is an immutable sequence
+
+Zipping lists together for creating tuples:
+top_pairs = list(zip(us_cookies,in_cookies))
+
+Unpacking tuples:
+use_num_1,in_num_1 = tope_pairs[0]
+
+Note: If you accidently put , at the end of a string, it will be treated as tuple.
+
+4) List:
+--------
+- To store mutable sequences, in Python we use the list type. Lists could be thought of as mutable tuples.
+- Allows to hold ordered colleciton of items
+
+x = [1, 2, 3, 4]   # create a list and assign to x
+x = [3, 1, 2] + [5, 4] # concatenate two lists and assign to x
+del x[0]               # delete the zeroth element in x
+print(len(x))          # print the number of elements in x
+x.sort()   # sort the elements in x in-place
+
+baby_names.extend(['Rowen','Sandeep']) -> Adding items to list
+
+x.append('y') -> Adding item to list
+position=x.index('cookies')
+y=x.pop(position) -> Remove item from list
+
+for cookie in Cookies:
+
+sorted(listname) -> Sort items in list
+
+list(listname) -> This does a deep copy of listname
+list(range(5))-> Create a range list , list of running numbers
+b= list(map(lambda x:x**2,a))  -> Used to apply function to list without for-loop
+b= filter(lambda x:x%2==0,a)  -> Used to apply filter on a list
+
+5) Set:
+-------
+- mutable
+- unique 
+- unordered
+
+Always created from set -> set(listname)
+.add()-> add an element into set
+.update()-> merge into another set or list
+.discard() -> remove value from a set
+.pop() -> remove and return an arbitrary element
+.union() -> or
+.intersection() -> and
+.difference() -> data present in one set but not the other
+
+
+6) Dictionaries:
+-----------------
+dictname.keys()
+dictname.items()

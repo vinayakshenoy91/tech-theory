@@ -1,0 +1,32 @@
+- A period represents the date-based amount of time in the ISO-8601 calendar system, such as 2 years, 3 months, and 4 days. 
+- This class is used to modify a given date or to find the difference between dates.
+
+1) Creating a period:
+----------------------
+Period period = Period.ofDays(5);  // Period of 5 days.
+System.out.println(period.getDays());
+period = Period.ofMonths(3);  // Period of 3 months.
+System.out.println(period.getMonths());
+period = Period.ofYears(2);  // Period of 2 Years
+System.out.println(period.getYears());
+period = Period.of(2, 5, 12); // Period of 2 Years, 5 Months and 12 Days.
+System.out.println(period.getYears()); 
+System.out.println(period.getMonths());
+System.out.println(period.getDays());
+
+2) Finding difference betweeen two days:
+---------------------------------------
+Period period = Period.between(LocalDate.parse("2020-05-18"), LocalDate.parse("2017-04-17"));
+
+3) Getting a specific value from Period:
+-----------------------------------------
+Period period = Period.between(LocalDate.parse("2017-04-17"), LocalDate.parse("2020-05-18"));
+        
+int years = period.getYears();
+int months = period.getMonths();
+int days = period.getDays();
+
+System.out.println("The difference between two dates is " + years + " Years, " + months + " Months and " + days + " Days");
+
+
+

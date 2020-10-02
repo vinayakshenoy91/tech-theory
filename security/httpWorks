@@ -1,0 +1,16 @@
+https://en.wikipedia.org/wiki/List_of_HTTP_header_fields
+
+- An HTTP message (either a request or a response) contains multiple parts:
+
+start line
+headers
+body
+
+#Some header advice:
+
+When using custom headers, it is always preferred to prefix them with a key so that they won’t conflict 
+with other headers that might become standard in the future. Historically, this worked until everyone started to use 
+“non-standard” X prefixes which, in turn, became the norm. The X-Forwarded-For and X-Forwarded-Proto headers are examples of 
+custom headers that are widely used and understood by load balancers and proxies, even though they weren’t part of the HTTP standard.
+
+If you need to add your own custom header, it’s generally better to use a vendor prefix, like Acme-Custom-Header or A-Custom-Header.

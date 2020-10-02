@@ -1,0 +1,3 @@
+- View unordered points
+plt.scatter(xpoints, ypoints)
+plt.scatter(xpoints, ypoints, alpha-0.1) //Making scatter transparent, alpha is a transaparency controller

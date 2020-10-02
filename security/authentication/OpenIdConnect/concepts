@@ -1,0 +1,150 @@
+- OpenID Connect is an extension of OAuth. It is a thin layer above OAuth which adds support for authentication.
+- OpenID Connect allows a range of clients, including web-based, mobile, and JavaScript clients, to request and 
+receive information about authenticated sessions and end-users.
+
+- There should be a standard way for client apps to communicate with the Identity Providers. 
+OpenID Connect is one of those standards that defines how a client and Identity Provider should interact.
+
+Participants in OpenID Connect:
+-------------------------------
+End User: End User refers to the entity for which the client is requesting identity information. 
+This is called Resource Owner in OAuth.
+
+Relying Party: This is the party that relies on the authorization server to provide the identity of the End User. 
+This is called client in OAuth.
+
+Identity Provider: This is a server that provides identity information about the End User. 
+This is called Authorization Server in OAuth.
+
+
+Identity token: 
+-While discussing OAuth, we discussed the authorization code and access token. In the case of OpenId Connect, 
+there is one more token that we can request. 
+This token is called the identity token, which encodes the user’s authentication information
+-ID tokens are intended to be understood by the client application. 
+The ID token contains the user information in JSON format. The JSON is wrapped into a JWT.
+
+When a client receives the identity token, it should validate it first. The client must validate the following fields:
+
+iss - Client must validate that the issuer of this token is the Authorization Server.
+aud - Client must validate that the token is meant for the client itself.
+exp - Client must validate that the token is not expired.
+
+
+Example contract:
+{
+  "iss": "https://server.example.com",
+  "sub": "24400320",
+  "aud": "s6BhdRkqt3",
+  "nonce": "n-0S6_WzA2Mj",
+  "exp": 1311281970,
+  "iat": 1311280970,
+  "auth_time": 1311280969,
+  "acr": "urn:mace:incommon:iap:silver"
+}
+
+iat - The iat claim identifies the time at which the JWT was issued. 
+This claim can be used to determine the age of the JWT. Its value must be a number containing a NumericDate value.
+
+auth_time - Time when the End-User authentication occurred. Its value is a JSON number 
+representing the number of seconds from 1970–01–01T0:0:0Z as measured in UTC until the date/time.
+
+nonce - ID token requests may come with a nonce request parameter to protect from replay attacks.
+When the request parameter is included, the server will embed a nonce claim in the issued ID token with 
+the same value of the request parameter.
+
+
+Scope:
+-----
+The client app must also tell the Identity Provider about what user information it is looking for. 
+This information can be provided through the scope field. 
+There are four types of scopes defined in OpenID Connect. Each of these scopes defines certain attributes.
+
+Scope	Purpose
+email	Fetch the user’s email information.
+phone	Fetch the user’s phone details.
+profile	Fetch the user’s default information.
+address	Fetch the user’s address.
+
+Please note that there is one more scope value, i.e. openid. 
+This value is mandatory if the client app needs an identity token in the response.
+
+Claims:
+-------
+Simply put, claims are name/value pairs that contain information about a user.
+
+Scope	Claim
+email	email, email_verified
+phone	phone_number, phone_number_verified
+profile	name, family_name, given_name, middle_name, nickname, preferred_username, 
+        profile picture, website, gender, birthdate, zoneinfo, locale, updated_at
+address	address
+
+Endpoints:
+----------
+The authorization server defines some endpoints that are used by the client to request some data.
+
+The core endpoints are defined below:
+
+1. Authorization endpoint
+
+We have discussed this endpoint in OAuth as well. This endpoint returns the authorization code after the user 
+authenticates and provides 
+their consent to the authorization server (called the Identity Provider in case of OpenID).
+
+2. Token endpoint
+
+This endpoint is used to exchange an authorization token with an access token and identity token. 
+The identity token contains some basic user information. 
+
+3. UserInfo endpoint
+
+The UserInfo endpoint is used by the client to request user profile information that was previously granted access to. 
+To access this information, the client needs to send an access token with the request. 
+The user fields are returned in the form of JSON which may or may not be encapsulated in a JWT.
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+ 
+{
+  "sub"            : "Joe",
+  "email"          : "Joe@dummy.net",
+  "email_verified" : true,
+  "name"           : "Joe Frank"
+}
+
+
+Auth flow:
+----------
+The Authorization code flow for OpenID Connect is similar to the Authorization Code Flow of OAuth
+The only difference is the change in the value of the scope field. 
+It must contain openid as one of the values, followed by other scope values based on what type of user data the client wants.
+
+When we send a request to the token endpoint to fetch the access token, then we must send openid in the scope field.
+We must also send other scope values like email or address if we want to get this information. The access token that 
+is returned is based on the scope values that were sent with the request. 
+When we hit the UserInfo endpoint, then only that user information is returned which the access token is authorized to get.
+
+Ex:
+Let’s say that while sending a request to the token endpoint, the scope value is “openid email”. The client sends this 
+request and gets an access token. If the client sends this access token to the UserInfo endpoint, 
+it will get only email information. It will not get an address or any other information.
+
+Authorization code flow types: There is one type but with and without openid in scope.
+
+1) If scope contains openid:
+
+a) Send request on authorization endpoint. The scope field contains openid
+b) Auth code returned
+c) Send request on toekn endpoint
+d) Access token and identity token is returned.
+
+2) If scope does not contain openid:
+
+a) Send request on authorization endpoint. The scope field does not contains openid
+b) Auth code returned
+c) Send request on toekn endpoint
+d) Access token is returned
+
+
+

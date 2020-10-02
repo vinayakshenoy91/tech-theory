@@ -1,0 +1,16 @@
+Why low-priority services should be on a separate domain #
+“What’s the harm”, you say? I would counter that using your main domain to store low-priority services can harm your main 
+business, and you could be in a lot of trouble. Even though there’s nothing inherently wrong with using subdomains to serve 
+different services, you might want to think about offloading low-priority 
+services to a different domain, the reasoning behind this choice is that, if the service running on the different TLD gets 
+compromised, it will be much harder for attackers to escalate the exploit to your main service(s).
+
+As we’ve seen, cookies are often shared across multiple subdomains (by setting the domain attribute to something like 
+*.example.com, .example.com or simply example.com), so a scenario could play out where you install a popular blogging 
+software like WordPress on engineering-blog.example.com and run with it for a few months, forget to upgrade the software 
+and install security patches as they get published.
+
+Later, an XSS in the blogging platform allows an attacker to dump all cookies present on your blog somewhere in his 
+control, meaning that users who are logged onto your main service (example.com) who visit your engineering blog could 
+have their credentials stolen. If you had kept the engineering blog on a separate domain, such as engineering-blog.example.io, 
+that would not have been possible.

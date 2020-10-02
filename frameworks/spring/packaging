@@ -1,0 +1,230 @@
+//Creating jar/war
+java -jar app.jar
+
+
+Steps: For JAR
+-----
+
+1) Use maven in pom:
+<plugin>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-maven-plugin</artifactId>
+    <configuration>
+        <executable>true</executable>
+    </configuration>
+</plugin>
+
+bootJar {
+    launchScript()
+}
+
+2) It might be necessary to make the archive executable; use chmod +x your-application.jar for that.
+
+
+3) Config properties:
+
+Property
+
+Description
+
+MODE
+
+The “mode” of operation. Default is auto, which will detect the mode; when launched from a symlink will behave like service. Change to run if you want to run the process in the foreground.
+
+USE_START_STOP_DAEMON
+
+Whether to use the start-stop-daemon command or not. By default will detect if the command is available
+
+PID_FOLDER
+
+Name of the folder to write the PID to, default /var/run
+
+LOG_FOLDER
+
+Name of the folder to write the logging to, default /var/log
+
+CONF_FOLDER
+
+Name of the folder to read .conf from, default the same directory as the jar file
+
+LOG_FILENAME
+
+Name of the logfile to write to, default <appname>.log.
+
+APP_NAME
+
+The name of the application. If the jar is run from a symlink, the script guesses the app name.
+
+RUN_ARGS
+
+The arguments to pass to the Spring Boot application
+
+JAVA_HOME
+
+By default will be discovered from the $PATH but can be explicitly defined if needed
+
+JAVA_OPTS
+
+Options to pass to the JVM (like memory settings, GC settings, etc.)
+
+JARFILE
+
+The explicit location of the JAR file, in case the script is being used to launch a JAR that it is not actually embedded
+
+DEBUG
+
+If not empty, sets the -x flag on the shell process, making it easy to see the logic in the script
+
+STOP_WAIT_TIME
+
+The time to wait before forcing a shutdown (default is 60 seconds)
+
+
+Example:
+
+JAVA_OPTS=-Xmx1024m
+DEBUG=true
+
+
+Steps creating WAR: 
+-------------------
+- Change the packaging of the application from JAR to WAR and let your Spring Boot application extend 
+the SpringBootServletInitializer so that it can bootstrap itself as a regular application.
+
+
+1)
+In the pom.xml change the packaging from JAR to WAR.
+<packaging>war</packaging>
+
+
+2) 
+When extending the SpringBootServletInitializer, you need to override the configure method. 
+The configure method gets a SpringApplicationBuilder , which you can use to configure the application. 
+One of the things to add is the main configuration class, just as with SpringApplication.run. 
+That is what the line builder.sources(HelloWorldApplication.class) does. 
+This will be used to bootstrap the application.
+
+To make sure that the application will start, you need your application to extend the SpringBootServletInitializer . 
+This is a special class needed to bootstrap Spring Boot in a Servlet or JEE container.
+
+package com.apress.springbootrecipes.helloworld;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+@SpringBootApplication
+public class HelloWorldApplication extends SpringBootServletInitializer {
+  public static void main(String[] args) {
+    SpringApplication.run(HelloWorldApplication.class, args);
+  }
+  @Override
+  protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+    return builder.sources(HelloWorldApplication.class);
+  }
+}
+
+
+Note: When deploying something to a Servlet or JEE Container, Spring Boot is no longer in control of the server; due to this configuration, 
+options from the server and management.servlet namespaces don’t apply anymore. 
+So when a server.port has been defined, it will be ignored when deploying to an external server!.
+
+
+3) 
+<dependency>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-starter-tomcat</artifactId>
+  <scope>provided</scope>
+</dependency>
+
+When doing so, the Spring Boot plugin will not add the libraries to the default WEB-INF/lib . However, they will still be 
+part of the created WAR file, but in the special WEB-INF/lib-provided directory. Spring Boot knows this location, and as such 
+you can also use the WAR to start the embedded container. Starting an embedded container is very nice for development;
+however, as it is a WAR file it is also deployable to a container like Tomcat of WebSphere
+
+4) Clicking the /spring-mvc-as-war-2.0.0 link will open the application
+
+Steps for: Reduce Archive Size Through the Thin Launcher
+-----------
+This launcher will result in the dependencies being downloaded before starting the application, 
+instead of the dependencies packaged inside the application.
+- When using the Spring Boot plugin as is, all the needed libraries are included in the archive in the BOOT-INF/lib folder
+
+To use the Thin Launcher, add a dependency to the Spring Boot plugin.
+<plugin>
+  <groupId>org.springframework.boot</groupId>
+  <artifactId>spring-boot-maven-plugin</artifactId>
+  <dependencies>
+    <dependency>
+      <groupId>org.springframework.boot.experimental</groupId>
+      <artifactId>spring-boot-thin-layout</artifactId>
+      <version>1.0.15.RELEASE</version>
+    </dependency>
+  </dependencies>
+</plugin>
+
+What happens is that a class named ThinJarWrapper has been added and that will be the entrypoint of your application. 
+Now your application contains a pom.xml and/or a META-INF/thin.properties to determine the dependencies. The thinJarWrapper 
+will locate another JAR file (the “launcher”). 
+The wrapper downloads the launcher (if it needs to), or else uses the cached version in your local Maven repository.
+
+The launcher then takes over and reads the pom.xml (if present) and the META-INF/thin.properties , 
+downloading the dependencies (and all transitives) as necessary. It will now create a custom class loader with all 
+the downloaded dependencies on the classpath. 
+Then it runs the application’s own main method with that class loader.
+
+NOTE: When downloaded, the dependencies from Maven will respect settings made in the Maven settings.xml, as it uses regular Maven 
+tooling. When using a mirror like Nexus for Maven repositories, 
+include a thin.repo in the META-INF/thin.properties to point to that mirror, else downloading the launcher will fail.
+
+
+5) Docker:
+----------
+a)  Create a Dockerfile and use one of the available Maven Docker plugins to build the Docker container.
+
+FROM openjdk:11-jre-slim
+VOLUME /tmp
+ARG JAR_FILE
+COPY ${JAR_FILE} app.jar
+ENTRYPOINT ["java","-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+
+b) docker plugin:
+
+<plugin>
+  <groupId>com.spotify</groupId>
+  <artifactId>dockerfile-maven-plugin</artifactId>
+  <version>1.4.4</version>
+  <configuration>
+    <repository>spring-boot-recipes/${project.name}</repository>
+    <tag>${project.version}</tag>
+    <buildArgs>
+      <JAR_FILE>target/${project.build.finalName}.jar</JAR_FILE>
+    </buildArgs>
+  </configuration>
+  <dependencies>
+    <dependency>
+      <groupId>javax.activation</groupId>
+      <artifactId>javax.activation-api</artifactId>
+      <version>1.2.0</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.plexus</groupId>
+      <artifactId>plexus-archiver</artifactId>
+      <version>3.6.0</version>
+    </dependency>
+  </dependencies>
+</plugin>
+
+NOTE: The dependency on the javax.activation-api is there because that isn’t part of the default set of available classes of Java 9; 
+if you are on Java 8 you don’t need this. 
+The dependency for plexus-archiver is there because the default version with Maven doesn’t work on Java 9+.
+
+c) mvn clean build dockerfile:build
+
+d) docker run -d spring-boot-recipes/dockerize:2.0.0-SNAPSHOT
+
+e) docker logs <name-of-container> --follow
+
+f) Passing env variable: docker run -d -e AUDIENCE="Docker" spring-boot-recipes/dockerize:2.0.0-SNAPSHOT
+
+NOTE: When setting variables to a Unix based system, you generally want to use all uppercase characters in the name and replace any . 
+with a _. So when passing in spring.profiles.active that would become SPRING_PROFILES_ACTIVE.

@@ -1,0 +1,22 @@
+#opening a file:
+----------------
+file=open('mobile_clean.csv','r')
+s=file.readline()
+
+#closing file:
+-------------
+file.close()
+
+#optimised syntax:
+-------------------
+with open('mobile_clean.csv','r') as file:
+      print(file.readline())
+
+with open('mobile_clean.csv','r') as file:
+      for line in file:
+         print(line)
+
+#writing a file:
+----------------
+with open('my.txt','w') as file:
+     file.write('hello world from python code')

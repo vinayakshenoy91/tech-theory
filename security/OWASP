@@ -1,0 +1,11 @@
+The Open Web Application Security Project #
+Truth to be told, I would strongly recommend you visit the OWASP website and find out what they have to say:
+
+- OWASP Cheat Sheet Series (https://cheatsheetseries.owasp.org): a collection of brief practical information. 
+You can find articles about how to harden Docker containers or in what form passwords be should stored. It is a technical 
+and comprehensive list of guides that inspired the practical approach used in this chapter of this course.
+
+- OWASP Developer Guide (https://github.com/OWASP/DevGuide): a guide on how to build secure applications. It is slowly being 
+rewritten (the original version was published in 2005) but most of the content is still very useful.
+
+- OWASP Testing Guide (https://www.owasp.org/index.php/OWASP_Testing_Guide_v4_Table_of_Contents): on how to test for security holes.

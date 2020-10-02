@@ -1,0 +1,138 @@
+X-Frame-Options: [Used tpo prevent click jacking]
+-----------------
+X-Frame-Options (abbr. XFO). XFO lets you decide whether your app can be embedded as an iframe on external websites. 
+Popularized by Internet Explorer 8, XFO was first introduced in 2009 and is still supported by all major browsers. 
+When a browser sees an iframe, it loads it and verifies that its XFO allows its inclusion in the current page before rendering it.
+
+
+The supported values are:
+
+DENY: This web page cannot be embedded anywhere. This is the highest level of protection as it doesn’t allow anyone to embed our
+content.
+SAMEORIGIN: Only pages from the same domain as the current one can embed this page. This means that example.com/embedder can load 
+example.com/embedded so long as its policy is set to SAMEORIGIN. 
+This is a more relaxed policy that allows owners of a particular website to embed their own pages across their application.
+ALLOW-FROM uri: Embedding is allowed from the specified URI. We could, for example, let an external, authorized website embed 
+our content by using ALLOW-FROM https://external.com. This is generally used when you intend to allow a third party to embed your 
+content through an iframe.
+
+
+An example HTTP response that includes the strictest XFO policy possible looks like this:
+
+HTTP/1.1 200 OK
+Content-Type: application/json
+X-Frame-Options: DENY
+
+
+XFO restricts access to iframes
+
+
+Content-Security-Policy:
+------------------------
+The Content-Security-Policy header, often abbreviated to CSP, provides a next-generation utility belt 
+for preventing a plethora of attacks, ranging from XSS (cross-site scripting) to clickjacking.
+we told the browser that our CSP policy only allows scripts included from the same origin of the current 
+URL which we can easily verify by curling the URL.
+By now, it should be clear how CSP helps us prevent a range of attacks on web applications. You define a policy and the 
+browser strictly adheres to it, refusing to run resources that would violate this policy.
+
+Report-only mode #
+An interesting variation of CSP is the report-only mode: instead of using the Content-Security-Policy header, you can first 
+test the impact of CSP on your website by telling the browser to simply report errors, 
+without blocking script execution. You can do this by using the Content-Security-Policy-Report-Only header.
+
+Reporting will allow you to understand what breaking changes could happen if you roll out your CSP and then allow you to 
+fix them accordingly. We can even specify a report URL and the browser will send us a report. Here’s a full example of a 
+report-only policy:
+
+Content-Security-Policy: default-src 'self'; report-uri http://cspviolations.example.com/collector
+CSP policies can be a bit complex on their own like in the following example:
+
+Content-Security-Policy: default-src 'self'; script-src scripts.example.com; img-src *; media-src medias.example.com medias.legacy.example.com
+This policy defines the following rules:
+
+executable scripts (e.g., JavaScript) can only be loaded from scripts.example.com
+images may be loaded from any origin (img-src: *)
+video or audio content can be loaded from two origins: medias.example.com and medias.legacy.example.com
+As you can see, policies can become lengthy, and if we want to ensure the highest protection for our users this can become a 
+tedious process. Nevertheless, writing a comprehensive 
+CSP policy is an important step towards adding an additional layer of security to our web applications.
+
+Deep dive at developer.mozilla.org/en-US/docs/Web/HTTP/CSP.
+
+githubengineering.com/githubs-csp-journey/
+githubengineering.com/githubs-post-csp-journey/
+
+
+X-XSS-Protection:
+-----------------
+- Unsupported by Firefox, this header is used to mitigate XSS attacks in older browsers that don’t fully support CSP.
+Syntax: X-XSS-Protection: 1; report=http://xssviolations.example.com/collector
+
+- This feature was disabled on Edge in mid-2018, with Chrome following suit a year later. A combination of quirky behaviors and the 
+release of more robust standards like CSP made this feature obsolete.
+
+Feature policy:
+---------------
+Currently supported by very few browsers, only Chrome and Safari at the time of writing, 
+this header lets us define whether a specific browser feature is enabled within the current page. 
+With a syntax very similar to CSP, we should have no issue understanding what a feature policy such as the following one means.
+
+Feature-Policy: vibrate 'self'; push *; camera 'none'
+
+vibrate 'self': this will allow the current page to use the vibration API and any nested browsing contexts (iframes) on the same origin.
+push *: the current page and any iframe can use the push notification API.
+camera 'none': access to the camera API is denied to the current page and any nested context (iframes).
+
+
+X-Content-Type-Options:
+------------------------
+MIME-sniffing is the ability for a browser to auto-detect (and fix) the content type of a resource it is downloading. Say for 
+example, we ask the browser to render an image at /awesome-picture.png, but the server sets the wrong type when serving it to 
+the browser (ie. Content-Type: text/plain), this would generally result in the browser not being able to display the image properly.
+
+In order to fix the issue, IE went to great lengths to implement a MIME-sniffing capability. When downloading a resource, the 
+browser would scan it and if it detected that the resource’s content type is not the one advertised by the server in the Content-Type
+header, it would ignore the type sent by the server and interpret the resource according to the type detected by the browser.
+
+The catch #
+Now, imagine hosting a website that allows users to upload their own images, and imagine a user uploading a /test.jpg file 
+that contains JavaScript code. See where this is going? Once the file is uploaded, the site would include it in its own HTML and, 
+when the browser would try to render the document, it would find the image the user just uploaded. As the browser downloads the image,
+ it would detect that it’s a script instead, and execute it on the victim’s browser.
+
+The fix #
+To avoid this issue, we can set the X-Content-Type-Options: nosniff header that completely disables MIME-sniffing. By doing 
+so, we are telling the browser that we’re fully aware that some file might have a mismatch in terms of type and content, 
+and the browser should not worry about it, we know what we’re doing, so the browser shouldn’t try to guess things, potentially posing a security threat to our users.
+
+X-Permitted-Cross-Domain-Policies :
+-----------------------------------
+
+Related to CORS, the X-Permitted-Cross-Domain-Policies targets cross-domain policies for Adobe products, namely Flash and Acrobat.
+
+I won’t go too much into the details, as this is a header that targets very specific use cases, but, long story short, Adobe products handle cross-domain request through a crossdomain.xml file in the root of the domain the request is targeting. The X-Permitted-Cross-Domain-Policies defines policies to access this file.
+
+Sounds complicated? I would simply suggest adding an X-Permitted-Cross-Domain-Policies: none and ignore clients wanting to make cross-domain requests with Flash.
+
+In 2017, Adobe announced it would discontinue support for Flash, meaning you most likely won’t have to deal with this technology in the future. Disabling any flash-related browser-feature is a safe and reasonable choice years into Adobe’s original announcement (https://theblog.adobe.com/adobe-flash-update/).
+
+Referrer-Policy #
+------------------
+At the beginning of our careers, we all probably made the same mistake, using the Referer header to implement a security restriction on our website. If the header contains a specific URL in a whitelist we define, we’re going to let users through.
+
+Ok, maybe that wasn’t every one of us, but I damn sure made the mistake of trusting the Referer header to give us reliable information on the origin the user comes from! The header was useful until we figured that sending this information to sites could pose a potential threat to our users’ privacy because it would specify which domains the users came from.
+
+Born at the beginning of 2017 and currently supported by all major browsers, the Referrer-Policy header can be used to mitigate these privacy concerns by telling the browser that it should only mask the URL in the Referrer header or omit it altogether.
+
+Some of the most common values the Referrer-Policy can take are:
+
+no-referrer: the Referrer header will be entirely omitted
+origin: turns https://example.com/private-page to https://example.com/
+same-origin: send the Referrer to same-site origins but omit it for anyone else
+It’s worth noting that there are many variations of the Referrer-Policy (strict-origin, no-referrer-when-downgrade, etc.) but the ones I mentioned above are going to cover most of your use cases. If you wish to better understand each and every variation you can use, I would recommend heading to the OWASP dedicated page.
+
+ℹ️ Origin and Referrer #
+The Origin header is very similar to Referrer, as it’s sent by the browser in cross-domain requests to make sure the caller is allowed to access a resource on a different domain. The Origin header is controlled by the browser, so there’s no way malicious users can tamper with it. You might be tempted to use it as a firewall for your web application. If the Origin is in our whitelist, it lets the request go through.
+
+One thing to consider is that other HTTP clients such as cURL can present their own origin. A simple curl -H "Origin: example.com" api.example.com will render all origin-based firewall rules inefficient. That is why you cannot rely on the Origin (or the Referrer, as we’ve just seen) to build a firewall to keep malicious clients away.

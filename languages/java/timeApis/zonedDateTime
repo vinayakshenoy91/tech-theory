@@ -1,0 +1,37 @@
+1) Creating a ZonedDateTime instance:
+--------------------------------------
+ZonedDateTime zonedDateTime = ZonedDateTime.now();
+ZoneId zoneId = ZoneId.of("Canada/Atlantic");
+zonedDateTime = ZonedDateTime.of(2020, 10, 15, 23, 45, 59, 1234, zoneId);
+
+2) Fetching Date and Time of a ZonedDateTime:
+----------------------------------------------
+      ZonedDateTime zonedDateTime = ZonedDateTime.now();
+      int year = zonedDateTime.getYear();
+      int dayOfMonth = zonedDateTime.getDayOfMonth();
+      Month month = zonedDateTime.getMonth();
+      DayOfWeek dayOfWeek = zonedDateTime.getDayOfWeek();
+      int dayOfYear = zonedDateTime.getDayOfYear();
+      int hour = zonedDateTime.getHour();
+      int minute = zonedDateTime.getMinute();
+      int second = zonedDateTime.getSecond();   
+      int nano = zonedDateTime.getNano(); 
+
+3) Modifying date and time:
+----------------------------
+ System.out.println("Date after adding Year is: " + zonedDateTime.plusYears(1));
+  System.out.println("Date after adding Month is: " + zonedDateTime.plusMonths(1));
+ System.out.println("Date after adding days is: " + zonedDateTime.plusDays(15));
+System.out.println("Date after adding hours is: " + zonedDateTime.plusHours(15));
+System.out.println("Date after adding minutes is: " + zonedDateTime.plusMinutes(1));
+ System.out.println("Date after adding seconds is: " + zonedDateTime.plusSeconds(15));
+ System.out.println("Date after adding nanoseconds is: " + zonedDateTime.plusNanos(15));
+  System.out.println("Date after subtracting Year is: " + zonedDateTime.minusYears(1));
+        System.out.println("Date after subtractng Month is: " + zonedDateTime.minusMonths(1));
+        System.out.println("Date after subtracting days is: " + zonedDateTime.minusDays(15));
+        System.out.println("Date after subtracting hours is: " + zonedDateTime.minusHours(15));
+        System.out.println("Date after subtracting minutes is: " + zonedDateTime.minusMinutes(1));
+        System.out.println("Date after subtracting seconds is: " + zonedDateTime.minusSeconds(15));
+        System.out.println("Date after subtracting nanoseconds is: " + zonedDateTime.minusNanos(15));
+
+

@@ -1,0 +1,3 @@
+import time
+
+time.time() #get time in epoch. Diff of two epoch will give you time in ms

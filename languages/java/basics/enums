@@ -1,0 +1,58 @@
+enum BOOK {HORROR, FICTION}
+- They are static and final
+- for (BookGenre book: BookGenre.values()){
+
+}
+
+
+--
+
+enum BookGenre{
+ BIOGRAPHY(12),
+ HORROR(15);
+
+ private BookGenre(int minAgeToRead){
+     this.mingAgeToRead= minAgeToRead;
+ }
+
+ private int mingAgeToRead;
+
+ public int getMinAgeToRead(){
+     return mingAgeToRead;
+ }
+}
+
+-- Nested
+
+public class Book{
+
+
+enum BookGenre{
+ BIOGRAPHY(12){
+     boolean isKidFriendly(int age){ //Approach 1
+         return age >=minAgeToRead
+     }
+ },
+ HORROR(15);
+
+ abstract boolean isKidFriendly(int age)
+
+ private BookGenre(int minAgeToRead){
+     this.mingAgeToRead= minAgeToRead;
+ }
+
+ protected int minAgeToRead;
+
+ public int getMinAgeToRead(){
+     return mingAgeToRead;
+ }
+
+ public boolean isKidFriendly(int age){ //Approach 2
+     switch(this){
+         case BIOGRAPHY: return age >=minAgeToRead;
+     }
+     return false;
+ }
+}
+
+}

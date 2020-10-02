@@ -1,0 +1,129 @@
+The module pattern is an object-creation pattern designed to create singleton objects with private data. 
+The basic approach is to use an immediately invoked function expression (IIFE) that returns an object. 
+An IIFE is a function expression that is defined and then called immediately to produce a result.
+
+var yourObject = (function() {
+
+      // private data variables
+
+      return {
+          // public methods and properties
+      };
+}());
+
+The module pattern allows you to use regular variables as de facto object properties that aren’t exposed publicly. 
+You accomplish this by creating closure functions as object methods. 
+Closures are simply functions that access data outside their own scope
+
+Variation of module pattern called: Revealign module pattern:
+-------------------------------------------------------------
+There is a variation of the module pattern called the revealing module pattern, 
+which arranges all variables and methods at the top of the IIFE and simply assigns them to the returned object.
+
+ var person = (function() {
+
+      var age = 25;
+
+      function getAge() {
+          return age;
+      }
+
+      function growOlder() {
+          age++;
+      }
+
+      return {
+          name: "Nicholas",
+          getAge: getAge,
+          growOlder: growOlder
+      };
+
+  }());
+
+PRIVATE MEMBERS FOR CONSTRUCTORS:
+----------------------------------
+
+function Person(name) {
+
+      // define a variable only accessible inside of the Person constructor
+      var age = 25;
+
+      this.name = name;
+
+     this.getAge = function() {
+          return age;
+      };
+
+     this.growOlder = function() {
+          age++;
+      };
+   }
+
+   var person = new Person("Nicholas");
+
+   console.log(person.name);       // "Nicholas"
+   console.log(person.getAge());   // 25
+
+   person.age = 100;
+   console.log(person.getAge());   // 25
+
+   person.growOlder();
+   console.log(person.getAge());   // 26
+
+Hybrid approach:
+----------------- 
+
+If you want private data to be shared across all instances (as if it were on the prototype), 
+you can use a hybrid approach that looks like the module pattern but uses a constructor:
+
+var Person = (function() {
+
+      // everyone shares the same age
+      var age = 25;
+
+      function InnerPerson(name) {
+          this.name = name;
+      }
+
+      InnerPerson.prototype.getAge = function() {
+          return age;
+      };
+
+      InnerPerson.prototype.growOlder = function() {
+          age++;
+      };
+
+      return InnerPerson;
+
+  }());
+  var person1 = new Person("Nicholas");
+  var person2 = new Person("Greg");
+
+  console.log(person1.name);      // "Nicholas"
+  console.log(person1.getAge());  // 25
+
+  console.log(person2.name);      // "Greg"
+  console.log(person2.getAge());  // 25
+
+  person1.growOlder();
+  console.log(person1.getAge());  // 26
+  console.log(person2.getAge());  // 26
+
+
+Mixin: https://learning.oreilly.com/library/view/the-principles-of/9781457185304/ch06.html
+------ 
+
+Scope-Safe Constructors:
+------------------------
+Because all constructors are just functions, you can call them without using the new operator and therefore affect the value of this. 
+Doing so can yield unexpected results, 
+as this ends up coerced to the global object in nonstrict mode, or the constructor throws an error in strict mode.
+
+//Scope safe
+function Person(name) {
+    if (this instanceof Person) {
+        this.name = name;
+    } else {
+        return new Person(name);
+    }
+}

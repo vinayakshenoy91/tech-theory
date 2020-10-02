@@ -1,0 +1,71 @@
+
+#display class methods:
+-----------------------
+We can use the built-in dir() function to list the methods and attributes of a class:
+for item in dir(str):
+    print(item)
+--------------
+# New classes can be defined with the class keyword:
+
+class A:               # define a class called A
+    pass               # do nothing
+
+a = A()                # create an instance of A and assign to a
+---------------
+# Member variables (or attributes in Python) can be added by assigning a value at class scope.
+
+class A:
+    x = 2              # create class attribute x
+
+y = A.x                # y is now 2
+B = A                  # create a reference to A and assign to B
+B.z = 3                # class attributes can be added dynamically
+print(A.z)             # A.z is now 3
+----------------
+# Methods can be added by defining a function at class scope.
+//Class specific or static
+class Counter:
+    count = 0          # class attribute count
+    def increment():   # define method to increment count
+        Counter.count += 1
+
+Counter.increment()    # call the method increment() on the class
+print(Counter.count)   # class attribute count is now 1
+counter = Counter()    # create instance of Counter
+print(counter.count)   # class attribute... count is still 1
+-----------------
+# So far all of our variables and methods have operated at class scope, but this often is not what we want. 
+To define instance attributes, we pass a self argument to a method. The self object refers to the class instance.
+
+//Instance specific
+class Counter:
+     def __init__(self,x):   # define __init__ method passing self
+         self.count = 0    # set instance attribute count to 0
+     def increment(self):  # define increment method passing self
+         self.count += 1   # add 1 to instance attribute count
+
+     def __str__(self):
+          return self.name+" "+ str(self.avg)
+
+c1 = Counter()             # create Counter instance
+c2 = Counter()             # create another instance
+c1.increment()             # increment counter for c1
+print(c1.count)            # count is 1
+print(c2.count)            # count is 0
+
+#Inheritance:
+-------------
+class Parent:               # define a parent class
+     def test(self):        # define an instance method
+         print('test')
+
+class Child(Parent):        # Child inherits from Parent
+     pass
+
+c = Child()                 # Create an instance of Child
+c.test()                    # Call inherited test() method
+
+
+class iPhone(MobilePhone):
+    def __init__(self,name):
+       MobilePhone.__init__(self,name,False,4)

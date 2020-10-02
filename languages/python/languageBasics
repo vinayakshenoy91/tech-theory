@@ -1,0 +1,65 @@
+# get some help:
+----------------
+help(print)
+type(print)
+print(x)
+print('Rank {}: {} and {}'.format(idx, girl_name, boy_name))
+dir(class) #ex: dir(df)
+
+import pdb; pdb.set_trace() #Debugger for debugging
+
+%xmode Verbose
+
+Comments in python: #
+
+#Variables:
+-----------
+- They cannot begin with a number and can only have -
+- Very variable in python is an object
+- '' or "" for string
+
+5) Dictionaries #:
+-------------------
+a = {'a':1, 'b':2}             # define a dictionary with keys 'a' and 'b'
+b = a['a']                     # retrieves the value at key 'a'
+print(b)
+a['a'] = 3                     # assigns a new value to the key at 'a'
+print(a)
+d = dict([['a', 1], ['b', 2]]) # create a dictionary from list of lists
+print(d)
+c = {(1, 2): '3'}              # dict with a tuple as a key and string as a value    
+print(c)
+
+Operator:
+---------
+- Slice Operator -> sequence[start:stop:step] ==> Very powerful
+
+x = 'Hello World'       # assign the string Hello World to x
+y = x[:5]               # slice from the zeroth to 5th element
+print(y)                # y is now 'Hello'
+y = x[4:-3]             # slice from the 4th element to the 8th element
+print(y)                # y is now 'o Wo'
+y = x[::-1]             # -1 steps backwards, y is now 'dlroW olleH'
+print(y)
+
+# importing modules:
+--------------------
+from mathplotlib import pyplot
+import pandas as pd
+
+#display:
+---------
+print(height)
+
+#functions:
+------------
+
+1) csv fn:
+--------------
+pd.read_csv() -> Turns csv file to table
+
+2) plotting functions:
+-----------------------
+plt.plot(x,y,label="Ransom")
+plt.show()
+

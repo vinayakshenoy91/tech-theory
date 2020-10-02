@@ -1,0 +1,39 @@
+variable xyz = { default = ["server1","server2"]}
+
+//Getting length
+resource "xyz" "abc"{
+    count = "${length(var.name.count)}"
+}
+
+//Getting index
+
+count.index +1
+
+//Eleemnt
+network_interface_ids = ["${element(azure_rm_network.main.*.id, count.index)}"]
+ 
+ //map
+
+ variable "machine_type" {
+     type="map"
+     default={
+         "dev" = "Standard_DS1"
+         "prod" = "Standard_DS2" 
+     }
+ }
+
+ var.machine_type["dev"]
+
+ //join
+
+ output "name" { value = "${join(",",azure_vm.main.*.id)}"}
+
+ //dependsOn
+
+ resource "azurerm_virtual_network" "main"{
+ depends_on=["azure_resource_group.main"]
+
+ }
+
+//conditional
+${var.environment == "production" ? var.machine_type_PROD: var.machine_type_DEV}

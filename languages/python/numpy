@@ -1,0 +1,44 @@
+import numpy as np
+
+X=np.asarray([1,2,3])
+
+np.asarray(l, float)  #Converting normal list to numpy array , float will give floating point
+
+X.shape -> Get dimensions
+
+y=np.asarray([[1,2],[2,3]]) 
+
+
+y[0,:] //Get complete row
+
+x=np.zeros((4,5))
+
+x=np.eye(4,5) #diagonal matrix will have 1
+np.random.random((4,5)) #get random number
+
+z=x.T -> tranpose
+X.reshape(20,1)
+np.arange(5) # creating range
+
+A+B # Any arihtmetic opration between two lists can be done
+
+np.floor()
+
+np.inner(u,v)# u and v are two list. It multiplies each column and adds all.
+
+np.outer(u,v)
+
+A=np.ones((2,3))
+B=np.ones((3,2))
+np.dot(A,B)
+
+A.sum(axis=0) //Column sum
+A.sum(axis=1) //Row sum
+A.max()
+
+np.asarray([3,4]) #Create vector
+
+Computing dot product:
+----------------------
+- np.dot(a,b)
+- np.dot(a,b)/np.linalg.norm(b) #Calculating projection

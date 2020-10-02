@@ -1,0 +1,71 @@
+1) Create the startup file under : /etc/systemd/system/project-mercury.service
+
+2) put below content in file: project-mercury.service
+
+[Unit]
+Description=xyz
+Documentation=xyz
+After=postgresql.service
+
+
+[Service]
+ExecStart= /bin/bash /usr/bin/project-mercury.sh
+
+User=project_mercury
+Restart=on-failure
+RestartSec=10
+
+[Install] //Load when booting into Graphical mode
+WantedBy graphical.target
+
+
+3) use command to start service:
+systemctl start project-mercury.service
+
+4) Checking the status: 
+systemctl status project-mercury.service
+
+5) stop service: 
+systemctl stop project-mercury.service
+
+6) Restart with changes: //After this use start
+systemctl daemon-reload  //Reloads system manager configuration and make systemD aware of the changes any changes made on disk needs 
+to be changed.
+
+systemcl restart docker
+
+systemctl reload docker //restart without effecting normal functionality
+
+systemctl enable docker
+
+systemctl enable docker -> make it persistant between reboots
+
+systemctl disable docker -> system disable on boot
+
+Edit a system ctl file:
+systemctl edit project-mercury.service --full //No need to run daemon reload in this case
+
+systemclt get-default
+systemctl set-default multi-user.target
+
+systemctl list-units --all
+
+sudo journalctl -u sample.service //Checkign why a particular service failed
+
+SystemD tools are:
+------------------
+1) Systemctl:
+-------------
+_ Manage system state
+- start/stop/restart/Load
+- Enable/disable
+- list and manage units
+- list and update target
+
+2) JOURNALCTL: [Used for systemD debugging]
+--------------
+QUERY SYSTEMD JOURNAL
+
+comamnd: journalctl -b => current boot
+journalctl -u docker.service
+sudo journalctl -u sample.service //Checkign why a particular service failed

@@ -1,0 +1,4 @@
+In today’s web, there are other ways to keep track of users, ETag tracking being one example. Since cookies are usually 
+associated with tracking, these techniques are often referred to as supercookies as well, even though they do not rely on 
+HTTP cookies. Other terms that may refer to the same set of technologies and practices are permacookies 
+(permanent cookies) or zombiecookies (cookies that never die).

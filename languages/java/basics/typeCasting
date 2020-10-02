@@ -1,0 +1,8 @@
+- Explicit casting: Larger to smaller variable
+
+Staff s = new Editor();
+s.approveReview(); // Compiler error
+((Editor)s).approveReview();
+
+- instanceof -> objRef instanceof aClass
+

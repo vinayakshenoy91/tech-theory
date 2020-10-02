@@ -1,0 +1,27 @@
+1) findFirst():
+----------------
+Optional<T> findFirst()
+
+It returns an Optional describing the first element of this stream, or an empty Optional if the stream is empty.
+
+Optional<Person> person = list.stream()               // Creating a Stream of person objects.
+                 .filter(p -> p.getCountry().equals("India")) // Filter to get only persons living in India.
+                 .findFirst();                                // Returning the first person encountered.
+
+if(person.isPresent()){
+             System.out.println(person);
+}
+
+
+2) findAny():
+--------------
+- It returns an Optional describing some element of this stream, or an empty Optional if the stream is empty.
+- just imagine that we can create a parallel stream so that the intermediate operations can be applied in parallel.
+
+Optional<T> findAny()
+
+- Instead, findAny() is used if we are not concerned about which element is returned.
+
+Optional<Person> person = list.stream()
+                 .filter(p -> p.getCountry().equals("India"))
+                 .findAny();

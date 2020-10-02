@@ -1,0 +1,7 @@
+- distribution of values in a dataset
+
+plt.hist(data,bins=nbins, range=(xmin,xmax), density=True) //Normalize histogram
+plt.show()
+
+- normalization reduces height of each bar by a constant factor so that sum of areas of each bar adds to 1
+

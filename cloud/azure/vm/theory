@@ -1,0 +1,6 @@
+When deployign VM you need to have below things also in place:
+- VNET
+- NIC -> This has a  private and public ip
+- NSG
+- OS disk
+- Data disk (optional)

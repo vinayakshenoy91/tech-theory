@@ -1,0 +1,21 @@
+- Stored in hierarchical fashion
+- Root node, Leaf node
+- Node which is just below is child and just above is parent
+- Degree of a node is number of children it has
+- Trees which do not have degree 0 or which are not leafs -> Internal nodes
+
+Application:
+-------------
+- BST
+- Binary heaps
+- B and B+ trees for indexing
+- Spanning tree used by bridges and shortest path for routers
+- Parse trees and expression tress in compilers
+
+
+Types:
+------
+- Tries  - Dictionary + prefix search
+- Suffix tree - Search patterns in a text
+- Segment tree -> Range query searches
+- Binary index tree -> Range query searches

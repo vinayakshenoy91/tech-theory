@@ -1,0 +1,2 @@
+- Putting it in the header is the right way as it will prevent url contamination
+- URL is common and easier

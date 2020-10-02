@@ -1,0 +1,33 @@
+//Static initilizers
+---------------------
+Two usecases:
+--------------
+- Populating  a DS
+- Initializing with error handling
+
+case 1:
+static HashMap map = new HashMap()
+static{
+    map.put("1","hello");
+    map.put("2","hello");
+}
+
+case 2:
+
+static Stuff stuff;
+
+static{
+    try{
+        stuff = getStuff();
+    }catch(Exception e){}
+}
+
+//Instance initilizers:
+------------------------
+- Used when sharing block of code between multiple constructors. initilizer copied to beginning of every constructor
+- Multiple initilisaers executed in order
+- can reference static members
+
+{
+    system.out.println("test")
+}

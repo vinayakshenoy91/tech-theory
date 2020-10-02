@@ -1,0 +1,27 @@
+Assertions:
+------------
+assertEquals(expected,actual)
+assertTrue(condition, error message)
+assertFalse(condition, () -> error message))
+assertNull(condition)
+assertNotNull(condition)
+assertArrayEquals(expected, actual)
+assertAll("address", ()-> asserEquals(),()-> asserEquals() )
+
+Conditons:
+-----------
+assumeTrue(false)
+assumeFalse(true)
+assumingThat(false, ()-> fail("Test 3 failed"))
+
+Testing exception:
+-------------------
+Throwable exception = assertThrows(IllegalargException.class, ()->{
+    throw new Illegalarg("a.messsage");
+})
+assertEquals("a.message", exception.getMessage())
+
+Tesitng timeout:
+-----------------
+assertTimeout(ofMinutes(2),()->{});
+AsserTimeoutPreemptively -> Execution of code will be preemptively aborted if the timeout is exceeded.

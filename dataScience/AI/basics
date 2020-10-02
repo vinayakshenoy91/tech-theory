@@ -1,0 +1,57 @@
+Why ML?
+--------
+- Lot of data
+- Lot of rules
+- Hard permutation and combination
+- Uknown rules
+
+Most part is : collect, curate and define task -> Chossing appropriate algo(ML engineer) -> ML research(Fast, Effecient and Better ways)
+
+
+Six elements of ML:
+--------------------
+1) Data:
+--------
+- Do you have both input and output
+- All data in numbers and high dimensions
+- Has x and y
+
+Dataset sites:
+--------------
+- Google AI
+- data.gov.in
+- UCI
+
+Figure eight, data turks, amazon mechnical turks -> curate data
+wiki data
+
+2) Tasks:
+---------
+- Identify the task that you could do with the data.
+- Can be classification and regresssion
+
+3) models: Writing eqn:
+-----------------------
+- Come up with diff functions to model the task
+- Control complexity of model
+
+4) Loss function:
+-----------------
+- See how good or bad the model is
+- sum of square of diff
+
+KL divergence
+Square error loss
+Cross entropy loss
+
+- Find  coeff, a,b,c such that loss fn is minimised
+- Many optimisation solvers do this.
+- Calculus and linear algebra required.
+- Try out with various functions as well
+
+5) Evaluate the model:
+----------------------
+- 1 time accuracy
+- Top 3 accuracy
+- Precision and recall
+- Evaluate on test data

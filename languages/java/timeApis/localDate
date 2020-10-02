@@ -1,0 +1,28 @@
+1) Getting the current date:
+-----------------------------
+LocalDate date = LocalDate.now();
+
+2) Get specific date:
+----------------------
+LocalDate date = LocalDate.of(2019, 05, 03);
+date = LocalDate.of(2019, Month.AUGUST, 03);
+
+3) Getting specific date using parse/Parsing a date string:
+------------------------------------------------------------
+LocalDate date = LocalDate.parse("2015-02-12");
+date = LocalDate.parse("12/02/2012", DateTimeFormatter.ofPattern("MM/dd/yyyy"));
+
+4) Get day of week:
+-------------------
+DayOfWeek dayOfWeek = LocalDate.parse("2017-04-06").getDayOfWeek();
+
+5) adding days and months to a given date:
+-------------------------------------------
+LocalDate date = LocalDate.parse("2015-02-12").plusDays(4);
+date = LocalDate.parse("2015-02-12").plus(4, ChronoUnit.MONTHS);
+
+6) Check if date is before or after a given date:
+---------------------------------------------------
+boolean isBefore = LocalDate.parse("2020-03-12").isBefore(LocalDate.parse("2018-06-14"));
+boolean isAfter = LocalDate.parse("2020-03-12").isAfter(LocalDate.parse("2018-06-14"));
+

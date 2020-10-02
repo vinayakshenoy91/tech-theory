@@ -1,0 +1,45 @@
+a in c -> Is a present  in the list c -> gives True/False
+a not in c -> 
+
+id(a)-> memory location
+
+
+import math
+
+math.floor(5.6)
+
+Conditional execution #
+------------------------
+if True:               # valid code block, code indented by 4 spaces
+    print('Here')
+else:
+    pass               # pass statement does nothing
+if True:
+   print('Here')
+  pass  
+
+
+if(not isinstance(x,int)):
+
+Loops:
+--------
+for i in range(10):
+    print(i)
+
+If we want to iterate over the elements of a sequence, 
+whilst also maintaining an index count, we can use the enumerate() function:
+
+for index,v in enumerate((1,2,3,4,5)): # enumerate elements in tuple
+   print(i, v)                     # otherwise print the value
+
+
+list comprehension:
+-------------------
+new_list = [expression for <item> in <sequence>]
+
+doubles = [x * 2 for x in range(4)]
+print(doubles)    
+
+upper = [c.upper() for c in 'Hello']
+print(upper)  
+

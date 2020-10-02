@@ -1,0 +1,142 @@
+Collectors: Collection Operations:
+-----------------------------------
+Mutable reductions #
+The mutable reductions collect the desired results into a mutable container object, such as a java.util.Collection or an array.
+
+The mutable reduction is achieved through the collect() method. It is one of the Java 8 Stream API‘s terminal methods.
+
+There are two overloaded versions of the collect() method:
+
+collect(Collector<? super T,A,R> collector)
+
+<R> R collect(Supplier&lt;R> supplier, BiConsumer<R, ? super T> accumulator, BiConsumer<R, R> combiner)
+
+This lesson focuses on the collect() method which takes an instance of Collector as input.
+
+We have two options:
+
+We can create our own Collector implementation.
+
+We can use the predefined implementations provided by the Collectors class.
+
+
+Collectors:
+-----------
+Collectors is a final class that extends the Object class. 
+It provides the most common mutable reduction operations that could be required by application developers as individual static methods.
+
+1. Collectors.toList():
+----------------------
+ List<String> empName = employeeList.stream()
+                .map(emp -> emp.getName())
+                .collect(Collectors.toList());
+
+
+2. Collectors.toSet():
+----------------------
+Set<String> empName = employeeList.stream()
+                .map(emp -> emp.getCountry())
+                .collect(Collectors.toSet());
+
+3. Collectors.toCollection(Supplier<C> collectionFactory):
+----------------------------------------------------------
+LinkedList<String> empName = employeeList.stream()
+                .map(emp -> emp.getName())
+                .collect(Collectors.toCollection(LinkedList::new));
+
+4. Collectors.toMap():
+----------------------
+
+The problem with the below example is that, if the list has duplicate elements, toMap() will throw an exception.
+
+Map<String,Integer> nameMap = list.stream()
+                .collect(Collectors.toMap(s -> s , s -> s.length()));
+
+To solve this problem, there is an overloaded version of toMap() that takes an additional BinaryOperator as a parameter. 
+This is used to decide which element should be considered in case of duplicates.
+
+Map<String,Integer> nameMap = list.stream()
+                .collect(Collectors.toMap(s -> s , s -> s.length(), (s1,s2) -> s1));
+
+we will convert our stream to a HashMap:
+
+List<String> list = new ArrayList<>();
+        list.add("done");
+        list.add("far");
+        list.add("away");
+        list.add("done");
+
+        Map<String,Integer> nameMap = list.stream()
+                .collect(Collectors.toMap(s -> s , s -> s.length(), (s1,s2) -> s1, HashMap::new));
+
+5) collectingAndThen(Collector<T,A,R> downstream, Function<R,RR> finisher):
+----------------------------------------------------------------------------
+This method returns a Collector that accumulates the input elements into the given Collector and then 
+performs an additional finishing function.
+
+
+List<String> list = new ArrayList<>();
+        list.add("done");
+        list.add("far");
+        list.add("away");
+        list.add("done");
+
+        List<String> unmodifiableList = list.stream()
+                .collect(Collectors.collectingAndThen(Collectors.toList(), Collections::unmodifiableList));
+
+6) counting():
+---------------
+- This function returns a Collector that counts the number of the input elements.
+
+long count = employeeList.stream()
+                .filter(emp -> emp.getAge() > 30)
+                .collect(Collectors.counting()); // Using the counting() method to get count of employees.
+
+7) Collectors.summingInt(ToIntFunction<? super T> mapper):
+-----------------------------------------------------------
+// Using summingInt() method to get the sum of salaries of all employees.
+int count = employeeList.stream()
+                .collect(Collectors.summingInt(emp -> emp.getSalary())); //summingLong() and summingDouble()
+
+8) Collectors.averagingInt(ToIntFunction<? super T> mapper):
+-------------------------------------------------------------
+double average = employeeList.stream()
+                .collect(Collectors.averagingInt(emp -> emp.getSalary())); //averagingLong(), and averagingDouble()
+
+9) minBy(Comparator<? super T> comparator):
+--------------------------------------------
+It returns a Collector that returns the minimum element based on the given comparator.
+The returned value is wrapped in an Optional instance.
+
+Optional<Employee> employee = employeeList.stream()
+                .collect(Collectors.minBy(Comparator.comparing(Employee::getSalary)));
+
+10) maxBy(Comparator<? super T> comparator):
+----------------------------------------------
+ Optional<Employee> employee = employeeList.stream()
+                .collect(Collectors.maxBy(Comparator.comparing(Employee::getSalary)));
+
+11) summarizingInt(ToIntFunction<? super T> mapper):
+-----------------------------------------------------
+It returns a Collector that applies an int-producing mapping function to each input element and returns 
+summary statistics for the resulting values.
+
+IntSummaryStatistics summarizingInt = Stream.of("1", "2", "3")
+                .collect(Collectors.summarizingInt(Integer::parseInt));
+
+12) joining():
+---------------
+It returns a Collector that concatenates the input elements into a String, in the encounter order. 
+It also has few overloaded versions which allow us to provide delimiters and prefix and suffix strings.
+
+// Joining all the strings.
+        String joinedString = Stream.of("hello", "how", "are" , "you")
+                .collect(Collectors.joining());
+
+// Joining all the strings with space in between.
+        joinedString = Stream.of("hello", "how", "are" , "you")
+                .collect(Collectors.joining(" "));
+
+// Joining all the strings with space in between and a prefix and suffix.
+        joinedString = Stream.of("hello", "how", "are" , "you")
+                .collect(Collectors.joining(" " , "prefix","suffix"));

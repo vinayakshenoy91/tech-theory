@@ -1,0 +1,12 @@
+Self balancing BST  
+===================
+
+They are represented usign "TreeSet" and "TreeMap"
+
+Search, inset,Delete -> O(logn)
+
+Additional ops: 
+- Maintains sorted order
+
+floor, ceil, greater than element, less than element -> all log n times
+

@@ -1,0 +1,19 @@
+- also known as JSR-310 under the java.time package.
+- classes in the new API are immutable and, hence, thread-safe
+
+Limitation with old api:
+-------------------------
+Here are the limitations of the old date and time API.
+
+1) The old date class is not Thread Safe. Unlike String or Integer class, it is not immutable. Any thread can get a reference 
+to the Date object and modify its value.
+
+2) Its month numbering is from 0 to 11. This is very confusing and has resulted in many errors.
+
+3) Prior to JDK 8, Java uses String to represent TimeZone. If we need to get the timezone for Hong Kong, then below is the code:
+TimeZone zone = TimeZone.getInstance(“Asia/Hong_Kong”);
+Now, there are chances that we might mistakenly write HongKong or make some other spelling errors. 
+There is no check for this in the old API.
+
+4) A Date instance represents an instant in time, not a date. This means that the date in the old API will mean both date and time. 
+If we need only time without date then that is not possible.

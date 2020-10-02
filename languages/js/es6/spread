@@ -1,0 +1,5 @@
+Take and array and then spread it
+
+console.log(...people); //[x,y, ...people]
+
+Creating an object clone: {...people}

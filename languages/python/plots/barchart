@@ -1,0 +1,6 @@
+
+Vertical bar chart: plt.bar(xpoints, ypoints)
+Horizontal bar chart: plt.barh(xpoints,ypoints, yerr=df.error) //Adding error bars
+Stacker bar chart:
+plt.bar(xpoints,ypoints, bottom=y1points, label="Cat" )
+plt.bar(xpoints,y1points,label="Dog")

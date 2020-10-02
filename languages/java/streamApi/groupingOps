@@ -1,0 +1,76 @@
+1) Collectors.groupingBy():
+---------------------------
+
+a) groupingBy(Function<? super T, ? extends K> classifier):
+------------------------------------------------------------
+
+// The employees are grouped by country using the groupingBy() method.
+        Map<String,List<Employee>> employeeMap = employeeList.stream()
+                .collect(Collectors.groupingBy(Employee::getCountry));
+
+b) groupingBy(Function<? super T,? extends K> classifier, Collector<? super T,A,D> downstream):
+-------------------------------------------------------------------------------------------------
+
+This method takes an additional second collector, which is applied to the results of the first collector.
+
+what if we need a Set of employees?
+
+Map<String, Set<Employee>> employeeMap = employeeList.stream()
+                .collect(Collectors.groupingBy(Employee::getCountry, Collectors.toSet()));
+
+Multiple condition grouping:
+
+// The employees are grouped by country and age by using the groupingBy() method twice.
+Map<String, Map<Integer,List<Employee>>> employeeMap = employeeList.stream()
+                .collect(Collectors.groupingBy(Employee::getCountry, Collectors.groupingBy(Employee::getAge)));
+
+
+Next, suppose we need to get a Map where the key is the name of the country and the value is the
+Employee object that has the max salary in that country.
+
+Map<String, Optional<Employee>> employeeMap = employeeList.stream()
+                .collect(Collectors.groupingBy(Employee::getCountry, Collectors.maxBy(Comparator.comparingInt(Employee::getSalary))));
+
+c) groupingBy(Function<? super T,? extends K> classifier, Supplier<M> mapFactory, Collector<? super T,A,D> downstream):
+------------------------------------------------------------------------------------------------------------------------
+This method is used, if we need to provide the implementation of the Map we need.
+
+ List<Employee> employeeList = new ArrayList<>();
+        employeeList.add(new Employee("Alex", 23, 23000, "USA"));
+        employeeList.add(new Employee("Ben", 63, 25000, "China"));
+        employeeList.add(new Employee("Dave", 34, 56000, "India"));
+        employeeList.add(new Employee("Jodi", 43, 67000, "USA"));
+        employeeList.add(new Employee("Ryan", 53, 54000, "China"));
+
+        Map<String, Set<Employee>> employeeMap = employeeList.stream()
+                .collect(Collectors.groupingBy(Employee::getCountry, HashMap::new, Collectors.toSet()));
+
+d) groupingByConcurrent(Function<? super T,? extends K> classifier):
+---------------------------------------------------------------------
+This method is applied on a parallel stream. 
+
+The groupingByConcurrent() collector is similar to the groupingBy() collector; the only difference is 
+that this method returns an instance of ConcurrentMap.
+
+ConcurrentMap<String,List<Employee>> employeeMap = employeeList.parallelStream()
+                .collect(Collectors.groupingByConcurrent(Employee::getCountry));
+
+
+2) Collectors.partitioningBy():
+--------------------------------
+- This method partitions the input elements according to the supplied Predicate and returns a Map<Boolean, List<T>>
+- Since the key is a boolean it only takes two values. Under the true key, we will find elements that match the given Predicate. 
+Under the false key, we will find the elements which don’t match the given Predicate.
+
+
+  List<Employee> employeeList = new ArrayList<>();
+        employeeList.add(new Employee("Alex", 23, 23000, "USA"));
+        employeeList.add(new Employee("Ben", 63, 25000, "China"));
+        employeeList.add(new Employee("Dave", 34, 56000, "India"));
+        employeeList.add(new Employee("Jodi", 43, 67000, "USA"));
+        employeeList.add(new Employee("Ryan", 53, 54000, "China"));
+
+        // Partitioning the list based on age.
+        Map<Boolean, List<Employee>> employeeMap = employeeList.stream()
+                .collect(Collectors.partitioningBy(emp -> emp.getAge() > 30));
+

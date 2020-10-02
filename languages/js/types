@@ -1,0 +1,110 @@
+- Primitive and reference. Primitive types are stored as simple data types. 
+
+boolean
+number
+string
+null
+undefined
+
+- Reference types are stored as objects, which are really just references to locations in memory.
+
+Array
+Date
+Error
+Function
+Object
+RegExp
+
+-  JS tracks variables for a particular scope with a variable object. Primitive values are stored directly on the variable object, 
+while reference values are placed as a pointer in the variable object, which serves as a reference to a location in 
+memory where the object is stored.
+
+- Reference types do not store the object directly into the variable to which it is assigned, so the object variable 
+in this example doesn’t actually contain the object instance. Instead, it holds a pointer (or reference) to the location in 
+memory where the object exists. This is the primary difference between
+objects and primitive values, as the primitive is stored directly in the variable.
+
+- When you assign an object to a variable, you’re actually assigning a pointer. 
+That means if you assign one variable to another, each variable gets a copy of the pointer, 
+and both still reference the same object in memory. For example:
+
+var object1 = new Object();
+var object2 = object1;
+
+
+
+- identifying types => using typeof
+
+typeof 'x'
+typeof null -> object
+
+The best way to determine if a value is null is to compare it against null directly
+
+value === null
+
+Some exmples of primitive methods:
+----------------------------------
+
+var count = 10;
+var fixedCount = count.toFixed(2);          // convert to "10.00"
+var hexCount = count.toString(16);          // convert to "a"
+
+- Dereferenceing object to help for GC: object1 = null; 
+
+- Literal; A literal is syntax that allows you to define a reference value without explicitly creating an object, 
+using the new operator and the object’s constructor
+
+instanceof:
+-----------
+- Other reference types are trickier to identify because, for all reference types other than functions, typeof returns "object". 
+- To identify reference types more easily, you can use JavaScript’s instanceof operator.
+
+console.log(items instanceof Array);       // true
+console.log(object instanceof Object);     // true
+console.log(reflect instanceof Function);  // true
+
+
+Array.isArray():
+-----------------
+It is the best way to identify arrays:
+
+var items = [];
+
+console.log(Array.isArray(items));      // true
+
+Why this is used isntead of instanceof Array: Although instanceof can identify arrays, there is one exception that affects 
+web developers: JavaScript values can be passed back and forth between frames in the same web page. This becomes a problem 
+only when you try to identify the type of a reference value, because each web page has its own global context—its own version 
+of Object, Array, and all other built-in types. As a result, when you pass an array from one frame to another,
+instanceof doesn’t work because the array is actually an instance of Array from a different frame.
+
+
+Wrapper:
+--------
+There are three primitive wrapper types (String, Number, and Boolean). These special reference types exist 
+to make working with primitive values as easy as working with objects. (It would be very confusing if you had to use 
+a different syntax or switch to a procedural style just to get a substring of text.)
+
+The primitive wrapper types are reference types that are automatically created behind the scenes whenever strings, 
+numbers, or Booleans are read. For example, in the first line of this listing, a primitive string value is assigned to name. 
+The second line treats name like an object and calls charAt(0) using dot notation.
+
+var name = "Nicholas";
+var firstChar = name.charAt(0);
+console.log(firstChar);                 // "N"
+This is what happens behind the scenes:
+
+// what the JavaScript engine does
+var name = "Nicholas";
+var temp = new String(name);
+var firstChar = temp.charAt(0);
+temp = null;
+console.log(firstChar);                 // "N"
+Because the second line uses a string (a primitive) like an object, the JavaScript engine creates an instance of String 
+so that charAt(0) will work. The String object exists only for one statement before it’s destroyed (a process called autoboxing). 
+To test this out, try adding a property to a string as if it were a regular object:
+
+var name = "Nicholas";
+name.last = "Zakas";
+
+console.log(name.last);                 // undefined

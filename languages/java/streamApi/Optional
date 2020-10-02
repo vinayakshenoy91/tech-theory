@@ -1,0 +1,122 @@
+- Optional<T> in the java.util package
+- Optional works as a container type for the value which is probably absent or null. 
+Java Optional is a final class present in the java.util package
+- The benefit is that Optional<T> class provides us lots of utility methods that we can apply to our wrapped objects.
+
+Example:
+--------
+public class StreamDemo {
+
+    Map<Integer, Employee> empMap = new HashMap<>();
+
+    public Optional<Employee> getEmployee(Integer employeeId) {
+        // Before returning the employee object we are wrapping it into an Optional
+        return Optional.ofNullable(empMap.get(employeeId));
+    }
+
+    public static void main(String[] args) {
+        StreamDemo demo = new StreamDemo();
+        Optional<Employee> emp = demo.getEmployee(123);
+        // Before getting a value from Optional we check if the value is present through isPresent() method.
+        if(emp.isPresent()){
+            System.out.println(emp.get().getName());  // We use get() method to get the value from Optional.
+        } else{
+            System.out.println("No employee returned.");
+        }
+    }
+}
+
+Different ways of creating an Optional:
+---------------------------------------
+1) Using empty() method:
+-------------------------
+Optional < Person > person = Optional.empty();
+
+2) Using of() method:
+---------------------
+We can create an Optional object that has a non-null value using of() method. 
+If we create an Optional using the of() method and the value is null, then it will throw a Null Pointer Exception.
+
+Person person = new Person();
+Optional<Person> optional = Optional.of(person);
+
+3) Using ofNullable() method:
+-------------------------------
+
+If while creating the Optional, you are not sure if the value is null or not null, then use the ofNullable() method. 
+If a non-null value is passed in Optional.ofNullable(), then it will return the Optional, containing the specified value.
+Otherwise, it will return an empty Optional
+
+Person person = new Person();
+Optional<Person> optional = Optional.ofNullable(person);
+
+Using optional:
+----------------
+1) isPresent():
+----------------
+optional.isPresent()
+
+2) ifPresent(Consumer<? super T> consumer):
+--------------------------------------------
+It takes in a Consumer as a parameter and returns nothing. When ifPresent() is called, if a value is present, 
+the specified consumer is invoked with the value. Otherwise, nothing happen
+public void ifPresent(Consumer<? super T> consumer)
+
+emp.ifPresent(System.out::println);
+
+3) get():
+----------
+The get() method returns a value if it is present in this Optional. Otherwise, it throws NoSuchElementException.
+
+optional.get()
+
+4) orElse(T other):
+-------------------
+optional.orElse("default sting")
+
+5) orElseGet(Supplier<? extends T> other):
+-------------------------------------------
+This method returns the value present in the optional. 
+If no value is present, then the value calculated from the supplier provided as a parameter is returned.
+
+  public static String getDefaultValue(){
+        return "default";
+    }
+
+Optional<String> optional = Optional.ofNullable(null);
+
+// This will return the default value.
+System.out.println(optional.orElseGet(OptionalDemo::getDefaultValue));
+
+6) orElseThrow(Supplier<? extends T> other):
+--------------------------------------------
+This method returns the value present in the optional. If no value is present, then it throws the exception created by the provided Supplier
+
+optional.orElseThrow(() -> new Exception("Resource not found."))
+
+7) Optional<T> filter(Predicate<? super T> predicate):
+--------------------------------------------------------
+optional.filter(str -> str.equals("orange"))
+
+8) map(Function<? super T, ? extends U> mapper):
+-------------------------------------------------
+if a value is present, apply the provided mapping function to it, and if the result is non-null, 
+return an Optional describing the result. Otherwise, return an empty Optional
+
+ // Creating an Optional of Employee object.
+Optional<Employee> optional = Optional.of(new Employee("Adam", 54, 20000));
+
+optional
+        .map(emp -> emp.getSalary()) // Fetching the salary from employee object.
+        .filter(sal -> sal > 10000) // Checking if the salary is greater than 10000.
+        .ifPresent(System.out::println);
+
+9) flatMap(Function<? super T, Optional<U&>> mapper):
+-------------------------------------------------------
+- The difference is that the map transforms values only when they are unwrapped, whereas flatMap takes a wrapped value and unwraps 
+it before transforming it
+
+Optional<Employee> optional = Optional.of(new Employee("Adam", 54, 20000));
+        optional.flatMap(emp -> emp.getSalary())
+                .filter(sal -> sal > 10000)
+                .ifPresent(System.out::println);

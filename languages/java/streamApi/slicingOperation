@@ -1,0 +1,27 @@
+1.distinct():
+--------------
+The first operation that we are going to discuss is distinct(). 
+It returns a stream consisting of the distinct elements (according to Object.equals(Object)) of this stream.
+
+countries.stream()
+                .distinct()
+                .forEach(System.out::println);
+
+
+2.limit():
+-----------
+
+countries.stream()
+                .distinct()
+                .limit(3)
+                .forEach(System.out::println);
+
+3) skip():
+----------
+- It returns a stream consisting of the remaining elements of this stream after discarding the first n elements of the stream.
+
+countries.stream()
+                .distinct()
+                .skip(2)
+                .forEach(System.out::println);
+

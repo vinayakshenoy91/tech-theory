@@ -1,0 +1,26 @@
+download.getContentFile('xyz.txt')
+
+import pandas as pd
+
+df=pd.read_csv('file.csv')
+
+df.head()
+df.tail()
+df.shape
+
+len(df)
+
+df.loc[5] -> Get a particular row
+
+df[[<column names comma separated>]] #
+df_thin[df_thin['is_liked']==1]
+df_thin[df_thin['is_liked']==1]['price'].mean() #complex ops
+
+df['price'].mean()
+.min()
+.max()
+.count()
+.describe()
+df.describe() #for all columns
+
+df_htin.groupby(['is_liked']).mean()

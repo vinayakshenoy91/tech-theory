@@ -1,0 +1,45 @@
+- When client performs an acton it connects to a coordinator node. This node with coordinate comms between client and cluster.
+Will determinate whihc node should process to store data.Also coordiantes with replica node
+
+- Tunable consistency is the USP of cassandra. From how many node will it wait to receive ack for the writes
+
+Consistency for reads:
+
+Set it to :
+one
+two
+three
+quoram -. When majority of them ack
+all
+any -> Write can make it to cluster at all.Even coordiantor ack it will tell as success
+
+Hinted handoff -> Even if one node fails, coordinator will persist the data and tries repeatedly to deliver data.
+When write successful, daa is removed.
+
+
+Consistency in reads: how important it is to retrieve latest info.
+How many nodes will be consulted to return most current info to the caller.
+Retrieve data from on adn digest of data from other.
+
+one
+two
+three
+quoram -> Data and digest from majority nodes will be consulted
+ALL
+
+If consistency is all and one of digest returned not mactched, it reads full data from all and 
+replaces woring digest with right data.
+
+Periaodically run : Nodetool repari command
+
+Achieving strong consistency:
+
+(Read + Write consistency)> Replicator factor
+Quoram Quoram  or one all 
+
+
+Multi data center consistency:
+-------------------------------
+- EACH_QUORAM
+- LOCAL_QUORAM -> Success where coordinator is located
+- LOCAL_ONE
