@@ -1,0 +1,19 @@
+- In-memory -> memcached and redis.
+- Buffer high-freq writes and periodically reconcile with backend DB
+- Deploy in your VPC
+
+Memcached: 
+----------
+- Key value  store
+- scales upto 20 nodes and 12.7TB
+
+Redis:
+------
+- Use advanced DS
+- Strings, lists, sorted sets, Hash , Bit arrays
+- Built in command for geospatial data
+- Scales upto 250 nodes 170 TB
+- Pub Sub and messaging
+- Read replica across multiple AZ
+- Detect primary failure and promotes replica as primary
+- Backup and restore.

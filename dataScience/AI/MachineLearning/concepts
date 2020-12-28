@@ -1,0 +1,361 @@
+
+Machine Learning is about making machines get better at some task by learning
+from data, instead of having to explicitly code rules.
+• There are many different types of ML systems: supervised or not, batch or online,
+instance-based or model-based, and so on.
+• In a ML project you gather data in a training set, and you feed the training set to
+a learning algorithm. If the algorithm is model-based it tunes some parameters to
+fit the model to the training set (i.e., to make good predictions on the training set
+itself), and then hopefully it will be able to make good predictions on new cases
+as well. If the algorithm is instance-based, it just learns the examples by heart and
+generalizes to new instances by comparing them to the learned instances using a
+similarity measure.
+• The system will not perform well if your training set is too small, or if the data is
+not representative, noisy, or polluted with irrelevant features (garbage in, garbage
+out). Lastly, your model needs to be neither too simple (in which case it will
+underfit) nor too complex (in which case it will overfit).
+
+
+
+==> Types of ML:
+------------
+1) Human supervised:
+---------------------
+a)  Supervised ML:
+- Model learns with human supervision
+- Have data with clear demarcation of what is right and wrong.
+
+ Types are:
+ i) Classification -> Desired solutions called labels.
+ ii)Regression -> Predict a value
+
+b) Unsupervised ML:
+- Training data is unlabeled
+- System tries without a label
+
+  Types are:
+  i) Clustering -> Detect group of similar visitors in blog
+  ii) Hierarchical clustering -> Bring similar elements together. In the form of tree.Nodes closer to each other are similar.
+  iii) Anomaly detection - Fraud in credit card txn
+
+c) Reinforcement learning:
+- Continous supervised learning
+- You either give a punishment or reward for an action  
+
+
+2) Learn incrementally [Batch and Online Learning]
+-----------------------
+
+a) Online: Algo updates itself as and when new changes come in.
+
+you train the system incrementally by feeding it data instances
+sequentially, either individually or by small groups called mini-batches. 
+
+Online learning algorithms can also be used to train systems on huge datasets that
+cannot fit in one machine’s main memory (this is called out-of-core learning). The
+algorithm loads part of the data, runs a training step on that data, and repeats the
+process until it has run on all of the data.
+
+One important parameter of online learning systems is how fast they should adapt to
+changing data: this is called the learning rate. 
+If you set a high learning rate, then your
+system will rapidly adapt to new data, but it will also tend to quickly forget the old
+data (you don’t want a spam filter to flag only the latest kinds of spam it was shown).
+Conversely, if you set a low learning rate, the system will have more inertia; that is, it
+will learn more slowly, but it will also be less sensitive to noise in the new data or to
+sequences of nonrepresentative data points (outliers).
+
+A big challenge with online learning is that if bad data is fed to the system, the sys‐
+tem’s performance will gradually decline. If we are talking about a live system, your
+clients will notice. For example, bad data could come from a malfunctioning sensor
+on a robot, or from someone spamming a search engine to try to rank high in search
+results. To reduce this risk, you need to monitor your system closely and promptly
+switch learning off (and possibly revert to a previously working state) if you detect a
+drop in performance. You may also want to monitor the input data and react to
+abnormal data (e.g., using an anomaly detection algorithm).
+
+
+b) Batch: Running periodically on entire data. Train on entire dataset
+ In batch learning, the system is incapable of learning incrementally: it must be trained
+using all the available data. This will generally take a lot of time and computing
+resources, so it is typically done offline. First the system is trained, and then it is
+launched into production and runs without learning anymore; it just applies what it
+has learned. This is called offline learning.
+
+If you want a batch learning system to know about new data (such as a new type of
+spam), you need to train a new version of the system from scratch on the full dataset
+(not just the new data, but also the old data), then stop the old system and replace it
+with the new one.
+
+if your system needs to be able to learn autonomously and it has limited
+resources (e.g., a smartphone application or a rover on Mars), then carrying around
+large amounts of training data and taking up a lot of resources to train for hours
+every day is a showstopper.
+
+
+3) Instance-Based Versus Model-Based Learning:
+-----------------------------------------------
+There are two main approaches to generalization: instance-based learning and
+model-based learning:
+
+Instance-based learning:
+This is called instance-based learning: the system learns the examples by heart, then
+generalizes to new cases by comparing them to the learned examples (or a subset of
+them), using a similarity measure. 
+
+Model-based learning:
+Another way to generalize from a set of examples is to build a model of these exam‐
+ples, then use that model to make predictions. This is called model-based learning.
+
+You can either define a utility
+function (or fitness function) that measures how good your model is, or you can define
+a cost function that measures how bad it is. For linear regression problems, people
+typically use a cost function that measures the distance between the linear model’s
+predictions and the training examples; the objective is to minimize this distance.
+
+This is where the Linear Regression algorithm comes in: you feed it your training
+examples and it finds the parameters that make the linear model fit best to your data.
+This is called training the model.
+
+==> ML challenges:
+-------------------
+1) insufficient quantity of training data.
+2) Nonrepresentative training data:By using a nonrepresentative training set, we trained a model that is unlikely to make
+accurate predictions, especially for very poor and very rich countries.
+It is crucial to use a training set that is representative of the cases you want to generalize to.
+If the sample is too small, you will have
+sampling noise (i.e., nonrepresentative data as a result of chance), but even very large
+samples can be nonrepresentative if the sampling method is flawed. This is called
+sampling bias.
+3) Poor-Quality Data
+Obviously, if your training data is full of errors, outliers, and noise (e.g., due to poorquality measurements), it will make it harder for the system to detect the underlying
+patterns, so your system is less likely to perform well. It is often well worth the effort
+to spend time cleaning up your training data. The truth is, most data scientists spend
+a significant part of their time doing just that.
+
+If some instances are clearly outliers, it may help to simply discard them or try to
+fix the errors manually.
+• If some instances are missing a few features (e.g., 5% of your customers did not
+specify their age), you must decide whether you want to ignore this attribute alto‐
+gether, ignore these instances, fill in the missing values (e.g., with the median
+age), or train one model with the feature and one model without it, and so on.
+
+4) Irrelevant Features:
+A critical part of the success of a Machine Learning project is coming up with a
+good set of features to train on. This process, called feature engineering, involves:
+
+Feature selection: selecting the most useful features to train on among existing
+features.
+• Feature extraction: combining existing features to produce a more useful one (as
+we saw earlier, dimensionality reduction algorithms can help).
+• Creating new features by gathering new data.
+
+5) Overfitting the Training Data:
+Overgeneralizing is
+something that we humans do all too often, and unfortunately machines can fall into
+the same trap if we are not careful. In Machine Learning this is called overfitting: it
+means that the model performs well on the training data, but it does not generalize
+well.
+
+Overfitting happens when the model is too complex relative to the
+amount and noisiness of the training data. The possible solutions
+are:
+
+To simplify the model by selecting one with fewer parameters
+(e.g., a linear model rather than a high-degree polynomial
+model), by reducing the number of attributes in the training
+data or by constraining the model
+• To gather more training data
+• To reduce the noise in the training data (e.g., fix data errors
+and remove outliers)
+
+Constraining a model to make it simpler and reduce the risk of overfitting is called
+regularization.
+
+The amount of regularization to apply during learning can be controlled by a hyper‐
+parameter. A hyperparameter is a parameter of a learning algorithm (not of the
+model). 
+
+If you set the regularization hyper‐
+parameter to a very large value, you will get an almost flat model 
+
+6) Undertting the Training Data
+
+underfitting is the opposite of overfitting: it occurs when your
+model is too simple to learn the underlying structure of the data. For example, a lin‐
+ear model of life satisfaction is prone to underfit; reality is just more complex than
+the model, so its predictions are bound to be inaccurate, even on the training exam‐
+ples.
+The main options to fix this problem are:
+• Selecting a more powerful model, with more parameters
+• Feeding better features to the learning algorithm (feature engineering)
+• Reducing the constraints on the model (e.g., reducing the regularization hyper‐
+parameter)
+
+
+Testing and Validating:
+-----------------------
+
+The only way to know how well a model will generalize to new cases is to actually try
+it out on new cases
+
+
+A better option is to split your data into two sets: the training set and the test set. As
+these names imply, you train your model using the training set, and you test it using
+the test set. The error rate on new cases is called the generalization error
+and by evaluating your model on the test set, you get an estimate of this
+error. This value tells you how well your model will perform on instances it has never
+seen before
+If the training error is low (i.e., your model makes few mistakes on the training set)
+but the generalization error is high, it means that your model is overfitting the train‐
+ing data
+
+Hyperparameter Tuning and Model Selection:
+------------------------------------------
+A common solution to this problem is called holdout validation: you simply hold out
+part of the training set to evaluate several candidate models and select the best one.
+The new heldout set is called the validation set (or sometimes the development set, or
+dev set). More specifically, you train multiple models with various hyperparameters
+on the reduced training set (i.e., the full training set minus the validation set), and
+you select the model that performs best on the validation set. After this holdout vali‐
+dation process, you train the best model on the full training set (including the valida‐
+tion set), and this gives you the final model. Lastly, you evaluate this final model on
+the test set to get an estimate of the generalization error.
+
+This solution usually works quite well. However, if the validation set is too small, then
+model evaluations will be imprecise: you may end up selecting a suboptimal model by
+mistake. Conversely, if the validation set is too large, then the remaining training set
+will be much smaller than the full training set. Why is this bad? Well, since the final
+model will be trained on the full training set, it is not ideal to compare candidate
+models trained on a much smaller training set. It would be like selecting the fastest
+sprinter to participate in a marathon. One way to solve this problem is to perform
+repeated cross-validation, using many small validation sets. Each model is evaluated
+once per validation set, after it is trained on the rest of the data. By averaging out all
+the evaluations of a model, we get a much more accurate measure of its performance.
+However, there is a drawback: the training time is multiplied by the number of valida‐
+tion sets
+
+Data Mismatch:
+--------------
+
+After training your model on the web pictures, if you observe that the perfor‐
+mance of your model on the validation set is disappointing, you will not know
+whether this is because your model has overfit the training set, or whether this is just
+due to the mismatch between the web pictures and the mobile app pictures. One sol‐
+ution is to hold out part of the training pictures (from the web) in yet another set that
+Andrew Ng calls the train-dev set. After the model is trained (on the training set, not
+on the train-dev set), you can evaluate it on the train-dev set: if it performs well, then
+the model is not overfitting the training set, so if performs poorly on the validation
+set, the problem must come from the data mismatch. You can try to tackle this prob‐
+lem by preprocessing the web images to make them look more like the pictures that
+will be taken by the mobile app, and then retraining the model. Conversely, if the
+model performs poorly on the train-dev set, then the model must have overfit the
+training set, so you should try to simplify or regularize the model, get more training
+data and clean up the training data.
+
+
+- Processing of data can happen using :
+----------------------------------------
+1) parallel computing where multiple core uses memory or bus to interact.
+2) Distributed computing using multiple machines.
+
+- Huge data handled by Hadoop MR, Apache spark.
+- GPU used by Keras, Tensorflow[Also has a distributed part], Caffe, Spark.
+
+ML checklist:
+--------------
+1. Frame the problem and look at the big picture.
+2. Get the data
+3. Explore the data to gain insights.
+4. Prepare the data for ML algo.
+5. Explore many models and short list the best ones.
+6. Fine tune the models
+7. Present the solutions
+8. Launch, Monitor and maintain the system.
+
+Types of variables:
+-------------------
+All variables:
+  - Numerical -> continuous , discrete
+  - categorical -> regular categorical, ordinal
+
+=> Box plot -> range of the middle 50% of the data, distance between the first quartile(25 percentile)
+and third percentile(75 percentile).
+IQR (Inter quartile ranges)
+
+=> In normal distribution, mean === SD
+=> Perforamnce measure is RMSE
+
+Create data:
+--------------
+=> Data are scaled and caped. So you might see a small spike at the end.
+=> seed => controls the randomness
+=> Problem with custom function of test, train, split is that the solution will break when fetvh updated dataset.
+
+VVIP: https://github.com/cloudxlab/ml/blob/master/machine_learning/end_to_end_project.ipynb
+
+=> avoid snooping bias is the model will remember test data.
+=> train_test_split of sklearn doesn't provide a unique id.
+
+
+
+Stats used for considering strong params: [Gaining insights]
+------------------------------------------------------------
+- Correlation indicates the extent to which two or more variable fluctuate together.
+Overfitting occurs when algo captures noise of data. It is a result of excessity complicated model.
+
+
+strat_train_set.drop("median_house_value",axis=1) -> Does not delete  the column but creates a new dataset.
+isn=housing.isnull()
+isn.any(axis=1)
+
+
+Cleaning data:
+---------------
+- Create functions to take create of missing features.
+- For missing features, either drop row/column/set to mean/median
+
+Use df methods
+
+OR
+
+Imputer: from sklearn.preprocessing import Imputer
+imputer= Imputer(strategy="median")
+housing_num=housing.drop('ocean_proximity',axis=1)
+imputer.fit(housing_num)
+imputer.statistics_
+X = imputer.transform(housing_num) //This is a numpy array
+housing_tr = pd.DataFrame(X,columns=housing_num.columns)
+housing_tr.info()
+
+Feature scaling min-max scales in the range of [0,1]
+
+housing_cat = housing['ocean_proximity']
+housing_cat.head(10)
+
+- When categorical variables are ordinal, we can give them a number, 0,1,2,3 and then use it in table.
+
+- When categorical variables are not ordinal, we use One-Hot Encoding where you create a column  
+and create one binary attribute per category.
+This OneHoteEncoder provided by scikit learn.Encode categories as one-hot vectors.
+np.array([1,2,3]).reshape(-1,1)
+
+
+Feature scaling:
+----------------
+- ML algo do not perform well when the input numerical attributes have very diff scale.
+
+Two ways:
+1) Min-max scaling -> normaliztion [0,1] -> x =  x - minx /maxx - minx => good when using neural networks.
+2) Standardization -> variance between valiues is high [SAT, Act scores]
+(x-x(bar) / sd)
+output will have properties of SD with 0 mean and unit variance.
+
+Transformation pipelines using Pipeline from sklearn:
+------------------------------------------------------
+- skLearn does not handle DF.
+- DataFrameSelector to select numerical or categorical columns.
+
+
+
+

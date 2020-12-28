@@ -27,3 +27,89 @@ so the browser stops the process, and our POST request never reaches the target.
 An attacker can trigger those requests without a preflight request, meaning there’s no protection at all.
 
 https://developer.mozilla.org/en-US/docs/Web/HTTP/CORS
+
+
+CORS: a.k.a. Cross-Origin Resource Sharing
+Any web developer who’s been at it for a while has seen this dreaded error message:
+
+XMLHttpRequest cannot load http://domain.example. Origin http://domain1.example is not allowed by Access-Control-Allow-Origin.
+For developers working on a web client for a public API, the browser checks for cross-origin resource sharing (CORS) to make sure that the request is secure, which means that the browser checked the requested endpoint and since it’s not finding any CORS headers, or the headers don’t specify our domain as valid, it is cancelling the request for security reasons.
+
+For API designers, this is a very relevant error because CORS needs to be taken into account, either by manually allowing it or by denying it.
+
+If you’re designing a public API, you need to make sure that you specify in the response headers that any domain can make a request. This is the most permissive of all possible settings.
+
+If, on the other hand, you’re defining a private API, then the CORS headers help define the only domains that can actually request any kind of resource of the endpoints.
+
+Normally, a web client will follow a set of steps on every CORS request :
+1.	
+First, the client will ask the API server if the desired request is possible (Can the client query the wanted resource using the needed method from the current origin?). This is done by sending a “pre-flight”1 request with the Access-Control-Request-Header header (with the headers the client needs to access) and the Access-Control-Request-Method header (with the method needed).
+
+ 
+2.	
+Then the server will answer with what is authorized, using these headers: Access-Control-Allow-Origin with the allowed origin (or * for anything), Access-Control-Allowed-Methods with the valid methods, and Access-Control-Allow-Headers with a list of valid headers to be sent.
+
+ 
+3.	
+Finally, the client can do the “normal” request.
+
+ 
+If anything fails to validate during the pre-flight request (either the requested method or the headers needed), then the response will not be a 200 OK response.
+
+----------
+
+Cross-origin resource sharing (CORS) is an important HTTP mechanism. It is responsible for allowing or denying asynchronous requests from other domains.
+
+CORS , in practice, includes only the HTTP headers that are included on the server side. Those headers can indicate which domain can consume the API, which HTTP methods are allowed, and, mainly, which endpoints can be shared publicly for applications from other domains to consume. Generally when implementing CORS in a browser, each cross-origin request will be preceded by an OPTIONS request that checks whether the GET or POST will be okay.
+
+Enabling CORS in the API
+As we are developing an API that will serve data for any kind of client-side applications, we need to enable the CORS ’s middleware for the endpoints to become public, meaning that any client can make requests on our API. For security reasons, then, let’s install and use the module cors to limit which resources a client can gain access to from another domain.
+
+1   npm install cors@2.7.1 --save
+To initiate it, just use the middleware app.use(cors()) in libs/middlewares.js.
+
+ 1   import bodyParser from "body-parser";
+ 2   import express from "express";
+ 3   import cors from "cors";
+ 4
+ 5   module.exports = app => {
+ 6     app.set("port", 3000);
+ 7     app.set("json spaces", 4);
+ 8     app.use(cors());
+ 9     app.use(bodyParser.json());
+10     app.use(app.auth.initialize());
+11     app.use((req, res, next) => {
+12       delete req.body.id;
+13       next();
+14     });
+15     app.use(express.static("public"));
+16  };
+When using only the function cors(), the middleware will release full access of our API. However, it is advisable to control which client domains can have access to, which methods they can use , and, mainly, which headers must be required for the clients to include in the request. In our case, let’s set up only three attributes: origin (allowed domains), methods (allowed methods), and allowedHeaders (requested headers).
+
+In libs/middlewares.js, let’s add these parameters in the app.use(cors()) function.
+
+ 1   import bodyParser from "body-parser";
+ 2   import express from "express";
+ 3   import cors from "cors";
+ 4
+ 5   module.exports = app => {
+ 6     app.set("port", 3000);
+ 7     app.set("json spaces", 4);
+ 8     app.use(cors({
+ 9       origin: ["http://localhost:3001"],
+10       methods: ["GET", "POST", "PUT", "DELETE"],
+11       allowedHeaders: ["Content-Type", "Authorization"]
+12     }));
+13     app.use(bodyParser.json());
+14     app.use(app.auth.initialize());
+15     app.use((req, res, next) => {
+16       delete req.body.id;
+17       next();
+18     });
+19     app.use(express.static("public"));
+20  }
+Now we have an API that is only going to allow client apps from the address http://localhost:3001. Don’t be concerned, because this will be the domain of the client application that we’ll build in the next chapters.
+
+A BIT MORE ABOUT CORS
+For study purposes , to understand CORS headers and, most important, to learn how to customize the rule for your API, I recommend you read the full documentation available at https://developer.mozilla.org/en-US/docs/Web/HTTP/Access_control_CORS .
+

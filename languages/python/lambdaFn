@@ -1,0 +1,21 @@
+add_bangs = (lambda a: a + '!!!')
+echo_word = (lambda a,b:a*b)echo_word = (lambda a,b:a*b)
+echo_word = (lambda a,b:a*b)
+
+
+Reduce:
+------
+from functools import reduce
+# Create a list of strings: stark
+stark = ['robb', 'sansa', 'arya', 'brandon', 'rickon']
+
+# Use reduce() to apply a lambda function over stark: result
+result = reduce(lambda item1, item2:item1+item2, stark)
+
+Filter:
+-------
+result = filter(lambda a: len(a)>6, fellowship)
+
+Map:
+-----
+map(lambda a:a*a, sequence) // this returns a list

@@ -1,0 +1,17 @@
+- of the java.util.concurrent.locks package
+
+Fine grained locking vs coarse grained locking:
+------------------------------------------------
+- In coarse grained locking, you will have just 1 lock.
+- In fined grained locking, you have multiple locks and here you will have chances of deadlock
+
+Conditions for deadlock:
+-------------------------
+1) Mutual Exclusion - only one thread can have exclusive access to resource.
+2) Hold and wait - At least one thread is holding a resource  and is waiting for another resource.
+3) Non-preemptive allocation - A resource is released only after the thread is done using it.
+4) Circular wait - A chain of atleast two threads each one is holding one resource and waiting for another resource.
+
+
+- Solution to avoid deadlock is to keep the order of the lock same.
+

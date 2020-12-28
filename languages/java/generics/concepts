@@ -1,4 +1,5 @@
-Why generics?
+# Why generics?
+--------------
 - Collections are by nature hetrogenous. They can contain any object.
 - Generics stop runtime errors at compile time.
 - Type-safety without copy and paste
@@ -8,30 +9,26 @@ Binary compatibility of generics:
 ----------------------------------
 You can replace a legacy class file with a generic class file without changing or recompiling any client code.
 
-Steps to make a class generics:
+# Steps to make a class generic:
 -------------------------------
+a) Class changes:
+
 1) CircularBuffer<T> ->  Make class name generics
 2) Make parameters as T -> private T[] buffer; final T value;
 3) Castings should be made this way -> (T[]) new Object[size];
 4) Change method parameters  and return value ->  offer(T value) & public T poll()
+
+b)Initilization phase:
+
 5) Initialize collection as Circular<String>  buffer = new Circular<String>();
-6) They make code Typesafe
-
-When in constructor you dont want parameters to be null:
-
-public Person(String name, int age){
-  Objects.requireNonNull(name);
-  this.name=name;
-  this.age=age;
-}
 
 
-# Here we have generic recipies:
+# Here we have generic patterns: 
 --------------------------------
 
-1) Implement a generic type:
--------------------------
-public class AgeComparator implements Comparator<ClassName>{
+1) Implement a generic type: [Implementing a specific type][Implementing a particular interface method]
+----------------------------
+public class AgeComparator implements Comparator<Person>{
  public int compare(final Person o1,final Person o2){
      return 0; //Integer.compare(o1.getAge(),o2.getAge()) [Multiply this by -1 for negative]
  }
@@ -40,8 +37,8 @@ public class AgeComparator implements Comparator<ClassName>{
 Collections.sort(list,new AgeComparator())
 
 
-2) Passing parameter to generic type:
-----------------------------------
+2) Passing parameter to generic type: [Fully generic type, you want generic class and compare it very generically]
+-------------------------------------
 If you want a reverse version of any comparator, use:
 
 public class ReverseComparator<T> implements Comparator<T>
@@ -59,10 +56,9 @@ public class ReverseComparator<T> implements Comparator<T>
 
 Collections.sort(list,new ReverseComparator<>(AgeComparator()))
 
-3) Type bounds:
+3) Type bounds: [If you dont want to implement that method/ tha params have some feature instead of class]
 ----------------
-
-public class SortedPair<T extends Comparable<T>>{
+public class SortedPair<T extends Comparable<T>>{  //Used if class itself has the self compare method
 
    private final T first;
    private final T second;

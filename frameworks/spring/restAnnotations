@@ -1,3 +1,5 @@
+https://learning.oreilly.com/library/view/enterprise-java-microservices/9781617294242/kindle_split_011.html
+
 @JsonInclude(value = Include.NON_NULL)
 @JsonIgnoreProperties(ignoreUnknown = true)
 

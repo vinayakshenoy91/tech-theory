@@ -1,0 +1,2 @@
+- Give  number of items in arraylist as this will improve perf. new ArrayList<>(50000)
+- Sorting is faster compared to linked list

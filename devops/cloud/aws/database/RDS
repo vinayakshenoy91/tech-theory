@@ -1,0 +1,26 @@
+- AWS relation DB
+- Push button scaling.
+- 6 popular DB engines: Aurora, MySQL,PostgresSQL, MariaDB, Oracle, SQL Server.
+
+- Automatic backup can be taken in s3 and is for 35 days,
+Last restorable time is typically withing last 5 min
+- Point in time restore upto specified second.
+
+- Snapshots are user initiated and kpt until explicitly deleted.Suitable for long term retention 
+and copy to anotehr region.
+
+- Read replica to offload read traffic from primary instance.
+Data can be stale.
+
+- RDS performs failover during compute scaling.Interruption to client for duration of failover.
+
+- Zero downtime for storage scaling. SQL upto 16TB. Aurora 64TB. MYsql, Oracle and others upto 32TB
+
+RDS permission and encryption:
+-------------------------------
+- IAM for control plane access - Who can create, manage, delete RDS instance.
+- DB specific user for data plane access. Who can connect to DB and run SQL.
+- Encryption at rest using KMS (Optional)
+- Optional encrypted connection support using SSL/TLS
+
+

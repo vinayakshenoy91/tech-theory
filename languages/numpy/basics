@@ -1,0 +1,106 @@
+- Numerical python
+- Provides fast math fn
+- Designed for scientific computation
+- effeciently implemented multi-dmin arrays
+- Needs homogenous elements in an array
+- In Machine Learning, NumPy is mostly used for matrix manipulations.
+- ank
+
+The rank of a NumPy array is the number of dimensions of the array.
+
+e.g. if there is a NumPy array (matrix) of dimension 2x3 (i.e. 2 rows and 3 columns), then the rank of this matrix (array) is 2 since it is a 2-dimensional array.
+
+Shape
+
+The shape of a NumPy array is the dimensions of that array.
+
+e.g. if an array (matrix) has dimensions of 2x3, then the shape of this array (matrix) is (2,3) i.e. 2 rows and 3 columns.
+
+
+- A NumPy array can be created in either of the below ways:
+
+Through passing a Python list
+Through passing a Python tuple
+
+- A NumPy operation is quite faster than a normal Python operation. For example, to multiply two arrays (matrices), 
+NumPy uses Vector operation, while in Python we normally use looping to do the same thing.
+
+We can use the %timeit function of Python to measure and compare the time taken for execution.
+
+Time comparision of python ops and numpy code:
+------------------------------------------------
+def multiply_loops(A, B):
+    c=np.zeros((A.shape[0], B.shape[1]))
+    for i in range(A.shape[0]):
+        for k in range(B.shape[1]):
+            c[i,k] = 0
+            for j in range(B.shape[0]):
+                n = A[i,j] * B[j,k]
+                c[i,k] += n
+    return c
+
+def multiply_vector(A, B):
+     return A @ B
+
+//Check th timing
+%timeit multiply_loops(X, Y)
+%timeit multiply_vector(X, Y)
+
+Text files using numpy:
+--------------------------
+There are two ways (constructs) in NumPy to load data from a text file:
+
+(1) using loadtxt() function
+
+(2) using genfromtxt() funct
+
+loadtxt() function provides less flexibility, whereas genfromtxt() function provides more flexibility.
+
+For example, genfromtxt() function also handles the missing values kind of scenarios in the loaded dataset, 
+whereas loadtxt() function doesn't.
+
+Difference between resize() and reshape() :
+reshape() will create an array with the same number of elements as the original array, i.e. of the same ‘size’ as that of the original array. If you want to convert the original array to a bigger array, reshape() can’t add more elements(than available in the original array) to give you a bigger array. Hence, reshape() is used to create a new array of the same size (as the original array) but of different desired dimensions.
+
+resize() can create an array of larger size than the original array. To convert the original array into a bigger array, resize() will add more elements (than available in the original array) by copying the existing elements (repeated as many times as required) to fill the desired larger size. resize() is used to create a new array of different sizes and dimensions.
+
+Numpy and Pandas - What is NumPy and Pandas ?
+NumPy and Pandas are the Python libraries that are used to manipulate, process and analyze the data. They don't have constructs that can be used to visualize the data, for that we can use another library from Python called matplotlib.
+
+NumPy:
+------
+NumPy stands for 'Numeric Python' or 'Numerical Python'.
+
+It is designed for scientific computations.
+
+It has efficiently implemented multi-dimensional arrays and it also provides fast mathematical functions.
+
+It is mostly used for array-oriented computing.
+
+NumPy's main object is the homogeneous multidimensional array called "ndarray".
+
+Pandas:
+-------
+Pandas provide high-performance, easy-to-use data structures, and data analysis tools.
+
+The DataFrame is the main and widely used data structure of the Pandas library.
+
+DataFrame is a kind of in-memory 2-D table (similar to Excel sheet) with rows and columns.
+
+Using DataFrames, we can create pivot tables (just like Excel sheet), compute one column value using values of other columns, etc.
+
+When do we use NumPy and when we use Pandas?:
+-----------------------------------------------
+Suppose, your data is currently lying in a text file or a database table. You can load this dataset either using Pandas or Numpy. Pandas library is preferred as it is more efficient.
+
+You can load the dataset using Pandas into a Pandas Dataframe. After loading the dataset, you can use Pandas library functions along with Matplotlib library functions to analyze, visualize and perform statistical analysis on the data in the dataset.
+
+You can use NumPy's functions to create random indices and use these random indices with Pandas dataframe to create a shuffled dataset.
+
+Many functions of the Scikit Learn (sklearn) library (like Imputer, OneHotEncoder, predict()) return a NumPy array, which we may need to process using NumPy. Also, we may need to create a Pandas dataframe from an existing NumPy array.
+
+Imputer - It is used to handle missing values in a dataframe
+OneHotEncoder - It is used to perform one hot encoding on categorical values
+predict() - It is used to predict values using a trained ML model
+
+So, we see that Pandas and NumPy are used very much in conjunction with each other throughout the Machine Learning process.

@@ -1,4 +1,0 @@
-- if you want arrays to be printed properly use : Arrays.toString(madMen);
-- While adding or expanding the array, use below:
-
-array = Arrays.copyOf(array, arrsy.length+1)

@@ -1,2 +1,26 @@
 - Putting it in the header is the right way as it will prevent url contamination
 - URL is common and easier
+
+
+Updating URI components is one strategy that many API providers use to define version schemes. These are often inserted as a 
+base for the URI, before the specification of a resource-like entity. For example, take Uber’s ride requests API endpoint, 
+https://api.uber.c​om/v1.2/requests. In this example, v1.2 is inserted before the requests resource. This is similar to the 
+scheme for Twitter’s Ads API, in which 2 is the version: https:/​/ads-api.twitter.c​om/2/accounts. An alternative to including 
+the version before the resource is placing the version after the resource, 
+which would imply that the version is specific to the resource or API method rather than the entire suite of API methods.
+
+
+Using HTTP headers is another way to specify versions. You can do this through custom headers, such as Stripe’s Stripe-Version header, 
+or through the Accept/Content-Type header (Accept: application/json; version=1) or through the Accept header with a custom media type 
+(Accept: application/custom_media+type.api.v1 + json). This scheme is less visible than a URI component, which can make it less 
+desirable for experimentation in the browser, and it can have implications regarding client caching 
+if the client interprets two requests to different versions as the same request. It can, however, reduce URI bloat.
+
+URI components:
+---------------
+Updating URI components is one strategy that many API providers use to define version schemes. These are often inserted as a base for the URI, before the specification of a resource-like entity. For example, take Uber’s ride requests API endpoint, https://api.uber.c​om/v1.2/requests. In this example, v1.2 is inserted before the requests resource. This is similar to the scheme for Twitter’s Ads API, in which 2 is the version: https:/​/ads-api.twitter.c​om/2/accounts. An alternative to including the version before the resource is placing the version after the resource, which would imply that the version is specific to the resource or API method rather than the entire suite of API methods.
+
+The benefit of specifying versions in URI components is that many programming languages, libraries, and SDKs have support for easily binding a request to a version using a base URI. Additionally, if the bulk of requests are GET requests, depending on your authorization system, it’s easy for developers to debug and inspect endpoints with the browser. This scheme should not be used, however, if you’re not ready to support these endpoints as permalinks, because the pattern implies a certain level of resource permanence in the REST paradigm. Finally, if you elect to use URI components to version your API, be prepared to support 300-level HTTP status codes to indicate redirection for moved or moving resources.
+
+
+https://developer.uber.com/docs/riders/guides/versioning

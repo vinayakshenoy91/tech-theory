@@ -1,0 +1,48 @@
+- Convert the interface of a class into another interface that the clients expect. 
+Adapter lets classes work together that could not otherwise because of incompatible interfaces.
+
+
+he Adapter Pattern: Key Features
+
+Intent
+
+Match an existing object beyond your control to a particular interface.
+
+Problem
+
+A system has the right data and behavior but the wrong interface. Typically used when you have to make something a derivative of an abstract class.
+
+Solution
+
+The Adapter provides a wrapper with the desired interface.
+
+Participants and collaborators
+
+The Adapter adapts the interface of an Adaptee to match that of the Adapter’s Target (the class it derives from). This allows the Client to use the Adaptee as if it were a type of Target.
+
+Consequences
+
+The Adapter pattern allows for preexisting objects to fit into new class structures without being limited by their interfaces.
+
+Implementation
+
+Contain the existing class in another class. Have the containing class match the required interface and call the methods of the contained class.
+
+
+
+There are actually two types of Adapter patterns:
+
+•   Object Adapter pattern—The Adapter pattern I have been using is called an Object Adapter because it relies on one object (the adapting object) containing another (the adapted object).
+
+•   Class Adapter pattern—Another way to implement the Adapter pattern is with multiple inheritance. In this case, it is called a Class Adapter pattern.
+
+The Class Adapter works by creating a new class which
+
+•   Derives publicly from our abstract class to define its interface.
+
+•   Derives privately from our existing class to access its implementation.
+
+
+
+Bottom line: A Facade simplifies an interface while an Adapter converts a preexisting interface into another interface.
+

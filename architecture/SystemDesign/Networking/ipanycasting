@@ -1,0 +1,16 @@
+IP Anycasting
+When we go to the address bar in a browser and type the name of a website, let’ say http://​cazton.​com, the Border 
+Gateway Protocol (BGP) will ensure that the request goes to the Cazton.com server via the best route through the Internet. 
+Using IP routing tables, IP Anycasting is smart enough to serve the user’s request from the closest server 
+topographically (not necessarily geographically). Typically, anycast is when a group of servers use the same 
+IP address. Anycasting uses an IP address range that is advertised in the BGP messages and routers are made 
+aware of the topographical path. This way the routers know of which neighbors provide the 
+shortest path to the advertised IP address.
+
+The major benefit of this approach is being able to add new servers and making the routers aware of the new 
+neighbors that can serve the request faster to a certain set of users. This cuts down on latency and bandwidth costs 
+and improves user experience drastically. The main benefits of this approach are seen when you have regions of high 
+traffic and the servers are far apart, including across the major oceans. Apart from performance improvement and 
+service reliability, it also balances the load and reduces the impact of DoS (or Denial of Service attack). It 
+reduces the likeliness of the DoS attack impacting the entire service and reduces it to the local server.
+

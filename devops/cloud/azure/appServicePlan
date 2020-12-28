@@ -1,0 +1,6 @@
+App service plan:
+------------------
+- It is an abstraction of underlying resources.
+- There is a price tier to it.
+- Bound to a certain region
+- Amount of app instance that are running.

@@ -1,0 +1,26 @@
+------------- Math modules --------------
+import math
+from math import factorial
+factorial comes as part of math package
+from math import *
+
+
+math.sqrt()
+math.pow(100,0.5)
+in_rad=math.pi*math_deg/180
+math.sin(rad)
+log_e=math.log(1000)
+
+-------------- Math operators -------------
+a**b -> power operator
+a<>b -> a!=b
+a // b -> integer division
+a/b -> floating division
+int(a) -> helps in concat with an integer
+
+-------------- Random nos -------------------
+import random
+random.random()  //It returns a random float value between 0.0 and 1.0 (including 0.0 but not 1.0).
+
+
+

@@ -1,0 +1,157 @@
+Hands On: Deploying an Ambassador and Memcache for a Sharded Cache
+In Chapter 3 we saw how to deploy a sharded Redis service. Deploying a sharded memcache is similar.
+
+First, we will deploy memcache as a Kubernetes StatefulSet:
+
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: sharded-memcache
+spec:
+  serviceName: "memcache"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: memcache
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: memcache
+        image: memcached
+        ports:
+        - containerPort: 11211
+          name: memcache
+Save this to a file named memcached-shards.yaml and you can deploy this with kubectl create -f memcached-shards.yaml. This will create three containers running memcached.
+
+As with the sharded Redis example, we also need to create a Kubernetes Service that will create DNS names for the replicas we have created. The service looks like this:
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: memcache
+  labels:
+    app: memcache
+spec:
+  ports:
+  - port: 11211
+    name: memcache
+  clusterIP: None
+  selector:
+    app: memcache
+Save this to a file named memcached-service.yaml and deploy it with kubectl create -f memcached-service.yaml. You should now have DNS entries for memcache-0.memcache, memcache-1.memcache, etc. As with Redis, we can use these names to configure twemproxy.
+
+memcache:
+  listen: 127.0.0.1:11211
+  hash: fnv1a_64
+  distribution: ketama
+  auto_eject_hosts: true
+  timeout: 400
+  server_retry_timeout: 2000
+  server_failure_limit: 1
+  servers:
+   - memcache-0.memcache:11211:1
+   - memcache-1.memcache:11211:1
+   - memcache-2.memcache:11211:1
+In this config, you can see that we are serving the memcache protocol on localhost:11211 so that the application container can access the ambassador. We will deploy this into our ambassador pod using a Kubernetes ConfigMap object that we can create with: kubectl create configmap --from-file=nutcracker.yaml twem-config.
+
+Finally, all of the preparations are done, and we can deploy our ambassador example. We define a pod that looks like this:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: sharded-memcache-ambassador
+spec:
+  containers:
+    # This is where the application container would go, for example
+    # - name: nginx
+    #   image: nginx
+    # This is the ambassador container
+    - name: twemproxy
+      image: ganomede/twemproxy
+      command:
+      - nutcracker
+      - -c
+      - /etc/config/nutcracker.yaml
+      - -v
+      - 7
+      - -s
+      - 6222
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: twem-config
+You can save this to a file named memcached-ambassador-pod.yaml, and then deploy it with:
+
+kubectl create -f memcached-ambassador-pod.yaml
+Of course, we don’t have to use the ambassador pattern if we don’t want to. An alternative is to deploy a replicated shard router service. There are trade-offs between using an ambassador versus using a shard routing service. The value of the service is a reduction of complexity. You don’t have to deploy the ambassador with every pod that wants to access the sharded memcache service, it can be accessed via a named and load-balanced service. The downside of a shared service is twofold. First, because it is a shared service, you will have to scale it larger as demand load increases. Second, using the shared service introduces an extra network hop that will add some latency to requests and contribute network bandwith to the overall distributed system.
+
+To deploy a shared routing service, you need to change the twemproxy configuration slightly so that it listens on all interfaces, not just localhost:
+
+memcache:
+  listen: 0.0.0.0:11211
+  hash: fnv1a_64
+  distribution: ketama
+  auto_eject_hosts: true
+  timeout: 400
+  server_retry_timeout: 2000
+  server_failure_limit: 1
+  servers:
+   - memcache-0.memcache:11211:1
+   - memcache-1.memcache:11211:1
+   - memcache-2.memcache:11211:1
+You can save this to a file named shared-nutcracker.yaml, and then create a corresponding ConfigMap using kubectl:
+
+kubectl create configmap --from-file=shared-nutcracker.yaml shared-twem-config
+Then you can turn up the replicated shard routing service as a Deployment:
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: shared-twemproxy
+spec:
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: shared-twemproxy
+    spec:
+      containers:
+      - name: twemproxy
+        image: ganomede/twemproxy
+        command:
+        - nutcracker
+        - -c
+        - /etc/config/shared-nutcracker.yaml
+        - -v
+        - 7
+        - -s
+        - 6222
+        volumeMounts:
+        - name: config-volume
+          mountPath: /etc/config
+      volumes:
+      - name: config-volume
+        configMap:
+          name: shared-twem-config
+If you save this to shared-twemproxy-deploy.yaml, you can create the replicated shard router using kubectl:
+
+kubectl create -f shared-twemproxy-deploy.yaml
+To complete the shard router, we have to declare a load balancer to process requests:
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: shard-router-service
+spec:
+  selector:
+    app: shared-twemproxy
+  ports:
+    - protocol: TCP
+      port: 11211
+      targetPort: 11211
+This load balancer can be created using kubectl create -f shard-router-service.yaml.
+

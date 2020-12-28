@@ -1,0 +1,383 @@
+The ReentrantReadWriteLock and its drawbacks:
+----------------------------------------------
+Here are a few of the important points about ReentrantReadWriteLock:
+
+1) Multiple threads can acquire a read lock simultaneously.
+2) Only one thread can acquire a write lock.
+3) If a thread wants to acquire a write lock and there are some threads that have read lock, 
+the thread will wait until all the threads release the read lock.
+
+
+There are a few problems with using the ReentrantReadWriteLock class:
+
+1) It can lead to starvation.
+2) Sometimes it can be significantly slower than other synchronizers.
+
+
+Stamped lock:
+--------------
+- StampedLock also provides a method to upgrade read lock to write lock
+- Apart from providing separate read and write locks, also has a feature for optimistic locking for reading operations.
+
+The StampedLock class provides three locking modes:
+1) Read
+2) Write
+3) Optimistic read
+
+A) Blocking methods:
+--------------------
+
+1) readLock() - This method is used to acquire the read lock. This method returns a stamp that should be used while releasing the lock.
+2) unlockRead(long stamp) - This method is used to release the read lock. This method takes a stamp as an input. 
+If the stamp provided does not match, IllegalStateException is thrown.
+3) writeLock() - This method is used to acquire the write lock. This method returns a stamp that should be used while releasing the lock.
+4) unlockWrite(long stamp) - This method is used to release the write lock. This method takes a stamp as an input. 
+If the stamp provided does not match then IllegalStateException is thrown.
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.StampedLock;
+
+public class StampedLockDemo {
+
+    static Map<String, Integer> data = new HashMap<>();
+    static StampedLock lock = new StampedLock();
+
+    // Method to read data from the Map.
+    public static Integer readDataFromMap(String key) {
+
+        long stamp = lock.readLock();
+        try {
+            return data.get(key);
+        } finally {
+            lock.unlockRead(stamp);
+        }
+    }
+
+    // Method to write data to the Map.
+    public static void writeDataToMap(String key, Integer value) {
+        long stamp = lock.writeLock();
+        try {
+            data.put(key, value);
+        } finally {
+            lock.unlockWrite(stamp);
+        }
+    }
+
+    public static void main(String args[]){
+        writeDataToMap("ray", 123);
+        Integer val = readDataFromMap("ray");
+        System.out.println(val);
+    }
+}
+
+B) Non-blocking lock methods:
+------------------------------
+If we want, our thread should not block. We can use one of the following methods:
+
+tryReadLock() - Acquire the lock if it is immediately available otherwise don’t block.
+tryWriteLock() - Acquire the lock if it is immediately available otherwise don’t block.
+tryReadLock(long time, TimeUnit unit) - Try to acquire the lock till the provided time limit.
+tryWriteLock(long time, TimeUnit unit) - Try to acquire the lock until the provided time limit.
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.StampedLock;
+
+public class StampedLockDemo {
+
+    static Map<String, Integer> data = new HashMap<>();
+    static StampedLock lock = new StampedLock();
+
+    //Method to read data from the Map. Since we are using tryReadLock(), the thread will not block. 
+    public static Integer readDataFromMap(String key) {
+
+        long stamp = lock.tryReadLock();
+        int result = 0;
+        if(stamp != 0L){
+            try {
+                result = data.get(key);
+            } finally {
+                lock.unlockRead(stamp);
+            }
+        }
+        return result;
+    }
+
+    //Method to write data to the Map. Since we are using tryWriteLock(), the thread will not block.
+    public static void writeDataToMap(String key, Integer value) {
+        long stamp = lock.tryWriteLock();
+        if(stamp != 0L){
+            try {
+                data.put(key, value);
+            } finally {
+                lock.unlockWrite(stamp);
+            }
+        }
+    }
+
+    public static void main(String args[]){
+        writeDataToMap("ray",123);
+        Integer val = readDataFromMap("ray");
+        System.out.println(val);
+    }
+}
+
+C) Optimising read:
+-------------------
+- Acquiring and releasing a lock is a costly process and can lead to starvation.
+Suppose we have a use case where data is read frequently but rarely updated. In this case, it is not advisable to 
+get a read lock every time we are reading.
+In such situations, we can use tryOptimisticRead() for our reading operations.
+
+Here is how tryOptimisticRead() works:
+
+Suppose thread t1 tries to get an optimistic lock
+
+a) If some other thread has already acquired a write lock, thread t1 returns. It is not able to acquire the lock.
+b) If some other thread has already acquired a read lock then tryOptimisticRead() returns an observation stamp.
+c) Now, thread t1 will completes the reading, and then it calls the validate(long stamp) method. 
+This method tells if a write operation after the observation stamp was generated.
+d) If the validation is successful, it means we have the most recent data and we are good.
+e) If the validation is not successful, it means that we may not have the most recent data and we need to do something else.
+
+The benefit of optimizing locking is that we are not actually acquiring the lock so it is a cheap operation.
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.locks.StampedLock;
+
+public class StampedLockDemo {
+
+    static Map<String, Integer> data = new HashMap<>();
+    static StampedLock lock = new StampedLock();
+
+    public static Integer readDataFromMap(String key) {
+        int result = 0;
+        long stamp = lock.tryOptimisticRead();
+
+        if(stamp != 0L){
+                result = data.get(key);
+        }
+
+        if (!lock.validate(stamp)) {
+        // This means that the data was modified after we called optimistic read.
+        // Do extra work here to get the latest data.
+        }
+        return result;
+    }
+
+    public static void writeDataToMap(String key, Integer value) {
+        long stamp = lock.tryWriteLock();
+        if(stamp != 0L){
+            try {
+                data.put(key, value);
+            } finally {
+                lock.unlockWrite(stamp);
+            }
+        }
+    }
+
+    public static void main(String args[]){
+        writeDataToMap("ray",123);
+        Integer val = readDataFromMap("ray");
+        System.out.println(val);
+    }
+}
+
+Converting lock modes:
+-----------------------
+1) tryConvertToWriteLock(long stamp):
+
+If the lock we are trying to convert is already a write lock, then return the lock.
+
+If the lock we are trying to convert is a read lock and a write lock is available then return the write lock and release the read lock.
+
+If the lock we are trying to convert is an optimistic read lock, then return the write lock if available.
+
+Return zero
+
+
+2) tryConvertToReadLock(long stamp):
+
+If the lock we are trying to convert is already a read lock then return the lock.
+
+If the lock we are trying to convert is a write lock then return the read lock and release write lock.
+
+If the lock we are trying to convert is an optimistic read lock, and then return the read lock if it is available.
+
+Return zero.
+
+3) tryConvertToOptimisticRead(long stamp):
+
+If the stamp represents an optimistic read lock, then return it if it is validated.
+
+If the stamp represents a lock then release the lock and return an observation stamp.
+
+Return zero.
+
+
+
+Stamped lock:
+--------------
+You can obtain control of the lock in three different modes:
+Write: In this mode, you get exclusive access to the lock. 
+No other thread can have control of the lock in this mode.
+Read: In this mode, you have non-exclusive access to the lock. There can be other threads that have access to the 
+lock in this mode or the Optimistic Read mode.
+Optimistic Read: Here, the thread doesn't have control over the block. Other threads can get control of the lock 
+in write mode. When you get a lock in the Optimistic Read mode and you want to access the shared data protected by 
+it, you will have to check whether you can access them or not using the validate() method.
+
+The StampedLock class provides methods to:
+Acquire control over the lock in one of the previous modes. If the methods (readLock(), writeLock(), readLockInterruptibly()) are unable to get control of the lock, the current thread is suspended until it gets the lock.
+Acquire control over the lock in one of the previous modes. If the methods (tryOptimisticRead(), tryReadLock(), tryWriteLock()) are unable to get control of the lock, they return a special value to indicate this circumstance.
+Convert one mode into another, if possible. If not, the methods (asReadLock(), asWriteLock(), asReadWriteLock()) return a special value.
+Release the lock.
+All these methods return a long value called stamp that we need to use to work with the lock. If a method returns zero, it means it tried to get a lock but it couldn't.
+A StampedLock lock is not a reentrant lock, such as the Lock and ReadWriteLock interfaces. If you call a method that tries to get the lock again, it may be blocked and you'll get a deadlock.
+It does not have the notion of ownership. They can be acquired by one thread and released by another.
+Finally, it doesn't have any policy about the next thread that will get control of the lock.
+
+
+While the Writer task has control of the lock, neither Reader nor OptimisticReader can access the values. 
+The Reader task is suspended in the readLock() method, while in OptimisticReader, the call to the validate() 
+method returns false and the call to the tryOptimisticRead() method returns 0 to indicate that the lock is 
+controlled in write mode by another thread. When the Writertask releases the lock, 
+both Reader and OptimisticReader tasks will be able to access the values of the shared object.
+
+
+How to do it...
+Follow these steps to implement the example:
+
+First, implement the shared data object. Create a class named Position with two integer attributes, namely x and y. You have to include the methods to get and set the values of the attributes. Its code is very simple so it is not included here.
+Now let's implement the Writer task. It implements the Runnable interface and it will have two attributes: a Position object named position and StampedLock named lock. They will be initialized in the constructor:
+         public class Writer implements Runnable { 
+ 
+          private final Position position; 
+          private final StampedLock lock; 
+ 
+          public Writer (Position position, StampedLock lock) { 
+            this.position=position; 
+            this.lock=lock; 
+          }
+Implement the run() method. In a loop that we will repeat 10 times, get the lock in write mode, change the value of the two attributes of the position object, suspend the execution of the thread for a second, release the lock (in the finally section of a try...catch...finally structure to release the lock in any circumstance), and suspend the thread for a second:
+        @Override 
+        public void run() { 
+ 
+          for (int i=0; i<10; i++) { 
+            long stamp = lock.writeLock(); 
+ 
+            try { 
+              System.out.printf("Writer: Lock acquired %d\n",stamp); 
+              position.setX(position.getX()+1); 
+              position.setY(position.getY()+1); 
+              TimeUnit.SECONDS.sleep(1); 
+            } catch (InterruptedException e) { 
+              e.printStackTrace(); 
+            } finally { 
+              lock.unlockWrite(stamp); 
+              System.out.printf("Writer: Lock released %d\n",stamp); 
+            } 
+ 
+            try { 
+              TimeUnit.SECONDS.sleep(1); 
+            } catch (InterruptedException e) { 
+              e.printStackTrace(); 
+            } 
+          } 
+ 
+        }
+Then, implement the Reader task to read the values of the shared object. Create a class named Reader that implements the Runnable interface. It will have two attributes: a Position object named position and a StampedLock object named lock. They will be initialized in the constructor of the class:
+        public class Reader implements Runnable { 
+ 
+          private final Position position; 
+          private final StampedLock lock; 
+ 
+          public Reader (Position position, StampedLock lock) { 
+            this.position=position; 
+            this.lock=lock; 
+          }
+Now implement the run() method. In a loop that we will repeat 50 times, get control of the lock in read mode, write the values of the position object in the console, and suspend the thread for 200 milliseconds. Finally, release the lock using the finally block of a try...catch...finally structure:
+        @Override 
+        public void run() { 
+          for (int i=0; i<50; i++) { 
+            long stamp=lock.readLock(); 
+            try { 
+              System.out.printf("Reader: %d - (%d,%d)\n", stamp,
+                                position.getX(), position.getY()); 
+              TimeUnit.MILLISECONDS.sleep(200); 
+            } catch (InterruptedException e) { 
+              e.printStackTrace(); 
+            } finally { 
+              lock.unlockRead(stamp); 
+              System.out.printf("Reader: %d - Lock released\n", stamp); 
+            } 
+          } 
+        }
+Then, implement the OptimisticReader task. The class OptimisticReader class implements the Runnable interface. It will have two attributes: a Position object named position and a StampledLock object named lock. They will be initialized in the constructor of the class:
+        public class OptimisticReader implements Runnable { 
+ 
+          private final Position position; 
+          private final StampedLock lock; 
+ 
+          public OptimisticReader (Position position, StampedLock lock) { 
+            this.position=position; 
+            this.lock=lock; 
+          }
+Now implement the run() method. First obtain the stamp of the lock in the optimistic read mode using the tryOptimisticRead() method. Then, repeat the loop 100 times. In the loop, validate whether you can access data using the validate() method. If this method returns true, write the values of the position object in the console. Otherwise, write a message in the console and get another stamp using the tryOptimisticRead() method again. Then, suspend the thread for 200 milliseconds:
+        @Override 
+        public void run() { 
+          long stamp; 
+          for (int i=0; i<100; i++) { 
+            try { 
+              stamp=lock.tryOptimisticRead(); 
+              int x = position.getX(); 
+              int y = position.getY(); 
+              if (lock.validate(stamp)) { 
+                System.out.printf("OptmisticReader: %d - (%d,%d)\n",
+                                  stamp,x, y); 
+              } else { 
+                System.out.printf("OptmisticReader: %d - Not Free\n",
+                                  stamp); 
+              } 
+              TimeUnit.MILLISECONDS.sleep(200); 
+            } catch (InterruptedException e) { 
+              e.printStackTrace(); 
+            } 
+          } 
+        }
+Finally, implement the Main class with the main() method. Create a Position and StampedLock object, create three threads--one for each task--start the threads, and wait for their finalization:
+        public class Main { 
+ 
+          public static void main(String[] args) { 
+ 
+            Position position=new Position(); 
+            StampedLock lock=new StampedLock(); 
+ 
+            Thread threadWriter=new Thread(new Writer(position,lock)); 
+            Thread threadReader=new Thread(new Reader(position, lock)); 
+            Thread threadOptReader=new Thread(new OptimisticReader
+                                               (position, lock)); 
+ 
+            threadWriter.start(); 
+            threadReader.start(); 
+            threadOptReader.start(); 
+ 
+            try { 
+              threadWriter.join(); 
+              threadReader.join(); 
+              threadOptReader.join(); 
+            } catch (InterruptedException e) { 
+              e.printStackTrace(); 
+            } 
+          } 
+        }
+
+The StampedLock class has other methods that you should know:
+
+tryReadLock() and tryReadLock(long time, TimeUnit unit): These methods try to acquire the lock in read mode. If they can't, the first version is returned immediately and the second one waits for the amount of time specified in the parameter. These methods also return a stamp that must be checked (stamp != 0).
+tryWriteLock() and tryWriteLock(long time, TimeUnit unit): These methods try to acquire the lock in write mode. If they can't, the first version is returned immediately and the second one waits for the amount of time specified in the parameter. These methods also return a stamp that must be checked (stamp != 0).
+isReadLocked() and isWriteLocked(): These methods are returned if the lock is currently held in read or write mode, respectively.
+tryConvertToReadLock(long stamp), tryConvertToWriteLock(long stamp), and tryConvertToOptimisticRead(long stamp): These methods try to convert the stamp passed as a parameter to the mode indicated in the name of the method. If they can, they return a new stamp. If not, they return 0.
+unlock(long stamp): This releases the corresponding mode of the lock.

@@ -1,0 +1,26 @@
+Memory managment:
+----------------
+- Each core had L1 and L2 cache and then a comming L3 cache shared by all cores. These all lie in CPU.
+CPU comm to main memory via bus
+- Main memory is in GBs
+  Size of L2 cache: 256kB
+  Size of L1 cache: 32kB
+
+Visibility: - Guarantees consistency of variable.
+-----------
+Value of the item on main memroy has been modified and the correct value is in one of the caches  of CPU and 
+should not be fetched from main memory
+- All the sync write are visible.
+- Visibility means a read should return the value set by the last write.
+
+- Happens-before link exists between all sync or volatile write ops
+and all sync or volatile read ops that follow.
+
+False sharing:
+--------------
+- Cache is organised in lines of data
+- Each line can hold 8 longs (64 bytes)
+- When a visible variable is modified in an L1 cache, all the line is marked "dirty" for the other caches.
+- A read on a dirty line triggers a refresh on this line.
+- Use padding to avoid this issue.
+

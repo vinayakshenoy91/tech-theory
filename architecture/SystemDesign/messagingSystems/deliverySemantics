@@ -1,0 +1,33 @@
+- At most once
+- At least once -> idempotent ops
+- Artificially idempotent -> Send a retry key with status as true or 
+false as part of the message alogn with sequence key.
+
+
+Serialize and Deserialize:
+----------------------------
+- serialization -> Translation of data structure or object into format that can be sent and reconstructed later.
+1) Java Object serialization -> Convert object to bystream and receive it as original object state and if both sides it is JVM
+All memebers are auto serilized except static and those marked as transient
+- Class need to match origin al class defn
+- have an acessingle no-args constructor.
+
+public class Data implements Serilizable{
+  
+  String city;
+
+  int[] ageRange;
+
+}
+
+2) Google's proto buff
+3) JSON
+
+
+
+- deserialize -> Reconstruct data back to DS or object.
+
+
+
+
+

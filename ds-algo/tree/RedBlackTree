@@ -1,0 +1,88 @@
+- A Red-Black Tree is another type of self-balancing Binary Search Tree
+- The nodes in a Red-Black Tree are colored to either red or black. Colored nodes help in re-balancing the tree after insertion 
+or deletion. There are also some cases used to balance the Red-Black Trees
+
+Properties of Red-Black Trees #
+--------------------------------
+Every node has either Red or Black color.
+
+The root is always colored black.
+
+Two red nodes cannot be adjacent, i.e. no red parent can have a red child and vice versa.
+
+Every path from the root to a leaf must contain the exact same number of black-colored nodes.
+
+Every null node is considered to be black in color.
+
+Balancing the tree doesn’t result in a tree being perfectly balanced, but it is good enough to get the time complexity close 
+to O(log n)O(logn) for basic operations like searching, deletion, and insertion.
+
+
+Insertion in Red-Black Tree #
+The following are the steps involved in inserting value into a Red-Black Tree:
+
+Insert currentNode using the standard BST insertion technique that we studied earlier, and make currentNode red.
+
+If currentNode is the root, then change the color of currentNode to black.
+
+If currentNode is not the root, then we will have to perform some operations to make the tree follow the Red-Black property.
+
+
+
+Rebalancing the Tree #
+To balance an unbalanced tree, we have two techniques which are used depending on some conditions that we will discuss shortly. The two techniques are:
+
+Recoloring Nodes.
+Rotating Nodes (left or right).
+But before going deeper into the concepts that’ll be a mess for you to understand at this point, let’s slow down and go step by step.
+
+First, we need to define the structure of the Red-Black Tree and some nodes relative to the currentNode, which is the node that we inserted in the Red-Black Tree.
+
+Node C – newly inserted node (currentNode)
+Node P – parent of currentNode
+Node G – grandparent of currentNode
+Node U – uncle of currentNode / sibling of Node P / child of Node G
+If currentNode is not a root, and the parent of currentNode is not black, first, we will check Node U (the uncle of currentNode). Based on Node U’s color, we will perform some steps to make the tree balanced. If Node U is red, then do the following:
+
+Change the color of Node P and U to black
+Change the color of Node G to red
+Make Node G the currentNode and repeat the same process from step two
+
+If Node U (uncle) is black, then we come across four different scenarios based on the arrangements of Node P and G, just like we did in AVL trees. We will cover each of these scenarios and try to help you understand by using illustrations:
+
+Left-Left: Node P is the leftChild of Node G, and currentNode is the leftChild of Node P
+
+Left-Right: Node P is the leftChild of Node G, and currentNode is the rightChild of Node P
+
+Right-Right: Node P is the rightChild of Node G, and currentNode is the rightChild of Node P
+
+Right-Left: Node P is the rightChild of Node G, and currentNode is the leftChild of Node P
+
+
+Deletion working in RB tree:
+----------------------------
+let’s see the main difference between insertion and deletion operations in Red-Black Trees.
+
+In insertion, we may violate the property of a red parent having a red child. At the same time, in a deletion operation, we may end up deleting a black node which could violate the property of, “the same number of black nodes from root to the null for every path”.
+
+In insertion, we check the color of the uncle node (uncle to currentNode), and based on the color we perform appropriate operations to balance the tree. In the deletion operation, we will check the color of the sibling node (sibling to currentNode), 
+and based on its color we will perform some actions to balance the tree again.
+
+Steps for Deletion #
+Following are the steps involved to remove any value in a Red-Black Tree:
+
+Search for a node with the given value to remove. We will call it currentNode
+Remove currentNode using standard BST deletion operation that we studied earlier
+We already know that for deletion in BST, we always end up deleting either a leaf node or a node with only one child.
+
+In the case of leaf node deletion, it is easy to just delete the node and link the parent of the node to be deleted with null
+In the case of a node with one child, deletion is relatively easy as we just link the parent of the node to be deleted with that one child
+Let’s name some nodes relative to Node C, which is the node that we want to delete:
+
+Node C – node to be deleted (currentNode)
+Node P – parent node of currentNode
+Node S – sibling node (once we rotate tree, Node R will have a sibling node which we name as Node S)
+Node SC – child node of Node S
+Node R – node to be replaced with currentNode and linked with Node P (Node R is the single child of Node C)
+
+

@@ -1,0 +1,32 @@
+Defending:
+----------
+- Cookie/Session/IP binding
+- Concurrent session matching
+- Concurrent query analysis
+- Rate limiting
+- Terms of service enforcement
+- Browser finger printing
+- Complex js wizardy
+- Materilzied view
+- prepared statement
+- Domain model,4-layer validation
+
+
+Design security architecture:
+------------------------------
+- Understand and manage risk
+- Understand and manage attack surface
+- Balance tradeoffs
+
+Governance -> Identify -> Assesssment-> Treatment -> Mitigation-> Acceptance -> Monitoring -> Governance
+
+
+Valuable appraoch for decision making:
+--------------------------------------
+- OWASP RAF
+- FAIR
+- NIST RMF
+- COBIT 5
+- OCTAVA
+
+https://ivychapel.ink

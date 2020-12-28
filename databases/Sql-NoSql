@@ -1,0 +1,121 @@
+Types of No-Sql Databases
+As stated earlier, there are many different kinds of No-Sql databases. They are the following:
+1.	
+Key-Value
+
+KEY-VALUE STORE
+These are schema-less, high-performance data stores with high availability. Partitioning, replication and auto-recovery are a given with such data stores. As the name suggests, they are simply a hashtable of key-value pairs, and the only possible retrieval mechanism is making a query using the actual key. In many cases, these are used as a second-level cache for the most part. These can vary from using just a string like MemcachedDB, to supporting data structures in strings or JSON, as well as BLOBs in case of Redis and Riak KV. For the most part these stores have a very simple API for the Key-Value pairs. It is getting one key using a simple Get-query or multiple keys using a Multi-get, Put-query to associate the value with the key as well as Delete-query to remove the entry of the key-value pair.
+Key-Value stores are capable of handling a constant stream of operations, both read as well as write, with low latency. Key-Value stores can also be configured to persist data to the disk if a certain number of write operations occur per second. So, for example, if you’d like to persist data every second if there are more than 100 writes, in case of Redis, it will just be a simple configuration. Redis would allow you to set multiple such criteria for persisting data.
+
+Values are stored as a blob. This, thereby, removes the need to index the data to improve performance. However, the value is opaque so filtering is pretty much not an option. That’s because the value is usually opaque. They can be used for saving user profiles, user preferences, session information, etc. They can also be used to retrieve product recommendations. One of the often-overlooked use case is use of a customers’ profile, preferences, and shopping habits to generate a wide array of customized ads and coupons.
+
+Key-Value store are like caches but are more powerful. Usually, a cache is just a read-heavy store that works in conjunction with a database. However, a Key-Value store is fully capable of persisting data to the disk. At the same time, a Key-Value store can be used for writes as well as updates. One other distinguishing factor is a transactional guarantee. Since caches are stored in RAM, unlike Key-Value stores, they are not resilient to server failure and won’t be able to provide any sort of transactional guarantees.
+
+When it comes to scalabilty and performance they are probably the best. However, a big problem with Key-Value stores is that they lack most of the complex functionality compared to any other data stores. One good example is of foreign keys. It will have to be introduced by the user manually and enforced by the application too. However, it’s a good idea to enforce foreign keys via the application, and it’s good to have the database enforcing it too. Of course, lack of transaction capability compared to other data stores is another issue. But again, the use of Key-Value stores is for some specific scenarios and it makes sense to use them considering the low overhead.
+
+The popular Key-Value stores may differ in the way they are implemented. For example, MemcachedDB supports simply Key-Value pairs and support ordering of keys. Redis is known to maintain data in RAM while also persisting it on disk. Couchbase Server not only stores data in RAM but is capable of supporting rotating disks. Aerospike has the capability to support RAM as well as SSDs (Solid State Drives). The latter is used to implement secondary indices.
+
+
+
+ 
+2.Document:
+These are by far the most popular of No-Sql databases. The document databases the values in documents, which are of a particular format like XML, JSON, BSON (binary encoding of JSON objects), etc. One of the major distinguishing features of a document Database is that it embeds metadata for the stored values. That makes it be able to retrieve results not just based on the query but also on the contents of the values.
+
+Partitioning, replication, and auto-recovery are provided out of the box with document databases. Since replication is supported, data could live in multiple servers easily. In such stores it makes sense to use techniques like Map-Reduce (to retrieve data from multiple servers and merge it before sending it back to the user). Map-Reduce is a specialization of the generic strategy split-apply-combine, which is used for data analysis. In a distributed environment MapReduce is used in parallel execution and is used for processing and generating big data sets. The Map procedure usually is responsible for filtering and sorting the data, and the Reduce procedure performs a summary operation. Behind the scenes it’s more like a three-step process.
+
+First, the Map procedure is applied by each worker node to local data. The result is stored in some form of temporary storage. The master node ensures that only one copy of redundant data is actually processed. Map procedure creates data based on output keys. Second is the shuffle phase. The worker nodes redistribute data based on output keys that were generated by the map function. Shuffling is done in a way that all data belonging to one key must be located on the same worker node. Third, In the Reduce phase, worker nodes finally process each group of output data (per key) in parallel.
+
+Some of the more popular document databases include MongoDB, Couchbase, and CosmosDB. I had to add CosmosDB here even though it’s hard to categorize CosmosDB. Given the fact that it’s the only database with five levels of consistency support that I know of, this is one database that could be a replacement for an RDBMS as well as a No-Sql database. We do have one caveat with CosmosDB. Even though we can access it using .NET, Node.js, Java, and even MongoDB API, it only runs on Azure.
+
+document databases carefully, you will notice some of them add complex search functionality in a few major releases. Why is that? It’s because they can add structured (or key-related) searches easily just because of the way document databases are constructed but they are missing indices (which are created on the values not keys) that could support unstructured or semi-structured searches.
+
+
+
+ 
+3.Column
+
+
+Like relational databases, data is stored in rows and columns in a column-family Database. However, data is stored in cells that are grouped in columns of data. The logical grouping of all these columns is called a column family. Column families can create any number of columns either statically (via the predefined schema) or at runtime. These columns are logically related together and are typically retrieved as a unit that correspondence to a real-world entity. The real power of the column-family Database is in denormalizing data into column families, thereby increasing retrieval.
+
+We have a Company Name, Phone Number, as well as an Email. As long as we have the key, we can get the exact detail of the family we need. We can also do the same for a different column family. Let’s say we have company employees using Twitter and we have their Twitter usernames. Since all the tweet data is public, if we want to create a column family to store the Twitter data, we can. Figure 5-4 shows how that data will be stored. A great benefit of this approach is scalability. Column family data can live separately in different machines altogether. Querying the key serves as a path to which machine the data lives in. For example, if we know the key 112 we can get the corresponding Tweet text and TweetId in this case.
+ 
+
+A layman’s explanation of Column stores is that it’s very similar to RDBMS but the data is stored in columns instead of rows. This could be very misleading for people coming from a relational database as the principles are quite different altogether. Column-Databases have been inspired by the Google big table and are meant specifically to work in a distributed environment whereas relational databases are not. The benefit of having the column families is to be able to retrieve data based on it. In a relational database, that will mean a bunch of joins to get the same data. However, in this case since the data is already aggregated smartly, we just need the key to get the right column within a column family. We can see that we won’t need a join to retrieve this data in case of Column-Database. Joins require indexing of the entire dataset. Rather than running the query on multiple machines separately, we are better off using the key that will point us to the exact machine where the data is stored.
+
+In a column Database, data is stored in a column family, which is pretty much the same way it’s stored on the disk. Column-Databases are definitely different from document stores. In case of document stores, we have the ability to search through the content. This requires indexing the entire dataset. Some documents store like CosmosDB index all the data by default. CosmosDB also allows the ability to turn off indexing for a particular entity.
+
+If you pay close attention to the data above, it’s actually not correctly formatted JSON. In fact, the absence of a comma between different properties within a family proves that it’s not JSON. As you can see both the column families are flattened in the column-family database as they are. This makes the query retrieval very straightforward as well as super fast
+
+Google big table, HBase, and Cassandra are examples of column Database. Most of the No-Sql databases are actually hybrids of different types of No-Sql databases. For example, Cassandra is a hybrid between a key-value and a column-Database.
+
+Key and nested sets of typed tuples
+
+4.Graph
+
+Even though it’s possible, it may not be practical to have relationships in other No-Sql databases, a graph-based No-Sql database is the best for it. Even though it’s possible, it may not be practical to have relationships in other No-Sql databases, a graph-based No-Sql database is the best for it. 
+
+Graph databases use a graphical representation instead of rows and columns used by relational databases. Another major benefit is that the schema is not enforced rigidly either.
+
+All the nodes of the graph correspond to real-world entities. Edges specify the relationships between these nodes. Each node knows the adjacent nodes. Even with the increase in the number of nodes, the cost of a hop (or taking a step from one node to another) remains the same. The idea of the graph databases is to specify real world relationships as it is and be able to speed up queries including hierarchies and relationships. Queries are sped up because there are indices that speed up lookups.
+
+But the value of graph databases in recommending things based on interests, behavior on an application, as well as purchase history is unprecedented. In such cases, there are a lot more relationships between entities like customer to entities like products. Not only that the relationships are bidirectional and have a lot more attributes. Hence, graph databases make a good candidate for social networks and recommendation engines.
+
+As compared to a Key-Value store that is optimized for lookups, the graph data store is optimized for traversing data between nodes. Generally speaking, lookup would be slower in case of graph database compared to a Key-Value store. Note, we are able to create a tree kind of structure in a Key-Value pair if we have to. This is usually done by having subsets of Key-Value pairs within the immediate parent key, all the way to the root or main parent key. However, a graph database is not just capable of having a simple tree structure, but it also has actual relationships that are quite intertwined, more like a graph. So, if we were to stick to the tree analogy, it’s like having a tree with branches and a trunk, at the same time, roots that connect to other trees in a forest. Some graph databases also end up using Lucene behind the scenes that helps them index their data better and in certain cases they could end up being as fast as a Key-Value store.
+
+Even though both relational databases and graph data stores are capable of handling relationships well, the former are optimized for aggregation, but the latter are optimized for connections. This makes the queries faster for handling all sorts of relationships because they are indexed. However, this doesn’t make Graph databases the end-all and be-all database for Master Data Management (or MDM). They are not very useful for processing high volumes of databases and since they are not optimized for aggregation of data, they are not very good at handling queries that span a vast majority of the database. They do have their place in a polyglot persistence scenario where they are one kind of database, but the primary database may not be a graph database. One thing to remember is that a well-designed and optimized RDBMS might be almost as good as a graph data store on retrieving relationships, but it’s also good at a lot of other use cases that the graph database might not be.
+
+- Linked list of keyed objects.
+
+
+FULL-TEXT SEARCH ENGINE DATABASES:
+-----------------------------------
+
+Even though Full-Text Search Engine databases are a specialized form of document databases, the way they are designed and the fact that they have completely different use cases, makes a case for having a separate discussion. As you know that in the document database, it’s really the key that’s important. If we know the key, we can get the data we need. If we know the value and the subsequent keys within the value, we can also get the contents. In a Search Engine though, it’s all about the value. The value gets indexed after the Search Engine processes it, using analyzers (examines text and generates a token stream), tokenizers (break data into lexical units called tokens), and filters (examines tokens and then keeps them, transforms them, or discards them). Once the value is indexed we retrieve the data we need using the indices.
+
+Full-text search engine databases are optimized to handle textual data, and in many different languages. They have a very granular indexing structure and have flexible query operations. Every document has a weight (or score) attached to it by default. This score can be altered by boosting (discussed below) the document higher or lower so it could be displayed accordingly.
+
+A typical indexing process means analyzing the content, creating a document, analyzing it using some kind of analyzer, indexing that particular document, and adding the index where all indices are stored. These are the stages in a search engine:
+1.	
+Acquire content: We get data from different sources. The idea of this stage is to make sure we remove redundant pieces of data we don’t need. For example, if we got data from a website that is in HTML, we might want to remove the HTML markup.
+
+ 
+2.	
+Build documents: A document is a unit of search and has fields with values. For example, if we are searching for, let’s say Laptops, on an e-commerce website. We will be able to retrieve N (where N is the number) laptops provided they exist in the search engine. That means we were able to retrieve N documents.
+
+ 
+3.	
+Boosting: While retrieving the N documents in No. 2 above, the search engine would rank them using some sort of ranking algorithm. However, during the build process we can also rank a document higher than others by increasing the boost value. This process is called Boosting. For example, if someone is searching for “24-inch monitor” and we have a 27-inch monitor on sale, it makes sense to boost the latter so the user can see it in search results. Boosting can be done during build as well as during retrieval except it’s a little bit more expensive to do it during retrieval process.
+
+ 
+4.	
+Analyze document: A text needs to be broken into tokens that make sense. For example, we may not need to keep the stop words like “a,” “an,” and “the.” We can use the built-in Stop Word Analyzer for this. We may also want to make sure we tokenize phrases together: “passed away”’ and ‘”passed out”’ are different than storing tokens ‘"passed,” “away,” and “out.” We can use a custom phrase analyzer for it.
+
+ 
+5.	
+Index document: Finally, we can index this document and store it in the search engine’s source of record, which could be files, databases, and eventually a copy of this might also live in the RAM just to speed up retrieval.
+
+ 
+A good search engine is one that has high recall without sacrificing precision. Precision happens to be the fraction of retrieved instances that are relevant. Recall is the fraction of relevant instances that are retrieved. So, if we were to search for my company name “Cazton, Inc” and we get, let’s say 15 results and only 12 out of 15 were relevant to my search then the precision is 12/15. However, what if there are total 25 results in the search engine that pertain to ‘Cazton, Inc’? That means the recall is just 15/25.
+
+Another important concept is one of an inverted index. It is an index data structure storing a mapping from content, such as words or numbers, to its locations in a database file, or in a document or a set of documents. If you’ve used an index at the end of the book, you know what an inverted index is. In a book, we can look for a keyword and it shows a list of all pages that keyword is in. In case of search engines, we can use the same logic and make our applications easily searchable. Let’s assume we want to find out which pages on Cazton.com refer to trainings. In that case, we can use the inverted index “training.” A more involved example is show below. Here are some of the trainings on Cazton.com
+
+ Assuming the analyzer gets rid of unwanted characters like ‘-’, ‘.’ and ‘(’, the index for above data would look like this:
+
+ASP.NET core: {(1,1), (2,3)}
+
+Mastering: {(1,0), (2,0)}
+
+To simplify things, we used numbering. This could have very well been the url of the page where the training is listed. Nevertheless, search engines are not only important but are the only kind of databases that make perfect sense for adding search capabilities in the website. They can be used for speeding up searches, creating ranking algorithms, and also some good recommendation engines. With the addition of artificial intelligence in search engines lately, their scope has become broader. Some of the popular search engines are based on Lucene. They are Solr and Elasticsearch. Azure search is a search engine in Azure that provides abstractions that make it easier for developers without a background in information retrieval to be able to add search capabilities to their applications.
+
+
+Strong consistency: This is an RDBMS-like consistency. With every request, the client is always guaranteed to read the latest acknowledge write. However, this is slow, and in order to use this the Cosmos DB account cannot be associated with more than one region.
+
+Bounded staleness: This level guarantees that the reads may lag behind by at most x versions of the document or a certain time interval by the client. For example, if the client sets x=2, the user will be guaranteed to get a document no later than the last two versions. It is the same with time. If the time is set to five seconds, every five seconds the resource will be guaranteed to have been written to all replicas to make sure that subsequent requests can see the latest version.
+
+Session: This is the most popular of all, and as the name suggests, is scoped to a client session. Imagine someone added a comment on a product on an e-commerce website. The user who commented should be able to see it; however, it will take some time before other users on the website can see it too.
+
+Eventual: As the name suggests, the replicas will eventually converge in absence of any additional writes. This happens to be the one with the weakest read consistency but the fastest of all options.
+
+Consistent Prefix: By selecting this option, you ensure that sequence of writes is always reflected during subsequent reads.
+
+

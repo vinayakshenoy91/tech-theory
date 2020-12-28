@@ -1,0 +1,12 @@
+- It is the discipline of experimenting on a system inorder to build confidenceint he system's capability to withstand
+turbulent conditions in production
+
+- Chaos.io
+
+- Collect info about services:
+1) Timeouts
+2) Retries
+3) Fallbacks
+4) % of traffic it served
+
+

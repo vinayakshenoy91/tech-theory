@@ -1,0 +1,152 @@
+Decision tree:
+---------------
+- decision tress are white box model. They are easy to interpret and intutive. So accuracy will be low. 
+As the inerpretability decreases, the accuracy increases. This is for black box model like XGBoost, Random forest,Neural networks, etc.
+
+- They are little unstable when variation in data happens
+
+- They can also estimate the probablity that instance belongs to a particular class k
+To do this:
+a) First it traverses the tree to fidn the leaf node for this instance
+b) Then it returns the ratio of training instance of class k in this node.
+
+- Decision Tress are generally approx balanced, so traversing the decision tree requires going through 
+roughly O(logm) nodes, there m is total number of training instances.
+- Hence the complexity of prediction is independent of the number of features.
+- So the predictions are very fast, even when dealing with large training sets.
+
+- the trainign algo compares all features on all samples at each node.
+
+- This results in a training complexity of O(n*mlog(m)) where n is the number of features,we have to compare all 
+the n features at each of the m nodes.
+
+- By default, the Gini impurity measure is used , but you can select the entropy impurity measure instead by 
+setting the criterion hyperparameter to "entropy". Entropy measures the degree of randomness.
+Gini impurity is slightly faster. Entropy tends to produce slightly more balanced trees.
+Gini impurity tends to isolate the most frequent class in its own branch of the tree.
+
+- To avoid overfitting the training data, you need to restrict the Decision tree's freedom during training.
+
+- Decision tree models are often called non-parametric model because the number of parameters
+is not determined prior training, so the model struture is free to stick closely to the data.
+A parameteric model such as linear model has a predetermined number of parameters, so its degree of 
+freedom is limited, reducing the risk of overfitting but increasing the risk of underfitting.
+
+- Regularization params are:
+a) max_depth -> restricts max depth of decision tree.
+b) min_samples_split -> the min number of samples a node must have before it can be split.
+c) min_samples_leaf -> the min number of samples a leaf node must have.
+d) min_weight_fraction_leaf -> same as min_samples_leaf but expressed as fraction of the total number of 
+weighted instances
+e) max_leaf_nodes -> max number of leaf nodes
+f) max_features -> max number of features that are evaluated for splitting at each node.
+
+increasing min_ * hyperparam or reducing max_ * hyperparam will regularise the model.
+
+CART training algorithm:
+--------------------------
+- Sckit-Learn uses the Classification and Regression Tree (CART) algo to train Decision Tree.
+- The algo first splits the trainign dataset into two subsets using a single feature k and a threshold tk
+- It searches for the pair(t,tk) that produces purest subsets
+- Cost fn that algo tries to minimize is : J(k,tk)=(mLeft/m)*Gleft + (mRight/m)*Gright
+Where G -> measure imputiry of left/right subset
+Where m -> is the number of instances in the left/right subset
+- Once it has successfully split the training set into two, it splits the subsets
+using the same logic, the the subsets and so on , recursively.
+
+- It stops recursion once it reaches the max depth or if it cannot find a split that will reduce impurity.
+- It is a greedy algo as it greedily searches for an optimum split at the top level
+- CART algorithm chooses the feature k and the threshold tk for splitting.
+It chooses the feature k and threshold tk which produces the purest subsets
+
+- The cost function for finding the value of feature k and threshold tk takes into consideration
+ The Gini index values of the subsets
+ The number of instances in the subsets
+ The total number of instances in the node that is being split
+- The training algorithm of decision tree compares all features (or less if max_features is set) on all samples at each node
+-If the number of features in n and number of training set instances is m then the complexity of training of a decision tree is:
+O(nmlog(m))
+
+1) Classification with decsion tree: Finding the right variety of flower:
+-------------------------------------------------------------------------
+- After providing the data and training the model, it is capable of classifing he flowers
+- Features: 
+1) You want the model to be whiteboxed or presentable
+2) Perfwise they are not great. Compared to random forest they are less perf.
+3) they end up overfitting a lot
+4) Good at handling non-linearity compared to various regression models
+
+
+from sklearn.datasets import load_iris
+from sklearn.tree import DecisionTreeClassifier
+
+iris = load_iris()
+iris.keys()
+
+iris['feature_names']
+
+X=iris_data[:,2:] //Coniderign only 2 features
+y  = iris.target
+
+tree_clf= DecisionTreeClassifier(max_depth=2)
+tree_clf.fit(X,y)
+
+//Test it via prediction
+tree_clf.predict_proba([[2.45,1]])
+iris['target_names']
+
+
+//If visualisation of one connecting to another use this
+from sklearn.tree import export_graphviz
+export_graph_viz(tree_clf,out_file='iris_tree.dot', feature_names=iris.feature_names[2:],class_names=iris.target_names, rounded=True, filled=True)
+
+!rm iris_tree.png //Deleting old file
+!dot -Tpng iris_tree.dot -o iris_tree.png
+
+from IPython.display import Image
+Image(filename='iris_tree.png') 
+
+Things to note:
+---------------
+- Values shown  are the errors in the prediction
+- A node's gini attibute measures its impurity
+- A node is pure if all training instances it applies to belong to the same class
+- A Gini coeff of 1 expresses maximal inequality among the training samples.
+- Depth is a hyper parameter here
+
+Idea of creating decision tree:
+
+- Find a feature when taken as node, the impurities in left and right are minimum.
+- Take gini on left and right, if sum of two gini is min, then that particular feature should be the node.
+- Every node represent condition on 1 feature.
+
+
+2) Regression with decision tree:
+----------------------------------
+import numpy as np
+import matplotlib.pyplot as plt
+
+np.random.seed(42)
+
+m=200
+X=np.random.ran(m,1)
+y = 4* (X-0.5) **2 + np.random.randm(m,1)/10
+
+from sklean.tree import DecsionTreeRegressor
+
+tree_reg= DecisionTreeRegressor(max_depth=2,random_state=42)
+
+tree_reg.fit(X,y)
+
+-> The main diff is that instead of predicting  a class in each node, it predicts a values.
+-> Same CART algo works here but it tries to split the training set in a way that minimises the MSE.
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,95 @@
+RULE: CONTENT-TYPE MUST BE USED
+
+RULE: CONTENT-LENGTH SHOULD BE USED
+The Content-Length header gives the size of the entity-body in bytes. In responses, this header is important for two reasons. First, a client can know whether it has read the correct number of bytes from the connection. Second, a client can make a HEAD request to find out how large the entity-body is, without downloading it.
+
+RULE: LAST-MODIFIED SHOULD BE USED IN RESPONSES
+The Last-Modified header applies to response messages only. The value of this response header is a timestamp that indicates the last time that something happened to alter the representational state of the resource. Clients and cache intermediaries may rely on this header to determine the freshness of their local copies of a resource’s state representation. This header should always be supplied in response to GET requests.
+
+RULE: ETAG SHOULD BE USED IN RESPONSES
+The value of ETag is an opaque string that identifies a specific “version” of the representational state contained in the response’s entity. The entity is the HTTP message’s payload, which is composed of a message’s headers and body. The entity tag may be any string value, so long as it changes along with the resource’s representation. This header should always be sent in response to GET requests.
+
+Clients may choose to save an ETag header’s value for use in future GET requests, as the value of the conditional If-None-Match request header. If the REST API concludes that the entity tag hasn’t changed, then it can save time and bandwidth by not sending the representation again
+
+
+RULE: STORES MUST SUPPORT CONDITIONAL PUT REQUESTS
+A store resource uses the PUT method for both insert and update, which means it is difficult for a REST API to know the true intent of a client’s PUT request. Through headers, HTTP provides the necessary support to help an API resolve any potential ambiguity. A REST API must rely on the client to include the If-Unmodified-Since and/or If-Match request headers to express their intent. The If-Unmodified-Since request header asks the API to proceed with the operation if, and only if, the resource’s state representation hasn’t changed since the time indicated by the header’s supplied timestamp value. The If-Match header’s value is an entity tag, which the client remembers from an earlier response’s ETag header value. The If-Match header makes the request conditional, based upon an exact match of the header’s supplied entity tag value and the representational state’s current entity tag value, as stored or computed by the REST API.
+
+The following example illustrates how a REST API can support conditional PUT requests using these two headers.
+
+Two client programs, client#1 and client#2, use a REST API’s /objects store resource to share some information between them. Client#1 sends a PUT request in order to store some new data that it identifies with a URI path of /objects/2113. This is a new URI that the REST API has never seen before, meaning that it does not map to any previously stored resource. Therefore, the REST API interprets the request as an insert and creates a new resource based on the client’s provided state representation and then it returns a 201 (“Created”) response.
+
+Some time later, client#2 decides to share some data and it requests the exact same storage URI (/objects/2113). Now the REST API is able to map this URI to an existing resource, which makes it unclear about the client request’s intent. The REST API has not been given enough information to decide whether or not it should overwrite client#1’s stored resource state with the new data from client#2. In this scenario, the API is forced to return a 409 (“Conflict”) response to client#2’s request. The API should also provide some additional information about the error in the response’s body.
+
+If client#2 decides to update the stored data, it may retry its request to include the If-Match header. However, if the supplied header value does not match the current entity tag value, the REST API must return error code 412 (“Precondition Failed”). If the supplied condition does match, the REST API must update the stored resource’s state, and return a 200 (“OK”) or 204 (“No Content”) response. If the response does include an updated representation of the resource’s state, the API must include values for the Last-Modified and ETag headers that reflect the update.
+
+RULE: LOCATION MUST BE USED TO SPECIFY THE URI OF A NEWLY CREATED RESOURCE
+The Location response header’s value is a URI that identifies a resource that may be of interest to the client. In response to the successful creation of a resource within a collection or store, a REST API must include the Location header to designate the URI of the newly created resource.
+
+In a 202 (“Accepted”) response, this header may be used to direct clients to the operational status of an asynchronous controller resource.
+
+RULE: CACHE-CONTROL, EXPIRES, AND DATE RESPONSE HEADERS SHOULD BE USED TO ENCOURAGE CACHING
+Caching is one of the most useful features built on top of HTTP. You can take advantage of caching to reduce client-perceived latency, to increase reliability, and to reduce the load on an API’s servers. Caches can be anywhere. They can be in the API’s server network, content delivery networks (CDNs), or the client’s network.
+
+When serving a representation, include a Cache-Control header with a max-age value (in seconds) equal to the freshness lifetime. For example:
+
+Cache-Control: max-age=60, must-revalidate
+To support legacy HTTP 1.0 caches, a REST API should include an Expires header with the expiration date-time. The value is a time at which the API generated the representation plus the freshness lifetime. REST APIs should also include a Date header with a date-time of the time at which the API returned the response. Including this header helps clients compute the freshness lifetime as the difference between the values of the Expires and Date headers. For example:
+
+Date: Tue, 15 Nov 1994 08:12:31 GMT
+Expires: Thu, 01 Dec 1994 16:00:00 GMT
+
+
+
+RULE: CACHE-CONTROL, EXPIRES, AND PRAGMA RESPONSE HEADERS MAY BE USED TO DISCOURAGE CACHING
+If a REST API’s response must not cached, add Cache-Control headers with the value no-cache and no-store. In this case, also add the Pragma: no-cache and Expires: 0 header values to interoperate with legacy HTTP 1.0 caches.
+
+RULE: CACHING SHOULD BE ENCOURAGED
+The no-cache directive will prevent any cache from serving cached responses. REST APIs should not do this unless absolutely necessary. Using a small value of max-age as opposed to adding no-cache directive helps clients fetch cached copies for at least a short while without significantly impacting freshness.
+
+RULE: EXPIRATION CACHING HEADERS SHOULD BE USED WITH 200 (“OK”) RESPONSES
+Set expiration caching headers in responses to successful GET and HEAD requests. Although POST is cacheable, most caches treat this method as non-cacheable. You need not set expiration headers on other methods.
+
+RULE: EXPIRATION CACHING HEADERS MAY OPTIONALLY BE USED WITH 3XX AND 4XX RESPONSES
+In addition to successful responses with the 200 (“OK”) response code, consider adding caching headers to 3xx and 4xx responses. Known as negative caching, this helps reduce the amount of redirecting and error-triggering load on a REST API.
+
+RULE: CUSTOM HTTP HEADERS MUST NOT BE USED TO CHANGE THE BEHAVIOR OF HTTP METHODS
+You can optionally use custom headers for informational purposes only. Implement clients and servers such that they do not fail when they do not find expected custom headers.
+
+If the information you are conveying through a custom HTTP header is important for the correct interpretation of the request or response, include that information in the body of the request or response or the URI used for the request. Avoid custom headers for such usages.
+
+
+REGISTERED MEDIA TYPES
+The Internet Assigned Numbers Authority[26] (IANA) governs the set of registered media types and provides links to each type’s published specification (RFC). The IANA allows anyone to propose a new media type by filling out the “Application for Media Type” form found at http://www.iana.org/cgi-bin/mediatypes.pl.
+
+Some commonly used registered media types are listed below:
+
+text/plain
+A plain text format with no specific content structure or markup.[27]
+
+text/html
+Content that is formatted using the HyperText Markup Language (HTML).[28]
+
+image/jpeg
+An image compression method that was standardized by the Joint Photographic Experts Group (JPEG).[29]
+
+application/xml
+Content that is structured using the Extensible Markup Language (XML).[30]
+
+application/atom+xml
+Content that uses the Atom Syndication Format (Atom), which is an XML-based format that structures data into lists known as feeds.[31]
+
+application/javascript
+Source code written in the JavaScript programming language.[32]
+
+application/json
+The JavaScript Object Notation (JSON) text-based format that is often used by programs to exchange structured data.[33]
+
+VENDOR-SPECIFIC MEDIA TYPES
+Media types use the subtype prefix “vnd” to indicate that they are owned or controlled by a “vendor.” Vendor-specific media types convey a clear description of a message’s content to the programs that understand their meaning. Unlike their more common counterparts, vendor-specific media types impart application-specific metadata that makes a message more meaningful to the web component that receives it.
+
+Vendor-specific media types may also be registered with the IANA. For example, the following vendor-specific types are among the many listed in the IANA’s registry (http://www.iana.org/assignments/media-types):
+
+application/vnd.ms-excel
+application/vnd.lotus-notes
+text/vnd.sun.j2me.app-descriptor

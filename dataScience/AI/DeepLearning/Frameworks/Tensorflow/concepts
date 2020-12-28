@@ -1,0 +1,14 @@
+- Powerful opensource lib for numerical computations
+- Fine tuned for large scale ML
+- Train ML model with few lines of code
+- Provides a python api  called TF.Learn(tensorflow.contrib.learn)
+- TF.Learn is compatible with Scikit-Learn
+- Api built on top of tensorflow called Keras, Pretty Tensor
+- Has a visualization tool called TensorBoard
+
+
+Managing graph:
+----------------
+- Any node that we create is added to the default graph
+- x1 = tf.Variable(1)
+- x1.graph is tf.get_default_graph() //True

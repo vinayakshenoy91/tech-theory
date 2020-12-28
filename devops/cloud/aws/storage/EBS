@@ -1,0 +1,14 @@
+- Detach and attach volume to a diff instance in same AZ. Instance and EBS must be in same AZ
+- Build in snspshot capability for incremental backup to S3
+- Create AMI from snapshots to launch new EC2 instances.
+- Volume is replicated within AZ
+- EBS created at AZ level
+- Built in snapshot capability for incremental backup to S3
+- Creates volumes from snapshot(Any AZ in the region)
+- Copy snapshots to another region(DR, expansion)
+- If multiple volumes attached to EC2, you can use one of the option:
+
+1) Stop the system -> issue snapshot -> restart
+2) Take backup at app level (using db s/w)
+3) Use the multi-volume consistent snapshot.
+

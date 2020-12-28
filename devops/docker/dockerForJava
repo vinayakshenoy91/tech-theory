@@ -1,0 +1,55 @@
+- Run a java application using jre
+
+DockerFile:
+----------
+FROM openjdk:8-jre
+ADD target/shopfront-0.0.1-SNAPSHOT.jar app.jar
+EXPOSE 8010
+ENTRYPOINT ["java", ↵
+"-Djava.security.egd=file:/dev/./urandom","-jar","/app.jar"]
+
+
+Docker build:
+-------------
+docker build -t danielbryantuk/djshopfront .
+
+Docker run: 
+-----------
+docker run -p 8010:8010 danielbryantuk/djshopfront 
+
+Docker compose for E2E testing:
+-------------------------------
+
+node {    
+    stage ('build') {
+        git url: 'https://github.com/ ↵
+        danielbryantuk/oreilly-docker-java-shopping.git'
+        // conduct other build tasks
+    }
+    
+    stage ('end-to-end tests') {
+        timeout(time: 60, unit: 'SECONDS') {
+            try {
+                sh 'docker-compose up -d'
+
+                waitUntil { // application is up
+                    def r = sh script: ↵
+                    'curl http://localhost:8010/health | ↵
+                    grep "UP"', returnStatus: true
+                    return (r == 0);
+                }
+                
+                // conduct main test here
+                sh 'curl http://localhost:8010 | ↵
+                grep "Docker Java"'
+                
+            } finally {
+                sh 'docker-compose stop'
+            }
+        }
+    }    
+    
+    stage ('deploy') {
+        // deploy the containers/application here
+    }
+}

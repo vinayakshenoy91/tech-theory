@@ -1,0 +1,40 @@
+app.route("/tasks/:id")
+16       .all((req, res) => {
+17         // Middleware for preexecution of routes          
+18       })
+19       .get((req, res) => {
+20         // "/tasks/1": Find a task          
+21       })
+22       .put((r eq, res) => {
+23         // "/tasks/1": Update a task          
+24       })
+25       .delete((req, res) => {
+26         // "/tasks/1": Delete a task          
+27       });
+
+
+app.route("/tasks")
+ 2     .all((req, res, next) => {
+ 3       delete req.body.id;
+ 4       next();
+ 5     })
+ 6     // Continuation of routes.
+
+ app.route("/tasks/:id")
+ 2     .all((req, res, next) => {
+ 3       delete req.body.id;
+ 4       next();
+ 5     })
+ 6     .get((req, res) => {
+ 7       Tasks.findOne({where: req.params})
+ 8         .then(result => {
+ 9           if (result) {
+10             res.json(result);
+11           } else {
+12             res.sendStatus(404);
+13           }
+14         })
+15         .catch(error => {
+16           res.status(412).json({msg: error.message});
+17         });
+18   })

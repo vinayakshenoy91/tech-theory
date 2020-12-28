@@ -1,0 +1,80 @@
+Steps:
+------
+1. Frame the problem and look at big picture
+- What exactly is the business objective.
+- How company use and benefit fromt he model.
+- What kind of learning it is?
+  -> Supervised , unsupervised, reinforcement
+  -> Classification, Regression, 
+  -> Use batch or online-learning[Reading sensor data]
+- Performance measure using - RMSE
+
+2.Get the data
+- Data might be scaled and capped and hence you might see a spike at the end.
+- Training set has 80% data
+- Test set has 20% data
+-> Use scikit-learn train_test_split() function [https://cloudxlab.com/assessment/displayslide/1317/end-to-end-machine-learning-project-part-2?course_id=71&playlist_id=414 -> Add manual logic]
+- Seed is important coz we want our data model to be trained and evaludated on same train and test set everytime.
+- If data set varies a lot[Splitting to mechnism would vary and if not proerly split will lead to snooping bias], it is good to have each instance in the dataset has a unique and immutable identifier.
+We can decide on the basis of the identifier, if it should go into test set or not.
+This is to totally avoid data snooping bias
+
+Solution is to :
+Compute hash of each instance's identifier. Take only last byte of hash. If last byte is lower or equal to 51 (20% of 256),
+put instance in test set.Data that came in training set last time should come in training set this time as well.
+
+For most of the data set that we use:
+from sklearn.model_selection import train_test_split
+
+- Random sampling methods work fine if dataset is large enough else we are at risk of introducing significant 
+sampling bias:
+---------------
+conveneince sample[Individual who are more accesible], 
+Voluntary response(occurs when sampling has strong opinion on issue), Non-response]
+No-response - If only a fraction of randomly sampled people response to a survey such that sample is no longer 
+representative of population.
+
+
+Sampling methods:
+------------------
+1) Simple random sample(SRS) -> Each case is equally likely to be selected.
+2) Stratified sample -> Divide the population into homogenous strata, then randomly sample from within each stratum.
+3) Cluster sample -> Divide the population clusters, randomly sample a few clusters, then randomly sample 
+from within these clusters.
+
+Limiting the categories:
+housing['income_cat'].where(housing["income_cat"]<5,5.0,inplace=True)
+np.ceil(housing["median_income"]/1.5).value_count() -> This is like group by ops
+
+Limit/Cap the categories:
+-------------------------
+housing["income_cat"]=np.ceil(housing["median_income"]/1.5)
+housing["income_cat"]=housing["income_cat"].where(housing["income_cat"]<5,5.0,inplace=True)//This will cap anything less than 5 to 5.
+housing["income_cat"].hist()
+
+
+Once you have created stratas using the above capping:
+Sklearn StratifiedShuffleSplit Class  to do stratified sampling
+
+
+
+3) Cluster sample -> Divide population cluster, randomly sample few cluster, randomly sample from within these clusters.
+- It is important to have sufficient number of instances in the dataset for each stratum.
+
+
+
+
+3.Explore data to gain insights
+4.Prepare data for ML algo
+5.Explore many diff models and short-list the best ones
+
+
+6.Fine-tune model
+7.Present the solution
+8.Launch,Monitor and maintain the system.
+
+
+Copy and plot data:
+=====================
+strat_test_set.copy() -> Create a copy set
+housing.plot(kind="scatter",x="longitude", y = "latitude", alpha=0.1) //Get transparency and get to know the density 

@@ -1,0 +1,33 @@
+Tools to analyse Heap space/Memory leak:
+-----------------------------------------
+Tool to analyse heap size is Visual VM.
+
+Stack:
+-----
+- Every thread will have stack.
+- Great for local variables.
+- Save simple datatype like primitives.
+One exception: If the Object types are not shared and are removed at end of block of code, then they are stored in stack
+rather than heap.
+
+Heap:
+-----
+- Common memory accessed by multiple threads.
+- String, Customer, Integer objects
+- However, variable reference on object is stored on stack.
+
+
+Metaspace:
+-----------
+- General metadata of classes , methods etc
+- Static primitives stored in Metaspace
+- Static variables are stored in Heap with pointer in Metaspace.
+- Objects referenced from metaspace in a heap will never be garbage collected.
+
+Note; put string in pool explicitly => i.toString().intern()
+
+
+String pool:
+-------------
+- Hashcode of string is calculated to check where does the string sit in the pool
+- Starts with 16 bucket.

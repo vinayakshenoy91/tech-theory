@@ -1,0 +1,119 @@
+- AWS account setup
+- Billing
+- IAM -> User and polcity config -> sagemaker read and s3 bucket access
+- AWS CLI
+  - Install it
+  - pip install awscli
+  - aws configure --profile ml_user_predict
+  - aws s3 ls --profile ml_user_predict
+
+1) Create a bucket
+ S3 bucket is needed to store models and artifacts.
+
+2) Launch jupyter notebook instances.
+sagemaker -> notebook instances ->  t3.medium
+
+
+3) Download sourcecode from git link of chandra lingam. Also download a kaggle dataset given below:
+https://www.kaggle.com/c/bike-sharing-demand/data
+
+
+
+More resources:
+----------------
+https://www.aws.training/Details/eLearning?id=42183
+https://www.aws.training/ -> Practice qn
+
+On premise ML:
+---------------
+On-Premises Usage and other technologies
+ => SageMaker Neo
+For latency-sensitive use cases and for use-cases that require analyzing large amounts of streaming data, it may not be possible to run ML inference in the cloud. Besides, cloud-connectivity may not be available all the time.
+
+For example, identifying issues in a manufacturing plant, processing sensor data in autonomous vehicles, and so forth.
+
+For these use cases, you need to deploy the ML model close to the data source.
+
+SageMaker Neo is a compiler that takes a trained model and converts into an executable that you can run in edge devices.
+
+It is a cross-compiler and supports a variety of hardware platforms and automatically optimizes the model for Intel, NVIDIA, ARM, Cadence, Qualcomm, and Xilinx processor architectures.
+
+It currently supports: MXNet, TensorFlow, PyTorch, or XGBoost models trained using Amazon SageMaker
+
+Benefits
+1. Up to 2X improvement in performance with no loss in accuracy
+
+2. Up to 10X reduction in framework size – Neo keeps only the framework functionality required for your specific model. Neo compiles model and framework into a single executable that can be deployed in your edge device
+
+3. Run the same ML model in multiple hardware platforms
+
+=> AWS IoT Greengrass
+The next challenge is how to deploy the model in your edge device.
+
+AWS IoT Greengrass is a software that extends AWS to edge devices.
+
+With Greengrass, you can run Lambda functions, docker containers, execute predictions on machine learning models in your edge device even when not connected to the internet.
+
+For hosting your model in edge devices, you need to place your SageMaker Neo compiled executable in S3.
+
+To prepare your device, you need to install GreenGrass, install DLR – a compact runtime for ML models, and point to the model location in S3.
+
+Greengrass runtime then downloads the executable and hosts the model in your computer, and you can use it to generate inference locally.
+
+=> DynamoDB Streams
+DynamoDB NoSQL database can capture all changes to a table (addition, deletion, modification, and so forth) using the DynamoDB Streams. The items in streams are time-ordered and available for 24 hours.
+
+The benefit of streams is you can build a loosely coupled system that can monitor for changes in the table and trigger a business logic.
+
+The AWS Lambda has built-in polling support to process DynamoDB Stream records. You can use Lambda to check for desired changes to items in DynamoDB and invoke Machine Learning models in SageMaker for inference.
+
+The DynamoDB Streams provide a flexible mechanism to integrate machine learning inference to an existing solution
+
+=> Horovod
+Horovod is a distributed deep learning training framework for TensorFlow, Keras, PyTorch, and Apache MXNet.
+
+"The goal of Horovod is to make distributed deep learning fast and easy to use.
+
+The primary motivation for this project is to make it easy to take a single-GPU training script and successfully scale it to train across many GPUs in parallel."
+
+https://github.com/horovod/horovod
+
+"Amazon SageMaker provides for TensorFlow model hosting and training, including fully managed distributed training with Horovod and parameter servers."
+
+https://aws.amazon.com/blogs/machine-learning/launching-tensorflow-distributed-training-easily-with-horovod-or-parameter-servers-in-amazon-sagemaker/
+
+=> T-SNE
+T-SNE is a visualization technique for high dimensional datasets.
+
+For example, in natural language processing, we need to convert word to vector.
+
+FastText/BlazingText is a popular algorithm for text classification and Word2Vec generation.
+
+For word representation, the number of dimensions can be anywhere from 100-300. The words that are used in a similar context are closer to each other.
+
+T-SNE helps in visualizing large dimensional data.
+
+For example, in the below AWS example notebook file, there is a T-SNE word embedding plot
+
+"you can still see clusters of similar words such as below where 'british', 'american', 'french', 'english' are near the bottom-left, and 'military', 'army' and 'forces' are all together near the bottom."
+
+https://github.com/awslabs/amazon-sagemaker-examples/blob/master/introduction_to_amazon_algorithms/blazingtext_word2vec_text8/blazingtext_word2vec_text8.ipynb
+
+
+
+Why not run tensorflow in local computer?
+-------------------------------------------
+While you can run the TensorFlow model directly by deploying the stack, 
+you would need to build the software infrastructure to manage, maintain, and secure the model. 
+Moreover, you would require powerful computing resources. With SageMaker Neo, you can 
+gain up to 10x reduction in framework size, and your model is converted into an executable that can 
+be easily deployed to your edge device using the IoT Greengrass. You can also run the same model on 
+multiple hardware platforms. Direct Connect is used for connecting on-premises data center to AWS
+
+Near real-time anomaly detection of transactions for an online retailer:
+--------------------------------------------------------------------------
+You can use the Random Cut Forest model for anomaly detection. With DynamoDB Streams, you can build a loosely coupled 
+system that can monitor for changes in the table and trigger a business logic. This option will minimize changes to the 
+core retailer system while incorporating ML capability. Modifying a solution to invoke Lambda will require more changes 
+to the retailer system. SageMaker Neo is not suitable for this 
+use-case as the retailer solution is already running on AWS and you can directly invoke the SageMaker endpoint.

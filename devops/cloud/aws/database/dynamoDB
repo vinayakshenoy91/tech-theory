@@ -1,0 +1,51 @@
+- It is a partitioned B-tree structure.
+- It is immediately consistent and hihgly durable.
+- Single attribute partition key and optional single attribute sort key.
+- Max item size if 400kb
+- Composite primary key [like year and title] -> Primary key and sort key
+- Partition key must be chosen such that it has large number of unique values.
+- Automaitc replication across multi AZ
+- DynamoDB Global Table -> Multi-region, Multi-master
+- Supports ACID
+- Backup with point in time recovery
+- Supports TTL
+- Item size < 400KB
+
+Trade-off while choosing:
+------------------------
+- You need to pull the data and do the processing at app end. (Ex: Finding value of all orders for a customer)
+- Storing 1TB data is 10 times as that stored in S3
+- Cost optimization: On-demand costs $1.25 per million writes, and $0.25 per million reads
+- Provisioned capacity: On paper, that same workload that cost $1/day to serve 1 million pages would only cost $0.14/day 
+with provisioned capacity, which seems like a very spectacular cost reduction. However, this calculation assumes that:
+
+1)Requests are evenly distributed over the course of the day
+2)There is absolutely zero capacity headroom. (You would get throttled if there were a million and one requests in a day.)
+Obviously, both of these assumptions are impractical. In reality, you’re going to have to provide abundant headroom in order to deal 
+with the peak request rate,as well as to handle any general uncertainty in demand. With provisioned capacity, 
+you will have the burden to monitor your utilization and proactively provision the necessary capacity.
+
+- move from on-demand to provisioned
+
+- DynamoDb indexes:
+1) Local index:
+
+The only advantage of local indexes is that they’re immediately consistent, but they do come with a very insidious downside. 
+Once you create a local index on a table, the property that allows a table to keep growing indefinitely goes away. Local indexes come with the 
+constraint that all the records that share the same partition key need to fit in 10 GB, 
+and once that allocation gets exhausted, all write operations with that partition key will start failing.
+
+2)Global index:global indexes don’t constrain your table size in any way, but reading from them is eventually consistent 
+(although the delay is almost always unnoticeable). 
+
+DynamoDB has an internal queue-like system between the main table and the global index, and this queue has a fixed (but opaque) size. 
+Therefore, if the provisioned throughput of a global index happens to be insufficient to keep up with updates on the main table, then 
+that queue can get full. When that happens, disaster strikes: All write operations on the main table start failing.
+
+The most problematic part of this behavior is that there’s no way to monitor the state of this internal queue. So, the only way to prevent it is:
+
+To monitor the throttled request count on all your global indexes, and then to react quickly to any throttling by provisioning 
+additional capacity on the affected indexes.
+
+
+

@@ -1,0 +1,3 @@
+Map<Category, List<Book>>booksByCategory = books.stream().
+                                        filter(book-> book.rating>=4.5)
+                                        .collect(groupingBy(Book::getCategory));

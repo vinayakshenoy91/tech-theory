@@ -1,0 +1,19 @@
+Reverse proxy or HTTP accelerators. HTTP Accelerators can be used to improve the response time to remote users. 
+There are commercially available products that can serve as good reverse proxies.
+
+The accelerators act as a forward proxy for multiple HTTP clients. By examining the headers of the resources, 
+the accelerator can understand which objects can be cached. So, it saves static objects in memory-based or disk-based 
+object cache. Whenever the user requests those objects, they had retrieved from the cache itself. Even though 
+the accelerator is smart enough to cache only the objects that have the required headers (Cache-Control and pragma), 
+it could be configured to exclude specific objects from caching.
+
+It makes use of the HTTP header (Last-Modified) to detect if the static object is still fresh. If the object has 
+been modified, it will retrieve the latest copy of the object and send it to the user. The configuration allows us 
+to disable specific objects from being cached. We can configure disabling caching enforcement by modifying the 
+conditional request from the browser. Sometimes for some kinds of static objects, including stylesheets and scripts, 
+the browser may send a conditional request to the server. If this object is not available in this HTTP accelerator, 
+we can modify the request and move the condition so that the server is forced to respond with the object that would 
+later be saved in the proxy. We can also configure it to enable web server compression. Just FYI, mostly the proxy has 
+a better compression than the web server. However, this is just one configuration option which is a good one to test 
+before we use it. Other configuration options include flushing the cache for troubleshooting purposes. 
+A major benefit of a commercial accelerator is the ability to access analytics on acceleration statistics.

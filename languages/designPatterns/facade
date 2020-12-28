@@ -1,0 +1,41 @@
+Defn:
+-----
+
+- Provide a unified interface to a set of interfaces in a subsystem. 
+- Facade defines a higher-level interface that makes the subsystem easier to use.
+
+When to use facade?
+--------------------
+- This approach works only when using a subset of the system’s capabilities or when interacting 
+with it in a particular way.
+
+
+Features:
+--------
+Intent
+
+You want to simplify how to use an existing system. You need to define your own interface.
+
+Problem
+
+You need to use only a subset of a complex system. Or you need to interact with the system in a particular way.
+
+Solution
+
+The Facade presents a new interface for the client of the existing system to use.
+
+Participants and collaborators
+
+It presents a simplified interface to the client that makes it easier to use.
+
+Consequences
+
+The Facade simplifies the use of the required subsystem. However, because the Facade is not complete, certain functionality may be unavailable to the client.
+
+Implementation
+
+Define a new class (or classes) that has the required interface.
+
+Have this new class use the existing system.
+
+Variations on Facade: Reduce the number of objects a client must work with

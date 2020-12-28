@@ -1,5 +1,0 @@
-- mapname.keySet()
-- mapname.values()
-
-
-for(Map.Entry<String,Person> entry:madMen.entrySet())

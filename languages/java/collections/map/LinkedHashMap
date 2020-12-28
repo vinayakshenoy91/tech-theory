@@ -1,0 +1,3 @@
+- Items are retrived in same order in which they are added.
+- There will be an extra pointer maintained between first and second item in the linked list.
+

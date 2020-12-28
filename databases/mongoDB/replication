@@ -1,0 +1,4 @@
+- Read and write is done from primary. If primary goes down, there is a election and till then there can be no writes made
+until a node is elected as primary.
+
+- We can issue write concern or write replication of 2 or majority.

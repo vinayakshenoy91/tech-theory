@@ -1,0 +1,16 @@
+SLO:
+---
+- It is a principled way of saying what level of downtime is acceptable.
+- Error rate: Acceptable error rate
+- Latency expectations
+
+Observable system gives you: context, status, expectations, debuggability
+
+How good your intrumentaiton tol must be:
+- Must have integration for Web, RPC and storage client
+- Context aware(canary or prod)
+- Support all languages
+- Support many analysis tools
+- Developers need to add custom instrumentation
+
+ Look in to this opencensus.io for GRPC

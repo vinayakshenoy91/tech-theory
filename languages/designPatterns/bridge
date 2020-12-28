@@ -1,0 +1,132 @@
+- Intent: Decouple abstraction from implementation
+- The Bridge pattern is useful when you have an abstraction that has different implementations. 
+It allows the abstraction and the implementation to vary independently of each other.
+
+- Allowing for the abstraction to vary independently from the implementation would mean 
+I could add new abstractions without changing my implementations and vice versa.
+
+public class Client {
+  static public void main () {
+     Shape myShapes[];
+      Factory myFactory= new Factory();
+
+      // get rectangles from some other source
+      myShapes= myFactory.getShapes();
+      for (int i= 0; i < myShapes.length; i++) {
+         myShapes[i].draw();
+      }
+   }
+}
+
+abstract public class Shape {
+   protected Drawing myDrawing;
+   abstract public void draw();
+
+   Shape (Drawing drawing) {
+      myDrawing= drawing;
+   }
+   protected void drawLine (
+      double x1,double y1, double x2,double y2) {
+      myDrawing.drawLine(x1,y1,x2,y2);
+   }
+
+   protected void drawCircle (
+      double x,double y,double r) {
+      myDrawing.drawCircle(x,y,r);
+   }
+}
+
+public class Rectangle extends Shape {
+   private double _x1, _y1, _x2, _y2;
+   public Rectangle (Drawing dp, double x1,
+      double y1, double x2, double y2) {
+      super( dp);
+      x1= x1; _y1= y1; _x2= x2; _y2= y2;
+   }
+   public void draw() {
+      drawLine( _x1, _y1, _x2, _y1);
+      drawLine( _x2, _y1, _x2, _y2);
+      drawLine( _x2, _y2, _x1, _y2);
+
+      drawLine( _x1, _y2, _x1, _y1);
+   }
+   protected void drawLine(double x1, double y1,
+      double x2, double y2) {
+      myDrawing.drawLine( x1, y1, x2, y2);
+   }
+}
+
+public class Circle extends Shape {
+   private double _x, _y, _r;
+   public Circle (Drawing dp,
+      double x, double y, double r) {
+      super(dp);
+      x= x; _y= y; _r= r;
+   }
+   public void draw() {
+      myDrawing.drawCircle( _x, _y, _r);
+   }
+}
+
+abstract public class Drawing {
+   abstract public void drawLine(double x1,
+      double y1, double x2, double y2);
+      abstract public void drawCircle(
+      double x, double y, double r);
+}
+
+public class V1Drawing extends Drawing {
+   public void drawLine (
+      double x1,double y1,
+      double x2,double y2) {
+      DP1.draw_a_line(x1,y1,x2,y2);
+   }
+   public void drawCircle (
+      double x,double y,double r) {
+      DP1.draw_a_circle(x,y,r);
+   }
+}
+
+public class V2Drawing extends Drawing {
+   public void drawLine (
+      double x1,double y1,
+      double x2,double y2) {
+      // arguments are different in DP2
+      // and must be rearranged
+      DP2.drawLine(x1,x2,y1,y2);
+   }
+   public void drawCircle (
+      double x, double y,double r) {
+      DP2.drawCircle(x,y,r);
+   }
+}
+
+The Bridge Pattern: Key Features
+
+Intent
+
+Decouple a set of implementations from the set of objects using them.
+
+Problem
+
+The derivations of an abstract class must use multiple implementations without causing an explosion in the number of classes.
+
+Solution
+
+Define an interface for all implementations to use and have the derivations of the abstract class use that.
+
+Participants and collaborators
+
+Abstraction defines the interface for the objects being implemented. Implementor defines the interface for the specific implementation classes. Classes derived from Abstraction use classes derived from Implementor without knowing which particular ConcreteImplementor is in use.
+
+Consequences
+
+The decoupling of the implementations from the objects that use them increases extensibility. Client objects are not aware of implementation issues.
+
+Implementation
+
+•   Encapsulate the implementations in an abstract class.
+
+•   Contain a handle to it in the base class of the abstraction being implemented. Note: In Java, you can use interfaces instead of an abstract class for the implementation.
+
+

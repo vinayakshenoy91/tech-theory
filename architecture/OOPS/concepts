@@ -1,0 +1,181 @@
+Cohesion  & Coupling: Code Complete (Microsoft Press, 1993)/ UML Distilled 
+---------------------
+
+Cohesion refers to how “closely the operations in a routine are related.”
+
+
+the strength of a connection between two routines. Coupling is a complement to cohesion. 
+Cohesion describes how strongly the internal contents of a routine are related to each other. 
+Coupling describes how strongly a routine is related to other routines. The goal is to create routines 
+with internal integrity (strong cohesion) 
+and small, direct, visible, and flexible relations to other routines (loose coupling).
+
+
+Core of OOP:
+------------
+- You exactly know what is happening, you need not know how it is happening.
+- Using objects shifts responsibility to a more local level.
+The advantage of using objects is that I can define things that are responsible for themselves
+- the technique of finding objects by looking for the nouns in the requirements and finding methods by looking for verbs. 
+- The best way to think about what an object is, is to think of it as something with responsibilities. A good design rule 
+is that objects should be responsible for themselves and should have those responsibilities clearly defined.
+- Objects have interfaces for other objects to use
+
+Object:
+-------
+A more useful definition is one based on the conceptual perspective—an object is an entity that has responsibilities. 
+These responsibilities define the behavior of the object.
+
+
+Inheritance:
+--------------
+-  the abstract class is Student. There are two types of Student represented by the concrete classes, RegularStudent 
+and GraduateStudent. RegularStudent is one kind of Student, and GraduateStudent is also a kind of Student.
+This type of relationship is called an is-a relationship. An is-a relationship is an example of something we call inheritance
+
+Encapsulation:
+------------------
+Encapsulation should be thought of as “any kind of hiding.” In other words, it can hide data. But it can also hide the following:
+
+•   Implementations
+
+•   Derived classes
+
+•   Design details
+
+•   Instantiation rules
+
+
+Abstract classes:
+------------------
+Abstract classes are often described as classes that do not get instantiated. This definition is accurate—at the implementation level. But that is too limited. It is more helpful to define abstract classes at the conceptual level. At the conceptual level, abstract classes are placeholders for other classes—classes that implement specifics of the concept the abstract class represents.
+
+That is, they give us a way to assign a name to a set of related classes. This enables us to treat this set of related classes as one concept.
+
+Abstract class
+
+Abstract classes define what a set of related classes can do.
+
+Class
+
+Defines the types of objects I have based on the responsibilities these objects have. Responsibilities can be divided into behavior and/or state. These can be implemented using methods and/or data, respectively.
+
+Concrete Class
+
+A class that implements a particular type of behavior for an abstract class. Concrete classes are specific, nonchanging implementations of a concept.
+
+Encapsulation
+
+Typically defined as data hiding, but better thought of as any kind of hiding (type, implementation, design, and so on).
+
+Inheritance
+
+A class inherits from another class when it receives some or all of the qualities of that class. The starting class is called the base, super, parent, or generalized class, whereas the inheriting class is called the derived, sub, child, or specialized class.
+
+Instance
+
+A particular example of a class. (It is always an object.) A particular instance or entity of a class. Each object has its own state. This enables me to have several objects of the same type (class).*
+
+Instantiation
+
+The process of creating an instance of a class.
+
+Interface
+
+An interface is like a class, but only provides a specification–and not an implementation–for its members. It is similar to an abstract class consisting only of abstract members. When programming, you use interfaces when you need several classes to share some characteristics that are not present in a common base class and want to be sure that each class implements the characteristic on its own (because each member is abstract).
+
+Perspectives
+
+There are three different perspectives for looking at objects: conceptual, specification, and implementation. These distinctions are helpful in understanding the relationship between abstract classes and their derivations. The abstract class defines how to solve things conceptually. It also gives the specification for communicating with any object derived from it. Each derivation provides the specific implementation needed.
+
+Polymorphism
+
+Being able to refer to different derivations of a class in the same way, but getting the behavior appropriate to the derived class being referred to.
+
+Constructor:
+-------------
+
+A constructor is a special procedure that is automatically called when the object is created. 
+Its purpose is to handle starting up the object. This is part of an object’s mandate to be responsible for 
+itself. The constructor is the natural place to do initializations, set default information, set up relationships 
+with other objects, or do anything else that is needed to make a well-defined object. All object-oriented languages 
+look for a constructor and execute it when the object is created.
+
+
+Commaonality and variablity:
+-----------------------------
+In other words, if variations are the specific concrete cases in the domain, commonality defines the concepts in the domain that tie them together. The common concepts will be represented by abstract classes. The variations found by variability analysis will be implemented by the concrete classes (that is, classes derived from the abstract class with specific implementations).
+
+Commonality analysis seeks structure that is unlikely to change over time, while variability analysis captures structure that is likely to change. Variability analysis makes sense only in terms of the context defined by the associated commonality analysis ... From an architectural perspective, commonality analysis gives the architecture its longevity; variability analysis drives its fitness for use.
+
+commonality analysis relates to the conceptual view of the problem domain, and variability analysis relates to the implementation (that is, to specific cases).
+
+Now, specification gives a better understanding of abstract classes
+
+The specification perspective lies in the middle. Both commonality and variability are involved in this perspective. The specification describes how to communicate with a set of objects that are conceptually similar. Each of these objects represents a variation of the common concept. This specification becomes an abstract class or an interface at the implementation level.
+
+
+The relationship between the specification perspective and the conceptual perspective is this: The specification identifies the interface I need to use to handle all the cases of this concept (that is, the commonality defined by the conceptual perspective).
+
+The relationship between the specification perspective and the implementation perspective is this: Given this specification, how can I implement this particular case (this variation)?
+
+
+
+Testability:
+------------
+Testability is strongly correlated to the other practices:
+
+•   Cohesive code is easier to test because the code is only about one thing.
+
+•   Loosely coupled code is easier to test than tightly coupled code because there are minimal interactions to worry about.
+
+•   Redundant code is not harder to test in itself, but requires more tests to cover the redundancy. Therefore, the testability of the entire system degrades when you have more redundancy.
+
+•   Readable code is easier to test because method names and parameters describe precisely what each is supposed to do.
+
+•   Encapsulated code is easier to test because it will have little, if any, coupling to other code.
+
+How to start designing?
+------------------------
+Identify the nouns present, and create objects representing them. Then, find the verbs relating to those nouns (that is, their actions) and implement them by adding methods to the objects.” This process of focusing on nouns and verbs typically leads to larger class hierarchies than we might want. I suggest that using commonality and variability analysis as a primary tool in creating objects is a better approach than looking at just nouns and verbs.
+
+
+I suggest that you design applications in the following way: First, use CVA to identify the concepts (commonalities) and concrete implementations (variabilities) that are present in the problem domain. At this point we are mostly interested in identifying the concepts here, but many variabilities will be identified as part of this process. Any entities in the problem domain that are not included in these concepts (e.g., there may be some one-of-a-kind objects present) should also be identified. Then, after the concept for the functionality you need has been identified, you go on to specify the interface for the abstraction that encapsulates this. Derive this interface by considering how the concrete implementations derived from this abstraction will be used.
+
+This approach basically follows Alexander’s contextual design approach, which is incorporated into the previously mentioned dependency inversion principle. By defining these interfaces, you are also determining which object uses which objects—completing the specification of the design.
+
+
+=> Create an anlysis matrix ti create a high level design
+4. Use the rows to identify rules
+5. Use the columns to identify implementation
+ Identify design patterns from this analysis: Look at rows
+Identify design patterns from this analysis: Look at columns
+Develop a high-level design
+
+
+The Process of Thinking in Patterns
+
+1.   Identify the patterns. Find the patterns in the problem domain.
+
+2.   Analyze and apply the patterns. For the set of patterns to be analyzed, perform steps 2a through 2d:
+
+2a. Order the patterns by context creation. Order the patterns according to how they create context for each other pattern. The idea is that one pattern will create a context for another, not two patterns co-creating contexts for each other.
+
+2b. Select pattern and expand design. Using your ordering, select the next pattern in this list and use it to create a high-level conceptual design
+
+2c. Identify additional patterns. Identify any additional patterns that might have come up during your analysis. Add them to the set of patterns to be analyzed.
+
+2d. Repeat. Repeat for the sets of patterns that have not yet been integrated into our conceptual design.
+
+3.   Add detail. Add detail as needed to the design. Expand method and class definitions.
+
+- I suggest that using commonality and variability 
+analysis as a primary tool in creating objects is a better approach than looking at just nouns and verbs.
+
+There are two basic strategies to follow in creating designs to deal with the variations:
+
+•   Find what varies and encapsulate it.
+
+•   Favor aggregation over inheritance.
+
+

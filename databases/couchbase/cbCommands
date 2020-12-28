@@ -1,0 +1,1 @@
+cbimport json -c couchbase://127.0.0.1 -u Administrator -p password -b couchmusic -f sample -d file://couchmusic1-countries.zip -t 2

@@ -1,0 +1,28 @@
+ import cluster             from "cluster";
+ 2   import os from "os";
+ 3
+ 4   const CPUS = os.cpus();
+ 5   if (cluster            .isMaster) {
+ 6     CPUS.forEach(() => cluster            .fork());
+ 7     cluster            .on("listening", worker => {
+ 8       console.log("Cluster %d connected", worker.process.pid);
+ 9     });
+10     cluster            .on("disconnect", worker => {
+11       console.log("Cluster %d disconnected", worker.process.pid);
+12     });
+13     cluster            .on("exit", worker => {
+14       console.log("Cluster %d is dead", worker.process.pid);
+15       cluster            .fork();
+16       // Ensure starts of a new                   cluster                                   if an old one dies          
+17     });
+18   } else {
+19     require("./index.js");
+20 }
+
+
+"scripts": {
+2     "start": "npm run apidoc && babel-node index.js",
+3     "clusters": "babel-node clusters.js",
+4     "test": "NODE_ENV=test mocha test/**/*.js",
+5     "apidoc": "apidoc -i routes/ -o public/apidoc"
+6   }

@@ -1,0 +1,29 @@
+Zookeeper: 
+- High perf coordinated service designed specifically for distributed systems.
+- It provides  an abstraciton layer for higher level distributed algos.
+- it is a distributed system itself that provides us high availability and reliability.
+- Typically runs in a cluster of odd number of nodes higher than 3
+That is right! We will go into more detail very soon, but this is the basis for both breaking the symmetry 
+as well as arriving to an unanimous agreement among a potentially large number of nodes
+
+Coding and installation part:
+-----------------------------
+- Once Zookeeper is downloaded
+1) Create a log folder
+2) In conf folder, zoo_sample.cfg-> rename to zoo.cfg. that is the config file zookeepr will look at runtime.
+Put dataDir param in it to: /Users/vinayak/Downloads/zookeeper-3.4.12/conf/zoo.cfg
+3) go to bin directory. Has all files to control zookeeper. sh for mac/linux .cmd -> windows
+4) Start zookeeper: ./zkServer.sh start
+5) zkCli.sh help us send command to zookeeper and see what is happening wrto java code.
+Type help to understand more.
+
+create /parent content
+create /parent/child "some content"
+
+get /parent
+
+rmr /parent
+
+
+6) Creating election node
+create /election ""

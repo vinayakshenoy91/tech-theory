@@ -1,0 +1,26 @@
+Jvisual VM
+
+HeapDump analysis:
+------------------
+-XX:+HeapDumpOnOutOfMemoryError
+-XX:HeapDumpPath=someFilePath
+
+- Use JVisaulVM + Memory Analyzer(MAT)
+
+Visual vm -> plugin -> visual gc to view gen of gc.
+
+
+
+Java mision control (JMC): (JMC github for all details) -> Use OpenJDK
+---------------------------
+- Profiler
+- jmc -vm <jdk-path>
+
+Microbench marking:
+-------------------
+- Tool used java microbenchmark harness (JMH) 
+- JMH takes care of warmup period 
+- Run a mvn build and import this in the eclipse. Then run eclipse:eclipse
+- Create file under the src/main/java folder of JMC and then create a method and annotate it with @Benchmark
+- mvn clean install -> java jar banchmarks.jar -bm avgt
+- Takes long time

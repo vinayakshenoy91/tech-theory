@@ -1,0 +1,5 @@
+- Petabyte scale Data wareshouse, massively parallel Relational DB, columnar storage, integrates with S3 datalake.
+- Used business analytics,SQl to explore data lake.
+- Leader consists of Leader node and multiple compute node.
+
+Available storage = storage per compute node x number of compute nodes

@@ -1,0 +1,16 @@
+Static config:
+-------------
+- Put address of all nodes in a document and give it to all nodes while starting so that they konw each other.
+- If one of node restarts, you add the modify the file and provide it to others through automation.
+Done using chef or puppet.
+- Ephemeral sequential node added under service registry. Each node puts address in znode.
+
+- Each node does getChildren() to get other node and uses getData() to talk to a particular node.
+Node will get notified about node children change.
+
+- etcd, consul, netflix eureka
+
+- We still need to distibute the address of zookeeper to all the cluster
+
+
+

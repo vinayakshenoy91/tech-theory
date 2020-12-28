@@ -1,0 +1,10 @@
+http 1.1:
+--------
+- New TCP connection is first established
+- Headers are passed in plain text
+
+http 2:
+--------
+- Interleave multiple request response in same connection
+- logical breaking connection to multiple streams.
+- headers are compressed

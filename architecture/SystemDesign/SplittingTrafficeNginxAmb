@@ -1,0 +1,79 @@
+Ngixn.conf:
+----------
+worker_processes  5;
+error_log  error.log;
+pid        nginx.pid;
+worker_rlimit_nofile 8192;
+
+events {
+  worker_connections  1024;
+}
+
+http {
+    upstream backend {
+        ip_hash;
+        server web weight=9;
+        server experiment;
+    }
+
+    server {
+        listen localhost:80;
+        location / {
+            proxy_pass http://backend;
+        }
+    }
+}
+
+kubectl create configmaps --from-file=nginx.conf
+
+# This is the 'experiment' service
+apiVersion: v1
+kind: Service
+metadata:
+  name: experiment
+  labels:
+    app: experiment
+spec:
+  ports:
+  - port: 80
+    name: web
+  selector:
+    # Change this selector to match your application's labels
+    app: experiment
+---
+# This is the 'prod' service
+apiVersion: v1
+kind: Service
+metadata:
+  name: web
+  labels:
+    app: web
+spec:
+  ports:
+  - port: 80
+    name: web
+  selector:
+    # Change this selector to match your application's labels
+    app: web
+
+And then we will deploy nginx itself as the ambassador container within a pod:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: experiment-example
+spec:
+  containers:
+    # This is where the application container would go, for example
+    # - name: some-name
+    #   image: some-image
+    # This is the ambassador container
+    - name: nginx
+      image: nginx
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/nginx
+  volumes:
+    - name: config-volume
+      configMap:
+        name: experiment-config

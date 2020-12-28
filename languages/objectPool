@@ -1,0 +1,30 @@
+The Object Pool Pattern: Key Features
+
+Intent
+
+Manage the reuse of objects when it is either expensive to create an object or there is a limit on the number objects of a particular type that can be created.
+
+Problem
+
+The creation and/or management of objects must follow a well-defined set of rules. Typically these rules relate to how to make an object, how many objects can be created and how to reuse existing objects once they have finished their current tasks.
+
+Solution
+
+The Client calls ReusablePool’s acquireReusable method when it needs a Reusable object. If the pool is empty, then the acquireReusable method creates a Reusable object if it can; otherwise, it waits until a Reusable object is returned to the collection.
+
+Participants and collaborators
+
+The ReusablePool manages the availability of Reusable objects for use by the Client. Client then uses instances of Reusable objects for a limited amount of time. ReusablePool contains all the Reusable objects so that they can be managed in a unified way.
+
+Consequences
+
+Works best when the demand for objects is fairly consistent over time; large variations in demand can lead to performance problems. To address this issue in the Object Pool pattern, limit the number of objects that can be created. Keeping the logic to manage the creation of instances separate from the class whose instances are being managed results in a more cohesive design.
+
+Implementation
+
+If there is a limit on the number of objects that may be created or if there is a limit on the size of the pool, use a simple array to implement the pool. Otherwise use a vector object. The object responsible for managing the object pool must be the only object able to create those objects. The ReusablePool is implemented with a Singleton pattern. Another variant is to put a release method on the Reusable object—and let it return itself to the pool
+
+Reference
+
+This pattern is not in the Gang of Four book. It is described in Mark Grand’s book, Patterns in Java, Volume 1,* pages 135–142. Clifton Nock’s book, Data Access Patterns,** covers this in a good amount of detail in the context of database resources; he refers to it as Resource Pool.
+

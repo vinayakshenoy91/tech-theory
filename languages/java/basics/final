@@ -1,4 +1,10 @@
-- Veriable value should not be changed once initialized
+- Veriable value should not be changed once initialized.
+- Variable can only be assigned once. We can change from uninitilaised to having a value.
+The value withing object can change but not the object itself. It is the reference that cannot be changed.
+It is like const in js
+
+Final methods cannot be overriden 
+Final classes cannot be subclassed.
 
 public static final double PI = 3.1416 //Implies a constant
 
@@ -25,3 +31,6 @@ constant variables ->
 - initialized with compile-time constant expression
 - final x = 5 -> if not final this will not be replaced below @conpile time.
   final y = 10+x -> now this will be replaced at compile time.
+
+
+

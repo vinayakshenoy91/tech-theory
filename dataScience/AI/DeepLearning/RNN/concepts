@@ -1,0 +1,24 @@
+- 2D data to be interpreted visually can be done well with CNN
+- RNN can work on sequence of arbitrary lengths rather than fixed size inputs.
+
+Applications:
+--------------
+- Analyse time series data like stock prices.
+- Autonomous driving where it can be used to anticipate car trajectories and help avoid accidents.
+- Can take sentences,documents,  or audio samples as input and make them extremenlyh useful.
+- For NLP system like, automatic translation, speech-to-text or sentiment analysis.
+- Autoreply email [What to suggest next], you use RNN
+- Google's Magenta project to predict the next melody.
+
+Features of RNN:
+---------------
+- RNN looks much like a feedforward neural network except it also has connections pointing backwards.
+- Since the output of a recurrent neuron at time step t is a function of all the inputs from previous time steps,
+We can say that it has a form of memory.
+- A part of neural network that preserves some state across time steps is called a Memory cell.
+- Call state at time step t , denoted h(t) us a function of some inputs at that time step and its
+state at the previous time step h(t)=f(h(t-1),x(t))
+- Its output at time step t, denoted y(t) is also a Function of the previous state and the current inputs.
+- RNN can take a sequence of inputs and produce a sequence of outputs. This kind of network is useful for predicting  time series.
+We feed it the prices over the last N days and It must output the prices shifted by one day intot he future.
+- Sequence of vector network is used for movie review as we get a sentiment score from it.

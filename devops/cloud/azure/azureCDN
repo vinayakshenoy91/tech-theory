@@ -1,0 +1,14 @@
+- CDN sits infront if server where you host static content and they provide
+ > custom domain name
+ > auth
+ > global content distribution
+
+- PoPs near to users
+- Static ocntent served via https
+- Secure token: valet key token
+
+Azure CDN:
+----------
+- Service works with akamai or varizon. You create a CDN profile.
+- Couple data source with azure cdn profile where static content with reside. CDN will then distribute it to PoPs
+

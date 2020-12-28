@@ -1,2 +1,192 @@
 - Hyermedia as engine of app state.
--
+- Client only assumes a fixed entry-point to the API, the server tells all the otehr available actions through
+hyperlinks
+
+{
+  "firstName" : "Osvaldo",
+  "lastName" : "Alonso",
+  "links" : {   1
+    "self" : {
+      "href" : "http://api.soccer.restapi.org/players/2113",
+      "rel"  : "http://api.relations.wrml.org/common/self"
+    },
+    "parent" : {
+      "href" : "http://api.soccer.restapi.org/players",
+      "rel"  : "http://api.relations.wrml.org/common/parent"
+    },
+    "team" : {  2
+      "href" : "http://api.soccer.restapi.org/teams/seattle",
+      "rel"  : "http://api.relations.wrml.org/soccer/team"
+    },
+    "addToFavorites" : {
+      "href" : "http://api.soccer.restapi.org/users/42/favorites/{name}",  3
+      "rel"  : "http://api.relations.wrml.org/common/addToFavorites"
+    }
+  }
+}
+
+RULE: A SELF LINK SHOULD BE INCLUDED IN RESPONSE MESSAGE BODY REPRESENTATIONS
+A response message body that contains a representation of an identifiable resource should include a link named self. 
+The self link relation signifies that the href value identifies a resource equivalent to the containing resource.
+
+------
+
+Root endpoint: GET /api/v1/
+
+{
+    "metadata": {
+        "links": {
+            "books": {
+                "uri": "/books",
+                "content-type": "application/json"
+            },
+            "authors": {
+                "uri": "/authors",
+                "content-type": "application/json"
+            }
+        }
+    }
+}
+Listing 1-1Example of a JSON Response from the Root Endpoint
+Now let’s look at the books list endpoint’s results in Listing 1-2: GET /api/v1/books
+
+{
+ "resources": [
+  {
+   "title": "Harry Potter and the Half Blood prince",
+   "description": "......",
+   "author": {
+    "name": "J.K.Rowling",
+    "metadata": {
+     "links": {
+      "data": {
+       "uri": "/authors/j-k-rowling",
+       "content-type": "application/json"
+      },
+      "books": {
+       "uri": "/authors/j-k-rowling/books",
+       "content-type": "application/json"
+      }
+     }
+    }
+   },
+   "copies": 10
+  },
+  {
+   "title": "Dune",
+   "description": "......",
+   "author": {
+     "name": "Frank Herbert",
+     "metadata": {
+       "links": {
+         "data": {
+           "uri": "/authors/frank-herbert",
+           "content-type": "application/json"
+         },
+         "books": {
+           "uri": "/authors/frank-herbert/books",
+           "content-type": "application/json"
+         }
+       }
+     }
+   },
+   "copies": 5
+  }
+ ],
+"total": 100,
+"metadata": {
+  "links": {
+    "next": {
+      "uri": "/books?page=1",
+      "content-type": "application/json"
+    }
+  }
+ }
+}
+Listing 1-2Example of Another JSON Response with Hyperlinks to Other Resources
+There are three sections highlighted in preceding example (Listing 1-2); those are the links returned on the response. With that information, the client application knows the following logical steps:
+1.	
+How to get the information from the books authors
+
+ 
+2.	
+How to get the list of books by the authors
+
+ 
+3.	
+How to get the next page of results
+
+ 
+Note that the full list of authors is not accessible through this endpoint; this is because for this particular use case, it’s not needed, so the API just doesn’t return it. It was present on the root endpoint, though, so if the client needs it when displaying the information to the end-user, it should still have it available.
+
+Each link from the preceding example contains an attribute specifying the content-type of the representation of that resource. If the resources have more than one possible representation, the different formats could be added as different links inside each resource’s metadata element, letting the client choose the most adequate to the current use case, or the type could change based on the client’s preferences (content negotiation).
+
+Note that the earlier JSON structure (more specifically, the metadata elements’ structure) is not important. The relevant part of the example is the information presented in the response. Each server has the freedom to design the structure as needed.
+
+Not having a standard structure might harm the developer experience while interacting with your system, so it might be a good idea to adopt one. This is certainly not enforced by REST, but it would be a major point in favor of your system. A good standard to adopt in this case would be Hypertext Application Language , or HAL,7 which tries to create a standard for both XML and JSON when representing resources with those languages.
+
+A Few Notes on HAL
+HAL tries to define a representation as having two major elements: resources and links.
+
+According to HAL, a resource has links, embedded resources (other resources associated to their parent), and a state (the actual properties that describe the resource). On the other hand, links have a target (the URI), a relation, and some other optional properties to deal with deprecation, content negotiation, and so forth.
+
+Listing 1-3 shows the preceding example represented using the HAL format.
+
+{
+  "_embedded": [
+    {
+      "title": "Harry Potter and the Half Blood prince",
+      "description": "......",
+      "copies": 10,
+      "_embedded": {
+        "author": {
+          "name": "J.K.Rowling",
+          "_links": {
+            "self": {
+              "href": "/authors/j-k-rowling",
+              "type": "application/json+hal"
+            },
+            "books": {
+              "href": "/authors/j-k-rowling/books",
+              "type": "application/json+hal"
+            }
+          }
+        }
+      }
+    },
+    {
+      "title": "Dune",
+      "description": "......",
+      "copies": 5,
+      "_embedded": {
+        "author": {
+          "name": "Frank Herbert",
+          "_links": {
+            "self": {
+              "href": "/authors/frank-herbert",
+              "type": "application/json+hal"
+            },
+            "books": {
+              "href": "/authors/frank-herbert/books",
+              "type": "application/json+hal"
+            }
+          }
+        }
+      }
+    }
+  ],
+  "total": 100,
+  "_links": {
+    "self": {
+     "href": "/books",
+     "type": "application/json+hal"
+    },
+    "next": {
+      "href": "/books?page=1",
+      "type": "application/json+hal"
+    }
+  }
+}
+Listing 1-3JSON Response Following the HAL Standard
+The main change in Listing 1-3 is that the actual books have been moved inside an element called "_embedded", as the standard dictates, since they’re actual embedded documents inside the represented resource, which is the list of books (the only property that belongs to the resource is "total", representing the total number of results). The same can be said for the authors, now inside the "_embedded" element of each book.
+

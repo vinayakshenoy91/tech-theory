@@ -1,0 +1,70 @@
+Why?
+------------
+- In object-oriented programming, objects come into being at various times and for various reasons
+- Core funda: If the code that uses the objects also is responsible for instantiating the objects (which is often the case), 
+the code can become complicated. 
+-  It has to keep track of many things: which objects to create, which construction parameters are needed, and how to use 
+the object after construction—often 
+even how to manage a pool of objects. This reduces cohesion, which is not what we want.
+- Decouple how objects are created from how they interact with each other.
+- Rule: Objects should either make other objects or use other objects, but never both
+
+
+Factories are a major player here:
+
+1.   Although there are often many “users” of an object, there is usually only one factory to build and/or manage it. Therefore, the more I can restrict my code modification to factories, the less work there will be for the main system—which is typically where the change of cost is highest.
+
+2.   When a change is needed, usually it is either a change in which objects are required or it is a change in the way in which some objects are used. Factories help to limit maintenance to the users of the object or the builder of the object. I will have to modify both much less frequently.
+
+3.   The knowledge that I can “worry about instantiation later” enables me to focus on the “pluggable” aspects of the design. It frees me to see opportunities for flexibility.
+
+
+factory:
+Define an interface for creating an object, but let subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses.1
+
+
+
+ In Java, the iterator method on collections is a Factory method. This method returns the right type of iterator for the collection being asked for it.
+
+In the classic implementation of the Abstract Factory, I had an abstract class define the methods to create a family of objects. I derived a class for each different family I could have. Each of the methods defined in the abstract class and then overridden in the derived classes was following the Factory Method pattern.
+
+Useful to bind parallel class hierarchies
+
+Sometimes it is useful to create a hierarchical class structure that is parallel to an existing class structure, with the new hierarchy containing some delegated responsibilities. In this case, it is important for each object in the original hierarchy to be able to instantiate the proper object in the parallel hierarchy. A Factory Method can be used for this purpose. In the languages example mentioned previously, the Factory Method patterns bind the different collections with the different iterators associated with the collections,
+
+The Factory Method Pattern: Key Features
+
+Intent
+
+Define an interface for creating an object, but let subclasses decide which class to instantiate. Defer instantiation to subclasses.
+
+Problem
+
+A class needs to instantiate a derivation of another class, but doesn’t know which one. Factory Method allows a derived class to make this decision.
+
+Solution
+
+A derived class makes the decision on which class to instantiate and how to instantiate it.
+
+Participants and collaborators
+
+Product is the interface for the type of object that the Factory Method creates. Creator is the interface that defines the Factory Method.
+
+Consequences
+
+Clients will need to subclass the Creator class to make a particular ConcreteProduct.
+
+Implementation
+
+Use a method in the abstract class that is abstract (pure virtual in C++). The abstract class’ code refers to this method when it needs to instantiate a contained object but does not know which particular object it needs.
+
+
+The Factory Method pattern is commonly used when defining frameworks. This is because frameworks exist at an abstract level. Usually they do not know and should not be concerned about instantiating specific objects. They need to defer the decisions about specific objects to the users of the framework.
+
+
+COre:
+
+This boils down to a fundamental principle: Given any two entities A and B in a system, the relationship should be limited such that A uses B or A creates/manages B, but never both!
+
+
+

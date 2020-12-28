@@ -1,0 +1,4 @@
+- Data migration service 
+-> one-time replication 
+-> Continous replication from on-premise to AWS and vice versa
+-> Homogenous and hetrogenous repliction

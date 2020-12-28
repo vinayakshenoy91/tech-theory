@@ -1,0 +1,11 @@
+- Key and sharding strategy must be chosen together to gurantee.
+- Chunks are distributed evenly.If chunks are not evenly distributed, they are moved using chunk migration.
+
+- Client -> Router(mongos) -> shards.
+Client just need to talk to router via ip address and router will pass query to respective shards.
+Also pool of router for fault tolerance.
+
+- Config server (mongod) -> Make decision on where each chunk is going to be located and balancing among shards.
+It runs as separate process. This provides information to router.
+Config servers will run as replication set and each shard is also run as replication set.
+Add more servers or shards.

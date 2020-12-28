@@ -1,0 +1,14 @@
+- it has a get method
+- in the exception part of try-catch, write a print statement -> print(()-> e.getMessage+"~")
+
+print(Supplier<String> s){
+  
+  System.out.println(s.get())// Only when get is called the above lambda is executed
+
+}
+s.get
+
+
+Constructor reference:
+---------------------
+String::new

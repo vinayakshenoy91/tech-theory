@@ -1,0 +1,68 @@
+Defn:
+------
+- A spanning tree of an undirected graph G graph is a subgraph that includes all vertices of G
+- A tree may have several spanning tree
+- You can assign weight to each edge.
+
+Minimum spanning tree:
+----------------------
+- It is a tree with weight less than than or equal to the weight of every other spanning tree.
+Usage: used in clustering algo
+
+1) Kruskal Algorithm:
+======================
+- it is edge base
+- Sort the edges according to their edge weights that will be done in O(N*logN) with merge or quick sort.
+- Use union find DS: disjoint set -> we start adding edges to MST and we make sure there will be no cycles
+in the spanning tree.It can be done in O(log v) with the help of union find DS
+- it performs better in typicakl situation(sparse graph) because it uses simpler DS.
+- Has better performance if the edges are sorted in linear time or edges are already sorted.
+
+Impl:
+----
+1) Sort the edges as per weight.
+2) Put vertices in disjoint set. Initially, total disjoint set == number of vertices
+3) Start with lower edge weight vertices and keep merging them util you finally get a  single set.
+Make sure you dont have a cycle [i.e, if two vertices are in same set, avoid taking that edge/edge weight into account]
+
+
+Note: 
+- Kruskal algo impl sometimes with priority queues. We could use a heap instead sorting edges in the beginning.
+- Spanning trees are invariant[property of s system that remains unchanged unders ome transformations] under the transformation of 
+these weights (addition/multiplication)
+
+Run times:
+----------
+- Worst case runtime is : O(E*logE) -> Use it for huge graph too.
+- if edges are sorted, the algo will be quasi-linear.
+
+Usage:
+-----
+a) Optimization problems
+b) K-means clustering:
+- We want to classify similar item
+- For example, dots in 2D plane.
+- Dots that are closer to each other will be in the same cluster.
+- We have to remove the last edge added of  the spanning tree coz that would create multiple clusters.
+Ex: used to find distinct segments in market.It is important unsupervised data analysis.
+
+c) Routing in lan: STPensures a loop free topology -> bridges can discover a subset of the topology 
+this is loop-free: that's the tree.Make sure there is enough connectivity to rach every portion of the network
+by spanning the entire lan.
+
+2) PRIM's Algorithm:
+======================
+- it is vertex based
+- We build spanning tree from a given vertex, adding smallest edge to MST
+a) in lazy impl:Add new neighbour edges to heap wihout deleting its content 
+b) eager impl: We keep updating the heap if the distance from a vertex to the MST has changed. 
+- this is basically used when you have got many moer edges than vertices.
+
+
+Run times:
+---------
+- avg running time: O(E*logE) but we need additional memory space O(E)
+- Worst case:O(E*logV)
+
+
+

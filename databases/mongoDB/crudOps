@@ -1,0 +1,42 @@
+Create:
+-------
+db.collectionname.insertOne(object)
+db.collectionname.insertMany([obj1,obj2])
+db.collectionname.insert(objToBeInserted, { writeConcern:{ w:2, wtimeout:5000 }})
+db.collectionname.insert(objToBeInserted, { writeConcern:{ w:"majority", wtimeout:5000 }}) //So it is recomended to have add num node
+
+Read:
+-----
+db.collectionname.find(filter)
+db.collectionname.find({age:{$gt:30}})
+db.collectionname.find(filter).readPref({"nearest"}) //primaryPreferred, secondary
+
+Update:
+-------
+db.collectionname.updateOne(filter, update action)
+db.collectionname.updateMany(filter, update action)
+db.collectionname.replaceOne(filter, replacement)
+
+
+Delete:
+-------
+db.collectionname.deleteOne(filter)
+db.collectionname.deleteMany(filter)
+
+
+Using a dB:
+----------
+show dbs
+use <dbname>
+show collections
+db.createCollection("physics")
+
+Connection to mongodb:
+----------------------
+mongo --port 27017
+
+
+Reference:
+-----------
+Java code: https://www.udemy.com/course/distributed-systems-cloud-computing-with-java/learn/lecture/16302924#announcements
+Test the mongo cluster

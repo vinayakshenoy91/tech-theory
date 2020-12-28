@@ -1,0 +1,51 @@
+- Naive algo which shifts one character to next is N*M -> Nis length of text and M is length of pattern
+
+1) Boyer-Moore: [Effecient for one pattern search]
+----------------
+- Algo needs to pre-process the pattern
+- Algo runs faster as length of pattern increases.
+- Match on tail of pattern rather then head.
+- We can skip multiple characters at the same time rather than searching every single char in the text.
+
+What to do?
+- Construct a bad match table  -> preprocessing stage
+- This table never has elements smaller than 1
+- Table should not contain repetitive characters.
+- max(1,lengthOfPattern-actualIndex-1)
+- We iterate over the pattern and compute the values to the bad match table.We keep updating old values for same characters.
+- Compare pattern to textstarting from rightmost char in the pattern
+- When mismatch, shift pattern to rightcorresponding to value in bad match table because we can skip several characters.
+- Mismatched character heuristics takes about N/M character.  M is length of pattern and N is length of text.
+- It is sublinear
+- Worst case is still same as brute force.
+
+2) Rabin-karp algo: [Effecient for multi pattern search]
+---------------------
+- Keep constructing hash values from pattern and substring.
+- Just compare two integers. If hash matches, then they are same.
+- If N is length of text and M is length of characters, avg and best case running time is O(N+M)
+- Worst case is still O(N*M). We can find multiple pattern at same time.Not effecient for one pattern search.
+- It relies on modular hashing
+- Every character is encoded in binary numbers so we can use the modular arithmetic on the characters.
+- For every i, compute  as hash of characters i to M+i-1 //Basically we just have to consider
+the substring thats length is equal to the length of the pattern so [i,M+i-1]
+- If the hash of the pattern is equal to the substring hash than check for a match.
+ But we can constrcut the hash for i+1 from i with O(1) constant time complexity
+ So basically computing the first hash values are expensive but after that hashing is very fast.
+- We can achive in O(N) linear time complexity with hashing
+- We have to choose a big prime number for hashing. Greater the number, smaller the probability of collision.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

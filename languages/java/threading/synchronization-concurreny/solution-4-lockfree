@@ -1,0 +1,12 @@
+Problems with lock:
+------------------
+- deadlock
+- multiple thread using same lock.
+- Priority inversion: two thread sharing same lock.
+- Thread not releasing lock
+- Performance.
+- Avoid data trace bym aplying Read/Assignment on all volatile primitive and ref types.
+
+
+
+

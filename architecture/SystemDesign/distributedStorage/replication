@@ -1,0 +1,29 @@
+- Creates redundancy
+- Copies of data in diff machine.
+
+Master slave apprach of replication:
+------------------------------------
+- Write goes to master and read goes to slave
+- Slave takes over both read and write if master not available.
+
+
+Master- Master architecture:
+-----------------------------
+- Each nodes take both read and write.
+- Eventual consistency gives us lower latency and higher availability
+- Strict consistency slows down the writes -> Used for financial data
+
+Quorum consensus:
+------------------
+Each document has a version that is updated
+R -> Min number of nodes a reader needs to read from
+W -> Min number of nodes a writer needs to write to
+N -> number of nodes in database cluster
+
+
+Strict consistency else eventual consistency:
+R + W > N
+
+N=5
+R=2
+W=4

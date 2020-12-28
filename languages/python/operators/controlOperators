@@ -1,4 +1,5 @@
 a in c -> Is a present  in the list c -> gives True/False
+sam in names -> If key sam is present in dict
 a not in c -> 
 
 id(a)-> memory location
@@ -18,20 +19,92 @@ if True:
    print('Here')
   pass  
 
+----
+
+if cyz:
+  print('XYZ')
+elif:
+  print('pyz')  
+
 
 if(not isinstance(x,int)):
 
 Loops:
+-----------
+
+For Loops:
 --------
+for var in seq:
+   expression
+
 for i in range(10):
     print(i)
+
+for i in [5,4,3,2,1]:
+  
+
 
 If we want to iterate over the elements of a sequence, 
 whilst also maintaining an index count, we can use the enumerate() function:
 
-for index,v in enumerate((1,2,3,4,5)): # enumerate elements in tuple
-   print(i, v)                     # otherwise print the value
+enumerate(listname) //This  will return atupel. To get tuple use enumerator
 
+//Enumerate is a function that takens any iterbale and produces enumerate obj
+for index,v in enumerate((1,2,3,4,5)): # enumerate elements in tuple
+   print(index, v)                     # otherwise print the value
+
+for index,v in enumerate(listname, start=10): //Starting index at 10
+   print(index, v)
+//print(list(enumerate(<list of string>))) -> This creates a tuple
+Example:
+
+# Create a list of strings: mutants
+mutants = ['charles xavier', 
+            'bobby drake', 
+            'kurt wagner', 
+            'max eisenhardt', 
+            'kitty pryde']
+
+# Create a list of tuples: mutant_list
+mutant_list = list(enumerate(mutants))
+
+# Print the list of tuples
+print(mutant_list)
+
+# Unpack and print the tuple pairs
+for index1,value1 in enumerate(mutants):
+    print(index1, value1)
+
+# Change the start index
+for index2, value2 in enumerate(mutants, start=1):
+    print(index2, value2)
+
+//Dict
+for index,v in worlds.items():
+
+//np
+meas=np.array([np_height, np_weight])
+
+for val in np.nditer(meas):
+         print(val)
+
+//pandas df
+for lab, row in brics.iterrows():
+         
+
+While loop:
+------------
+while condition:
+ expression
+
+Breaking the loop:
+------------------
+while True:
+     line =input('> ')
+     if line == 'done' :
+        break
+     print(line)
+print('Done!')
 
 list comprehension:
 -------------------
@@ -42,4 +115,50 @@ print(doubles)
 
 upper = [c.upper() for c in 'Hello']
 print(upper)  
+
+
+
+Iterators:
+---------
+- Object that has an iter() method is an iterable. Like list, string. dict,etc
+- Iterator produces next value using next()
+
+Usage example:
+-------------
+word="Be"
+it=iter(word)  /?Creating an iterator
+next(it) // As many times as you call, this will keep returning the next word
+print(*it) //Print at one shot
+
+Usage in file operation:
+
+file=open('file.txt')
+it=iter(file)
+print(next(it))
+print(next(it))
+
+
+
+Zip:
+----
+Converts arbitraty number of iterables and returns a iterator of tuples.
+
+z=zip(avengers, names) //YOu can use a forloop on this to retrive tuples.
+list(z) 
+print(*z) //Using slack operator
+
+
+
+Iterators to deal with large files:
+-----------------------------------
+- Loading data in chunks from files
+
+import pandas as pandas
+total=0
+
+for chunk in pd.read_csv('data.csv', chunksize=1000):
+ total+=sum(chunk['x'])
+print(total)
+
+
 

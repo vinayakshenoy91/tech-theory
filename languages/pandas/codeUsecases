@@ -1,0 +1,5 @@
+ 
+ Getting the file from the os path:
+ ----------------------------------
+ import os
+ csv_path =os.path.join(housing_path,"housing.csv")

@@ -1,0 +1,12 @@
+- pub/sub
+- one message and many receivers
+- One SNS topic subscribed by multiple consumers. Each will get their copy of message.
+- Upto 1cr subscriptions per topic
+- 1 lakh topic limits
+- Subscribers can be: SQS, HTTP/HTTPS, lambda, email, sms, mobile notification
+- Data is not persisted(lost if not delivered)
+
+Encryption, Access controls and SNS access policies same as SQS
+
+Note:
+SNS cannot send messages to SQS FIFO queues(AWS limitation)

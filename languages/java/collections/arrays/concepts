@@ -1,0 +1,2 @@
+Arrays.toString(arrayName) -> Print array properly
+Arrays.copyOf(array,array.length+1)

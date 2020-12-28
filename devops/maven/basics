@@ -1,0 +1,44 @@
+CD: Small increments released at any time and faster feedback and learning.
+
+CD process improvements:
+--------------------------
+The benefits to the CD process of exposing application or service functionality via an API include:
+
+- Easier automation of test fixture setup and teardown via internal resource endpoints (and this limits or removes the need to 
+manipulate state via file system or data store access).
+- Easier automation of specification tests (e.g., REST-assured). Triggering functionality through a fragile UI is no longer required 
+for every test.
+- API contracts can be validated automatically, potentially using techniques like consumer contracts and consumer-driven contracts 
+(e.g., Pact-JVM).
+- Dependent services that expose functionality through an API can be efficiently mocked (e.g., WireMock), stubbed (e.g., stubby4j), 
+or virtualized (e.g., Hoverfly).
+- Easier access to metrics and monitoring data via internal resource endpoints (e.g., Codahale Metrics or Spring Boot Actuator).
+
+Something to be aware of:
+--------------------------
+Using container technologies like Docker can fundamentally change the way your software interacts with the hardware it is running on, and it is beneficial to be aware of these changes:
+
+- Container technology can limit access to system resources, due to developer/operator specification, or to resource contention.
+In particular, watch out for the restriction of memory available to a JVM, and remember that Java application memory requirements are 
+not simply equal to heap size. In reality, Java applications’ memory requirements include the sum of Xmx heap size, PermGen/Metaspace, native memory thread requirements, and JVM overhead.
+- Another source of potential issues is that containers typically share a single source of entropy (/dev/random) on the host machine, and this can be quickly exhausted. This manifests itself with Java applications unexpectedly stalling/blocking during cryptographic operations such as token generation on the initialization of security functionality. It is often beneficial to use the JVM option -Djava.security.egd=file:/dev/urandom, 
+but be aware that this can have some security implications.
+- Container technology can (incidentally) expose incorrect resource availability to the JVM (e.g., the number of processor cores 
+typically exposed to a JVM application is based on the underlying host hardware properties, not the restrictions applied to a running container)
+- When running containerized deployment fabric, it is often the case that additional layers of abstraction are applied over the 
+operating system (e.g., orchestration framework, container technology itself, and an additional OS).
+- Container orchestration and scheduling frameworks often stop, start, and move containers (and applications) much more often 
+compared to traditional deployment platforms.
+- The hardware fabric upon which containerized applications are run is typically more ephemeral in nature (e.g., cloud computing).
+- Containerized applications can expose new security attack vectors that must be understood and mitigated.
+- These changes to the properties of the deployment fabric should not be a surprise to developers, as the use of many new technologies 
+introduce some form of change (e.g., upgrading the JVM version on which an application is running, deploying Java applications 
+within an application container, and running Java applications in the cloud). The vast majority of these potential issues can be 
+mitigated by augmenting the testing processes within the CD build pipeline.
+
+
+Test doubles over wire:
+-----------------------
+- WireMock
+- Mountebank
+- Stubby4j

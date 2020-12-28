@@ -1,0 +1,35 @@
+1) Thread.interrupt():
+-----------------------
+When can we interrupt a Thread:
+------------------------------
+1. If the thread is executing a method that throws an InterruptedException
+2. If the thread's code is handling the interrupt signal explictly
+
+//In invoking endpoint call-> thread.intrrupt
+thread.Interrupt(); => interrupt other thread from sleep. //You can then return it.
+
+//Check for interrupted condition
+Thread.currentThread().isInterrupted() => used this in for loop where you can interrupt the process.
+
+  if (Thread.interrupted()) { 
+            throw new InterruptedException(); 
+          } 
+
+Note: 
+
+1) System.in.read() does not respond to Thread.interrupt();
+In this case you need to set thread as daemon
+
+2) As a rule of thumb, never leave a catch block empty, and use the InterruptedException catch block to 
+gracefully stop the current thread (by adding some print or cleaning code before returning from the run method)
+
+3) Wait()/Notify(), join() all throw interrupted exception
+
+
+Sleeping a thread:
+-------------------
+  try { 
+          TimeUnit.SECONDS.sleep(1); 
+      } catch (InterruptedException e) { 
+              System.out.printf("The FileClock has been interrupted"); 
+      } 

@@ -1,0 +1,16 @@
+- Ruls for class methods or variable names are that first character must be an letter, underscore  or $
+- Statically typed
+- If variable is declared at class level, then it will get a default value. If variable is inside a method,
+then it will not get a default value. 
+- When variable is in method, it is called local variable. When variable is at class level, then it is instance variable.
+- At class level, assignments should be done when they are declared mandatorily
+
+
+
+When in constructor you dont want parameters to be null:
+
+public Person(String name, int age){
+  Objects.requireNonNull(name);
+  this.name=name;
+  this.age=age;
+}

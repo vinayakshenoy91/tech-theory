@@ -1,0 +1,116 @@
+1) getOrDefault(): Reduces null pointer as it will return a default value
+-------------------
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapUpgrades {
+  
+  public static void main(String args[]){
+    Map<String , Integer> fruits = new HashMap<>();
+    fruits.put("apple", 20);
+
+    fruits.put("banana", fruits.getOrDefault("banana", 0) + 20);
+  }
+}
+
+2) putIfAbsent:
+---------------
+- This method inserts a key and value in the Map only if it is not present.
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class MapUpgrades {
+  
+  public static void main(String args[]){
+    Map<String , Integer> fruits = new HashMap<>();
+    
+    fruits.put("apple", 20);
+
+    System.out.println(fruits.get("apple"));
+
+    fruits.putIfAbsent("apple", 30);
+
+    System.out.println(fruits.get("apple"));
+  }
+}
+
+3) compute(), computeIfAbsent() and computeIfPresent():
+---------------------------------------------------------
+
+The compute() method computes a new mapping given the key and its existing value. This method returns the computed value. 
+If the key is not present in the map, then an exception is thrown.
+
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ComputeExample {
+
+  public static void main(String args[]) {
+    Map<String, Integer> fruits = new HashMap<>();
+    fruits.put("apple", 20);
+
+    int val = fruits.compute("apple", (k, v) -> v + 10);
+
+    System.out.println(val);
+    // Below line will throw Null Pointer Exception.
+    //val = fruits.compute("banana", (k, v) -> v + 10);
+
+  }
+}
+
+The computeIfAbsent() method returns: ==>
+
+- The original value if the key is already present in the map.
+- The computed value if the key is not present in the map.
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ComputeIfAbsentExample {
+
+  public static void main(String args[]) {
+    Map<String, Integer> fruits = new HashMap<>();
+    fruits.put("apple", 20);
+
+    int val = fruits.computeIfAbsent("apple", v ->  10);
+
+    System.out.println(val);
+    
+    val = fruits.computeIfAbsent("banana", v ->  10);
+
+    System.out.println(val);
+  }
+}
+
+
+The computeIfPresent() method returns:
+
+- A null value if the key is not present in the map.
+- The computed value if the key is present in the map
+
+import java.util.HashMap;
+import java.util.Map;
+
+public class ComputeIfPresentExample {
+
+  public static void main(String args[]) {
+    Map<String, Integer> fruits = new HashMap<>();
+    fruits.put("apple", 20);
+
+    Integer val = fruits.computeIfPresent("apple", (k, v) -> v + 10);
+
+    System.out.println(val);
+    
+    val = fruits.computeIfPresent("banana", (k, v) -> v + 10);
+
+    System.out.println(val);
+  }
+}
+
+
+
+merge:
+------
+- Takes key and a value and a remapping function [Addition of values in a map where you pass addition as a remap fn ]

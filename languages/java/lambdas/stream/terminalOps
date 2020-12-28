@@ -1,0 +1,68 @@
+Typically, the Collector applies a transforming function to the element (quite often this is the identity transformation, which has no effect, for example, as in toList), 
+and accumulates the result in a data structure that forms the final output of this process. 
+
+import static java.util.stream.Collectors.*;
+
+Grouping:
+----------
+Map<Currency, List<Transaction>> transactionsByCurrencies =
+        transactions.stream().collect(groupingBy(Transaction::getCurrency));
+
+
+Tolist:
+-------
+List<Transaction> transactions =
+    transactionStream.collect(Collectors.toList());
+
+
+minBy,maxBy;
+------------
+Comparator<Dish> dishCaloriesComparator =
+    Comparator.comparingInt(Dish::getCalories);
+
+Optional<Dish> mostCalorieDish =
+    menu.stream()
+        .collect(maxBy(dishCaloriesComparator));
+
+summingInt:
+-----------
+int totalCalories = menu.stream().collect(summingInt(Dish::getCalories));
+
+averageInt:
+-----------
+double avgCalories =
+    menu.stream().collect(averagingInt(Dish::getCalories));
+
+IntSummaryStats:
+----------------
+IntSummaryStatistics menuStatistics =
+        menu.stream().collect(summarizingInt(Dish::getCalories));
+
+Joining:
+--------
+String shortMenu = menu.stream().map(Dish::getName).collect(joining());
+
+
+Note that joining internally makes use of a StringBuilder to append the generated strings into one.
+Also note that if the Dish class had a toString method returning the dish’s name, you’d obtain the same 
+result without needing to map over the original stream with a function extracting the name from each dish:
+
+String shortMenu = menu.stream().collect(joining());
+
+String shortMenu = menu.stream().map(Dish::getName).collect(joining(", "));
+
+Summary with reduction:
+----------------------
+int totalCalories = menu.stream().collect(reducing(
+                                   0, Dish::getCalories, (i, j) -> i + j));
+
+It takes three arguments:
+
+The first argument is the starting value of the reduction operation and will also be the value returned in the case of a stream with no elements, so clearly 0 is the appropriate value in the case of a numeric sum.
+The second argument is the same function you used in section 6.2.2 to transform a dish into an int representing its calorie content.
+The third argument is a BinaryOperator that aggregates two items into a single value of the same type. Here, it just sums two ints.
+
+
+Optional<Dish> mostCalorieDish =
+    menu.stream().collect(reducing(
+        (d1, d2) -> d1.getCalories() > d2.getCalories() ? d1 : d2));

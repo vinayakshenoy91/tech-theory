@@ -1,0 +1,38 @@
+- background threads that do not prevent the app from exiting if the main thread terminates.
+- Daemon thread in java is a service provider thread that provides services to the user thread. 
+Its life depend on the mercy of user threads i.e. when all the user threads dies, JVM terminates this thread automatically.
+- Java has a special kind of thread called daemon thread. When daemon threads are the only threads running in 
+a program, the JVM ends the program after finishing these threads.
+- A typical example of these kinds of threads is the Java garbage collector.
+- There are many java daemon threads running automatically e.g. gc, finalizer etc.
+- With these characteristics, daemon threads are normally used as service providers for normal (also called user) 
+threads running in the same program. They usually have an infinite loop that waits for the service request or
+performs the tasks of a thread. A typical example of these kinds of threads is the Java garbage collector.
+
+- It provides services to user threads for background supporting tasks. It has no role in life than to serve user threads.
+- Its life depends on user threads.
+- It is a low priority thread.
+
+When do we use daemon:
+-----------------------
+- Background tasks that should not block our app from terminating
+Ex: file saving thread in text editor.
+
+- Code in a worker thread is not under control  and we do not want it to block our app from terminating.
+Ex: Worker thread that uses an external library
+
+
+Tool used to find daemon thread:
+---------------------------------
+- The jconsole tool provides information about the loaded classes, memory usage, running threads etc.
+
+Methods for Java Daemon thread by Thread class [Setting daemon threads]:
+------------------------------------------------
+The java.lang.Thread class provides two methods for java daemon thread.
+
+No.	Method	Description
+1)	public void setDaemon(boolean status)	is used to mark the current thread as daemon thread or user thread.
+2)	public boolean isDaemon()	is used to check that current is daemon
+
+- "Thread.currentThread().isDaemon()"
+- "t1.setDaemon(true);//now t1 is daemon thread "

@@ -1,0 +1,27 @@
+Consider a simple Kubernetes pod definition for a Redis server:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: adapter-example
+  namespace: default
+spec:
+  containers:
+  - image: redis
+    name: redis
+
+However, if we simply add an adapter container (in this case, an open source Prometheus exporter), 
+we can modify this pod to export the correct interface and thus adapt it to fit Prometheus’s expectations:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: adapter-example
+  namespace: default
+spec:
+  containers:
+  - image: redis
+    name: redis
+ # Provide an adapter that implements the Prometheus interface
+  - image: oliver006/redis_exporter
+    name: adapter

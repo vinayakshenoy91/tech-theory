@@ -1,0 +1,60 @@
+- Writer is an abstract class
+- Write of single character
+- Write of  array of characters
+- Write a string
+- Append a single char or string
+
+
+1) Classes for certain type of output:
+- Disk: FileWriter
+- In-memeory: CharArrayWriter
+
+File file = new File("files/data.txt");
+Writer writer = new FileWriter(file);
+PrintWriter printer = new PrintWriter(writer);
+
+2) Classes that add behaviour to writer:
+- Buffered writer
+- write with a format: PrintWriter
+
+Syntax:
+------
+Writer writer = ..
+writer.write("H");
+writer.write("Hello world", 0,5);
+writer.write(hello.toCharArray(),0,5); //Convert string into array of char
+
+try(Writer writer =...){
+   writer.write("Hello");
+}catch(IOException e){
+
+}
+
+BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+Path path = Paths.get("files/data.txt");
+try(BufferedWriter bufferedWriter = Files.newBufferedWriter(path, StandardOpenOption.CREATE,StandardOpenOption.CREATE);)
+ PrintWriter pw = new PrintWriter(bufferedWriter);
+ pw.println("Hello");
+
+}catch(){
+
+}
+
+{StandardOpenOption.APPEND
+- DELETE_ON_CLOSE
+- CREATE_NEW
+- WRITE
+
+Note:
+----
+- Writing on IO  is the responsibility of OS
+
+try (FileWriter file = new FileWriter(".\\data\\log.txt");
+        PrintWriter pw = new PrintWriter(file);) { 
+ 
+          for (int i = 0; i < 10; i++) { 
+            pw.println("Main : Status of Thread " + i + " : " + 
+                        threads[i].getState()); 
+            status[i] = threads[i].getState(); 
+          } 

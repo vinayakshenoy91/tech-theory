@@ -1,0 +1,4 @@
+- Cache as a service
+- Inmemeory datastore
+- 99.9 availability
+- pubsub for data interaction and key value store.

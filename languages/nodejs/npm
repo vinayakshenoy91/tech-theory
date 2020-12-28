@@ -1,0 +1,18 @@
+Node.js modules work with three levels of versioning. For example, the version 1.2.3 is divided into the following levels:
+
+Major: X.0.0
+
+Minor: 0.X.0
+
+Patch: 0.0.X
+
+Note the X means the current level version to date.
+
+The previous package.jsonhas four modules, and each one uses a different semantic version. The first one, "module-1", has a fixed version 1.0.0. Use this kind of version to install dependencies with updates that can break the project if you change the version.
+
+The next module, "module-2", already has a certain update flexibility. It uses the character "∼", which allows you to update a module as a patch level 1.0.x (it only updates the x version). Generally, these updates are safe, as they bring improvements and bug fixes.
+
+The "module-3" updates versions that are greater than or equal to 1.0.0 in all the version levels. In many cases, using ">=" can be risky, because the dependency can be updated to a major or minor level and, consequently, can bring some modifications that can break your application.
+
+The last one, "module-4", uses the "*" character. This one always catches the latest version of the module in any version level. It also can cause trouble in the updates and it has the same behavior as the module-3 versioning. Generally, it is used only in the devDependencies, which are dependencies used for test purposes that do not affect the application behavior. Do not use this kind of version in a production environment!
+

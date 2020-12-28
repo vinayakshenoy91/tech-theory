@@ -1,0 +1,6 @@
+- Stored in natural order of the keys
+- Defines sort order and adds functionality.
+- Allows null values but not null key
+- Comparator -> Key elements have a sorted order.
+- Uses red-black tree.
+- Navigable and sorted

@@ -1,0 +1,26 @@
+- Add:
+ - spring-boot-starter-webflux
+ - Reactor-test from io.projectreactor
+
+
+//For sync
+ private RestTemplate restTemplate;
+
+ @Autowired
+ public className(RestTemplateBuilder builder){
+     restTemplate=buolder.build();
+ }
+
+ JokeResponse response = restTemplate.getForObject(url, JokeResponse.class)
+
+
+//For async
+private WebClient client = WebClient.create("http://api.icndb.com")
+
+public Mono<String> getJokeAsync(String first, String last){
+ String path = "/jokes/random?firstName={first}";
+
+ return client.get().uri(path, first,last).retrieve().bodyToMono(JokeResponse.class)
+        .map(jokeResponse -> jokeResponse.getValue().getJoke())
+
+}

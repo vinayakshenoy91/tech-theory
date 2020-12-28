@@ -1,0 +1,30 @@
+- LIFO
+
+Applications:
+--------------
+- There are many computer algorithms like Depth First Search and Expression Evaluation Algorithm, etc.,
+- To backtrack to the previous task/state, e.g., in a recursive code
+- To store a partially completed task, e.g., when you are exploring two different paths on a Graph from a 
+point while calculating the smallest path to the target.
+
+Function - Description
+push	Inserts an element at the top
+pop	Removes an element from the top and returns it
+isFull	Returns true if the stack is full and false otherwise
+isEmpty	Returns true if the stack is empty and false otherwise
+top	Returns the element at the top (i.e., the one added most recently)
+
+Impl:
+-----
+stacks are generally implemented 
+using arrays because it takes less space; we don’t need to store an additional pointer like in a linked list.
+
+Complexities of Stack Operations #
+Let’s look at the time complexity of each stack operation.
+
+Operation	Time Complexity
+isEmpty	O(1)
+top	O(1)
+size	O(1)
+push	O(1)
+pop	O(1)

@@ -1,0 +1,66 @@
+- The training data you feed to the algorithm includes the desired solutions called Labels
+
+Typical tasks of supervised learning includes:
+---------------------------------------------
+- classification
+- regression -> Predict a target using predictors/features
+
+Note: Logistic Regression is commonly used for classification, as it can
+output a value that corresponds to the probability of belonging to a given class.
+
+Some supervised learning algos are:
+------------------------------------
+- k-Nearest Neighbors
+- Linear Regression
+- Logistic Regression
+- Support Vector Machines (SVMs)
+- Decision Trees and Random Forests
+- Neural networks
+
+
+
+
+
+
+- Task of identifying to which category an observation belongs to.
+Ex: Email spam or not, species of iris flowers based on petal length, credit card txn frad/genuine.
+face recog
+
+- Binary and Multiclass classification
+
+MNIST dataset [Modified National Institute of Standard and Tech]. It is hello world of ML.
+When people come with algo, they test it against MNIST dataset.
+
+- SGD classifier follows OvA strategy for multi-class classification.
+- SGD and linear classifiers are binary classifiers.
+- The greater the value for ROC AUC [Max value 1], better the model.
+
+
+
+Steps for machine learning classification is:
+---------------------------------------------
+1) Divide dataset into training and test sample.
+2) Train classifier using training set.
+3) Test using testing set.
+4) Performance metrice[Finalize model]
+5) Improve model using error analysis
+
+Binary classifier:
+-----------------
+- Binary or binomial classification is the task of classifying the elements of a given set into two groups
+on the basis of classification rule.
+
+Stochastic Gradient Descent(SGD) Classifier:
+---------------------------------------------
+- Capable of handlign large datasets
+- Deals with training instances independently
+- Well suited for online training
+
+It implements:
+- a plain SGD routine
+- supports diff loss functions
+- penalties for classification
+
+- Gradient descent: Instead of trying all lines, go intot he direction that yield better results.
+Measure the slope and move on.
+

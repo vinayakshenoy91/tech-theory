@@ -1,0 +1,63 @@
+Importing tensorflow and checking version:
+-------------------------------------------
+import tensorflow
+print(tensorflow.__version__)
+
+
+//Writing a sigmod function with wx+d
+
+tf.keras.layers.Dense(output_size)
+
+model = tf.keras.models.Sequential([
+    tf.keras.layers.Input(shape=(D,)),
+    tf.keras.layers.Dense(1, activation='sigmoid')
+])
+
+//Testing
+model.compile(optimizer='adam',loss='binary_crossentropy', metrics=['accuracy'])
+
+Training/Fitting
+
+//Returns a history object  so we can plot loss per iteration
+r=model.fit(X_train, y_train, validation_data=(X_test,y_test), epochs=100) //Epochs is number of iteratiosn you take
+ 
+//Plotting - Decide based on this if you need more or less epochs
+plt.plot(r.history['loss'],label='loss')
+plt.plot(r.history['val_loss'], label='val_loss')
+
+
+Example of evaluating an expression using TF:
+----------------------------------------------
+import tensorflow as tf
+
+reset_graph()
+
+x = tf.Variable(3, name="x")
+y = tf.Variable(4, name="y")
+f = x*x*y + y + 2 // Till here it just creates a computation graph, even the variables are not initilized at this point.
+
+#Normal way
+// To evaluate the graph, we need to open a TF session and use it to initilize variable and compute f
+//Session places operations on to GPU/CPUs and running them. It holds all the variable values.
+//Normal way to get result 
+sess = tf.Session()
+sess.run(x.initializer)
+sess.run(y.initializer)
+result = sess.run(f)
+print(result)
+sess.close()
+
+# Better way [using with, the file closing operation is taken care of]
+with tf.Session() as sess:
+    x.initializer.run()
+    y.initializer.run()
+    result = sess.run(f) //or f.eval()
+    print(result)
+result
+
+#more better way
+init = tf.global_variables_initilizer()
+
+with tf.Session() as sess:
+      init.run()
+      result = f.eval()

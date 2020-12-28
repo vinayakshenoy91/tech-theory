@@ -1,0 +1,212 @@
+There are two types of synchronization:
+---------------------------------------
+Process Synchronization
+Thread Synchronization
+
+Thread Synchronization:
+-----------------------
+There are two types of thread synchronization mutual exclusive and inter-thread communication.
+
+1) Mutual Exclusive:
+------------------
+a) Synchronized method:
+If you declare any method as synchronized, it is known as synchronized method.
+Synchronized method is used to lock an object for any shared resource.
+When a thread invokes a synchronized method, it automatically acquires the 
+lock for that object and releases it when the thread completes its task.
+
+//example of java synchronized method  
+class Table{  
+ synchronized void printTable(int n){//synchronized method  //object method.
+   for(int i=1;i<=5;i++){  
+     System.out.println(n*i);  
+     try{  
+      Thread.sleep(400);  
+     }catch(Exception e){System.out.println(e);}  
+   }  
+  
+ }  
+}  
+b) Synchronized block:
+- Synchronized block can be used to perform synchronization on any specific resource of the method.
+Synchronized block can be used to perform synchronization on any specific resource of the method.
+
+Suppose you have 50 lines of code in your method, but you want to synchronize only 5 lines, you can use synchronized block.
+
+If you put all the codes of the method in the synchronized block, it will work same as the synchronized method.
+
+Points to remember for Synchronized block
+Synchronized block is used to lock an object for any shared resource.
+Scope of synchronized block is smaller than the method.
+
+class Table{  
+  
+ void printTable(int n){  
+   synchronized(this){//synchronized block  
+     for(int i=1;i<=5;i++){  
+      System.out.println(n*i);  
+      try{  
+       Thread.sleep(400);  
+      }catch(Exception e){System.out.println(e);}  
+     }  
+   }  
+ }//end of the method  
+}
+
+c) static synchronization:
+If you make any static method as synchronized, the lock will be on the class not on object.
+Suppose there are two objects of a shared class(e.g. Table) named object1 and object2.In case of synchronized method 
+and synchronized block there cannot be interference between t1 and t2 or t3 and t4 because t1 and t2 both refers to a 
+common object that have a single lock.But there can be interference between t1 and t3 or t2 and t4 because t1 acquires 
+another lock and t3 acquires 
+another lock.I want no interference between t1 and t3 or t2 and t4.Static synchronization solves this problem.
+
+class Table{  
+  
+ synchronized static void printTable(int n){  
+   for(int i=1;i<=10;i++){  
+     System.out.println(n*i);  
+     try{  
+       Thread.sleep(400);  
+     }catch(Exception e){}  
+   }  
+ }  
+}  
+  
+class MyThread1 extends Thread{  
+public void run(){  
+Table.printTable(1);  
+}  
+}  
+  
+class MyThread2 extends Thread{  
+public void run(){  
+Table.printTable(10);  
+}  
+}  
+
+OR
+
+static void printTable(int n) {  
+    synchronized (Table.class) {       // Synchronized block on class A  
+        // ...  
+    }  
+}
+
+2) Cooperation (Inter-thread communication in java):
+-----------------------------------------------------
+- Inter-thread communication or Co-operation is all about allowing synchronized threads to communicate with each other.
+
+Cooperation (Inter-thread communication) is a mechanism in which a thread is paused running in its critical 
+section and another thread is allowed to enter (or lock) in the same critical section to be executed.It is implemented 
+by following methods of Object class:
+
+wait():
+------
+1) wait() method
+Causes current thread to release the lock and wait until either another thread invokes the notify() method or the notifyAll() method for this object, or a specified amount of time has elapsed.
+
+notify():
+2) notify() method
+Wakes up a single thread that is waiting on this object's monitor. If any threads are waiting on this object, one of them is chosen to be awakened. The choice is arbitrary and occurs at the discretion of the implementation. Syntax:
+
+public final void notify()
+
+3) notifyAll():
+Wakes up all threads that are waiting on this object's monitor. Syntax:
+
+public final void notifyAll()
+
+
+The point to point explanation of the above diagram is as follows:
+
+Threads enter to acquire lock.
+Lock is acquired by on thread.
+Now thread goes to waiting state if you call wait() method on the object. Otherwise it releases the lock and exits.
+If you call notify() or notifyAll() method, thread moves to the notified state (runnable state).
+Now thread is available to acquire lock.
+After completion of the task, thread releases the lock and exits the monitor state of the object.
+
+Difference between wait and sleep?
+Let's see the important differences between wait and sleep methods.
+
+wait()	sleep()
+wait() method releases the lock	sleep() method doesn't release the lock.
+is the method of Object class	is the method of Thread class
+is the non-static method	is the static method
+is the non-static method	is the static method
+should be notified by notify() or notifyAll() methods	after the specified amount of time, sleep is completed.
+
+Interrupting a thread:-
+----------------------
+
+If any thread is in sleeping or waiting state (i.e. sleep() or wait() is invoked), calling the interrupt() method on the 
+thread, breaks out the sleeping or waiting state throwing InterruptedException. If the thread is not in the sleeping or 
+waiting state, calling the interrupt() 
+method performs normal behaviour and doesn't interrupt the thread but sets the interrupt flag to true
+
+The 3 methods provided by the Thread class for interrupting a thread:
+public void interrupt()
+public static boolean interrupted()
+public boolean isInterrupted()
+
+class TestInterruptingThread1 extends Thread{  
+public void run(){  
+try{  
+Thread.sleep(1000);  
+System.out.println("task");  
+}catch(InterruptedException e){  
+throw new RuntimeException("Thread interrupted..."+e);  
+}  
+  
+}  
+  
+public static void main(String args[]){  
+TestInterruptingThread1 t1=new TestInterruptingThread1();  
+t1.start();  
+try{  
+t1.interrupt();  
+}catch(Exception e){System.out.println("Exception handled "+e);}  
+  
+}  
+} 
+
+- Note: If thread is not in sleeping or waiting state, calling the interrupt() method sets 
+the interrupted flag to true that can be used to stop the thread by the java programmer later.
+
+What about isInterrupted and interrupted method?
+The isInterrupted() method returns the interrupted flag either true or false. The static interrupted() method returns the interrupted flag afterthat it sets the flag to false if it is true.
+
+public class TestInterruptingThread4 extends Thread{  
+  
+public void run(){  
+for(int i=1;i<=2;i++){  
+if(Thread.interrupted()){  
+System.out.println("code for interrupted thread");  
+}  
+else{  
+System.out.println("code for normal thread");  
+}  
+  
+}//end of for loop  
+}  
+  
+public static void main(String args[]){  
+  
+TestInterruptingThread4 t1=new TestInterruptingThread4();  
+TestInterruptingThread4 t2=new TestInterruptingThread4();  
+  
+t1.start();  
+t1.interrupt();  
+  
+t2.start();  
+  
+}  
+}  
+
+
+
+
+
+
+

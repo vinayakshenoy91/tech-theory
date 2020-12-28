@@ -1,0 +1,18 @@
+Relational approach :
+- Follow a disk first approach for durability
+- Write to disk -> Log for availability -> Cache index to memory
+- Good for adhoc queries and reports.
+- ACID txn control
+- Schema predicatability
+- Firmly defined schema
+- Durable txn
+
+Engaged(E-DBMS):
+-Memeory first  for perf
+- Cache data and index in memory -> Replicate for availability -> Write to disk
+- ORMs map the data in the disk [Lot of joins happen in memory]
+- Always on cluster, build to change at scale.
+
+Analytical DB
+- Vast batched workloads 
+- Focus on retrospective analysis

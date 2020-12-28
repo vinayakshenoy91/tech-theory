@@ -1,0 +1,21 @@
+To do this, we use the adapter pattern with a redis container as the main application container, 
+and the fluentd container as our adapter container. In this case, we will also use the fluent-plugin-redis-slowlog 
+fluentd plugin to listen to the slow queries. 
+We can configure this plugin using the following snippet:
+
+<source>
+  type redis_slowlog
+  host localhost
+  port 6379
+  tag redis.slowlog
+</source>
+
+Configure apache storm:
+
+<source>
+  type storm
+  tag storm
+  url http://localhost:8080
+  window 600
+  sys 0
+</source>

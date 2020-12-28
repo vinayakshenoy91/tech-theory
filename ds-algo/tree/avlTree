@@ -1,0 +1,72 @@
+- AVL trees are a self-balanced special type of Binary Search Tree with just one exception:
+"For each Node, the maximum height difference between the left and right sub-trees can only be one"
+
+- If at any point their difference becomes more than one, then re-balancing is applied to make it a valid AVL tree.
+
+- (Insertion, Deletion, and Searching) -> o(logn)
+
+terms which we will be using while re-balancing the tree.
+
+Node U – an unbalanced node
+Node C – child node of node U
+Node G – grandchild node of node U
+
+Insertion Cases #
+To rebalance the tree, we will perform rotations on the subtree with Node U as being the root node.
+
+There are two types of rotations:
+
+left
+right
+We came across four different scenarios based on the arrangements of Nodes U, C and, G.
+
+Left-Left: Node C is the left-child of Node U, and Node G is the left-child of Node C.
+
+Left-Right: Node C is the left-child of Node U, and Node G is the right-child of Node C.
+
+Right-Right: Node C is the right-child of Node U, and Node G is the right-child of Node C.
+
+Right-Left: Node C is the right-child of Node U, and Node G is the left-child of Node C.
+
+Time Complexity #
+Considering that it takes constant time to do left-right rotation operations and update the height to get a balanced tree, 
+the time complexity of an AVL insert remains the same as BST insert: O(h)O(h) where h is the height of the tree. 
+However, since the AVL tree is balanced, the height is O(Logn)O(Logn); so time complexity of an AVL insert is O(Logn)O(Logn).
+
+- After fixing the first unbalanced node through rotations, 
+start moving up and fix the next unbalanced node. Keep on fixing the unbalanced nodes until you reach the root.
+
+---------
+Steps for Deletion #
+The following are the detailed steps for removing value from AVL Trees.
+
+Step 1: Delete currentNode #
+Delete the currentNode in the same way as we did in BST deletion. At this point, the tree will become unbalanced, and we would need to perform some kind of rotation (left or right) to rebalance the tree.
+
+Step 2: Traverse Upwards #
+Start traversing from currentNode upwards till you find the first unbalanced node.
+
+Let’s look at some of the terms we will be using while re-balancing the tree.
+
+Node U — an unbalanced node
+Node C — child node of node U
+Node G — grandchild node of node U
+Step 3: Rebalance the Tree #
+To rebalance the tree, we will perform rotations on the subtree where U is the root node.
+
+There are two types of rotations:
+
+left
+right
+We came across four different scenarios based on the arrangements of Nodes U, C and, G.
+
+Left-Left: Node C is the left-child of Node U, and Node G is the left-child of Node C.
+
+Left-Right: Node C is the left-child of Node U, and Node G is the right-child of Node C.
+
+Right-Right: Node C is the right-child of Node U, and Node G is the right-child of Node C.
+
+Right-Left: Node C is the right-child of Node U, and Node G is the left-child of Node C.
+
+After performing a successful rotation for the first unbalanced Node U, traverse up and find the next unbalanced node and perform the same series of operations to balance. Keep on balancing the unbalanced nodes from first Node U to ancestors of 
+Node U until we reach the root. After that point, we will have a fully balanced AVL Tree.

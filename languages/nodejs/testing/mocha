@@ -1,0 +1,94 @@
+- Mocha, Chai , Sinon js
+- chai: To write BDD tests.
+- supertest: To execute some requests in the API.
+
+
+
+ npm install babel-register@6.5.2 mocha@2.4.5 chai@3.5.0 supertest@1.2.0 --save-dev
+
+ "scripts": {
+ 7       "start": "babel-node index.js",
+ 8       "test": "NODE_ENV=test mocha test/**/*.js"
+ 9     },
+
+ import supertest from "supertest";
+2   import chai from "chai";
+3   import app from "../index.js";
+4   
+5   global.app = app;
+6   global.request = supertest(app);
+7   global.expect = chai.expect;
+
+Then, let’s create a simple file that allows us to include some settings as parameters to the mocha command. This will be responsible for loading test/helpers.js and also use the --reporter spec flag to show a detailed report about the tests. After that, we’ll include the --compilers js:babel- register flag for Mocha be able to run the tests in ECMAScript 6 standard via the babel-register module.
+
+The last flag is --slow 5000, which waits five seconds before starting all tests (time enough to start the API server and database connection safely). Create the test/mocha.opts file using the following parameters.
+
+1   --require test/helpers
+2   --reporter spec
+3   --compilers js:babel-register
+4   --slow 5000          
+
+To enable support for multiple environments, let’s rename the current libs/config.js file libs/config.development.js and then create the libs/config.test.js file. The only new parameter in this new file is logging: false, which disables the SQL log outputs. It is necessary to disable these logs to avoid difficulty with the test report in the terminal. This file (libs/config.test.js) should look like the following code.
+
+ 1   module.exports = {
+ 2     database: "ntask_test",
+ 3     username: "",
+ 4     password: "",
+ 5     params: {
+ 6       dialect: "sqlite",
+ 7       storage: "ntask.sqlite",
+ 8       logging: false,
+ 9       define: {
+10         underscored: true
+11       }
+12     },
+13     jwtSecret: "NTASK_TEST",
+14     jwtSession: {session: false}
+15   };
+
+
+To implement this test, create the test/routes/index.js file using the following code.
+
+ 1   describe("Routes: Index", () => {
+ 2     describe("GET /", () => {
+ 3       it("returns the API status", done => {
+ 4         request.get("/")
+ 5           .expect(200)
+ 6           .end((err, res) => {
+ 7             const expected = {status: "NTask API"};
+ 8             expect(res.body).to.eql(expected);
+ 9             done(err);
+10           });
+11       });
+12     });
+13   });
+
+POST call:-
+----------
+it("returns authenticated user token", done => {
+ 2     request.post("/token")
+ 3       .send({
+ 4         email: "john@mail.net",
+ 5         password: "12345"
+ 6       })
+ 7       .expect(200)
+ 8       .end((err, res) => {
+ 9         expect(res.body).to.include.keys("token");
+10         done(err);
+11       });
+12   });
+
+
+
+Before each:
+------------
+ beforeEach(done => {
+ 2     Users
+ 3       .destroy({where: {}})
+ 4       .then(() => Users.create({
+ 5         name: "John",
+ 6         email: "john@mail.net",
+ 7         password: "12345"
+ 8       }))
+ 9       .then(() => done());
+10   });

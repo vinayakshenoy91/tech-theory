@@ -1,0 +1,24 @@
+Syntax: [[output expression] for iterator variable in iterable]
+
+new_nums = [num + 1 for num in nums]
+
+Nested loops: 
+-------------
+pairs_2 = [(num1, num2) for num1 in range(0,2)for num2 in range(6,8)]
+
+Creating a matrix:
+------------------
+matrix = [[col for col in range(5)]for row in range(5) ]
+
+For dict:
+--------
+x = {num: -num for num in range(9)}
+
+Conditional in comprehensions:
+------------------------------
+[num ** 2 for num in range(10) if num % 2 == 0 ]
+
+using else:
+[member if len(member) >= 7 else '' for member in fellowship]
+
+

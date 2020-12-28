@@ -46,15 +46,3 @@ mypackage.module1.func()      # call func from module1 in mypackage
 from mypackage import module2 # import module 2 from mypackage
 module2.func()                # call func from module 2
 
-Packages are:
--------------
-import math
-
-math.sqrt()
-math.pow(100,0.5)
-
-from math import factorial
-
-factorial comes as part of math package
-
-from math import *

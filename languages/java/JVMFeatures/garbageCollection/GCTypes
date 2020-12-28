@@ -1,0 +1,17 @@
+GC types:
+----------
+
+1) Serial GC -> Some other processor is getting a chance.
+-XX:+UseSerialGC
+ 
+2) Parallel GC -> This is the default.
+-XX:+UseParallelGC
+
+3) Concurrent GC
+-XX:+UseConcMarkSweepGC
+
+
+-XX:+UseG1GC 
+-------------
+- Each of the young/old space keeps changing after gc.
+- You get: -XX:UseStringDeDuplication

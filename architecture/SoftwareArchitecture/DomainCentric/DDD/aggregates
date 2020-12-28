@@ -1,0 +1,83 @@
+- Aggregate is composed of one or more entity. Aggregates are also composed of value objects.
+
+- The Root Entity of each Aggregate owns all the other elements clustered inside it. 
+The name of the Root Entity is the Aggregate’s conceptual name.
+
+- Each Aggregate forms a transactional consistency boundary. This means that within a single Aggregate, 
+all composed parts must be consistent, according to business rules, when the controlling transaction is 
+committed to the database.
+Any other Aggregate will be modified and committed in a separate transaction. That’s why an Aggregate is said to be a 
+transactional consistency boundary. 
+So, you design your Aggregate compositions in a way that allows for transactional consistency and success. 
+
+Rules of thumb:
+--------------
+Let’s next consider the four basic rules of Aggregate design:
+
+1. Protect business invariants inside Aggregate boundaries.
+
+2. Design small Aggregates.
+
+3. Reference other Aggregates by identity only.
+
+4. Update other Aggregates using eventual consistency.
+
+5. Another thing to keep in mind when designing Aggregates is the Single Responsibility Principle (SRP).
+
+- Domain Events are published by an Aggregate and subscribed to by an interested Bounded Context.
+
+Modeling aggregates:
+--------------------
+There are a few hooks waiting for you as you work on your domain model, implementing your Aggregates. One big, nasty hook 
+is the Anemic Domain Model [IDDD]. This is where you are using an object-oriented domain model, and all of your Aggregates 
+have only public accessors (getters and setters) but no real business behavior. 
+This tends to happen when there is a technical rather than business focus during modeling. Designing an Anemic Domain 
+Model requires you to take on all the overhead of a domain model without realizing any of its benefits. Don’t take the bait!
+
+Also watch out for leaking business logic into the Application Services above your domain model. It can happen undetected, 
+just like physical anemia. Delegating business logic from services to helper/utility classes isn’t going to work out well 
+either. Service utilities always exhibit an identity crisis and can never keep their stories straight. Place your business 
+logic in your domain model, or suffer bugs sponsored by an Anemic Domain Model.
+
+
+How to change internal state? -> Do not expose setters
+
+- you may not want to expose setters as public. Without public setters, how do property/attribute values change? 
+When using an object-oriented approach (C#, Scala, and Java), you change internal state using behavioral methods. 
+If using a functional approach (F#, Scala, and Clojure), 
+the functions will return new values that are different from the values passed as arguments.
+
+- You should be on a mission to fight the Anemic Domain Model [IDDD]. If you expose public setter methods, 
+it could quickly lead to anemia, because the logic for setting values on Product would be implemented outside the model.
+
+Consider these design steps that will help you reach consistency boundary goals:
+
+1. Put your first focus on the second rule of Aggregate design, “Design small Aggregates.” Start by creating 
+every Aggregate with just one Entity, which will serve as the Aggregate Root. Don’t even dare to place two Entities 
+in a single boundary. That opportunity will come soon enough. Populate each of the Entities with the 
+fields/attributes/properties that you believe are most closely associated with the single Root Entity. 
+One big hint here is to define every field/attribute/property that is required to identify and find the Aggregate, 
+as well as any additional intrinsic fields/attributes/properties that are required for the Aggregate to be constructed 
+and left in a valid initial state.
+
+2. Now place your focus on the first rule of Aggregate design, “Protect business invariants inside Aggregate 
+boundaries.” You have already asserted by the previous step that at a minimum all the intrinsic fields/attributes 
+must be up-to-date when the single-Entity Aggregate is persisted. But now you need to look at each of your Aggregates 
+one at a time. As you do so for Aggregate A1, ask the Domain Experts if any other Aggregates you have defined must be 
+updated in reaction to changes made to Aggregate A1. Make a list of each of the Aggregates and their consistency rules,
+ which will indicate the time frames for all reaction-based updates. In other words, “Aggregate A1” would be the heading 
+ of one list, and other Aggregate types would be listed under A1 if they will be updated in reaction to A1 updates.
+
+3. Now ask the Domain Experts how much time may elapse until each of the reaction-based updates may take place. 
+This will lead to two kinds of specifications: (a) immediately, and (b) within N seconds/minutes/hours/days. 
+One possible way to find the correct business threshold is by presenting an exaggerated time frame (such as 
+weeks or months) that is obviously unacceptable. This will likely cause business experts to respond with an 
+acceptable time frame.
+
+4. For each of the immediate time frames (3a), you should strongly consider composing those two Entities within 
+the same Aggregate boundary. That means, for example, that Aggregate A1 and Aggregate A2 will actually be composed 
+into a new Aggregate A[1,2]. Now Aggregates A1 and A2 as they were previously defined will no longer exist. There 
+is only Aggregate A[1,2].
+
+5. For each of the reacting Aggregates that can be updated following a given elapsed time (3b), you will update 
+these using the fourth rule of Aggregate design, “Update other Aggregates using eventual consistency.”

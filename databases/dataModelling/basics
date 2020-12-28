@@ -1,0 +1,8 @@
+- It is the process of analysing a target business domain interms of entities 
+and erlationship among those entities and cardinality.
+- Entity is an object modeled in a database managment system so that information  about its states 
+and relationships may be persisted.
+
+- Often, docuemnt structures corresponds to 1:1 to domain objects and it removes impedence mismatch between code and persistence.
+
+

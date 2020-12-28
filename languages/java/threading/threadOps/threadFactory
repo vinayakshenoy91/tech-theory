@@ -1,0 +1,64 @@
+How to do it...
+Follow these steps to implement the example:
+
+Create a class called MyThreadFactory and specify that it implements the ThreadFactory interface:
+       public class MyThreadFactory implements ThreadFactory {
+Declare three attributes: an integer number called counter, which we will use to store the number of thread objects created, a string called name with the base name of every thread created, and a list of string objects called stats to save statistical data about the thread objects created. Also, implement the constructor of the class that initializes these attributes:
+        private int counter; 
+        private String name; 
+        private List<String> stats; 
+   
+        public MyThreadFactory(String name){ 
+          counter=0; 
+          this.name=name; 
+          stats=new ArrayList<String>(); 
+        }
+Implement the newThread() method. This method will receive a Runnable interface and return a thread object for this Runnable interface. In our case, we generate the name of the thread object, create the new thread object, and save the statistics:
+        @Override 
+        public Thread newThread(Runnable r) { 
+          Thread t=new Thread(r,name+"-Thread_"+counter); 
+          counter++; 
+          stats.add(String.format("Created thread %d with name %s on %s\n",
+                                  t.getId(),t.getName(),new Date())); 
+          return t; 
+        }
+Implement the getStatistics() method; it returns a String object with the statistical data of all the thread objects created:
+        public String getStats(){ 
+          StringBuffer buffer=new StringBuffer(); 
+          Iterator<String> it=stats.iterator(); 
+     
+          while (it.hasNext()) { 
+            buffer.append(it.next()); 
+            buffer.append("\n"); 
+          } 
+     
+          return buffer.toString(); 
+        }
+Create a class called Task and specify that it implements the Runnable interface. In this example, these tasks are going to do nothing apart from sleeping for 1 second:
+        public class Task implements Runnable { 
+          @Override 
+          public void run() { 
+            try { 
+              TimeUnit.SECONDS.sleep(1); 
+            } catch (InterruptedException e) { 
+              e.printStackTrace(); 
+            } 
+          } 
+        }
+Create the main class of the example. Create a class called Main and implement the main() method:
+        public class Main { 
+          public static void main(String[] args) {
+Create a MyThreadFactory object and a Task object:
+        MyThreadFactory factory=new MyThreadFactory("MyThreadFactory"); 
+        Task task=new Task();
+Create 10 Thread objects using the MyThreadFactory object and start them:
+        Thread thread; 
+        System.out.printf("Starting the Threads\n"); 
+        for (int i=0; i<10; i++){ 
+           thread=factory.newThread(task); 
+          thread.start(); 
+        }
+Write the statistics of the thread factory in the console:
+        System.out.printf("Factory stats:\n"); 
+        System.out.printf("%s\n",factory.getStats());
+Run the example and see the results.

@@ -1,0 +1,8 @@
+- Takes two input parameters and returns an output of certain type
+
+BiFunction<String, String, Boolean> x = (c,d)->d.contains(c);
+x.apply(x,y)
+
+Constructor reference:
+-----------------------
+BiFunction<Integer, Float, HashMap> biFunction = HashMap::new;

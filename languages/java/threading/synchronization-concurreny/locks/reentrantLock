@@ -1,0 +1,136 @@
+- Java monitors are reentrant means java thread can 
+reuse the same monitor for different synchronized methods if method is called from the method.
+
+- Locks are reentrant -> When thread holds a lock, it can enter a block synchronised on the lock it is holding.
+
+
+Advantage of Reentrant Monitor
+It eliminates the possibility of single thread deadlocking
+
+
+
+class Reentrant {  
+    public synchronized void m() {  
+    n();  
+    System.out.println("this is m() method");  
+    }  
+    public synchronized void n() {  
+    System.out.println("this is n() method");  
+    }  
+}  
+
+
+
+
+
+public class ReentrantExample{  
+public static void main(String args[]){  
+final ReentrantExample re=new ReentrantExample();  
+  
+Thread t1=new Thread(){  
+public void run(){  
+re.m();//calling method of Reentrant class  
+}  
+};  
+t1.start();  
+}}  
+
+----------Reentrant lock -------------
+
+- Works like synchronized keyword on object
+- requires explicit locking and unlocking.
+
+Pattern1:
+Lock lockObj = new ReentrantLock();
+
+public void method(){
+    lockObj.lock();
+    try{
+    //data
+    }finally{
+    lockObj.unlock();
+    }
+}
+
+For testing you get various methods like:
+getQueuedThreads()
+getOwner()
+isHeldByCurrentThread()
+isLocked()
+
+- Prevent thread starvation using ReentrantLock(true) but this may reduce throughput
+
+- lockObj.lockInterruptibility(); -> interrupted by some other thread.
+This is used as watchdog for deadlock detection a recovery.Waking up threads to do clean and close the app.
+
+Pattern 2: Can be interrupted by thread [Interruptiable lock acquisition]
+---------------------------------------
+try{
+ lockObj.lockInterruptibility();
+}catch(InterruptedException){
+    cleanAndExit()
+} finally{
+    lockObj.unlock();
+    }
+
+Pattern3: Reentrant - tryLock:[timed lock acquisition]
+-------------------------------
+
+This method tries to get control of the lock, and if it can't, because it's used by another thread, it returns false.
+ With the synchronized keyword, if thread (A) tries to execute a synchronized block of code when thread (B) is 
+ executing it, thread (A) is suspended until thread (B) finishes the execution of the synchronized block. With lock, you can execute the tryLock() method. This method 
+returns a Boolean value indicating whether there is another thread running the code protected by this lock.
+
+boolean tryLock()
+boolean tryLock(long timeOut, Timeunit unit)
+Return true and acquires a lock if available.
+
+
+if(obj.tryLock()){ //Acquire lock + return true.
+    try{
+
+    }finally{
+        obj.unlock();
+    }
+}
+
+Pattern 4: Fairness locK:
+--------------------------
+new ReentrantLock(true) //fair. By default it is unfair as fairness is costly.
+//THis will allow first thread first and not randomly
+
+The constructor of the ReentrantLock class admits a boolean parameter named fair; this parameter allows you to 
+control its behavior. The false value is the default value and it's called the non-fair mode. In this mode, if 
+some threads are waiting for a lock and the lock has to select one of these threads to get access to the critical 
+section, it randomly selects anyone of them. The true value is called the fair mode. In this mode, if some threads 
+are waiting for a lock and the lock has to select one to get access to a critical section, it selects the thread 
+that has been waiting for the longest period of time. Take into account that the behavior explained previously 
+is only used in the lock() and unlock() methods. As the tryLock() method doesn't 
+put the thread to sleep if the Lock interface is used, the fair attribute doesn't affect its functionality.
+
+
+Pattern 5: Re-entrant ReadWrite lock:
+-------------------------
+- Synchronized and ReentrantLock do not allow multiple readers to access a shared resource concurrently.
+- The ReadWriteLock interface allows a separation of read and write operations with multiple readers and only one modifier.
+
+private ReadWriteLock lock=new ReentrantReadWriteLock(); 
+ReentrantReadWriteLock rwLock = new ReentrantReadWriteLock();
+Lock readLock = rwLock.readLock();
+Lock writeLock = rwLock.writeLock();
+
+Putting write lock | similarly put read lock: 
+
+writeLock.lock()
+try{
+
+}finally{
+   writeLock.unlock() 
+}
+
+- If write lock is acquired, no thread can acquire a read lock.
+- If atleast one thread hold a read lock, no thread can acquire a write lock
+
+- Correct! Since the method is guarded by a read lock. 
+Many threads can acquire that lock as long as no other thread is holding the write lock.
+Once write lock is held, no one can read.

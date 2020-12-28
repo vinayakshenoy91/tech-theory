@@ -1,0 +1,220 @@
+- Sequelize.js module
+
+1) Connection setting file:
+
+Now, let’s create a connection settings file between Sequelize and SQLite3 . To do so, create the file libs/config.js 
+using these parameters:
+
+database: Defines the database name.
+
+username: Informs the username of access.
+
+password: Informs the username’s password.
+
+params.dialect: Informs which database will be used (sqlite, mysql, postgres, mariadb, mssql).
+
+params.storage: A specific attribute for only SQLite3 , it defines the directory where the database files will be recorded.
+
+params.define.underscored: Standardizes the tables fields’ names to appear in lowercase letters with an underscore.
+
+The file is going to look like this.
+
+ 1   module.exports = {
+ 2     database: "ntask",
+ 3     username: "",
+ 4     password: "",
+ 5     params: {
+ 6       dialect: "sqlite",
+ 7       storage: "ntask.sqlite",
+ 8       define: {
+ 9         underscored: true
+10       }
+11     }
+12   };
+
+2) After creating this settings file, we’re going create a code that will be responsible for connecting with the database. This connection code will adopt the Singleton pattern to ensure that the Sequelize connection will be instantiated only once. This is going to allow us to load this module innumerable time via a single database’s connection.
+
+To do this, create the db.js code following this step.
+
+ 1   import Sequelize from "sequelize";
+ 2   const config = require("./libs/config.js");
+ 3   let sequelize = null;
+ 4   
+ 5   module.exports = () => {
+ 6     if (!sequelize) {
+ 7       sequelize = new Sequelize(
+ 8         config.database,
+ 9         config.username,
+10         config.password,
+11         config.params
+12       );
+13    }
+14    return sequelize;
+15   };
+
+
+3) 
+To finish the Sequelize.js setup, let’s implement a simple sync function between Sequelize and the database. This sync function performs, if necessary, alterations on database tables, according to what is going to be set up on the models. Let’s include the app.db.sync() function to ensure this action will be executed before the server starts. This refactoring needs to be written into the libs/boot.js file.
+
+1   module.exports = app => {
+2     app.db.sync().done(() => {
+3       app.listen(app.get("port"), () => {
+4         console.log(`NTask API             - Port ${app.get("port")}`);
+5       });
+6     });
+7   };
+To test those modifications, restart the server. If everything is okay, your application must work as it was working before; after all, no visible modification was made, only some adjustments to establish a connection between the API and SQLite3 . In the next section, we’ll create all the necessary models for our application, and will have a huge impact for our project .
+
+
+
+4) Create models:
+
+MODEL: TASKS
+To start, let’s modify the models/tasks.js file, applying the following code.
+
+ 1   module.exports = (sequelize, DataType) => {
+ 2     const Tasks = sequelize.define("Tasks", {
+ 3       id: {
+ 4         type: DataType.INTEGER,
+ 5         primaryKey: true,
+ 6         autoIncrement: true
+ 7       },
+ 8       title: {
+ 9         type: DataType.STRING,
+10         allowNull: false,
+11         validate: {
+12           notEmpty: true
+13         }
+14       },
+15       done: {
+16         type: DataType.BOOLEAN,
+17         allowNull: false,
+18         defaultValue: false
+19       }
+20     }, {
+21       classMethods: {
+22         associate: (models) => {
+23           Tasks.belongsTo(models.Users);
+24         }
+25       }
+26     });
+27     return Tasks;
+28   };
+
+5) 
+
+MODEL: USERS
+To complete our database modeling, let’s create a model that will represent the users of our application. You need to create the models/users.js file with the following model definitions.
+
+ 1   module.exports = (sequelize, DataType) => {
+ 2     const Users = sequelize.define("Users", {
+ 3       id: {
+ 4         type: DataType.INTEGER,
+ 5         primaryKey: true,
+ 6         autoIncrement: true
+ 7       },
+ 8       name: {
+ 9         type: DataType.STRING,
+10        allowNull: false,
+11        validate: {
+12          notEmpty: true
+13        }
+14       },
+15       password: {
+16         type: DataType.STRING,
+17         allowNull: false,
+18         validate: {
+19           notEmpty: true
+20         }
+21        },
+22        email: {
+23          type: DataType.STRING,
+24          unique: true,
+25          allowNull: false,
+26          validate: {
+27            notEmpty: true
+28          }
+29         }
+30       }, {
+31         classMethods: {
+32           associate: (models) => {
+33             Users.hasMany(models.Tasks);
+34           }
+35        }
+36      });
+37      return Users;
+38   };
+This time, the modeling of the table Users was very similar to Tasks. The only difference was the inclusion of the unique: true attribute, inside the field email, to ensure that repeated e-mails won’t be allowed .
+
+After finishing this step, we are going to change some codes in the project so it can load these models correctly and run their respective relationship functions in the database. To start, let’s modify some of the modules loading on index.js. First, we are going to order the loading of the modules so the libs/config.js is loaded first, then the db.js, and then also remove the loading of the models directory from consign, because now all models are loaded from db.js. The code should look like this.
+
+ 1   import express from "express";
+ 2   import consign from "consign";
+ 3   
+ 4   const app = express();
+ 5   
+ 6   consign()
+ 7     .include("libs/config.js")
+ 8     .then("db.js")
+ 9     .then("libs/middlewares.js")
+10     .then("routes")
+11     .then("libs/boot.js")
+12     .into(app);
+The reason the directory models was deleted from consign() is that now, all models will be loaded directly by db.js file, via the sequelize.import() function. After all, if you go back to the models codes, you will notice that two new attributes within module.exports = (sequelize, DataType) appeared. Those are going to be magically injected via sequelize.import(), which is responsible for loading and defining the models. Let’s refactor the db.js file, to import and load all models correctly.
+
+ 1   import fs from "fs";
+ 2   import path from "path";
+ 3   import Sequelize from "sequelize";
+ 4   
+ 5   let db = null;
+ 6   
+ 7   module.exports = app => {
+ 8     if (!db) {
+ 9       const config = app.libs.config;
+10       const sequelize = new Sequelize(
+11        config.database,
+12        config.username,
+13        config.password,
+14        config.params
+15      );
+16      db = {
+17        sequelize,
+18        Sequelize,
+19        models: {}
+20      };
+21      const dir = path.join(__dirname, "models");
+22      fs.readdirSync(dir).forEach(file => {
+23        const modelDir = path.join(dir, file);
+24        const model = sequelize.import(modelDir);
+25        db.models[model.name] = model;
+26      });
+27      Object.keys(db.models).forEach(key => {
+28        db.models[key].associate(db.models);
+29      });
+30     }
+31     return db;
+32   };
+This time, the code got a little complex, didn’t it? Its features are pretty cool, though. Now we can use the database settings via app.libs.config object. Another detail is in the execution of the nested function fs.readdirSync(dir).forEach(file), which basically returns an array of strings referring to the file names from the directory models. Then, this array is iterated to import and load all models using the sequelize.import(modelDir) function and, then, inserted in this module inside the structure db.models via db.models[model.name] = model.
+
+After loading all models, a new iteration happens through the Object.keys(db.models).forEach(key) function, which basically executes the function db.models[key].associate(db.models) to ensure the models’ relationship.
+
+To finish the adjustments, we need to write a simple modification in the libs/boot.js file, changing from the app.db.sync() function to app.db.sequelize.sync():
+
+1   module.exports = app => {
+2     app.db.sequelize.sync().done(() => {
+3       app.listen(app.get("port"), () => {
+4         console.log(`NTask API               - Port ${app.get("port")}`);
+5       });
+6     });
+7   };
+Then, let’s modify routes/tasks.js to load the Tasks model correctly using app.db.models.Tasks and modify the function Tasks.findAll() to this Promises-based function provided by Sequelize . This is how it should look.
+
+1   module.exports = app => {
+2     const Tasks = app.db.models.Tasks;
+3     app.get("/tasks", (req, res) => {
+4       Tasks.findAll({}).then(tasks => {
+5         res.json({tasks: tasks});
+6       });
+7     });
+8   };
+

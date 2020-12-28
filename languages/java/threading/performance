@@ -1,0 +1,9 @@
+Latency: Time to completion of a task.
+
+Throughput: Amount of tasks completed ina given period.Measured in tasks/time unit.
+
+The number of tasks we break down to should be [N] nearly equal to  number of cores.
+
+#thread = #core is optimal only if all threads are runnable and can run withut interruption
+(no IO/blocking calls/sleep)
+- assumption is nothing else runs that conumes lot of CPU

@@ -1,0 +1,14 @@
+- https://www.terraform.io/
+- brew install terraform
+
+- Run terraform in cli to check
+- For terraformt o access your env, you need to set access and secret key:
+$ export AWS_ACCESS_KEY_ID=(your access key id)
+$ export AWS_SECRET_ACCESS_KEY=(your secret access key)
+
+-It’ll also be able to use credentials in $HOME/.aws/credentials, which are automatically generated 
+if you run the configure command 
+on the AWS CLI, or IAM Roles, which you can add to almost any resource in AWS. 
+Read: http://bit.ly/2M11muR
+
+

@@ -1,0 +1,2 @@
+- Scaling out using app service plan. The platform will figure out based on CPU how much it should scale.
+We can also scale based on scheduled time.

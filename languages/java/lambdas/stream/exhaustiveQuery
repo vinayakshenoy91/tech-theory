@@ -1,0 +1,128 @@
+menu.stream().filter(d->d.getCalories()>300)
+    .map(Dish::getName)
+    .limit(3)
+    .collect(Collectors.toList());
+
+long count = menu.stream()
+    .filter(d->d.getCalories()>300)
+    .sorted(comparing(Trader::getName))
+    .map(Dish::getName)
+    .map(String::length)
+    .flatMap(Arrays::stream)
+    .limit(3)
+    .skip(2)
+    .findAny(); //Returns optional if it doesn't find one.
+    .ifPresent(function)
+    .findFirst();
+    .noneMatch(d -> d.getCalories() >= 1000)
+    .allMatch(d -> d.getCalories() < 1000)
+    .anyMatch(Dish::isVegetarian)
+    .distinct() //According to hashcode and equals method -> or use .collect(toSet());
+    .count()
+    .reduce(0, (a, b) -> a + b);[Summing ops]
+    .reduce(Integer::max); //These return optional -> use  .min(comparing(Transaction::getValue))
+    .reduce(Integer::min); //These return optional -> use    .max(comparing(Transaction::getValue))
+    .reduce(0, Integer::sum); //This involved boxing/unboxing
+    .reduce("",(n1,n1)->n1+n2) //Combining to string -> effecient->  .collect(joining());
+    .forEach(System.out::println)
+    .min(comparing(Transaction::getValue))
+    .max(comparing(Transaction::getValue))
+    .mapToInt(Dish::getCalories)
+    .sum()
+
+Creating stream from array:
+---------------------------
+String[] arrayOfWords = {"Goodbye", "World"};
+Stream<String> streamOfwords = Arrays.stream(arrayOfWords);
+
+
+Creating stream as is:
+---------------------------
+Stream<String> stream = Stream.of("Java 8 ", "Lambdas ", "In ", "Action");
+stream.map(String::toUpperCase).forEach(System.out::println);
+
+Empty stream creation:
+-----------------------
+Stream<String> emptyStream = Stream.empty();
+
+2. Given two lists of numbers, how would you return all pairs of numbers? For example, given a list [1, 2, 3] and a list [3, 4] you should return [(1, 3), (1, 4), (2, 3), (2, 4), (3, 3), (3, 4)]. For simplicity, you can represent a pair as an array with two elements.
+
+Answer:
+
+You could use two maps to iterate on the two lists and generate the pairs. But this would return a Stream<Stream<Integer[]>>. What you need to do is flatten the generated streams to result in a Stream<Integer[]>. This is what flatMap is for:
+
+List<Integer> numbers1 = Arrays.asList(1, 2, 3);
+List<Integer> numbers2 = Arrays.asList(3, 4);
+List<int[]> pairs =
+    numbers1.stream()
+            .flatMap(i -> numbers2.stream()
+                                  .map(j -> new int[]{i, j})
+                    )
+            .collect(toList());
+
+Pythagoream triplets:
+----------------------
+Stream<int[]> pythagoreanTriples =
+    IntStream.rangeClosed(1, 100).boxed()
+             .flatMap(a ->
+                IntStream.rangeClosed(a, 100)
+                         .filter(b -> Math.sqrt(a*a + b*b) % 1 == 0)
+                         .mapToObj(b ->
+                            new int[]{a, b, (int)Math.sqrt(a * a + b * b)})
+                     );
+
+pythagoreanTriples.limit(5)
+                  .forEach(t ->
+                     System.out.println(t[0] + ", " + t[1] + ", " + t[2]));
+
+//You need to test whether the square root of a * a + b * b is an integer number; that is, it has no 
+fractional part, which in Java can be expressed 
+using expr % 1.0. If it’s not an integer, that means c is not an integer
+filter(b -> Math.sqrt(a*a + b*b) % 1 == 0)
+
+Fibonacci series:
+------------------
+Stream.iterate(new int[]{0, 1},
+               t -> new int[]{t[1],t[0] + t[1]})
+      .limit(10)
+      .map(t -> t[0])
+      .forEach(System.out::println);
+OR
+IntSupplier fib = new IntSupplier(){
+    private int previous = 0;
+    private int current = 1;
+    public int getAsInt(){
+        int oldPrevious = this.previous;
+        int nextValue = this.previous + this.current;
+        this.previous = this.current;
+        this.current = nextValue;
+        return oldPrevious;
+    }
+};
+IntStream.generate(fib).limit(10).forEach(System.out::println);
+
+Create infinite stream:
+-----------------------
+The Streams API provides two static methods to generate a stream from a function: 
+Stream.iterate and Stream.generate. 
+
+Stream.iterate(0, n -> n + 2)
+      .limit(10)
+      .forEach(System.out::println);
+
+Stream.generate(Math::random)
+      .limit(5)
+      .forEach(System.out::println);
+
+
+Note: But it’s important to note that a supplier that’s stateful isn’t safe to use in parallel code. 
+//Stream of ones
+IntStream ones = IntStream.generate(() -> 1);
+
+IntStream twos = IntStream.generate(new IntSupplier(){
+            public int getAsInt(){
+                return 2;
+            }
+        });
+The generate method will use the given supplier and repeatedly call the getAsInt method, which always returns 2. But the difference between the anonymous class used here and a lambda is that the anonymous class can define state via fields, which the getAsInt method can modify. This is an example of a side effect. All lambdas you’ve seen so far were side-effect free; they didn’t change any state.
+

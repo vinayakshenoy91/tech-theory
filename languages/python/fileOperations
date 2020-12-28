@@ -1,7 +1,14 @@
 #opening a file:
 ----------------
+- If the file opens successfully, the operating system returns us a file handle. The file handle is not the actual data 
+contained in the file, but instead, it is a "handle" that we can use to read the data. 
+We are provided with a handle if the requested file exists and we have the proper permissions to read the file.
+
 file=open('mobile_clean.csv','r')
 s=file.readline()
+OR
+if( line.startsWith('From:'):
+print(line)
 
 #closing file:
 -------------
@@ -16,7 +23,50 @@ with open('mobile_clean.csv','r') as file:
       for line in file:
          print(line)
 
+//Creating a single line:
+with open("/cxldata/python_sample_file") as f:
+    s = ""
+    for line in f:
+        print(line)
+        s = s + line
+    print(s)
+
+
+content = content.replace('\n',' ') //Replce the contents
+
 #writing a file:
 ----------------
 with open('my.txt','w') as file:
      file.write('hello world from python code')
+
+//Reading while file as 1 string:
+We can also read the whole file into one string using the read method on the file handle.
+content = f.read()
+
+
+NOTES: Always use handlers for iterating
+
+Counting number of lines in a file:
+------------------------------------
+
+def number_of_lines():
+    handler = open('/cxldata/datasets/project/mbox-short.txt')
+    inp = handler.read()
+    count=0
+    for line in inp:
+        if(line == "\n"):
+            count=count+1
+    return count
+
+
+Select lines with desired prefix:
+----------------------------------
+def count_number_of_lines():
+    handler = open('/cxldata/datasets/project/mbox-short.txt')
+    #inp = handler.read()
+    count=0
+    for line in handler:
+        if(line.rstrip().startswith('Subject:')):
+            count=count+1
+    return count
+    

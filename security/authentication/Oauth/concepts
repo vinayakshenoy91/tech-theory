@@ -4,6 +4,7 @@
 using a token which is valid for a limited time. The application users authorize the client app to retrieve information 
 on their behalf.
 - OAuth should only be used for authorization.
+- Used for sharing data between services.
 
 Resource owner:
 --------------

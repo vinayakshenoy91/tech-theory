@@ -1,0 +1,22 @@
+- That’s why we want to make sure that the critical styles 
+and scripts are downloaded with the HTML file before we download the rest of the scripts and styles.
+- Second, since our home page usually gets most of the traffic, 
+it’s also a great idea to use a CDN as well as cache the static content.
+- Search by text use no sql DB
+- What do we do with the static text on the home page? If the text is something that does not change very often, 
+we can use a caching database server like Redis. 
+Depending on your app, caching could be done on the browser as well as using the second-level cache.
+
+- Images must be optimized per device. A lot of times we can see that it’s the same image and a different 
+stylesheet is used per device. This can make pictures look smaller but the mobile device still has to load the 
+same image that was created for the desktop. This must be mitigated across the board. Another important thing that 
+needs to be done is to optimize the stylesheets such as layout and ensure that paint operations are not triggered 
+more often than necessary in the browser. This could be done by using simple techniques as hiding the element, making 
+all the changes in the DOM (not the render tree), and then making the element visible again. This way layout will only 
+be triggered once. If you need to read more about this I would investigate Virtual Dom approaches as well as frameworks.
+
+Search engine boosting:
+
+What if we have a 27-inch monitor on the sale and it might be priced as much as the 24-inch monitor? We would definitely 
+want to boost it up. This means it will show up higher in the search results based on the boosting score we provide. 
+This is easier to implement in a search engine than a relational database as boosting is natively supported in a search engine.

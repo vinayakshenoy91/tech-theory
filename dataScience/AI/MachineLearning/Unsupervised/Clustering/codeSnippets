@@ -1,0 +1,71 @@
+1) KMeans clustering: [Refer to sklearn lib]
+-------------------
+Loading/Generating data:
+-------------------------
+import pandas as pd
+pointsdf = pd.read_csv("/cxldata/mltut/points.csv");
+
+import numpy as np
+points = np.array(pointsdf)
+
+xs=points[:,0] 
+ys=points[:,1] 
+import matplotlib.pyplot as plt
+
+plt.scatter(xs,ys)
+plt.show()
+
+Creating a model:
+--------------------
+from sklean.cluster import KMeans
+model = KMeans(n_cluster=3) //Create model
+model.fit(points) //Use the fit() method of KMeans to fit the model to the array of points that we have already loaded.-> Optional
+OR
+clusters = model.fit_predict(points) //Train model. Use the .predict() method of model to predict the cluster labels of new_points, assigning the result to labels. 
+                                     //Tip: To see which clusters these points belong to , use the fit_predict
+new_points = [[4,3],[4,1]]
+j=model.predict(new_points) //Test model
+print(j)
+
+model.cluster_centers_ //These are cluster centres
+
+
+Evaluating a cluster:
+--------------------
+ks = range(1,10)
+inertias=[]
+for k in ks:
+    model = KMeans (n_clusters=k)
+    model.fit(samples)
+    inertias.append(model.inertia_)
+
+# Plot ks vs inertia_
+
+plt.plot(ks,inertias,'-o')
+plt.xlabel('number of clusters,k')
+plt.ylabel('inertia')
+plt.xticks(ks)
+plt.show()
+
+Decision: We need to find where is the elbow occuring. When rate of change of slope is smaller, we stop.
+
+- Use standard scalar to scale the column data
+
+2) Evaluating a cluster:
+-------------------------
+xs=points[:,0] 
+ys=points[:,1] 
+import matplotlib.pyplot as plt
+
+plt.scatter(xs,ys)
+plt.show()
+
+
+2) Hierarchical clustering: #refer git cloudxlab
+---------------------------
+
+model = AgglomerativeClustering(n_cluster=3)
+model = model.fit(X)
+plt.title('Auto MPG Clustering Dendrogram')
+plot_dendrogram(model, labels=y,leaf_rotation=90)
+plt.show()

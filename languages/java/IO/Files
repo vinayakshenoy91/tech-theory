@@ -1,0 +1,45 @@
+Creating file object:
+---------------------
+File file = new File("files/data.txt");
+- Creating file object does not create anything on disk
+- a file object can be file or directory
+
+Boolean methods of files to do checks:
+--------------------------------------
+- file.exists()
+- file.isDirectory()
+- file.isFile()
+- file.canRead()
+- file.canWrite()
+- file.canExecute()
+
+
+Creating/Modify/Delete file:
+----------------------------
+file.createNewFile();
+file.mkdir();
+file.mkdirs();
+file.delete();
+file.deleteOnExit()
+file.renameTo("files/file.txt")
+
+Querys on files:
+-----------------
+file.getName();
+file.getParent();
+file.getPath();
+file.getAbsolutePath();
+
+Path methods:
+-------------
+Path root = Paths.get("files");
+Path child = Paths.get("data.txt");
+
+Path resolved = root.resolve(child); // causes path concatenation
+//If child ath is relative like D://, then resolution is just child path
+Path resolved = file.resolveSibling(sibling);//putting child file in parent path.
+
+Path dir = Paths.get("D:/src/java");
+Path file = Paths.get("D:/src/java/org/paumard/Main.java");
+
+Path relative = dir.relativize(file); //org/paumard/Main.java

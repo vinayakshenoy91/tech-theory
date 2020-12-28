@@ -1,0 +1,19 @@
+CDN:
+----
+A congestion window is the limit of data the sender can send into the TCP network before receiving 
+an ACK (or acknowledgment) from the receiver. The received window (rwnd) is the limit of data that could 
+be accepted by the receiver. TCP uses both congestion and a receive window in order to prevent congestion 
+in the network. When the packets from the sender or the source exceed what the destination (or receiver) can 
+handle, it can lead to network congestion. That’s why the protocol introduces the limit. This limit increases 
+with every single pair of requests (from sender) and acknowledgments (from receiver). In order to reach the 
+congestion window (cwnd) size of size N, the time taken is calculated using the following formula:
+
+Time = RTT x [log2(N/initial cwnd)]
+
+RTT -> Round trip Time
+
+
+Let’s assume we are sending data between San Francisco and New York. The round-trip time between the two cities is 42ms. One of the ways TCP congestion control happens is by using the TCP Slow-start strategy. Slow-start can begin with an initial cwnd of 1, 2, 4, or 10 Maximum Segment Size (or MSS). The MSS happens to be the largest amount of data that a device on the TCP network can receive. With every acknowledgment (or ACK) the window size will be effectively doubled per round-trip time (assuming that the ACKs are not delayed). The process in the diagram is a three-way TCP handshake in which the SYN (or Synchronize) message is sent from the sender to the receiver, which sends the SYN-ACK (Synchronize-Acknowledgment) back to the sender. This is how the TCP socket connection is established. Next, if we assume that the actual request is made to the server and the server takes about 50ms to process the request. We will assume the MSS of 10 (which is the maximum allowed size). This means the server can send 14.6KB to the receiver in 113 ms. With every round trip time this number should effectively double, so you can see the data that can come in with the subsequent requests is 29.2KB and 58.4KB. If the total size of the response from the server was just 116.8KB we will need approximately 239ms. This looks like a small number but is really high when we consider the RTT time between the two cities, which is just 42ms and the size of the response is pretty minimal.
+
+Latency is a constant and is a fraction of the speed of the light. If we assume that we have the best transmission media (out of fiber optics, coaxial cables, etc.) and there is no loss of packet due to external reasons, latency itself is a big factor in performance of the application. In this case, we only assumed that the server takes just 50ms to process the request and prepare a response. However, it’s the congestion limits and the way TCP works that slowed us down. So, the key learning here is that in order to speed up responses for our users, we must make use of servers that are near the user’s location. This is where CDNs come to the rescue. 
+

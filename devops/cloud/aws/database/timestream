@@ -1,0 +1,2 @@
+- Timeseries DB  optimised for storing  and querying high volume timeseries dat at 1/10th the cost of RDBMS
+Use: IOT, telemtry

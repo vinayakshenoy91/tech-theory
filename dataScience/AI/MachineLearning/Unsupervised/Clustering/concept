@@ -1,0 +1,18 @@
+Kmeans Clustering:
+------------------
+- Cluster the data on given number of centroid
+
+Steps:
+------
+1) Initilize the centroid randomly
+2) For each instance:
+   -> Pick a centroid from which the instance is at shortest distance.
+   -> Assign the instance the group
+   -> Recalaculate that centroid
+
+3) Keep repeat the step 2 until no instance changes the group.
+
+
+- Complexity of k means clustering is O(n*m*centroid_num)
+
+- Inertia: Closeness between instances and centre

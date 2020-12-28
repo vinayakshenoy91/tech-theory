@@ -1,0 +1,93 @@
+- Introduces new datatype called DataFrame
+- High level data manipulation tool
+- Built by Wes McKinney
+- Data stored in DF
+- Pandas provide high-performance, easy-to-use data structures, and data analysis tools.
+- The DataFrame is the main and widely used data structure of the Pandas library.
+- DataFrame is a kind of in-memory 2-D table (similar to Excel sheet) with rows and columns.
+- Using DataFrames, we can create pivot tables (just like Excel sheet), 
+compute one column value using values of other columns, etc.
+
+
+cars["x"] => Pandas series
+cars[["x"]] => Pandas DF 
+
+# Creating data frome from csv:
+-------------------------------
+import pandas as pd
+brics=pd.DataFrame(dict)
+brics.index=["BR","RU","IN"]
+
+df=pd.read_csv('ransom.csv', index_col=0)
+
+Getting metadata of dataframe:
+-------------------------------
+df.head() -> Print first few lines of DF, df.head(20) -> Print first 20 lines
+df.info() -> tells about structure of DF
+df.describe() -> Gives all the stats
+dfname["columns name"] -> Get all the data for that column //This returns a pandas series
+dfname["columns name"]> value -> Returns true or false value based on condition
+Pandas Series object has a unique() function to find unique values. Also, try using the autocomplete feature 
+of Jupyter or help() or dir() function to find out the values functions available on an object.
+bikesData['yr'].unique() //Find unique values in a column
+
+# Getting the data using loc and iloc:
+-------------------------------------
+- brics.loc[["RU","IN"],[column_labels]]
+- brics.loc[:,[column_labels]] # if only 1 element, dont use 2nd bracket.
+- brics.iloc[[1,2,3],[0,1]]
+
+//To get rows use: cars[0:3]
+//To get column use: cars[["country"]] #DF, cars["series"] #Pandas series
+
+#Get count of unique categorical values in a particular column:
+---------------------------------------------------------------
+housing["ocean_proximity"].value_counts()
+
+
+#Adding new column in DF:
+---------------------------
+for lab, row in brics.iterrows() :
+    brics.loc[lab, "name_length"] = len(row["country"])
+
+OR
+
+brics["name_length"] = brics["country"].apply(len)
+cars["COUNTRY"] = cars["country"].apply(str.upper)
+
+
+Pandas use example:
+-------------------
+# Pre-defined lists
+names = ['United States', 'Australia', 'Japan', 'India', 'Russia', 'Morocco', 'Egypt']
+dr =  [True, False, False, False, True, True, True]
+cpc = [809, 731, 588, 18, 200, 70, 45]
+
+# Import pandas as pd
+import pandas as pd
+
+
+# Create dictionary my_dict with three key:value pairs: my_dict
+my_dict={'country':names,'drives_right':dr,'cars_per_cap':cpc}
+
+# Build a DataFrame cars from my_dict: cars
+cars=pd.DataFrame(my_dict)
+
+# Print cars
+print(cars)
+
+
+#some more examples using loc and iloc:
+---------------------------------------
+# Import cars data
+import pandas as pd
+cars = pd.read_csv('cars.csv', index_col = 0)
+
+# Print out drives_right column as Series
+print(cars['drives_right'])
+
+# Print out drives_right column as DataFrame
+print(cars[['drives_right']])
+
+# Print out cars_per_cap and drives_right as DataFrame
+print(cars.loc[:,['cars_per_cap','drives_right']])

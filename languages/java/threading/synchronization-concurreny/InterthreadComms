@@ -1,0 +1,49 @@
+
+Inter-thread comm done using:
+------------------------------
+- interrupt
+- joins
+- semaphore
+
+- Conditon variable:
+--------------------
+- Always associated with a lock.
+- Lock ensures atomic check and modification of shared variables, involved in the condition.
+
+Lock lock = new RenetrantLock();
+Condition condition = lock.newCondition();
+
+void await -> unlock lock, wait until signalled. .//This is  blocking call.
+long awaitNanos(timeInNano);
+boolean await(time, unit)
+boolean awaitUntil(Date deadline)
+- void signal wakes up a single thread waiting on condition variable.
+- A thread that wakes up has to reacquire the lock associated with condition variable.
+- If currently no thread is waiting on the condition variable, the signal method doesn't do anything.
+void signalAll()-> broadcast signal to all threads currently waiting on conditon variable.
+
+
+wait, notify and notifyAll:
+----------------------------
+- In wait state, thread is not consuming any cpu.
+- Notify wakes u a single thread waiting on that object.
+
+public class MySharedClass{
+  private boolean isComplete = false;
+  public void watiUntilComplete(){
+      synchronized(this){
+          while(isComplete==false){
+              this.wait();
+          }
+      }
+  }
+}
+
+public void complete(){
+    synchronized(this){
+        isComplete=true;
+        this.notify();
+    }
+}
+
+//Producer consumer built using conditions.

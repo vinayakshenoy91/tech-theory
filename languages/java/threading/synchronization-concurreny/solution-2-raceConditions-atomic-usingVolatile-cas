@@ -1,0 +1,109 @@
+- core of the problem is non-atomic operations performed on shared resource.
+- Compiler and CPU may execute the instructions out of order to optimise
+performance and utilization. They will do so by maintaining logical correctness.
+- Compiler rearranges the instructiosn for better:
+1) branch prediction -> optimised loops. if statement etc/
+2) Vectorization -> parallel instruction execution (SIMD)
+3) Prefetching instructions -> better cache performance.
+- Rearragne for better hardware utilisation
+
+- Declare variable as volatile to prevent data race.
+Code before volatile will be executed before and after will be executed after.
+If x and y are made volatile while excuting x++ and y++, they will be executed in order.
+
+Atomic operation:
+-----------------
+- Anything that is atomic is threadsafe.
+- An operation or a set of operations is considered atomic , if it appears to the rest of the system as if it 
+occured at once.
+- Single step: all or nothing.
+- All reference assignments are atomic.
+- All getters and setters are atomic. We can get and set reference to objects atomically as well. So synchroniztion is 
+not required here.
+- All assignments to primitive types are safe except long and double. For long and double, you need to add volatile keyword 
+if you need to make them threadsafe.
+- The below operation is atomic and threadsafe.
+volatile double x = 1.0
+volatile double y = 9.0
+x=y
+- java.util.concurrent.atomic
+- The compiler may compile the assignment of long, and double as 2 operations, which may intoduce a race condition.
+Need to make long and double assignment as volatile or make the getters synchronized.
+
+Atomic Integer:
+---------------
+int init = 0;
+AtomicInteger at = new AtomicInteger(init);
+at.incremetnAndGet();
+at.getAndIncrement.
+get() and set()
+getAndSet(value)
+compareAndSet(expected, actual)
+getAndUpdate(unaryOp)
+updateAndGet(unaryOp)
+getAndIncrement()
+getAndDecrement()
+getAndAdd(value)
+addAndGet(value)
+getAndAccumulate(value,binOp)
+accumulateAndGet(value,binOp)
+
+AtomicReference<V>:
+-------------------
+get() and set()
+getAndSet(value)
+getAndUpdate(unaryOp)
+updateAndGet(unaryOp)
+getAndAccumulate(value,binOp)
+accumulateAndGet(value,binOp)
+compareAndSet(expected, actual)
+
+AtomicBoolean:
+---------------
+- get(),set()
+- getAndSet(value)
+- compareAndSet( expecxtedValue, newValue)
+
+AtomicLong: //Safe increment without sync
+-----------
+AtomicLong counter = new AtomicLong(10L);
+long newValue = counter.incrementAndGet(); //CASing tells if increment failed.
+
+Compare and Swap(CAS):
+---------------------
+- Tool to handle concurrent reads and writes
+- Low level CPU instruction exposed at api level
+- If the current value at that address is the expected value then it is replaced by new value and 
+returns true else fall, all this in a single atomic assembly instruction
+- Works well when concurrency not too high
+- CASing if not handled properly will hit memory and CPU
+
+
+LongAdder and Long Accumulator:
+-------------------------------
+- Works as atomic long
+- Has update like atomicLong but no get after an update.
+- Distribute update on diff cell
+- Tailored for high concurrency
+
+LongAdder has:
+- increment()
+- decrement()
+- add(long)
+- sum(), longValue(), intValue()
+- sumThenReset()
+
+Long Accumulator
+- built on binary operator
+- accumulate(long)
+- get()
+- intValue(),longValue(),floatValue(), doubleValue()
+- getThenReset()
+
+Volatile:
+--------
+- If you don't put sync, then 
+- Happens-before link between sync writes and reads.
+- If the operation is not atomic, just declaring variable volatile won't work, you need to 
+sync it.
+- For happens-before link, you need to set getter/setter as sync.

@@ -4,3 +4,15 @@ Openapi:
 - Formerly known as swagger
 - swagger.io
 - Inspector.swagger.io
+- apidocjs.com
+- Use swqagger or api blueprint [Use with aglio
+]
+- darkov , apiary
+
+That’s why it’s so important to focus not on exposing on your company’s 
+internal infrastructure but on the experience that an outside developer should have when interacting with your API.
+
+There are tools that help you to describe the interface of an API in a structured way that can be used to generate documentation and run your tests. 
+Additionally, a subset of these tools also allows you to specify data types and custom data types. Some examples are json:api, JSON Schema, and Apache Avro.
+
+

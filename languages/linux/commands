@@ -1,0 +1,2 @@
+!head -n 15 /cxldata/datasets/project/mbox-short.txt //Find 15 lines in the head
+

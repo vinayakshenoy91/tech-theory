@@ -1,0 +1,46 @@
+"use strict";
+class AnotherClass {
+        constructor(p1, p2) {
+                this._param1 = p1;
+                this._param2 = p2;
+        }
+}
+class SampleClass extends AnotherClass {
+        constructor(param1, param2) {
+                super(param1, param2)
+        }
+        set param1(val) {
+                this._param1 = +val;
+        }
+        set param2(val) {
+                this._param2 = +val;
+        }
+        get param1() {
+                return "This is param1: " + this._param1;
+        }
+        get sum() {
+                return this._param1 + this._param2;
+        }
+        static description() {
+                return "This is a static method, like the ones you're used to using...";
+        }
+}
+let sampleObj = new SampleClass(1,2);
+console.log(sampleObj.sum);
+sampleObj.param1 = "100";
+console.log(sampleObj.sum);
+console.log(sampleObj.param1);
+console.log(SampleClass.description());
+Listing 3-18Example of Classes in ES6
+Like I said, nothing controversial nor complicated, the code sample shows the basic features of the classes that come with ES6, which are:
+Inheritance: Using the extends reserved word, you can quickly tell which class inherits from another one.
+
+Reserved word constructor: Yes, you do have a quirk here; instead of following the old convention of using the class name to identify the constructor code, you can actually define it using a function called constructor.
+
+Getters and setters: This is one that I actually think is pretty neat. You get methods that you can define to add extra code needed when setting or getting a specific property on your class.
+
+No privacy in your code: There is no way to define the visibility of your methods and properties; everything is public, deal with it.
+
+Static methods: Finally, we also got static methods, which help to clean up the code.
+
+TIPSetters are quite useful and easy to set up; just remember to not name them exactly like the property you’re trying to affect, otherwise you’ll get a recursion error trying to setting inside the actual setter.

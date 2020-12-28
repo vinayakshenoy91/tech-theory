@@ -1,0 +1,68 @@
+We can begin building this with the following Varnish cache configuration:
+
+vcl 4.0;
+backend default {
+  .host = "dictionary-server-service";
+  .port = "8080";
+}
+Create a ConfigMap object to hold this configuration:
+
+kubectl create configmap varnish-config --from-file=default.vcl
+Now we can deploy the replicated Varnish cache, which will load this configuration:
+
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: varnish-cache
+spec:
+  replicas: 2
+  template:
+    metadata:
+      labels:
+        app: varnish-cache
+    spec:
+      containers:
+      - name: cache
+        resources:
+          requests:
+            # We'll use two gigabytes for each varnish cache
+            memory: 2Gi
+        image: brendanburns/varnish
+        command:
+        - varnishd
+        - -F
+        - -f
+        - /etc/varnish-config/default.vcl
+        - -a
+        - 0.0.0.0:8080
+        - -s
+        # This memory allocation should match the memory request above
+        - malloc,2G
+        ports:
+        - containerPort: 8080
+        volumeMounts:
+        - name: varnish
+          mountPath: /etc/varnish-config
+      volumes:
+      - name: varnish
+        configMap:
+          name: varnish-config
+You can deploy the replicated Varnish servers with:
+
+kubectl create -f varnish-deploy.yaml
+And then finally deploy a load balancer for this Varnish cache:
+
+kind: Service
+apiVersion: v1
+metadata:
+  name: varnish-service
+spec:
+  selector:
+    app: varnish-cache
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 8080
+which you can create with:
+
+kubectl create -f varnish-service.yaml

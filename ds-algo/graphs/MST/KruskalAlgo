@@ -1,0 +1,25 @@
+Disjoint sets:
+---------------
+- DS to keep track of a set of elements partitioned into a number of disjoint(non-overlapping) subsets
+- Three ops: union, find, make
+- usually impl like tree structure
+- In kruskal algo, with disjoint set we can decide in approx O(1) time whether two vertexes are in same set or not.
+
+- In union ops, to balance a tree, we use:
+
+1) union by rank -> Always attach the smaller tree to the root of larger one.The tree will become more balanced:faster!!!
+2) path compression -> flattening the structure of the tree. We set every visited node to be connected to root directly.
+
+ran -> depth of tree
+
+Uses of disjoint sets:
+-----------------------
+- Adding given edge would form a cycle or not.
+- union-find DS in this case would be helpful
+- We can check if cycle present in O(1) constant time complexity.
+
+Spanning Tree:
+--------------
+- A spannign tree of an undirected G graph is a subgraph that includes all vertices of G
+
+

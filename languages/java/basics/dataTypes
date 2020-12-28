@@ -1,0 +1,80 @@
+
+Variables:
+----------
+- primitive types
+- object reference
+
+Primitive types:
+-----------------
+byte -> 8 bits -> -2^7 to 2^7-1 -> default : 0
+short ->16 bits -> -2^15 to 2^15-1 -> default : 0
+int -> 32 bits -> -2^31 to 2^31-1 -> default : 0
+long -> 64 bits -> -2^63 to 2^63-1 -> default : 0 -> 222222222L,22_22_22_222L //Help with readability
+float -> 32 bits -> -3.4E38 to 3.4E38 -> default: 0.0f -> 6-7 decimal digit precision
+double -> 64 bits -> -1.7E308 to 1.7E308 -> default: 0.0d -> 15-16 decimal digit precision
+char
+boolean
+
+- IEEE 754 floating point scheme used for float and double.
+- Exponential ex: 3.8e4
+
+Boxed variables:
+-------------------
+Integer.compare(person1.age(), person2.age())
+
+Tips:
+------ 
+1) use int and double most of the time.
+2) Use BigDecimal for precision.
+BigDecimal x = new BigDecimal("0.1");
+x.add(second)
+
+Note: Long literal can only be assigned to long. byte, short, int will have int literals
+
+- int x = Integer.MIN_VALUE
+  int y = Integer.MAX_VALUE
+
+Hexadecimal:
+------------
+- int intHex = 0x0041L
+
+Binary:
+-------
+int bin = 0b01000001
+
+Octal:
+-----
+int oct = 0101;
+
+Char type:
+----------
+- single letter characters
+- char x = 'B' -> This is stored as 66
+- Uses: 16 bit unsigned int
+- char -> 16 bits -> 0 to 2^16-1 [0-65536] -> default '\u0000' 
+- Mapping between character and number mapping is kept by unicode character set.
+Maps every characer with hexa number called code point -> whihc maps to integer value -> stored in a binary format.
+Unicode impl used is UTF-16 [encoding scheme]
+'B' -> encoded as 0042 [Hexa number] -> 00000000 01000010 [Stored in binary format] //Binary value is 66
+
+MIN_VALUE = '\u0000'
+MAX_VALUE = '\uFFFF'
+
+- unicode-table.com
+char x =66;
+char x_hex = 0x0041
+
+int x = 'A' -> This will print 65
+
+
+Static Variables:
+-----------------
+- They are unique to the class.
+
+Declaration ways:
+-----------------
+double x = 2.0, y = 3.0;
+
+Typecasting:
+-------------
+

@@ -1,0 +1,5 @@
+Fast Integration
+Integration with the system means how easily the modules interact with the specific database engine. With MySQL and PostgreSQL, there is Sequelize,4 which provides very complete and powerful object-relational mapping (ORM). It lets you focus more on the data model than on the actual engine particularities. Besides, if you use it right, you can potentially switch between both engines with minimum impact on the code.
+
+On the other hand, with MongoDB you have Mongoose.js,5 which allows you to abstract your code from the engine, simplifying your task when it comes to defining the schemas, validations, and so forth.
+

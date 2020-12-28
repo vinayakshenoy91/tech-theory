@@ -1,0 +1,92 @@
+What happens if I have to print more than one header and/or footer at a time? Or what if 
+the order of the headers and/or footers needs to change? The number of combinations can quickly overwhelm.
+
+- the Decorator pattern can prove very useful. Instead of controlling added functionality by having a control method, 
+the Decorator pattern says to control it by chaining together the functions desired in the correct order needed. 
+The Decorator pattern separates the dynamic building of this chain of functionality from the client that uses it 
+(in this case, the SalesOrder). It also separates the building of the chain from the chain components (e.g., the headers,
+the footer, the SalesTicket). This allows for flexible use of these components.
+
+
+- Attach additional responsibilities to an object dynamically. 
+Decorators provide a flexible alternative to subclassing for extending functionality.
+
+
+https://learning.oreilly.com/library/view/design-patterns-explained/0321247140/ch17.html
+
+The Decorator pattern helps to decompose the problem into two parts:
+
+•   How to implement the objects that give the new functionality
+
+•   How to organize the objects for each special case
+
+This enables me to separate implementing the Decorators from the object that determines how they are used. 
+This increases cohesion because each of the Decorators is only concerned with the function it adds—not in how 
+it is added to the chain. It also enables me to arbitrarily reorder the Decorators without changing any of their code.
+
+
+Anotehr example:
+A common use for the Decorator pattern is in stream I/O. 
+
+
+When you use it?
+- Dynamism in the usage of the functions.this gives programmers the ability to pick any 
+number of combinations from the different behaviors available.
+
+- Developers in object-oriented languages can take advantage of this by having source and behavior 
+objects derive from a common abstract class. Each behavior object can be given its source or prior 
+behavior in its constructor. A chain of actions is then built as the objects themselves are instantiated. 
+(Each is given a reference to its trailing object.) The sources derive from ConcreteComponent ,
+whereas the behaviors are decorators. Note that ConcreteComponent is now a misnomer because it is now abstract.
+
+- The Decorator pattern’s implementation tells you to make a linked list of the optional functions ending with the Transmission object. 
+The “decorating” objects should all have the same interface as the Transmission object.
+
+- A more robust solution is to implement a collection object that has the same interface as the Transmission object. 
+This calls the “decorators” and catches any required exceptions in case they don’t. In fact, this might have the added 
+advantage of making it so the decorating objects no longer needed to have the same interface.
+
+The point is that you can view the Decorator pattern as having the following forces:
+
+•   Several optional functions exist.
+
+•   These decorators may or may not be following all of the rules they should.
+
+•   You need some way to invoke these decorating objects, in different orders as needed, without encumbering the Client object.
+
+•   You don’t want to encumber your application with knowing which of these to use (or even that they exist).
+
+Thinking of the Decorator pattern in this light makes a distinction between the purpose of the Decorator pattern and the implementation of the Decorator pattern.
+
+Example:
+--------
+The classes directly derived from java.io.InputStream (ByteArrayInputStream, FileInputStream, FilterInputStream, InputStream, ObjectInputStream, SequenceInputStream, and StringBufferInputStream) all play the role of the decorated object. All of the decorators derive from FilterInputStream (either directly or indirectly).
+
+Adding data:
+-----------
+
+Intent
+
+Attach additional responsibilities to an object dynamically.
+
+Problem
+
+The object that you want to use does the basic functions you require. However, you may need to add some additional functionality to the object, occurring before or after the object’s base functionality. Note that the Java foundation classes use the Decorator pattern extensively for I/O handling.
+
+Solution
+
+Allows for extending the functionality of an object without resorting to subclassing.
+
+Participants and collaborators
+
+The ConcreteComponent is the class having function added to it by the Decorators. Sometimes classes derived from ConcreteComponent are used to provide the core functionality, in which case ConcreteComponent is no longer concrete, but rather abstract. The Component defines the interface for all of these classes to use.
+
+Consequences
+
+Functionality that is to be added resides in small objects. The advantage is the ability to dynamically add this function before or after the functionality in the ConcreteComponent. Note: Although a decorator may add its functionality before or after that which it decorates, the chain of instantiation always ends with the ConcreteComponent.
+
+Implementation
+
+Create an abstract class that represents both the original class and the new functions to be added to the class. In the decorators, place the new function calls before or after the trailing calls to get the correct order.
+
+

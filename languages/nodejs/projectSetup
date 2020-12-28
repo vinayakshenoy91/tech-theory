@@ -1,0 +1,1838 @@
+Project name
+  - config
+  - controllers
+  - lib
+  - models
+  - node_modules
+  - request_schemas
+  - schemas
+  - swagger-ui
+  - tests
+
+
+Here are the folders we’ll be creating and using:
+controllers : This folder contains the code for our controllers. It also has an index.js file to handle exporting the contents of the required controller files. There is also a base controller here, which contains all the generic methods that all controllers should have; so every new controller can extend this and inherit said methods.
+
+lib : This folder contains the miscellaneous code not big enough to have its own folder but required across several different places in our project; for instance, database access, helper functions, and so forth.
+
+models : Inside this folder are the model files. Normally when working with Mongoose, a model’s file has the schema definition, and you return the instantiation of that schema as your model. In our case, the actual definition is somewhere else, so this code handles loading that external definition, adding the extra behavior specific to each model, and then returning it.
+
+request_schemas : Inside this folder are the JSON Schemas used to validate the different requests.
+
+schemas : These are the JSON Schemas of the models, used for the Swagger module to define the UI for testing and for the Mongoose model’s definition. We will have to add some code to translate from the first one to the latter, since they don’t use the same format.
+
+swagger-ui : This folder contains the contents of the Swagger UI project. We’ll need to do some minor adjustments to the index.html file to make it work as we expect it.
+
+node_modules : This folder will be created automatically by npm, and it’ll contain the modules listed on you package.json file. You don’t really have to worry about maintaining (or even creating) this folder, it’ll appear there once you run npm install for the first time.
+
+config : The config folder is used by the config module, which will look inside it by default. Your configuration should be inside a JSON file called default.json. Any environment-specific configuration will be added by creating configuration files aptly named (such as production.json, or development.json, which you can later reference using the NODE_ENV environment variable1).
+
+CONTROLLERS
+This file (Listing 7-2) is used to export each controller. Using this technique, we can import the entire folder like if it was a module, like this:
+
+module.exports = {
+        BookSales: require("./booksales"),
+        Stores: require("./stores"),
+        Employees: require("./employees"),
+        ClientReviews: require("./clientreviews"),
+        Clients: require("./clients"),
+        Books: require("./books"),
+        Authors: require("./authors")
+}
+Listing 7-2/controllers/index.js
+var controllers = require("/controllers")
+const restify = require("restify"),
+        errors = require("restify-errors"),
+        halson = require("halson"),
+        logger = require("../lib/logger")
+class BaseController {
+        constructor() {
+                this.actions = []
+                this.server = null
+        }
+        setUpActions(app ,sw) {
+                this.server = app
+                this.actions.forEach(act => {
+                        let method = act['spec']['method']
+                        logger.info(`Setting up auto-doc for (${method} ) - ${act['spec']['nickname']}`)
+                        sw['add' + method](act)
+                        app[method.toLowerCase()](act['spec']['path'], act['action'])
+                })
+        }
+        addAction(spec, fn) {
+                let newAct = {
+                        'spec': spec,
+                        action: fn.bind(this)
+                }
+                this.actions.push(newAct)
+        }
+        RESTError(type, msg) {
+                logger.error("Error of type" + type + "found:" + msg.toString());
+                if(errors[type]) {
+                        return new errors[type](msg.toString())
+                } else {
+                        return {
+                                error: true,
+                                type: type,
+                                msg: msg
+                        }
+                }
+        }
+        writeHAL(res, obj) {
+                if(Array.isArray(obj)) {
+                        let newArr = obj.map( item => {
+                                return item.toHAL();
+                        })
+                obj = halson(newArr)
+                } else {
+                        if(obj && obj.toHAL) {
+                                obj = obj.toHAL()
+                        }
+                }
+                if(!obj) {
+                        obj = {}
+                }
+                res.json(obj)
+        }
+}
+module.exports = BaseController
+Listing 7-3/controllers/basecontroller.js
+Every controller extends this class (Listing 7-3), gaining access to the methods shown earlier. We’ll use basic prototypical inheritance, as you’ll see in a bit when we start listing the other controllers’ code.
+
+Let’s quickly go over the methods exposed in the code from Listing 7-3.
+setUpActions: This method is called upon instantiation of the controller; it is meant to add the actual routes to the HTTP server. This method is called during the initialization sequence for all controllers exported by the index.js file.
+
+addAction: This method defines an action, which consists of the specs for that action and the actual function code. The specs are used by Swagger to create the documentation, but they’re also used by our code to set up the route; so there are bits inside the JSON spec that are also meant for the server, such as the path and method attributes.
+
+RESTError: This is a simple wrapper method around all the error methods provided by Restify’s error extension.2 It provides the benefit of cleaner code.
+
+writeHAL: Every model defined (as you’ll see soon enough) has a toHAL method, and the writeHAL methods take care of calling it for every model we’re trying to render. It basically centralizes the logic that deals with collections or simple objects, depending on what we’re trying to render.
+
+const BaseController = require("./basecontroller"),
+  swagger = require("swagger-node-restify")
+class Books extends BaseController {
+  constructor(lib) {
+    super();
+    this.lib = lib;
+  }
+  /**
+  Helper method for the POST action, it takes two lists of items with
+  properties calls "store" and "copies" and returns a single list, with
+  "store" being a unique key
+  */
+  mergeStores(list1, list2) {
+    let stores1 = {}
+    let stores2 = {}
+    let storesMap1 = list1.reduce( (theMap, theItem)  => {
+      if(theItem.store) theMap[theItem.store] = theItem.copies;
+      return theMap;
+    }, {})
+    let storesMap2 = list2.reduce( (theMap, theItem)  => {
+      if(theItem.store) theMap[theItem.store] = theItem.copies;
+      return theMap;
+    }, {})
+    
+    let stores = Object.assign(storesMap1, storesMap2)
+    return Object.keys().map( (k) => {
+      return {store: k, copies: stores[k]}
+    })
+  }
+  list(req, res, next) {
+    let criteria = {}
+    if(req.params.q) {
+      let expr = new RegExp('.*' + req.params.q + '.*')
+      criteria.$or = [
+        {title: expr},
+        {isbn_code: expr},
+        {description: expr}
+      ]
+    }
+    if(req.params.genre) {
+      criteria.genre = req.params.genre
+    }
+    this.lib.db.model('Book')
+      .find(criteria)
+      .populate('stores.store')
+      .exec((err, books) => {
+        if(err) return next(err)
+        this.writeHAL(res, books)
+      })
+  }
+  details(req, res, next) {
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model("Book")
+        .findOne({_id: id})
+        .populate('authors')
+        .populate('stores')
+        .populate('reviews')
+        .exec((err, book) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          if(!book) {
+            return next(this.RESTError('ResourceNotFoundError', 'Book not found'))
+          }
+          this.writeHAL(res, book)
+        })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Missing book id'))
+    }
+  }
+  create(req, res, next) {
+    let bookData = req.body
+    if(bookData) {
+      let isbn = bookData.isbn_code
+      this.lib.db.model("Book")
+        .findOne({isbn_code: isbn})
+        .exec((err, bookModel) => {
+          if(!bookModel) {
+            bookModel = this.lib.db.model("Book")(bookData)
+          } else {
+            bookModel.stores = this.mergeStores(bookModel.stores, bookData.stores)
+          }
+          bookModel.save((err, book) => {
+              if(err) return next(this.RESTError('InternalServerError', err))
+              this.writeHAL(res, book)
+            })
+        })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Missing content of book'))
+    }
+  }
+  bookAuthors(req, res, next) {
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model("Book")
+        .findOne({_id: id})
+        .populate('authors')
+        .exec((err, book) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          if(!book) {
+            return next(this.RESTError('ResourceNotFoundError', 'Book not found'))
+          }
+          thihs.writeHAL(res, book.authors)
+        })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Missing book id'))
+    }
+  }
+  bookReviews(req, res,next) {
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model("Book")
+        .findOne({_id: id})
+        .populate('reviews')
+        .exec((err, book) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          if(!book) {
+            return next(this.RESTError('ResourceNotFoundError', 'Book not found'))
+          }
+          this.writeHAL(res, book.reviews)
+        })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Missing book id'))
+    }
+  }
+  update(req, res, next) {
+    let data = req.body
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model("Book").findOne({_id: id}).exec((err, book) => {
+      if(err) return next(this.RESTError('InternalServerError', err))
+        if(!book) return next(this.RESTError('ResourceNotFoundError', 'Book not found'))
+        book = Object.assign(book, data)
+        book.save((err, data) => {
+        if(err) return next(this.RESTError('InternalServerError', err))
+         this.writeHAL(res, data.toJSON())
+        })
+      })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Invalid id received'))
+    }
+  }
+}
+module.exports = function(lib) {
+  let controller = new Books(lib);
+  controller.addAction({
+        'path': '/books',
+        'method': 'GET',
+        'summary': 'Returns the list of books',
+        "params": [ swagger.queryParam('q', 'Search term', 'string'), swagger.queryParam('genre','Filter by genre', 'string')],
+        'responseClass': 'Book',
+        'nickname': 'getBooks'
+  }, controller.list)
+  controller.addAction({
+        'path': '/books/{id}',
+        'method': 'GET',
+        'params': [ swagger.pathParam('id', 'The Id of the book','int') ],
+        'summary': 'Returns the full data of a book',
+        'responseClass': 'Book',
+        'nickname': 'getBook'
+      }, controller.details )
+  controller.addAction({
+        'path': '/books',
+        'method': 'POST',
+        'params': [ swagger.bodyParam('book', 'JSON representation of the new book','string') ],
+        'summary': 'Adds a new book into the collectoin',
+        'responseClass': 'Book',
+        'nickname': 'newBook'
+      }, controller.create)
+  controller.addAction({
+        'path': '/books/{id}/authors',
+        'method': 'GET',
+        'params': [ swagger.pathParam('id', 'The Id of the book','int') ],
+        'summary': 'Returns the list of authors of one specific book',
+        'responseClass': 'Author',
+        'nickname': 'getBooksAuthors'
+      }, controller.bookAuthors)
+  controller.addAction({
+        'path': '/books/{id}/reviews',
+        'method': 'GET',
+        'params': [ swagger.pathParam('id', 'The Id of the book','int') ],
+        'summary': 'Returns the list of reviews of one specific book',
+        'responseClass': 'BookReview',
+        'nickname': 'getBooksReviews'
+      }, controller.bookReviews)
+  controller.addAction({
+        'path': '/books/{id}',
+        'method': 'PUT',
+        'params': [ swagger.pathParam('id', 'The Id of the book to update','string'),
+                   swagger.bodyParam('book', 'The data to change on the book', 'string') ],
+        'summary': 'Updates the information of one specific book',
+        'responseClass': 'Book',
+        'nickname': 'updateBook'
+      }, controller.update)
+  return controller
+}
+Listing 7-4/controllers/books.js
+The code for this controller (Listing 7-4) is very straightforward; in it we see the basic mechanics we’ve defined for this particular project, on how to declare a controller and its actions. We also have the special case for the POST action, which takes care of checking for the ISBN of the new book to see if it is trying to add it in stock at another store. If the ISBN already exists, then the book is merged to all the relevant stores (method mergeStores); otherwise, it’ll just create the new record.
+
+For every controller, we’re creating a new class that inherits from the BaseController, which gives us the ability to add custom behavior if we wanted to and also to remove the common code (such as the setUpActions and RESTError methods) and move it into a single place.
+
+The controller files are required during initialization of the API and then used on the setUpRoutes function inside the helpers.js file. And when that happens, the lib object is passed to them:
+
+function setupRoutes(server, swagger, lib) {
+        for(controller in lib.controllers) {
+                cont = lib.controllers[controller](lib)
+                cont.setUpActions(server, swagger)
+        }
+}
+This in turn, means that the lib object is received by the export function, which is the one in charge of instantiating the new controller and setting up its actions as part of swagger’s documentation to finally return it back to the requiring code.
+
+Here are some other interesting bits from Listing 7-4:
+The getBooks action shows how to do simple regular expression–based filtering with Mongoose.
+
+The update action is not actually using the update method from Mongoose but instead loads the model using the extend method from the underscore, and finally calls the save method on the model. This is done for one simple reason: the update method doesn’t trigger any post-hooks on the models, but the save method does, so if we wanted to add behavior to react to an update on the model, this would be the way to go about it.
+
+const BaseController = require("./basecontroller"),
+          swagger = require("swagger-node-restify")
+class Stores extends BaseController {
+  constructor(lib) {
+    super();
+    this.lib = lib;
+  }
+  list(req, res, next) {
+    let criteria = {}
+    if(req.params.state) {
+      criteria.state = new RegExp(req.params.state,'i')
+    }
+    this.lib.db.model('Store')
+      .find(criteria)
+      .exec((err, list) =>  {
+        if(err) return next(this.RESTError('InternalServerError', err))
+        this.writeHAL(res, list)
+    })
+  }
+  details(req, res, next) {
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model('Store')
+        .findOne({_id: id})
+        .populate('employees')
+        .exec((err, data) => {
+        if(err) return next(this.RESTError('InternalServerError', err))
+        if(!data) return next(this.RESTError('ResourceNotFoundError', 'Store not found'))
+        this.writeHAL(res, data)
+      })
+    } else  {
+      next(this.RESTError('InvalidArgumentError', 'Invalid id'))
+    }
+  }
+  storeBooks(req, res, next) {
+    let id = req.params.id
+    if(id) {
+      let criteria = {stores: {$elemMatch: {"store": id}}}
+      if(req.params.q) {
+        let expr = new RegExp('.*' + req.params.q + '.*', 'i')
+        criteria.$or = [
+          {title: expr},
+          {isbn_code: expr},
+          {description: expr}
+        ]
+      }
+      if(req.params.genre) {
+        criteria.genre = req.params.genre
+      }
+      //even though this is the stores controller, we deal directly with books here
+      this.lib.db.model('Book')
+        .find(criteria)
+        .populate('authors')
+        .exec((err, data) =>  {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          this.writeHAL(res, data)
+        })
+    } else  {
+      next(this.RESTError('InvalidArgumentError', 'Invalid id'))
+    }
+  }
+  storeEmployees(req, res, next) {
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model('Store')
+        .findOne({_id: id})
+        .populate('employees')
+        .exec((err, data) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          if(!data) {
+            return next(this.RESTError('ResourceNotFoundError', 'Store not found'))
+          }
+          console.log(data)
+          this.writeHAL(res, data.employees)
+        })
+    } else  {
+      next(this.RESTError('InvalidArgumentError', 'Invalid id'))
+    }
+  }
+  storeBooksales(req, res, next) {
+    let id = req.params.id
+    if(id) {
+      //even though this is the stores controller, we deal directly with booksales here
+      this.lib.db.model('Booksale')
+        .find({store: id})
+        .populate('client')
+        .populate('employee')
+        .populate('books')
+        .exec((err, data) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          this.writeHAL(res, data)
+        })
+    } else  {
+      next(this.RESTError('InvalidArgumentError', 'Invalid id'))
+    }
+  }
+  create(req, res, next) {
+    let data = req.body
+    if(data) {
+      let newStore = this.lib.db.model('Store')(data)
+      newStore.save((err, store) => {
+        if(err) return next(this.RESTError('InternalServerError', err))
+        this.writeHAL(res, store)
+      })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'No data received'))
+    }
+  }
+  update(req, res, next) {
+    let data = req.body
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model("Store").findOne({_id: id}).exec((err, store) => {
+      if(err) return next(this.RESTError('InternalServerError', err))
+        if(!store) return next(this.RESTError('ResourceNotFoundError', 'Store not found'))
+        store = Object.assign(store, data)
+        store.save((err, data) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          this.writeHAL(res, data);
+        })
+      })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Invalid id received'))
+    }
+  }
+}
+module.exports = lib => {
+  let controller = new Stores(lib);
+  controller.addAction({
+          'path': '/stores',
+          'method': 'GET',
+          'summary': 'Returns the list of stores ',
+    'params': [swagger.queryParam('state', 'Filter the list of stores by state', 'string')],
+          'responseClass': 'Store',
+          'nickname': 'getStores'
+  }, controller.list);
+  controller.addAction({
+          'path': '/stores/{id}',
+          'method': 'GET',
+          'params': [swagger.pathParam('id','The id of the store','string')],
+          'summary': 'Returns the data of a store',
+          'responseClass': 'Store',
+          'nickname': 'getStore'
+  }, controller.details )
+  controller.addAction({
+    'path': '/stores/{id}/books',
+    'method': 'GET',
+    'params': [swagger.pathParam('id','The id of the store','string'),
+               swagger.queryParam('q', 'Search parameter for the books', 'string'),
+               swagger.queryParam('genre', 'Filter results by genre', 'string')],
+    'summary': 'Returns the list of books of a store',
+    'responseClass': 'Book',
+    'nickname': 'getStoresBooks'
+  }, controller.storeBooks)
+  controller.addAction({
+          'path': '/stores/{id}/employees',
+          'method': 'GET',
+          'params': [swagger.pathParam('id','The id of the store','string')],
+          'summary': 'Returns the list of employees working on a store',
+          'responseClass': 'Employee',
+          'nickname': 'getStoresEmployees'
+  }, controller.storeEmployees)
+  controller.addAction({
+          'path': '/stores/{id}/booksales',
+          'method': 'GET',
+          'params': [swagger.pathParam('id','The id of the store','string')],
+          'summary': 'Returns the list of booksales done on a store',
+          'responseClass': 'BookSale',
+          'nickname': 'getStoresBookSales'
+  }, controller.storeBooksales)
+  controller.addAction({
+          'path': '/stores',
+          'method': 'POST',
+          'summary': 'Adds a new store to the list',
+    'params': [swagger.bodyParam('store', 'The JSON data of the store', 'string')],
+          'responseClass': 'Store',
+          'nickname': 'newStore'
+  }, controller.create)
+  controller.addAction({
+          'path': '/stores/{id}',
+          'method': 'PUT',
+          'summary': "UPDATES a store's information",
+          'params': [swagger.pathParam('id','The id of the store','string'), swagger.bodyParam('store', 'The new information to update', 'string')],
+          'responseClass': 'Store',
+          'nickname': 'updateStore'
+  }, controller.update)
+  return controller
+}
+Listing 7-5/controllers/stores.js
+The code from Listing 7-5 is very similar to that of the Books controller. It does, however, have something of notice: the getStoresBookSales action clearly shows what happens when we don’t use a Hierarchical MVC model. I said that this is not a common case, so it would be fine for the purpose of this book, but it clearly shows how separation of concerns is broken in the strictest of senses, by acting over the model of another controller instead of going through that other controller. Given the added complexity that mechanism would imply to our code, we’re better off looking the other way for the time being.
+
+Listings 7-6 to 7-10 show the code of the three remaining controllers. They don’t particularly show anything new compared to the previous ones, so we’ll just look at their code and the occasional code comment.
+
+const BaseController = require("./basecontroller"),
+  swagger = require("swagger-node-restify")
+class  BookSales extends BaseController {
+  constructor(lib) {
+    super();
+    this.lib = lib;
+  }
+  queryAuthors(res, next, criteria, bookIds) {
+    if(bookIds) {
+      criteria.books = {$in: bookIds}
+    }
+    this.lib.db.model('Author')
+      .find(criteria)
+      .exec((err, authors) =>  {
+        if(err) return next(this.RESTError('InternalServerError', err))
+        this.writeHAL(res, authors)
+      })
+  }
+  list(req, res, next) {
+    let criteria = {}
+    if(req.params.q) {
+      let expr = new RegExp('.*' + req.params.q + '.*', 'i')
+      criteria.$or = [
+        {name: expr},
+        {description: expr}
+      ]
+    }
+    let filterByGenre = false || req.params.genre
+    if(filterByGenre) {
+      this.lib.logger.debug("Filtering by genre:" + filterByGenre)
+      this.lib.db.model('Book')
+        .find({genre: filterByGenre})
+        .exec((err, books) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          this.queryAuthors(res, next, criteria, _.pluck(books, '_id'))
+        })
+    } else {
+      this.queryAuthors(res, next, criteria)
+    }
+  }
+  details(req, res, next) {
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model('Author')
+        .findOne({_id: id})
+        .exec((err, author) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          if(!author) {
+            return next(this.RESTError('ResourceNotFoundError', 'Author not found'))
+          }
+          this.writeHAL(res, author)
+        })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Missing author id'))
+    }
+  }
+  create(req, res, next) {
+    let body = req.body
+    if(body) {
+      let newAuthor = this.lib.db.model('Author')(body)
+      newAuthor.save((err, author) => {
+        if(err) return next(this.RESTError('InternalServerError', err))
+        this.writeHAL(res, author)
+      })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Missing author id'))
+    }
+  }
+  update(req, res, next) {
+    let data = req.body
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model("Author").findOne({_id: id}).exec((err, author) => {
+      if(err) return next(this.RESTError('InternalServerError', err))
+          if(!author) return next(this.RESTError('ResourceNotFoundError', 'Author not found'))
+          author = Object.assign(author, data)
+          author.save((err, data) => {
+            if(err) return next(this.RESTError('InternalServerError', err))
+            this.writeHAL(res, data)
+          })
+      })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Invalid id received'))
+    }
+  }
+  authorBooks(req, res, next) {
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model('Author')
+        .findOne({_id: id})
+        .populate('books')
+        .exec((err, author) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          if(!author) {
+            return next(this.RESTError('ResourceNotFoundError', 'Author not found'))
+          }
+          this.writeHAL(res, author.books)
+        })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Missing author id'))
+    }
+  }
+}
+module.exports = function(lib) {
+  let controller = new BookSales(lib)
+  //list
+  controller.addAction({
+          'path': '/authors',
+          'method': 'GET',
+          'summary' :'Returns the list of authors across all stores',
+          'params': [ swagger.queryParam('genre', 'Filter authors by genre of their books', 'string'),
+                                  swagger.queryParam('q', 'Search parameter', 'string')],
+          'responseClass': 'Author',
+          'nickname': 'getAuthors'
+  }, controller.list)
+  //get
+  controller.addAction({
+          'path': '/authors/{id}',
+          'summary': 'Returns all the data from one specific author',
+          'method': 'GET',
+    'params': [swagger.pathParam('id','The id of the author','string')],
+          'responseClass': 'Author',
+          'nickname': 'getAuthor'
+  }, controller.details )
+  //post
+  controller.addAction({
+          'path': '/authors',
+          'summary': 'Adds a new author to the database',
+          'method': 'POST',
+          'params': [swagger.bodyParam('author', 'JSON representation of the data', 'string')],
+          'responseClass': 'Author',
+          'nickname': 'addAuthor'
+  }, controller.create )
+  //put
+  controller.addAction({
+          'path': '/authors/{id}',
+          'method': 'PUT',
+          'summary': "UPDATES an author's information",
+          'params': [swagger.pathParam('id','The id of the author','string'),
+                                  swagger.bodyParam('author', 'The new information to update', 'string')],
+          'responseClass': 'Author',
+          'nickname': 'updateAuthor'
+  }, controller.update)
+  // /books
+  controller.addAction({
+          'path': '/authors/{id}/books',
+          'summary': 'Returns the data from all the books of one specific author',
+          'method': 'GET',
+          'params': [ swagger.pathParam('id', 'The id of the author', 'string')],
+          'responseClass': 'Book',
+          'nickname': 'getAuthorsBooks'
+  }, controller.authorBooks )
+  return controller
+}
+Listing 7-6/controllers/authors.js
+const BaseController = require("./basecontroller"),
+  swagger = require("swagger-node-restify")
+class BookSales extends BaseController {
+  constructor(lib) {
+    super();
+    this.lib = lib;
+  }
+  list(req, res, next) {
+    let criteria = {}
+    if(req.params.start_date)
+      criteria.date = {$gte: req.params.start_date}
+    if(req.params.end_date)
+      criteria.date = {$lte: req.params.end_date}
+    if(req.params.store_id)
+      criteria.store = req.params.store_id
+    this.lib.db.model("Booksale")
+      .find(criteria)
+      .populate('books')
+      .populate('client')
+      .populate('employee')
+      .populate('store')
+      .exec((err, sales) => {
+        if(err) return next(this.RESTError('InternalServerError', err))
+        this.writeHAL(res, sales)
+      })
+  }
+  create(req, res, next) {
+    let body = req.body
+    if(body) {
+      let newSale = this.lib.db.model("Booksale")(body)
+      newSale.save((err, sale) => {
+        if(err) return next(ths.RESTError('InternalServerError', err))
+        this.writeHAL(res, sale)
+      })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'Missing json data'))
+    }
+  }
+}
+module.exports = function(lib) {
+  let controller = new BookSales(lib);
+  controller.addAction({
+        'path': '/booksales',
+        'method': 'GET',
+        'summary': 'Returns the list of book sales',
+        'params': [ swagger.queryParam('start_date', 'Filter sales done after (or on) this date', 'string'),
+                    swagger.queryParam('end_date', 'Filter sales done on or before this date', 'string'),
+                    swagger.queryParam('store_id', 'Filter sales done  on this store', 'string')
+                  ],
+        'responseClass': 'BookSale',
+        'nickname': 'getBookSales'
+      }, controller.list)
+  controller.addAction({
+        'path': '/booksales',
+        'method': 'POST',
+        'params': [ swagger.bodyParam('booksale', 'JSON representation of the new booksale','string') ],
+        'summary': 'Records a new booksale',
+        'responseClass': 'BookSale',
+        'nickname': 'newBookSale'
+      }, controller.create)
+  return controller
+}
+Listing 7-7/controllers/booksales.js
+const BaseController = require("./basecontroller"),
+          swagger = require("swagger-node-restify")
+class ClientReviews extends BaseController {
+  constructor(lib) {
+    super();
+    this.lib = lib;
+  }
+  create(req, res, next) {
+    let body = req.body
+    if(body) {
+      let newReview = this.lib.db.model('ClientReview')(body)
+      newReview.save((err, rev) => {
+        if(err) return next(this.RESTError('InternalServerError', err))
+        this.writeHAL(res, rev)
+      })
+    }
+  }
+}
+module.exports = function(lib) {
+  let controller = new ClientReviews(lib);
+  controller.addAction({
+          'path': '/clientreviews',
+          'method': 'POST',
+          'summary': 'Adds a new client review to a book',
+          'params': [swagger.bodyParam('review', 'The JSON representation of the review',  'string')],
+          'responseClass': 'ClientReview',
+          'nickname': 'addClientReview'
+  }, controller.create)
+  return controller
+}
+Listing 7-8/controllers/clientreviews.js
+const BaseController = require("./basecontroller"),
+          swagger = require("swagger-node-restify")
+class Clients extends BaseController {
+   constructor(lib) {
+    super();
+    this.lib = lib;
+   }
+  list(req, res, next) {
+    this.lib.db.model('Client').find().sort('name').exec((err, clients) => {
+      if(err) return next(this.RESTError('InternalServerError', err))
+      this.writeHAL(res, clients)
+    })
+  }
+  create(req, res, next) {
+    let newClient = req.body
+    let newClientModel = this.lib.db.model('Client')(newClient)
+    newClientModel.save((err, client) => {
+      if(err) return next(this.RESTError('InternalServerError', err))
+      this.writeHAL(res, client)
+    })
+  }
+  details(req, res, next) {
+    let id = req.params.id
+    if(id != null) {
+      this.lib.db.model('Client').findOne({_id: id}).exec((err, client) => {
+        if(err) return next(this.RESTError('InternalServerError',err))
+        if(!client) return next(this.RESTError('ResourceNotFoundError', 'The client id cannot be found'))
+        this.writeHAL(res, client)
+      })
+    } else {
+      next(this.RESTError('InvalidArgumentError','Invalid client id'))
+    }
+  }
+  update(req, res, next) {
+    let id = req.params.id
+    if(!id) {
+      return next(this.RESTError('InvalidArgumentError','Invalid id'))
+    } else {
+      let model = this.lib.db.model('Client')
+      model.findOne({_id: id})
+        .exec((err, client) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          client = Object.assign(client, req.body)
+          client.save((err, newClient) => {
+            if(err) return next(this.RESTError('InternalServerError', err))
+            this.writeHAL(res, newClient)
+          })
+        })
+    }
+  }
+}
+module.exports = (lib) => {
+  let controller = new Clients(lib);
+  controller.addAction({
+          'path': '/clients',
+          'method': 'GET',
+          'summary': 'Returns the list of clients ordered by name',
+          'responseClass':'Client',
+          'nickname': 'getClients'
+  }, controller.list )
+  controller.addAction({
+          'path': '/clients',
+          'method': 'POST',
+          'params': [swagger.bodyParam('client', 'The JSON representation of the client', 'string')],
+          'summary': 'Adds a new client to the database',
+          'responseClass': 'Client',
+          'nickname': 'addClient'
+  }, controller.create )
+  controller.addAction({
+          'path': '/clients/{id}',
+          'method': 'GET',
+          'params': [swagger.pathParam('id', 'The id of the client', 'string')],
+          'summary': 'Returns the data of one client',
+          'responseClass': 'Client',
+          'nickname': 'getClient'
+  }, controller.details)
+  controller.addAction({
+          'path': '/clients/{id}',
+          'method': 'PUT',
+          'params': [swagger.pathParam('id', 'The id of the client', 'string'), swagger.bodyParam('client', 'The content to overwrite', 'string')],
+          'summary': 'Updates the data of one client',
+          'responseClass': 'Client',
+          'nickname': 'updateClient'
+  }, controller.update )
+  return controller
+}
+Listing 7-9/controllers/clients.js
+const BaseController = require("./basecontroller"),
+          swagger = require("swagger-node-restify")
+class Employees extends BaseController {
+  constructor(lib) {
+    super();
+    this.lib = lib;
+  }
+  list(req, res, next) {
+    this.lib.db.model('Employee').find().exec((err, list) => {
+      if(err) return next(this.RESTError('InternalServerError', err))
+      this.writeHAL(res, list)
+    })
+  }
+  details(req, res, next) {
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model('Employee').findOne({_id: id}).exec((err, empl) => {
+        if(err) return next(err)
+        if(!empl) {
+          return next(this.RESTError('ResourceNotFoundError', 'Not found'))
+        }
+        this.writeHAL(res, empl)
+      })
+    } else  {
+      next(this.RESTError('InvalidArgumentError', 'Invalid id'))
+    }
+  }
+  create(req, res, next) {
+    let data = req.body
+    if(data) {
+      let newEmployee = this.lib.db.model('Employee')(data)
+      console.log(newEmployee)
+      newEmployee.save((err, emp) => {
+        if(err) return next(this.RESTError('InternalServerError', err))
+        this.writeHAL(res, emp)
+      })
+    } else {
+      next(this.RESTError('InvalidArgumentError', 'No data received'))
+    }
+  }
+  update(req, res, next) {
+    let data = req.body
+    let id = req.params.id
+    if(id) {
+      this.lib.db.model("Employee").findOne({_id: id}).exec((err, emp) => {
+        if(err) return next(this.RESTError('InternalServerError', err))
+        emp = Object.assign(emp, data)
+        emp.save((err, employee) => {
+          if(err) return next(this.RESTError('InternalServerError', err))
+          this.writeHAL(res, employee)
+        })
+      })
+    } else {
+      next(this.RESTError('InvalidArgumentError','Invalid id received'))
+    }
+  }
+}
+module.exports = function(lib) {
+  let controller = new Employees(lib);
+  controller.addAction({
+          'path': '/employees',
+          'method': 'GET',
+          'summary': 'Returns the list of employees across all stores',
+          'responseClass': 'Employee',
+          'nickname': 'getEmployees'
+  }, controller.list)
+  controller.addAction({
+          'path': '/employees/{id}',
+          'method': 'GET',
+          'params': [swagger.pathParam('id','The id of the employee','string')],
+          'summary': 'Returns the data of an employee',
+          'responseClass': 'Employee',
+          'nickname': 'getEmployee'
+  }, controller.details)
+  controller.addAction({
+          'path': '/employees',
+          'method': 'POST',
+          'params': [swagger.bodyParam('employee', 'The JSON data of the employee', 'string')],
+          'summary': 'Adds a new employee to the list',
+          'responseClass': 'Employee',
+          'nickname': 'newEmployee'
+  }, controller.create)
+  controller.addAction({
+          'path': '/employees/{id}',
+          'method': 'PUT',
+          'summary': "UPDATES an employee's information",
+          'params': [swagger.pathParam('id','The id of the employee','string'), swagger.bodyParam('employee', 'The new information to update', 'string')],
+          'responseClass': 'Employee',
+          'nickname': 'updateEmployee'
+  }, controller.update)
+  return controller
+}
+Listing 7-10/controllers/employees.js
+LIB
+As mentioned, the lib folder contains all sorts of helper functions and utilities that were just too small to be put into a separate folder, but important and generic enough to be used in several places of the code.
+
+/lib/index.js
+
+const mongoose = require("mongoose");
+module.exports = {
+        helpers: require("./helpers"),
+        logger: require("./logger"),
+        controllers: require("../controllers"),
+        schemas: require("../schemas"),
+        schemaValidator: require("./schemaValidator"),
+        db: require("./db")(mongoose)
+}
+Listing 7-11Code for the Main lib File, which Provides Access to the Exported Modules
+This file is meant to act as the single point of contact between the outside world (the rest of the project) and the inside world (all of the mini-modules grouped within this folder). There is nothing special about it. This file is simply used as a centralizer for all the require statements you’d use throughout your code if you were to individually require the specific files. In other words, it just does a require for everything and exports the returned code using predefined keys.
+
+const halson = require("halson"),
+        config = require("config");
+module.exports = {
+        makeHAL: makeHAL,
+        setupRoutes: setupRoutes,
+        validateKey: validateKey
+}
+function setupRoutes(server, swagger, lib) {
+        for(controller in lib.controllers) {
+               cont = lib.controllers[controller](lib)
+               cont.setUpActions(server, swagger)
+        }
+}
+/**
+Makes sure to sign every request and compare it
+against the key sent by the client, this way
+we make sure it's authentic
+*/
+function validateKey(hmacdata, key, lib) {
+        //This is for testing the swagger-ui, should be removed after development to avoid possible security problem :)
+        if(+key == 777) return true
+        let hmac = require("crypto").createHmac("md5", config.get('secretKey'))
+          .update(hmacdata)
+          .digest("hex");    
+        return hmac == key
+}
+function makeHAL(data, links, embed) {
+        let obj = halson(data)
+        if(links && links.length > 0) {
+                links.forEach( lnk => {
+                        obj.addLink(lnk.name, {
+                                href: lnk.href,
+                                title: lnk.title || ''
+                        })
+                })
+        }
+        if(embed && embed.length > 0) {
+                embed.forEach( item => {
+                        obj.addEmbed(item.name, item.data)
+                })
+        }
+        return obj
+}
+Listing 7-12/lib/helpers.js
+Just as the modules exported by the index.js file are too small to merit their own folder, these functions (Listing 7-12) are too small and particular to merit their own module, so instead they are grouped here, inside the helpers module. The functions are meant to be of use (hence, the name “helpers”) throughout the entire project.
+
+Let’s quickly go over each of these names:
+setupRoutes: This function is called from within the project’s main file during boot-up time. It’s meant to initialize all controllers, which in turn adds the actual route’s code to the HTTP server.
+
+validateKey: This function contains the code to validate the request by recalculating the HMAC key. And as mentioned earlier, it contains the exception to the rule, allowing any request to validate if the key sent is 777.
+
+makeHAL: This function turns any type of object into a HAL JSON object ready to be rendered. This particular function is heavily used from within the models’ code.
+
+const tv4 = require("tv4"),
+        formats = require("tv4-formats"),
+        schemas = require("../request_schemas/")
+module.exports = {
+        validateRequest: validate
+}
+function validate (req) {
+        let res = {valid: true}
+        tv4.addFormat(formats)
+        let schemaKey = req.route ? req.route.path.toString().replace("/", "") : ''
+        let actionKey = req.route.name
+        let mySchema = null,
+                myData = null;
+        if(schemas[schemaKey]){
+                mySchema = schemas[schemaKey][actionKey]
+                data = null
+                if(mySchema) {
+                        switch(mySchema.validate) {
+                                case 'params':
+                                        data = req.params
+                                break
+                        }
+                        res = tv4.validateMultiple(data, mySchema.schema)
+                }
+        }
+        return res
+}
+Listing 7-13/lib/schemaValidator.js
+This file (Listing 7-13) has the code that validates any request against a JSON Schema that we define. The only function of interest is the validate function, which validates the request object. It also counts on a predefined structure inside the request, which is added by Swagger (the route attribute).
+
+As you might’ve guessed from Listing 7-13 code, the validation of a request is optional; not every request is being validated. And right now, only query parameters are validated, but this can be extended by simply adding a new case to the switch statement.
+
+This function works with the premise of “convention over configuration,” which means that if you set up everything “right,” then you don’t have to do much. In our particular case, we’re looking inside the request_schemas folder to load a set of predefined schemas, which have a very specific format. In that format we find the name of the action (the nickname that we set up) to validate and the portion of the request we want to validate. In our particular function, we’re only validating query parameters for things such as invalid formats and so forth. The only request we have set up to validate right now is the BookSales listing action; but if we wanted to add a new validation, it would just be a matter of adding a new schema—no programming required.
+
+const config = require("config"),
+        _ = require("underscore"),
+        mongoose = require("mongoose"),
+        Schema = mongoose.Schema
+let obj = {
+        cachedModels: {},
+        getModelFromSchema: getModelFromSchema,
+        model: function(mname) {
+                return this.models[mname]
+        },
+        connect: function(cb) {
+                mongoose.connect(config.database.host + "/" + config.database.dbname)
+                this.connection = mongoose.connection
+                this.connection.on('error', cb)
+                this.connection.on('open', cb)
+        }
+}
+obj.models = require("../models/")(obj)
+module.exports = obj
+function translateComplexType(v, strType) {
+        let tmp = null
+        let type = strType || v['type']
+        switch(type) {
+                case 'array':
+                        tmp = []
+                        if(v['items']['$ref'] != null) {
+                                tmp.push({
+                                        type: Schema.ObjectId,
+                                        ref: v['items']['$ref']
+                                })
+                        } else {
+                                let originalType = v['items']['type']
+                                v['items']['type'] = translateTypeToJs(v['items']['type'])
+                                tmp.push(translateComplexType(v['items'], originalType))
+                        }
+                break;
+                case 'object':
+                        tmp = {}
+                        let props = v['properties']
+                        _.each(props, (data, k) => {
+                                if(data['$ref'] != null) {
+                                        tmp[k] = {
+                                                type: Schema.ObjectId,
+                                                ref: data['$ref']
+                                        }
+                                } else {
+                                        tmp[k] = translateTypeToJs(data['type'])
+                                }
+                        })
+                break;
+                default:
+                        tmp = v
+                        tmp['type'] = translateTypeToJs(type)
+                break;
+        }
+        return tmp
+}
+/**
+Turns the JSON Schema into a Mongoose schema
+*/
+function getModelFromSchema(schema) {
+        let data = {
+                name: schema.id,
+                schema: {}
+        }
+        let newSchema = {}
+        let tmp = null
+        _.each(schema.properties, (v, propName) => {
+                if(v['$ref'] != null) {
+                        tmp = {
+                                type: Schema.Types.ObjectId,
+                                ref: v['$ref']
+                        }
+                } else {
+                        tmp = translateComplexType(v) //{}
+                }
+                newSchema[propName] = tmp
+        })
+        data.schema = new Schema(newSchema)
+        return data
+}
+function translateTypeToJs(t) {
+        if(t.indexOf('int') === 0) {
+                t = "number"
+        }
+        return eval(t.charAt(0).toUpperCase() + t.substr(1))
+}
+Listing 7-14/lib/db.js
+Listing 7-14 contains some interesting functions that are used a lot from the models’ code. In Chapter 5 I mentioned that the schemas used with Swagger could potentially be reused to do other things, such as defining the models’ schemas. But to do this, we need a function to translate the standard JSON Schema into the nonstandard JSON format required by Mongoose to define a model. This is where the getModelFromSchema function comes into play; its code is meant to go over the structure of the JSON Schema and create a new, simpler JSON structure to be used as a Mongoose Schema.
+
+The other functions are more straightforward:
+connect: Connects to the database server and sets up the callbacks for both error and success cases
+
+model: Accesses the model from outside. We could just directly access the models using the object models, but it’s always a good idea to provide a wrapper in case you ever need to add extra behaviors (such as checking for errors).
+
+Finally, as seen in Listing 7-15, the main logging function is defined in this file. Thanks to the module Winston3 (which you can add by doing npm install winston --save) we’re able to define a generic and powerful logger, with a standard output format for all messages and the possibility of adding the “transports” if needed.
+
+const config = require("config");
+let _ENV = process.env.NODE_ENV || config.get('env');
+const { createLogger, format, addColors, transports } = require('winston');
+const { combine, timestamp, label, printf, colorize } = format;
+const myFormat = printf(info => {
+  return `${info.timestamp} [${info.label}] ${info.level}: ${info.message}`;
+});
+const myCustomLevels = {
+  levels: {
+    error: 0,
+    warn: 1,
+    info: 2,
+    debug: 3,
+  },
+  colors: {
+    error: 'red',
+    warn: 'yellow',
+    info: 'blue',
+    debug: 'violet'
+  }
+};
+const logger = createLogger({
+  format: combine(
+    colorize(),
+    label({ label: _ENV }),
+    timestamp(),
+    myFormat
+  ),
+  levels: myCustomLevels.levels,
+  transports: [new transports.Console()]
+});
+addColors(myCustomLevels)
+module.exports = logger;
+Listing 7-15/lib/logger.js
+By default, the code assumes the environment set on the default configuration file. This value can be overridden by setting a value for the environment variable NODE_ENV.
+
+MODELS
+This folder contains the actual code of each model. The definition of these resources won’t be found in these files because they’re only meant to define behavior. The actual properties are defined in the schemas folder (which, again, is being used both by the models and Swagger).
+
+module.exports = function(db) {
+        return {
+                "Book": require("./book")(db),
+                "Booksale": require("./booksale")(db),
+                "ClientReview": require("./clientreview")(db),
+                "Client": require("./client")(db),
+                "Employee": require("./employee")(db),
+                "Store": require("./store")(db),
+                "Author": require("./author")(db)
+        }
+}
+Listing 7-16/models/index.js
+Again, as in the other folders, the index.js file (seen in Listing 7-16) allows us to require every model at once and treat this folder like a module itself. The other thing of note here is the passing of the db object to every model, so that they can access the getModelFromSchema function.
+
+const mongoose = require("mongoose")
+        jsonSelect = require('mongoose-json-select'),
+        helpers = require("../lib/helpers");
+module.exports = function(db) {
+        let schema = require("../schemas/author.js")
+        let modelDef = db.getModelFromSchema(schema)
+        modelDef.schema.plugin(jsonSelect, '-books')
+        modelDef.schema.methods.toHAL = function() {
+                let halObj = helpers.makeHAL(this.toJSON(),
+                                                        [{name: 'books', 'href': '/authors/' + this.id + '/books', 'title': 'Books'}])
+                if(this.books.length > 0) {
+                        if(this.books[0].toString().length != 24) {
+                                halObj.addEmbed('books', this.books.map(e => { return e.toHAL() }))
+                        }
+                }
+                return halObj
+        }
+        return mongoose.model(modelDef.name, modelDef.schema)
+}
+Listing 7-17/models/author.js
+Listing 7-17 shows the basic mechanics of loading the JSON Schema, transforming it into a Mongoose Schema, defining the custom behavior, and finally returning a new model.
+
+The following defines the main custom behaviors:
+The jsonSelect model allows us to define the attributes to add to or remove from the object when turning it into a JSON. We want to remove the embedded objects from the JSON representation, because they will be added to the HAL JSON representation as embedded objects, rather than being part of the main object.
+
+The toHAL method takes care of returning the representation of the resource in HAL JSON format.
+
+The links associated to the main object are defined manually. We could improve this by further customizing the code for the loading and transformation of the JSON Schemas of the models.
+
+NOTEChecks like the following (inside the toHAL method) are meant to determine if the model has populated a reference, or if it is simply the id of the referenced object:
+if(this.books[0].toString().length != 24) {
+  //...
+}
+The following is the rest of the code inside the models folder; as you can appreciate, the same mechanics are duplicated on every case.
+
+const mongoose = require("mongoose"),
+        jsonSelect = require('mongoose-json-select'),
+        helpers = require("../lib/helpers")
+module.exports = function(db) {
+        let schema = require("../schemas/book.js")
+        let modelDef = db.getModelFromSchema(schema)
+        modelDef.schema.plugin(jsonSelect, '-stores -authors')
+        modelDef.schema.methods.toHAL = function() {
+                let halObj = helpers.makeHAL(this.toJSON(),
+                                                [{name: 'reviews', href: '/books/' + this.id + '/reviews', title: 'Reviews'}])
+                if(this.stores.length > 0) {
+                        if(this.stores[0].store.toString().length != 24) {
+                                halObj.addEmbed('stores', this.stores.map(s => { return { store: s.store.toHAL(), copies: s.copies } } ))
+                        }
+                }
+                if(this.authors.length > 0) {
+                        if(this.authors[0].toString().length != 24) {
+                                halObj.addEmbed('authors', this.authors)
+                        }
+                }
+                return halObj
+        }
+        return mongoose.model(modelDef.name, modelDef.schema)
+}
+Listing 7-18/models/book.js
+const mongoose = require("mongoose"),
+        jsonSelect = require('mongoose-json-select'),
+        helpers = require("../lib/helpers");
+module.exports = db => {
+        let schema = require("../schemas/booksale.js")
+        let modelDef = db.getModelFromSchema(schema)
+        modelDef.schema.plugin(jsonSelect, '-store -employee -client -books')
+        modelDef.schema.methods.toHAL = function() {
+                let halObj = helpers.makeHAL(this.toJSON());
+                ['books', 'store', 'employee', 'client']
+                        .filter( prop => {
+                                if(Array.isArray(this[prop])) return this[prop][0].toString().length != 24;
+                                return this[prop].toString().length != 24
+                        })
+                        .map( prop => {
+                                if(Array.isArray(this[prop])) halObj.addEmbed(prop, this[prop].map(p => { return p.toHAL()}))
+                                else halObj.addEmbed(prop, this[prop].toHAL())
+                        })
+                return halObj
+      }
+        return mongoose.model(modelDef.name, modelDef.schema)
+}
+Listing 7-19/models/booksale.js
+const mongoose = require("mongoose"),
+        jsonSelect = require('mongoose-json-select'),
+        helpers = require("../lib/helpers");
+module.exports = db => {
+        let schema = require("../schemas/client.js")
+        let modelDef = db.getModelFromSchema(schema)
+        modelDef.schema.methods.toHAL = function() {
+                return helpers.makeHAL(this.toJSON())
+        }
+        return mongoose.model(modelDef.name, modelDef.schema)
+}
+Listing 7-20/models/client.js
+const mongoose = require("mongoose"),
+        jsonSelect = require('mongoose-json-select'),
+        helpers = require("../lib/helpers");
+module.exports = db => {
+        let schema = require("../schemas/clientreview.js")
+        let modelDef = db.getModelFromSchema(schema)
+        modelDef.schema.methods.toHAL = function() {
+                return helpers.makeHAL(this.toJSON())
+        }
+        modelDef.schema.post('save', function(doc, next) {
+                db.model('Book').update({_id: doc.book}, {$addToSet: {reviews: this.id}}, next)
+        })
+        return mongoose.model(modelDef.name, modelDef.schema)
+}
+Listing 7-21/models/clientreview.js
+const mongoose = require("mongoose"),
+        jsonSelect = require('mongoose-json-select'),
+        helpers = require("../lib/helpers");
+module.exports = db => {
+        let schema = require("../schemas/employee.js")
+        let modelDef = db.getModelFromSchema(schema)
+        modelDef.schema.methods.toHAL = function() {
+                let json = JSON.stringify(this) //toJSON()
+                return helpers.makeHAL(json);
+        }
+        return mongoose.model(modelDef.name, modelDef.schema)
+}
+Listing 7-22/models/employee.js
+const mongoose = require("mongoose"),
+        jsonSelect = require("mongoose-json-select"),
+        helpers = require("../lib/helpers")
+module.exports = db => {
+        let schema = require("../schemas/store.js")
+        let modelDef = db.getModelFromSchema(schema)
+        modelDef.schema.plugin(jsonSelect, '-employees')
+        modelDef.schema.methods.toHAL = function() {
+                let halObj = helpers.makeHAL(this.toJSON(),
+                                                [{name: 'books', href: '/stores/' + this.id + '/books', title: 'Books'},
+                                                {name: 'employees', href: '/stores/' + this.id + '/employees', title: 'Employees'},
+                                        {name: 'booksales', href: '/stores/' + this.id + '/booksales', title: 'Book Sales'}])
+                if(this.employees.length > 0) {
+                        if(this.employees[0].toString().length != 24) {
+                                halObj.addEmbed('employees', this.employees.map(e => { return e.toHAL() }))
+                        }
+                }
+                return halObj
+        }
+        return mongoose.model(modelDef.name, modelDef.schema);
+}
+Listing 7-23/models/store.js
+REQUEST_SCHEMAS
+This folder contains the JSON Schemas that will be used to validate the requests. They need to describe an object and its properties. We should be able to validate against the request object attribute that contains the parameters (normally request.params, but potentially something else, such as request.body).
+
+Due to the type of attributes we defined for our endpoints, there is really only one endpoint that we would want to validate: the getBookSales (GET /booksales) endpoint. It receives two date parameters, and we probably want to validate their format to be 100% certain that the dates are valid.
+
+Again, to provide the simplicity of usage that “convention over configuration” provides, our schema files must follow a very specific format, which is then used by the validator that we saw earlier (see Listing 7-13).
+
+/request_schemas/[CONTROLLER NAME].js
+module.exports = {
+ [ENDPOINT NICKNAME]: {
+   validate: [TYPE],
+   schema: [JSON SCHEMA]
+ }
+}
+Listing 7-24Template Code for a Validator
+There are several pieces that need to be explained in the preceding code:
+CONTROLLER NAME: This means that the file for the schema needs to have the same name as the controller, all lowercase. And since we already did that for our controllers’ files, this means the schemas for each controller will have to have the same name as each controller’s file.
+
+ENDPOINT NICKNAME: This should be the nickname given to the action when adding it to the controller (using the addAction method).
+
+TYPE: The type of object to validate. The only value supported right now is params, which references the query and path parameters received. This could be extended to support other objects.
+
+JSON SCHEMA: This is where we add the actual JSON Schema defining the request parameters.
+
+Listing 7-25 shows the actual code defining the validation for the getBookSales action.
+
+module.exports = {
+ getbooksales: {
+   validate: 'params',
+   schema: {
+     type: "object",
+     properties: {
+       start_date: {
+         type: 'string',
+         format:'date'
+       },
+       end_date: {
+         type: 'string',
+         format:'date'
+       },
+       store_id: {
+         type: 'string'
+       }
+     }
+   }
+ }
+}
+Listing 7-25/request_schemas/booksales.js
+SCHEMAS
+This folder contains the JSON Schema definitions of our resources, which also translate into the Mongoose Schemas when initializing our models.
+
+The level of detail provided in these files is very important, because it also translates into the actual Mongoose model. This means that we could define things such as ranges of values and format patterns, which would be validated by Mongoose when creating the new resources.
+
+For instance, let’s take a look at ClientReview, a schema that makes use of such capability.
+
+module.exports = {
+        "id": "ClientReview",
+        "properties": {
+                "client": {
+                        "$ref": "Client",
+                        "description": "The client who submits the review"
+                },
+                "book": {
+                        "$ref": "Book",
+                        "description": "The book being reviewed"
+                },
+                "review_text": {
+                        "type": "string",
+                        "description": "The actual review text"
+                },
+                "stars": {
+                        "type": "integer",
+                        "description": "The number of stars, from 0 to 5",
+                        "min": 0,
+                        "max": 5
+                }
+        }
+}
+Listing 7-26/schemas/clientreview.js
+The stars attribute is clearly setting the maximum and minimum values that we can send when saving a new review. If we tried to send an invalid number, then we would get an error like the one shown in Figure 7-2.
+../images/333292_2_En_7_Chapter/333292_2_En_7_Fig2_HTML.jpg
+Figure 7-2An error when trying to save an invalid value in a validated model
+When defining schemas that reference others, remember to correctly name the reference (the name of each schema is given by the id property). So if you correctly set up the reference, the getModelFromSchema method of the db module will also properly set up the reference in Mongoose (this works both for direct reference and for collections).
+
+Listing 7-27 shows the main file for this folder; the index.js works like the index files in the other folders.
+
+module.exports = {
+        models: {
+                BookSale: require("./booksale"),
+                Book: require("./book"),
+                Author: require("./author"),
+                Store: require("./store"),
+                Employee: require("./employee"),
+                Client: require("./client"),
+                ClientReview: require("./clientreview")
+        }
+}
+Listing 7-27schemas/index.js
+Finally, Listings 7-28 to 7-34 show the rest of the schemas defined for the project.
+
+module.exports = {
+        "id": "Author",
+        "properties": {
+                "name": {
+                        "type": "string",
+                        "description": "The full name of the author"
+                },
+                "description": {
+                        "type": "string",
+                        "description": "A small bio of the author"
+                },
+                "books": {
+                        "type": "array",
+                        "description": "The list of books published on at least one of the stores by this author",
+                        "items": {
+                                "$ref": "Book"
+                        }
+                },
+                "website": {
+                        "type": "string",
+                        "description": "The Website url of the author"
+                },
+                "avatar": {
+                        "type": "string",
+                        "description": "The url for the avatar of this author"
+                }
+        }
+}
+Listing 7-28/schemas/author.js
+module.exports = {
+        "id": "Book",
+        "properties": {
+                "title": {
+                        "type": "string",
+                        "description": "The title of the book"
+                },
+                "authors": {
+                        "type":"array",
+                        "description":"List of authors of the book",
+                        "items": {
+                                "$ref": "Author"
+                        }
+                },
+                "isbn_code": {
+                        "description": "Unique identifier code of the book",
+                        "type":"string"
+                },
+                "stores": {
+                        "type": "array",
+                        "description": "The stores where clients can buy this book",
+                        "items": {
+                                "type": "object",
+                                "properties": {
+                                        "store": {
+                                                "$ref": "Store",
+                                        },
+                                        "copies": {
+                                                "type": "integer"
+                                        }
+                                }
+                        }
+                },
+                "genre": {
+                        "type": "string",
+                        "description": "Genre of the book"
+                },
+                "description": {
+                        "type": "string",
+                        "description": "Description of the book"
+                },
+                "reviews": {
+                        "type": "array",
+                        "items": {
+                                "$ref": "ClientReview"
+                        }
+                },
+                "price": {
+                        "type": "number",
+                        "minimun": 0,
+                        "description": "The price of this book"
+                }
+        }
+}
+Listing 7-29/schemas/book.js
+module.exports = {
+        "id": "BookSale",
+        "properties": {
+                "date": {
+                        "type":"date",
+                        "description": "Date of the transaction"
+                },
+                "books": {
+                        "type": "array",
+                        "description": "Books sold",
+                        "items": {
+                                "$ref": "Book"
+                        }
+                },
+                "store": {
+                        "type": "object",
+                        "description": "The store where this sale took place",
+                        "type": "object",
+                        "$ref": "Store"
+                },
+                "employee": {
+                        "type": "object",
+                        "description": "The employee who makes the sale",
+                        "$ref": "Employee"
+                },
+                "client": {
+                        "type": "object",
+                        "description": "The person who gets the books",
+                        "$ref": "Client",
+                },
+                "totalAmount": {
+                        "type": "integer"
+                }
+        }
+}
+Listing 7-30/schemas/booksale.js
+module.exports = {
+        "id": "Client",
+        "properties": {
+                "name": {
+                        "type": "string",
+                        "description": "Full name of the client"
+                },
+                "address": {
+                        "type": "string",
+                        "description": "Address of residence of this client"
+                },
+                "phone_number": {
+                        "type": "string",
+                        "description": "Contact phone number for the client"
+                },
+                "email": {
+                        "type": "string",
+                        "description": "Email of the client"
+                }
+        }
+}
+Listing 7-31/schemas/client.js
+module.exports = {
+        "id": "Employee",
+        "properties": {
+                "first_name": {
+                        "type": "string",
+                        "description": "First name of the employee"
+                },
+                "last_name": {
+                        "type": "string",
+                        "description": "Last name of the employee"
+                },
+                "birthdate": {
+                        "type": "string",
+                        "description": "Date of birth of this employee"
+                },
+                "address": {
+                        "type": "string",
+                        "description": "Address for the employee"
+                },
+                "phone_numbers": {
+                        "type": "array",
+                        "description": "List of phone numbers of this employee",
+                        "items": {
+                                "type": "string"
+                        }
+                },
+                "email": {
+                        "type": "string",
+                        "description": "Employee's email"
+                },
+                "hire_date": {
+                        "type": "string",
+                        "description": "Date when this employee was hired"
+                },
+                "employee_number": {
+                        "type": "number",
+                        "description": "Unique identifier of the employee"
+                }
+        }
+}
+Listing 7-32/schemas/employee.js
+module.exports = {
+        "id": "Store",
+        "properties": {
+                "name": {
+                        "type": "string",
+                        "description": "The actual name of the store"
+                },
+                "address": {
+                        "type": "string",
+                        "description": "The address of the store"
+                },
+                "state": {
+                        "type": "string",
+                        "description": "The state where the store resides"
+                },
+                "phone_numbers": {
+                        "type": "array",
+                        "description": "List of phone numbers for the store",
+                        "items": {
+                                "type": "string"
+                        }
+                },
+                "employees": {
+                        "type": "array",
+                        "description": "List of employees of the store",
+                        "items": {
+                                "$ref": "Employee"
+                        }
+                }
+        }
+}
+Listing 7-33/schemas/store.js
+SWAGGER-UI
+This folder contains the downloaded Swagger UI project, so we will not go over this particular code; however, I will mention the minor modifications we’ll need to do to the index.html file (located at the root of the swagger-ui folder) to get the UI to properly load.
+
+The changes needed are three very simple ones:
+1.	
+Edit the routes for all the resources loaded (CSS and JS files) to start with /swagger-ui/. In other words, all loaded resources should look like the following:
+
+<link href='/swagger-ui/css/screen.css' media="print" rel="stylesheet" type='text/css'/>
+ 
+2.	
+Change the URL for the documentation server to http://localhost:9000/api-docs (around line 31).
+
+ 
+3.	
+Uncomment the block of code in line 73. Set the right value to the apiKey variable (set it to 777).
+
+ 
+With those changes, the UI should be able to load correctly and allow you to start testing your API.
+
+ROOT FOLDER
+This is the root of the project. There are only two files here: the main index.js and the package.json file that contains the dependencies and other project attributes.
+
+{
+  "name": "come_n_read",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "colors": "^1.0.3",
+    "config": "^1.30.0",
+    "halson": "^2.3.1",
+    "mongoose": "^5.0.0",
+    "mongoose-json-select": "^0.2.1",
+    "mongoose-mock": "^0.4.0",
+    "proxyquire": "^2.0.1",
+    "restify": "^6.0.0",
+    "restify-errors": "^6.0.0",
+    "restify-plugins": "^1.6.0",
+    "sinon": "^4.5.0",
+    "swagger-node-restify": "^0.1.2",
+    "tv4": "^1.1.9",
+    "tv4-formats": "^1.0.0",
+    "underscore": "^1.7.0",
+    "winston": "^3.0.0-rc2"
+  }
+}
+Listing 7-34/package.json
+The most interesting part of this file is the list of dependencies. The rest was autogenerated using the init option of the npm command-line tool.
+
+TIPIf you’re testing out the code for this chapter, make sure you install all dependencies listed in this file by running npm install from the root of the project’s folder.
+const restify = require("restify"),
+        restifyPlugins = restify.plugins,
+        colors = require("colors"),
+        lib = require("./lib"),
+        swagger = require("swagger-node-restify"),
+        config = require("config");
+const server = restify.createServer(config.get('server'))
+server.use(restifyPlugins.queryParser({
+        mapParams: true
+}))
+server.use(restifyPlugins.bodyParser())
+restify.defaultResponseHeaders = data => {
+  this.header('Access-Control-Allow-Origin', '*')
+}
+///Middleware to check for valid api key sent
+server.use((req, res, next) => {
+        //We move forward if we're dealing with the swagger-ui or a valid key
+        if(req.url.indexOf("swagger-ui") != -1 || lib.helpers.validateKey(req.headers.hmacdata || '', req.params.api_key, lib)) {
+                next()
+        } else {
+                res.send(401, { error: true, msg: 'Invalid api key sent'})
+        }
+})
+/**
+Validate each request, as long as there is a schema for it
+*/
+server.use((req, res, next) => {
+        let results = lib.schemaValidator.validateRequest(req)
+        if(results.valid) {
+                return next()
+        }
+        res.send(400, results)
+})
+//the swagger-ui is inside the "swagger-ui" folder
+server.get(/^\/swagger-ui(\/.*)?/, restifyPlugins.serveStatic({
+        directory: __dirname + '/',
+        default: 'index.html'
+ }))
+swagger.addModels(lib.schemas)
+swagger.setAppHandler(server)
+lib.helpers.setupRoutes(server, swagger, lib)
+swagger.configureSwaggerPaths("", "/api-docs", "") //we remove the {format} part of the paths, to
+swagger.configure('http://localhost:9000', '0.1')
+server.listen(config.get('server.port'), () => {
+        lib.logger.info("Server started succesfully...")
+        lib.db.connect( err => {
+                if(err) lib.logger.error("Error trying to connect to database: ", err)
+                else lib.logger.info("Database service successfully started")
+        })
+})
+Listing 7-35/index.js
+And finally, the main file, the one that starts it all up is the index.js . There are four distinct sections to this file:
+1.	
+The initial section , which requires all needed modules and instantiates the server.
+
+ 
+2.	
+The middleware setup section , which handles setting up all pieces of middleware (we’ll go over this in a bit).
+
+ 
+3.	
+The setup section , which handles loading models, controllers, setting up routes, and whatnot.
+
+ 
+4.	
+The server start section , which starts the web server and the database client.
+
+ 
+The initial and final sections of the file don’t really require much explanation since they’re pretty self-explanatory, so let’s go over the other two.
+
+Middleware Setup
+The middleware setup is potentially the most important part of the file and of the bootstrap process required for the API to start up and function properly. But thanks to the ease of use and simplicity that the middleware mechanics bring to the table, it’s very easy to write and understand.
+
+We’re setting up five different middleware here:
+1.	
+The query parser to turn the query parameters into an object so that we can access them easily
+
+ 
+2.	
+The body parser so that we can access the content of the POST and PUT requests as an object, with the added bonus of autoparsing JSON strings
+
+ 
+3.	
+The security check, which takes care of rehashing the request every time to make sure that we’re dealing with an authenticated client
+
+ 
+4.	
+The validate check, which validates the request against any existing JSON Schema
+
+ 
+5.	
+The static content folder, which is not exactly a middleware, but acts as one for one specific set of routes, allowing Restify to serve static content
+
+ 
+Setup Section
+This last section is also very important; those five lines actually handle instantiating all the models, linking Swagger and the Restify server, setting up all the routes (linking the code of each action to the corresponding path and method defined in the spec section), and, finally, setting up the route for the Swagger back-end server.
+
+npm installations :
+-------------------
+ npm install babel-cli@6.5.1 babel-preset-es2015@6.5.0 --save -> es6,es7
+
+ Now you need to link the preset babel-preset-es2015 to be recognized by the babel-cli. To do this, just create the file .babelrc with this simple code:
+
+1   {
+2     "presets": ["es2015"]
+3   }
+
+Check about consign module:
+----------------------------
+ import express from "express";
+ 2   import consign from "consign";
+ 3   
+ 4   const app = express();
+ 5   
+ 6   consign()
+ 7     .include("db.js")
+ 8     .then("models")
+ 9     .then("libs/middlewares.js")
+10     .then("routes")
+11     .then("libs/boot.js")
+12     .into(app);
+

@@ -1,0 +1,22 @@
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+
+Annotations:
+-----------
+
+You need: @RunWith(MockitoJunitRunner.class) on the class
+
+@OnjectMocks
+ServiceImpl serviceImpl;  //Class which you are testing
+
+@mock
+Service service; //Service which you are calling in that class
+
+
+Methods:
+--------
+1) using mock() method:
+-----------------------
+DataService svc = mock(dataService.class)
+when(svc.methodName()).thenReturn(new int[]{1,2,3})

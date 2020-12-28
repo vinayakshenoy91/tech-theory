@@ -1,0 +1,127 @@
+RULE: 200 (“OK”) SHOULD BE USED TO INDICATE NONSPECIFIC SUCCESS
+In most cases, 200 is the code the client hopes to see. It indicates that the REST API successfully carried out whatever action the client requested, and that no more specific code in the 2xx series is appropriate. Unlike the 204 status code, a 200 response should include a response body.
+
+RULE: 200 (“OK”) MUST NOT BE USED TO COMMUNICATE ERRORS IN THE RESPONSE BODY
+Always make proper use of the HTTP response status codes as specified by the rules in this section. In particular, a REST API must not be compromised in an effort to accommodate less sophisticated HTTP clients.
+
+RULE: 201 (“CREATED”) MUST BE USED TO INDICATE SUCCESSFUL RESOURCE CREATION
+A REST API responds with the 201 status code whenever a collection creates, or a store adds, a new resource at the client’s request. There may also be times when a new resource is created as a result of some controller action, in which case 201 would also be an appropriate response.
+
+RULE: 202 (“ACCEPTED”) MUST BE USED TO INDICATE SUCCESSFUL START OF AN ASYNCHRONOUS ACTION
+A 202 response indicates that the client’s request will be handled asynchronously. This response status code tells the client that the request appears valid, but it still may have problems once it’s finally processed. A 202 response is typically used for actions that take a long while to process.
+
+Controller resources may send 202 responses, but other resource types should not.
+
+RULE: 204 (“NO CONTENT”) SHOULD BE USED WHEN THE RESPONSE BODY IS INTENTIONALLY EMPTY
+The 204 status code is usually sent out in response to a PUT, POST, or DELETE request, when the REST API declines to send back any status message or representation in the response message’s body. An API may also send 204 in conjunction with a GET request to indicate that the requested resource exists, but has no state representation to include in the body.
+
+RULE: 301 (“MOVED PERMANENTLY”) SHOULD BE USED TO RELOCATE RESOURCES
+The 301 status code indicates that the REST API’s resource model has been significantly redesigned and a new permanent URI has been assigned to the client’s requested resource. The REST API should specify the new URI in the response’s Location header.
+
+RULE: 302 (“FOUND”) SHOULD NOT BE USED
+The intended semantics of the 302 response code have been misunderstood by programmers and incorrectly implemented in programs since version 1.0 of the HTTP protocol.[24] The confusion centers on whether it is appropriate for a client to always automatically issue a follow-up GET request to the URI in response’s Location header, regardless of the original request’s method. For the record, the intent of 302 is that this automatic redirect behavior only applies if the client’s original request used either the GET or HEAD method.
+
+To clear things up, HTTP 1.1 introduced status codes 303 (“See Other”) and 307 (“Temporary Redirect”), either of which should be used instead of 302.
+
+RULE: 303 (“SEE OTHER”) SHOULD BE USED TO REFER THE CLIENT TO A DIFFERENT URI
+A 303 response indicates that a controller resource has finished its work, but instead of sending a potentially unwanted response body, it sends the client the URI of a response resource. This can be the URI of a temporary status message, or the URI to some already existing, more permanent, resource.
+
+Generally speaking, the 303 status code allows a REST API to send a reference to a resource without forcing the client to download its state. Instead, the client may send a GET request to the value of the Location header.
+
+RULE: 304 (“NOT MODIFIED”) SHOULD BE USED TO PRESERVE BANDWIDTH
+This status code is similar to 204 (“No Content”) in that the response body must be empty. The key distinction is that 204 is used when there is nothing to send in the body, whereas 304 is used when there is state information associated with a resource but the client already has the most recent version of the representation.
+
+This status code is used in conjunction with conditional HTTP requests, discussed in Chapter 4.
+
+RULE: 307 (“TEMPORARY REDIRECT”) SHOULD BE USED TO TELL CLIENTS TO RESUBMIT THE REQUEST TO ANOTHER URI
+HTTP/1.1 introduced the 307 status code to reiterate the originally intended semantics of the 302 (“Found”) status code. A 307 response indicates that the REST API is not going to process the client’s request. Instead, the client should resubmit the request to the URI specified by the response message’s Location header.
+
+A REST API can use this status code to assign a temporary URI to the client’s requested resource. For example, a 307 response can be used to shift a client request over to another host.
+
+RULE: 400 (“BAD REQUEST”) MAY BE USED TO INDICATE NONSPECIFIC FAILURE
+400 is the generic client-side error status, used when no other 4xx error code is appropriate.
+
+
+
+RULE: 401 (“UNAUTHORIZED”) MUST BE USED WHEN THERE IS A PROBLEM WITH THE CLIENT’S CREDENTIALS
+A 401 error response indicates that the client tried to operate on a protected resource without providing the proper authorization. It may have provided the wrong credentials or none at all.
+
+RULE: 403 (“FORBIDDEN”) SHOULD BE USED TO FORBID ACCESS REGARDLESS OF AUTHORIZATION STATE
+A 403 error response indicates that the client’s request is formed correctly, but the REST API refuses to honor it. A 403 response is not a case of insufficient client credentials; that would be 401 (“Unauthorized”).
+
+REST APIs use 403 to enforce application-level permissions. For example, a client may be authorized to interact with some, but not all of a REST API’s resources. If the client attempts a resource interaction that is outside of its permitted scope, the REST API should respond with 403.
+
+RULE: 404 (“NOT FOUND”) MUST BE USED WHEN A CLIENT’S URI CANNOT BE MAPPED TO A RESOURCE
+The 404 error status code indicates that the REST API can’t map the client’s URI to a resource.
+
+RULE: 405 (“METHOD NOT ALLOWED”) MUST BE USED WHEN THE HTTP METHOD IS NOT SUPPORTED
+The API responds with a 405 error to indicate that the client tried to use an HTTP method that the resource does not allow. For instance, a read-only resource could support only GET and HEAD, while a controller resource might allow GET and POST, but not PUT or DELETE.
+
+A 405 response must include the Allow header, which lists the HTTP methods that the resource supports. For example:
+
+Allow: GET, POST
+RULE: 406 (“NOT ACCEPTABLE”) MUST BE USED WHEN THE REQUESTED MEDIA TYPE CANNOT BE SERVED
+The 406 error response indicates that the API is not able to generate any of the client’s preferred media types, as indicated by the Accept request header. For example, a client request for data formatted as application/xml will receive a 406 response if the API is only willing to format data as application/json.
+
+RULE: 409 (“CONFLICT”) SHOULD BE USED TO INDICATE A VIOLATION OF RESOURCE STATE
+The 409 error response tells the client that they tried to put the REST API’s resources into an impossible or inconsistent state. For example, a REST API may return this response code when a client tries to delete a non-empty store resource.
+
+RULE: 412 (“PRECONDITION FAILED”) SHOULD BE USED TO SUPPORT CONDITIONAL OPERATIONS
+The 412 error response indicates that the client specified one or more preconditions in its request headers, effectively telling the REST API to carry out its request only if certain conditions were met. A 412 response indicates that those conditions were not met, so instead of carrying out the request, the API sends this status code.
+
+RULE: 415 (“UNSUPPORTED MEDIA TYPE”) MUST BE USED WHEN THE MEDIA TYPE OF A REQUEST’S PAYLOAD CANNOT BE PROCESSED
+The 415 error response indicates that the API is not able to process the client’s supplied media type, as indicated by the Content-Type request header. For example, a client request including data formatted as application/xml will receive a 415 response if the API is only willing to process data formatted as application/json.
+
+RULE: 500 (“INTERNAL SERVER ERROR”) SHOULD BE USED TO INDICATE API MALFUNCTION
+500 is the generic REST API error response. Most web frameworks automatically respond with this response status code whenever they execute some request handler code that raises an exception.
+
+A 500 error is never the client’s fault and therefore it is reasonable for the client to retry the exact same request that triggered this response, and hope to get a different response.
+
+-----------------
+
+Status Code
+
+Meaning
+
+200
+
+OK. The request went fine and the content requested was returned. This is normally used on GET requests.
+
+201
+
+Created. The resource was created and the server has acknowledged it. It could be useful on responses to POST or PUT requests. Additionally, the new resource could be returned as part of the response body.
+
+204
+
+No content. The action was successful but there is no content returned. Useful for actions that do not require a response body, such as a DELETE action.
+
+301
+
+Moved permanently. This resource was moved to another location and the location is returned. This header is especially useful when URLs change over time (maybe due to a change in version, a migration, or some other disruptive change), keeping the old ones and returning a redirection to the new location allows old clients to update their references in their own time.
+
+400
+
+Bad request. The request issued has problems (for example, might be lacking some required parameters). A good addition to a 400 response might be an error message that a developer can use to fix the request.
+
+401
+
+Unauthorized. Especially useful for authentication when the requested resource is not accessible to the user owning the request.
+
+403
+
+Forbidden. The resource is not accessible, but unlike 401, authentication will not affect the response.
+
+404
+
+Not found. The URL provided does not identify any resource. A good addition to this response could be a set of valid URLs that the client can use to get back on track (root URL, previous URL used, etc.).
+
+405
+
+Method not allowed. The HTTP verb used on a resource is not allowed—for instance, doing a PUT on a resource that is read-only.
+
+500
+
+Internal server error. A generic error code when an unexpected condition is met and the server crashes. Normally, this response is accompanied by an error message explaining what went wrong.
+
+
+

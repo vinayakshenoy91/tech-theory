@@ -1,0 +1,48 @@
+Scalability:
+-------------
+- It is defined as the potential of a system, network, or even a 
+process to handle a certain number of simultaneous users, sessions, transactions, or 
+operations and grow seamlessly as needed.
+
+Reliability : 
+---------------
+- A system that performs as expected for a specific period of time is 
+known as a reliable system.
+
+1.Mean Time Between Failures (MTBF): This is defined as the difference of Total Time Elapsed and Total Downtime 
+divided by the number of failures.
+
+MTBF = (Total Time Elapsed - Total Downtime)/(Number of failures)
+
+2.Mean Time to Repair (MTTR): This is defined as the average time taken to repair a failed component.
+
+Performance: 
+-------------
+- Performance is sometimes incorrectly defined as time taken per operation;
+- amount of work accomplished compared to the time and resources used
+- Good performance, hence, is nothing but the optimum utilization of all resources involved.
+
+A high-performing system may involve one or more of the following: good responsiveness, low resource utilization, 
+high throughput and/or availability, short data transmission time, etc.
+
+Responsiveness: 
+---------------
+Time taken per operation is known as responsiveness
+
+Availability: 
+-------------
+- A direct effect of scalability is availability.
+- A system won’t be considered available if the response time is overly delayed. For example, if an average response 
+from a website takes less than one second, 
+the system will be considered largely unavailable if the system takes, let’s say, one minute to respond.
+
+Availability (%) = (Total Time Elapsed - Total Downtime)/(Total Time Elapsed)
+
+Fault Tolerance: 
+-----------------
+Systems that don’t collapse even after failures of certain individual components of a 
+system are fault tolerant systems.
+
+Downtime Impact: 
+-----------------
+It is the impact of the downtime of a server, service, or a resource.

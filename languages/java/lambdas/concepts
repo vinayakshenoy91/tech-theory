@@ -1,0 +1,112 @@
+
+- Lambda expressions are neither required nor allowed to use a throws clause to declare the exceptions they might throw.
+- Lambda is an anonymous function
+- Lambda is based in bytecode instruction called invokedynamic
+- Lambdas works only with functional interfaces.
+- You can pass the lambda only if the method only if the interface is a functional interface.
+- With lambda, memeory is allcoated only once for the method.
+
+
+- A lambda mst always evaluate to an instance of a class that impl appropriate functional interface.
+The intention is to give the platform flexibility to optimize in ways that would not be possible if 
+every lambda expression were required to have a unique identity.
+
+Lambdas like these, which interact with their environment only via arguments and return values, are called stateless, or 
+non-capturing. Capturing lambdas, by contrast, can access the state of their enclosing object. “Capture” is the technical 
+term for the retention by a lambda of a reference to its environment. The connotation is that the variable has been ensnared 
+by the lambda and held, to be queried or—in other languages—modified, when the lambda is later evaluated.
+
+Correctness of Lambda and immutability:
+----------------------------------------
+Correctness: Lifting this restriction would allow the introduction of a new class of multithreading bugs involving local variables. 
+Local variables in Java have until now been immune to race conditions and visibility problems because 
+they are accessible only to the thread executing the method in which they are declared. But a lambda can be passed from the 
+thread that created it to a different thread, and that immunity would therefore be lost if the lambda, when evaluated by the 
+second thread, were given the ability to mutate local variables.
+
+Further, regardless of the number of threads involved, a lambda can outlive the call to the method that evaluated it. 
+If captured locals were mutable, they too would need to outlive the method call that created them. This change would 
+introduce, among other consequences, a new possibility of memory leaks involving local variables.
+
+
+Performance in lambdas:
+------------------------ 
+Programs that allow multithread access to mutable variables can be guaranteed correct, if access to the variables 
+is guarded by synchronization. But the cost of this would frustrate one of the principal purposes of introducing lambdas—to allow 
+strategies that efficiently distribute evaluation of a function for different arguments to different threads. Even the ability to 
+read the value of mutable local variables from a different 
+thread would introduce the necessity for synchronization or the use of volatile in order to avoid reading stale data
+
+
+Inner classes vs Lambdas:
+--------------------------
+- An inner class creation expression is guaranteed to create a new object with unique identity, while the result of evaluating a 
+lambda expression may or may not have unique identity, depending on the implementation. 
+This flexibility allows the platform to use more efficient implementation strategies than for the corresponding inner classes.
+
+- An inner class declaration creates a new naming scope, within which this and super refer to the current instance of the inner 
+class itself; by contrast, lambda expressions do not introduce any new naming environment. In this way they avoid the complexity 
+in name lookup for inner classes that causes many subtle errors, such as mistakenly calling Object methods on the inner class 
+instance when the enclosing instance was intended.
+
+
+- Ananymous class can have target type can have multiple methods
+
+
+Recursive lambda defn:
+----------------------
+- A lambda can refer to itself if its name is in scope, but the rules restricting forward references in initializers 
+(for both local and instance variables) 
+prevent lambda variable initialization. It is still possible to declare a recursively defined lambda:
+
+
+public lass Factorial{
+ IntUnaryOperator fact;
+ public Factorial(){
+    fact = i -> i==0?1: i* fact.applyAsInt(i-1);
+ }
+}
+
+Method references:
+------------------
+
+Name                    Syntax  
+Static               RefType:: staticMethod
+Bound instance       expr::instMethod
+Unbound instance     RefType::instMethod
+Constructor          ClsName:: new
+
+Ex: Arrays.sort(integerArray, Integer::compareUnsigned);
+
+Bound references are so called because the receiver is fixed as part of the method reference. 
+Every invocation of the method reference System.out::print will have the same receiver: System.out
+
+-  however, you want to invoke a method reference with the method receiver as well as its arguments taken from 
+the arguments to the method reference. For this, you need an unbound method reference, so called because the receiver 
+is not fixed; rather, the first argument to the method reference is used as the receiver. Unbound method references are 
+easiest to understand when there is only one argument; for example, to create a Comparator using the factory method 
+comparing (p. 16), we could use an unbound reference to replace the lambda expression
+
+Comparator personComp = Comparator.comparing(p -> p.getLastName());
+
+with the unbound method reference:
+
+Comparator personComp = Comparator.comparing(Person::getLastName);
+
+map.replaceAll(String::concat)
+
+constructor references are handles to existing constructors. Constructor references are created using 
+syntax similar to that of method references, but with the method name replaced by the keyword new. For example:
+
+ArrayList::new
+File::new
+
+Stream<String> stringStream = Stream.of("a.txt","b.txt","c.txt");
+Stream<File> fileStream = stringStream.map(File::new);
+
+Comparator:
+----------
+- Comparator is a functional interface with only one abstract method
+If method parameter type is not a functional interface
+- If two method are there with diff name and same parameter, the compiler will not know which method to use
+()-> {return java;} //the thing in RHS is a statement

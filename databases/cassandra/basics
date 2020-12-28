@@ -1,4 +1,8 @@
 - open source nosql DB
+- Usecase for large number of column.
+- Industrial expt for data collection.
+- Support muti-column partition and sort key
+- Theoretical limit of 2GB per column. 
 
 How data is stored in cassandra?
 --------------------------------

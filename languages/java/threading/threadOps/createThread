@@ -1,0 +1,94 @@
+A) Creating a thread:
+----------------------
+Some developers prefer to decouple the code and the threading functionality, and prefer to implement a Runnable. 
+In other scenarios, developers prefer to encapsulate the threading functionality in one class and therefore prefer 
+to extend Thread.
+
+1. Extending thread
+-------------------
+class Multi extends Thread{  
+public void run(){  
+System.out.println("thread is running...");  
+}  
+public static void main(String args[]){  
+Multi t1=new Multi();  
+t1.start();  
+ }  
+}  
+
+2. Creating runnable interface.
+--------------------------------
+class Multi3 implements Runnable{  
+public void run(){  
+System.out.println("thread is running...");  
+}  
+  
+public static void main(String args[]){  
+Multi3 m1=new Multi3();  
+Thread t1 =new Thread(m1);  
+t1.start();  
+ }  
+}  
+
+Commonly used Constructors of Thread class:
+---------------------------------------------
+Thread()
+Thread(String name)
+Thread(Runnable r)
+Thread(Runnable r,String name)
+
+
+Commonly used:
+
+Thread th = new Thread(new Runnable(){
+
+@Override
+public void run(){
+
+}
+
+})
+
+OR using lambda:
+
+Thread th = new Thread(()->{
+
+})
+
+th.start();
+
+- Runnable task = () -> System.out.println("Hello world!");
+
+
+
+- IF you sart a already running thread, IllegalThreadStateException is thrown
+
+
+Thread Methods:
+-------------------
+Thread.currentThread().getName()
+getName(),setName(String) and getId() => Set get names of thread.
+Thread.sleep(<timeinms>)
+
+
+Setting thread priority:
+------------------------
+3 constants defined in Thread class:
+public static int MIN_PRIORITY
+public static int NORM_PRIORITY
+public static int MAX_PRIORITY
+
+Default priority of a thread is 5 (NORM_PRIORITY). The value of MIN_PRIORITY is 1 and the value of MAX_PRIORITY is 10.
+
+- thread.currentThread().getPriority())
+- thread.setPriority(Thread.MAX_PRIORITY)
+
+Catching uncaught exception in thread:
+--------------------------------------
+thread.setUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler(){
+    @Override
+    public void uncaughtException(Thread t, Throwable e){
+        //print
+    }
+})
+

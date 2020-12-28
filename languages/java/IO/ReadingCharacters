@@ -1,0 +1,108 @@
+- Reader is an abstract class
+
+- To read from disk use: FileReader
+- In-memory: CharArrayReader, StringReader
+
+1) Class that add behaviour to reader:
+- Buffered reader
+- LineNumberReader extends BufferedReader has a getLineNumber() method.
+
+Ops:
+-----
+1) Reading a character
+2) Reading an array of char
+3) marking and setting a position
+4) skipping position
+5) Closing stream
+
+
+Basic syntax:
+-------------
+Reader reader  = ..
+
+# Reading single char
+int nextChar = reader.read();
+while(nextChar !=-1){
+   nextChar = reader.read();
+}
+
+#Reading array of char:
+Reader reader = null
+try{
+reader
+char[] buffer = new char[1024];
+int number = reader.read(buffer);
+
+while(number != -1){
+   number = reader.read(buffer); 
+   number = reader.read(buffer,16,128); //Position and length 
+}
+
+}catch(IOException e){
+
+}finally{
+    if(reader!=null){
+    try{
+      reader.close();
+    }catch(IOException e){
+
+    }
+    }
+}
+
+#Closing array with try with resource pattern
+- Resource must implAutoCloseable interface, with one method to impl called close()
+
+try(Reader reader = ..){
+}catch(IOException e){
+
+}
+
+FileReader:
+-----------
+File filw = new File("path");
+Reader reader = new FileReader(file);
+
+Read in-memory array or string:
+----------------------------------
+String text = "Hello world!";
+Reader reader = new StringReader(text);
+
+
+Buffered Reader:
+-----------------
+- Extends Reader by delegates task to file reader or chararrayreader.
+- BufferedRead has a composition relationship with CharArrayReader or FileReader.
+- Reads character through a buffer
+- has a readLine() method
+
+File filw = new File("path");
+Reader reader = new FileReader(file);
+BufferedReader bufReader = new BufferedReader(fileReader); //file read with UTF-8 charset
+
+//You can't specify charset above, so you use:
+Path path = Paths.get("files/data.txt");
+BufferedReader reader2 = Files.newBufferedReader(path,StandardCharsets.ISO_8859_1);
+
+//Use this: 
+Note: Always put the reader declaration in try block
+try(Reader reader = new FileReader(file)){
+   BufferedReader br = new BufferedReader(reader);
+   String line = br.readLine();
+   while(line !=null){
+       line = br.readLine();
+   }
+}catch(IOException e){
+
+}
+
+//Improved
+Path path = Paths.get("files/bat-weasels.txt");
+try(BufferedReader br = Files.newBufferedReader(path);){
+   String line = br.readLine();
+   while(line !=null){
+       line = br.readLine();
+   }
+}catch(IOException e){
+
+}

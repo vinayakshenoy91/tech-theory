@@ -1,0 +1,45 @@
+Build a model of housing prices in California using California census data:
+----------------------------------------------------------------------------
+import pandas as pd
+import os
+
+1) Loading data:
+-----------------
+HOUSING_PATH='/home/vinayakshenoy247571/ml/machine_learning/datasets/housing'
+def load_housing_data(housing_path=HOUSING_PATH):
+    csv_path = os.path.join(housing_path,"housing.csv")
+    return pd.read_csv(csv_path)  
+
+housing=load_housing_data()
+housing.head(20)
+housing["ocean_proximity"].value_counts()
+housing.describe()
+
+2) Plot loaded data:
+---------------------
+%matplotlib inline
+import matplotlib.pyplot as plt
+housing.hist(bins=50,figsize=(20,15))
+plt.show()
+
+
+3) Training model:
+-------------------
+
+import numpy as np
+np.random.seed(42)
+
+def split_train_test(data,test_ratio):
+    shuffled_indices = np.random.permutation(len(data))
+    test_set_size = int(len(data)*test_ratio)
+    test_indices = shuffled_indices[:test_set_size]
+    train_indices = shuffled_indices[test_set_size:]
+    return data.iloc[train_indices],data.iloc[test_indices]
+
+train_set,test_set = split_train_test(housing,0.2)
+print(len(train_set),"train +",len(test_set),"test")
+
+
+4) Performance measure:
+------------------------
+- Using RMSE

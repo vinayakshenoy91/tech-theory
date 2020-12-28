@@ -1,6 +1,20 @@
 #Data types:
 -----------
 
+Explicit conversions:
+----------------------
+bool(x)
+str(x)
+float(x)
+int(x)
+list(x)
+
+The value None is not the same as the string "None". It is a special value that has its own type:
+
+print(type(None))
+It returns <class 'NoneType'>
+
+
 1) Numeric types #
 -------------------
 The main numeric types are:
@@ -25,12 +39,70 @@ Multi-line
 As a sequence type, individual elements in a string can be accessed using a square brace 
 syntax that you will be familiar with from other languages.
 print('hello'.capitalize())
+fruit.upper()
+x.strip()
+x.split()
+str.find('Z')
+str.endswith()
+str.startswith('y')
+str.replace("exisitng","new")
+"#".join(['x',"y"])
+line.rstrip()
+
+Concatenate strings multiple times => "Hello"*3
+=> a[1]="m" -> this kind of string assignment is not allowed
+
+-> 'cloud' in 'cloudxlab' //Returns true, to check if a string is present
+
+3) Bool types:
+--------------
+True | False
+my_string='Hello'
 
 3) Tuples and ranges:
 ----------------------------------
 - Tuples hold data in the order we supply it
+- They are immutable- While defining temporary variables, tuples are used coz they are more effecient.
 - Other immutable sequence types are tuple and range
 - Tuples can be used for storing sequences of any type, and ranges store contiguous sequences of int.
+- Tuple is also a sequence of values much like a list. 
+The values stored in a tuple can be of any type, and they are indexed by integers.
+- Tuples are immutable but also comparable and hashable 
+so we can sort lists of them and use tuples as key values in Python dictionaries.
+
+t = (12,323, 'd', [1,23], False)
+
+Even if a tuple has a single element, we need to mention the comma,
+t = (1,)
+type(t) //Tuple
+
+- We can also create a tuple using the function tuple. With no argument, it creates an empty tuple:
+t = tuple()
+print(t)
+
+- Example:
+t1 = tuple("1,2,3,4,5") //('1', ',', '2', ',', '3', ',', '4', ',', '5')
+t2 = tuple([1,2,3,4,5]) //(1, 2, 3, 4, 5)
+t3 = tuple((1,2,3,4,5)) //(1, 2, 3, 4, 5)
+
+t1.reverse()
+t1.sort()
+list to tuple -> tuple(listname)
+
+[i[::-1] for i in l] -> Reverse each word in a list and revese list
+t.count(1)
+t.append()
+
+Comparision with tuple:
+------------------------
+- Comparisons work with sequences. So, it works well with the tuples.
+Python compares the tuples element-wise starting with the 1st element. If they turn out to be equal, it proceeds to the next one. 
+If it finds any difference in elements, it gives the result without considering the further elements.
+print((0, 1, 2) < (0, 3, 4)) //True
+- It doesn't depend on the number of elements in each tuple. 
+It is only concerned with the two elements that it is comparing at one time.
+(0, 1, 2) < (0, 3)//True
+
 Note:  range(10, 1, -1) will create a reversed range from 10 to 2
 x = range(1,4)     # create a range from 1 (inclusive) to 4 (exclusive)
 x = (1, 2, 3, 4)   # a tuple is an immutable sequence
@@ -40,8 +112,24 @@ top_pairs = list(zip(us_cookies,in_cookies))
 
 Unpacking tuples:
 use_num_1,in_num_1 = tope_pairs[0]
+a,b,c=even_nums
 
 Note: If you accidently put , at the end of a string, it will be treated as tuple.
+
+sorting in tuple:
+------------------
+sort function also works the same way by comparing elements inside each tuple when given a list of tuples.
+l = [(0,23,34), (2,34,23), (1,34,23)]
+l.sort()
+[(0, 23, 34), (1, 34, 23), (2, 34, 23)]
+l.sort(reverse=True)//reverse sorting
+
+Tuple assignment:
+------------------
+You can have tuple on the left-hand side of the assignment as well.
+
+l = [1,2,3]
+(a,b,c) = l
 
 4) List:
 --------
@@ -50,7 +138,7 @@ Note: If you accidently put , at the end of a string, it will be treated as tupl
 
 x = [1, 2, 3, 4]   # create a list and assign to x
 x = [3, 1, 2] + [5, 4] # concatenate two lists and assign to x
-del x[0]               # delete the zeroth element in x
+del(x[0])         # delete the zeroth element in x -> Deleting elements
 print(len(x))          # print the number of elements in x
 x.sort()   # sort the elements in x in-place
 
@@ -64,15 +152,36 @@ for cookie in Cookies:
 
 sorted(listname) -> Sort items in list
 
-list(listname) -> This does a deep copy of listname
+list(listname) -> This does a deep copy of listname (VVIP)
 list(range(5))-> Create a range list , list of running numbers
 b= list(map(lambda x:x**2,a))  -> Used to apply function to list without for-loop
 b= filter(lambda x:x%2==0,a)  -> Used to apply filter on a list
 
+Array operations:
+a = [1,2,3,4,5,6,7,8,9]
+a[2:5] = [7,4,9]
+
+list1 = [12,23,43,[2,4,5], 2, 4,5]
+list1.pop(3) //pop modifies the list and returns the element that was removed. If we don't provide an index, 
+it deletes and returns the last element.
+
+If we do not want the deleted value, we can use the del operator which deletes the element but doesn't return anything.
+
+-> del list2[1] //And, if we know the element that needs to be removed, we can use remove,list2.remove('lab').
+The return value from remove is None.
+
+-> To remove more than one element, we can use del with a slice index:
+list2 = ['cloudx', 'lab', 'provides', 'cloud', 'lab']
+del list2[:]
+
+Performing .sort() on a list modifies the actual list and sorts it, 
+whereas running sorted() returns the sorted list without modifying the actual list.
+
+
 5) Set:
 -------
 - mutable
-- unique 
+- unique elements collection
 - unordered
 
 Always created from set -> set(listname)
@@ -83,9 +192,41 @@ Always created from set -> set(listname)
 .union() -> or
 .intersection() -> and
 .difference() -> data present in one set but not the other
+x1.issubset(x2)
+x1.issuperset(x2)
+
+Creating a set:
+x = set()
+or
+x={1}
+
+- set cannot be indexed because they are not ordered.
+
 
 
 6) Dictionaries:
 -----------------
+- Both dict keys and items are not subscriptable
+
+type({}) -> dict
 dictname.keys()
-dictname.items()
+dictname.items()//There is a function with the name items associated with dictionaries that 
+returns a list of tuples, where each tuple is a key-value pair:
+dictname.values()
+
+Empty dict => x={} or x=dict()
+
+print(4 in d)=> This looks for key
+
+//Sample dict code
+def dict_tuple_func(list_int):
+    tempDict={}
+    for num in list_int:
+        if(num in tempDict):
+            tempDict[num]=tempDict[num]+1
+        else:
+            tempDict[num]=1
+    return (tempDict,sum(tempDict.keys()))
+
+Dict comprehension:
+{x:x**2 for x in range(10)}    

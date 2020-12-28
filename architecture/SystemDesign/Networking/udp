@@ -1,0 +1,11 @@
+- Connectionless
+- Best efort - unreliable.
+- Messages can be lost, duplicated or reordered.
+- Basic unit is datagram
+- Speed and simplicity than reliability
+
+Update:
+- Debug info to distributed loggign service.
+- Realtime video or audio
+- online gaming
+- Udp allows broadcasting

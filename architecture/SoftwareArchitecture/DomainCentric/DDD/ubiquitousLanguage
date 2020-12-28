@@ -1,0 +1,6 @@
+- The software model inside the context boundary reflects a language that is developed by the team working in the 
+Bounded Context and is spoken by every member of the team that creates the software model that functions within 
+that Bounded Context. 
+
+- When the Bounded Context is being developed as a key strategic initiative of your organization, 
+it’s called the Core Domain.It addresses a major line of business.

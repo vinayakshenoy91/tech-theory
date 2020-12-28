@@ -1,7 +1,37 @@
 Commands:
 ----------
 from matplotlib import pyplot as plt -> Import plt library
-plt.plot(x_values,y_values) -> plotting x and y values
+//Plot some params
+plt.plot(x_values,y_values) -> plotting x and y values for simple line plot
+plt.show() -> show plot
+
+//Scatter plot:
+plt.scatter(x,y)
+
+//Changing the xscale to log: 
+plt.xscale('log')
+plt.scatter(x = gdp_cap, y = life_exp, s = np.array(pop) * 2, c=col, alpha=0.8) //S is the size of each scatter point. 
+Alpha gives opacity. col is color.Color is a dict s shown below:
+dict = {
+    'Asia':'red',
+    'Europe':'green',
+    'Africa':'blue',
+    'Americas':'yellow',
+    'Oceania':'black'
+}
+
+//Plotting grid lines:
+plt.grid(True)
+
+//Putting a text in plot:
+plt.text(1550, 71, 'India')
+
+//ploting histogram : 
+plt.hist(values,bins=3) //By default 10 bins
+
+//cleans it up again so you can start afresh.
+plt.clf()
+
 plt.plot(x_values,y_values,label="Aditya")  //plt.legend() -> This is to add legend, otherwise label wont be displayed
 plt.plot(x_values,'*') 
 plt.plot(x_values,'*-') 
@@ -12,6 +42,14 @@ plt.title("Ransom notes letter", fontsize=20, color="green", linewidth=1,linesty
 -label, colors here are web colors
 plt.text(xcord,ycord,"Text message") -> add an arbitrary text to plot [Placing a random text]
 plt.style.use("ggplot")//seaborn, default,"fivethirtyeight"
+plt.rcParams['figure.figsize']=[15,15]
+
+
+//Custom info: Labels & plots
+plt.xlabel('Year')
+plt.ylabel('Population')
+plt.title('Title')
+plt.yticks([0,2,4,6,8,10],['0B','2B','4B','6B','8B','10B'])//Has tick labels. Similarly has x ticks
 
 
 Interpolation:
@@ -34,3 +72,6 @@ plt.quiver(0,0,3,4, scale_units='xy', angles='xy',scale=1, color='r') #plot vect
 plt.xlim(-10,10)
 plt.ylim(-10,10)
 
+
+
+plt.clf()# Clear figure

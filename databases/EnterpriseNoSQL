@@ -1,0 +1,11 @@
+What are forcing the way people look at data:
+----------------------------------------------
+- Velocity | Batch -> Periodic -> Near real time -> realtime
+- Variety | File -> Tables -> web photo audio -> unstructured.
+- Volume -> MB -> GB -> TB -> PB
+
+NoSQL DBs are:
+- Cloud Focused
+- Cluster Friendly
+- Flexible
+- Fast

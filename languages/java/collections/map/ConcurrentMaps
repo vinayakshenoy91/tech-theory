@@ -1,0 +1,49 @@
+Concurrent maps:
+---------------
+- ConcurrentMap [Interface]
+Two impl:
+- ConcurrentHashMap
+  Atomic operations:
+  - putIfAbsent(key, value)
+  - remove(key, value)
+  - replace(key, value)
+  - replace(key, existingValue, newValue)
+
+- It breaks the array in to several cells so that only those cells are blocked and they can be accessed 
+concurrently.
+
+- Built of synchronized segments
+- Number of segments = concurrency level(16-64K)
+- This sets the number of threads that can use this map.
+- The number of key/value pairs has tp be much greater than concurrency level.
+
+//Search will be done in parallel if we have 10k entries
+ConcurrentHashMap<long,String> map=...;
+String result = map.search(10000,(key,value)-> value.startsWith("a")?"a":null);
+- 1st parameter is parallelism threshold
+
+//Reduce
+map.reduce(10000, (key,value)-> value.size(), (value1,value2)-> Integer.max(value1,value2));
+
+//ForEach
+map.forEach(10000,(key,value)->value.removeIf(s->s.length()>20))
+
+//Concurrent set: No parallel ops
+Set><String> set = ConcurrentHashMap.<String>newKeySet(); 
+
+- ConcurrentSkipListMap -> no sync[In jdk 6]
+--------------------------------------------
+- Smart structure used to create linked list
+- relies on atomic reference ops, no sync
+- We create fast access list on top of linked list.It assumes that elements are sorted.
+- Can be used to create map where keys are sorted.
+- Fast access to any key
+- Skip list is not array based structure.
+
+ConcurrentSkipListMap-> All references are impl with atomic references
+- - Used for maps and sets
+It is a thread safe map with no sync
+
+ConcurrentSkipListSet -> Use same strucutre and used for high concurrency
+
+ 

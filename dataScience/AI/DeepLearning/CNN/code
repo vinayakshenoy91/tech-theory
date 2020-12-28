@@ -1,0 +1,58 @@
+import numpy as np
+
+#1 load image dataset:
+from sklearn.datasets import load_sample_images
+
+dataset = np.array(load_sample_images().images, dtype=np.float32)
+batch_size,height, width, channels = dataset.shape
+
+#2 filter creation 7x7 , one with vertical and horizontal line.
+
+filter_test=np.zeros(shape=(7,7, channels,2),dtype=np.float32)
+
+filters_test[:,3,:,0] =1 #vertical line
+
+filters_test[3,:,:,1] =1 #horizontal line.
+
+filters= tf.constant(filters_test)
+
+X = tf.placeholder(tf.float32, shape=(None,height, width, channels))
+
+convolution = tf.nn.conv2d(X,filters,strides=[1,2,2,1], padding="SAME") //VALID -> No zero padding
+
+#3 run model
+with tf.Session() as sess:
+    output=sess.run(convolution,feed_dict={X: dataset})
+
+plt.imshow(output[0,:,:,1])  # plot 1st image's 2nd feature map
+plt.show()
+
+
+Formulas:
+---------
+Number of output neurons = number of input neurons/stride
+
+Hyperparameters: [Cross validation can be used to find hyyper param but it is time consuming]
+-----------------
+- Number of filters
+- height and width
+- strides
+- padding type.
+
+#4 pooling layers
+- Tensorflow cirrently does not support poolign over multipel instance so the first element of ksize must be equal to 1.
+- It does not support pooling over both sptial dims[height and width] and the depth.
+
+X = tf.placeholder(tf.float32,shape=(None, height, width, channels))
+max_pool=tf.nn.max_pool(X,ksize=[1,2,2,1], strides=[1,2,2,1], padding="VALID")
+#ksize arg contains th kernel shape along all 4 dims of the input tensor [batch size, height, width, channels]
+
+
+with tf.Session() as sess:
+     output = sess.run(max_pool, feed_dict={X:dataset})
+
+plt.imshow(output[0].astype(np.uint8))
+plt.show()
+
+# to create avg pooling layer, use avg_pool() fucntion instead of max_pool()
+

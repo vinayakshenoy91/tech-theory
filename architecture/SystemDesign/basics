@@ -1,0 +1,7 @@
+https://github.com/brendandburns/designing-distributed-systems.
+
+
+Some optimisations:
+--------------------
+Database query optimization, sharding databases, adding missing indexes, utilizing caching, doing expensive operations asynchronously, 
+writing efficient code, and tuning web servers help in increasing the throughput and decreasing the latency.

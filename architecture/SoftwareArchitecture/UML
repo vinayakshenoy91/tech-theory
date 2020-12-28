@@ -1,0 +1,55 @@
+Types of modelling:
+--------------------
+a) Structural modelling:
+- Identify physical and conceptual parts
+- static parts
+- Nouns
+
+Diagrams:
+---------
+1) Class:
+- Vocab
+- Relationship
+- Composiiton is like the entity is not standalone until it is tied to its parent.
+Composition -> contained object is a part of the containing object
+This is an unshared association, with the contained object’s lifetime being controlled by its containing object. 
+- Aggregation -> contained objects are more like collection of things.
+
+
+
+2) Component:
+- Identify interfaces
+- Define replaceble parts
+
+3) Package:
+- logical container
+- support large models
+
+
+4) Deployment
+- visualize hardware and network dependencies
+- Map components to physical systems
+- view special devices
+
+
+b) Behavioural modelling:
+--------------------------
+Functionality - Processes and interactions
+Dynamic parts
+Verbs
+
+Diagram:
+-------
+1) Use case:
+- Identify user task
+- System interactions
+2) Sequence
+- Object interactions
+- Focus on time order
+
+3) State:
+- Model states of an Object
+- Reactive objects
+- Internal behaviour
+
+4) Activity

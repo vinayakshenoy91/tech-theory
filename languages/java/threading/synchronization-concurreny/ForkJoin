@@ -1,0 +1,830 @@
+It's the fork/join framework.
+
+This framework is designed to solve problems that can be broken into smaller tasks using the divide and conquer technique. 
+Inside a task, you check the size of the problem you want to resolve, and if it's bigger than an established size, 
+you divide it into smaller tasks that are executed using the framework. If the size of the problem is smaller than the established size, 
+you solve the problem directly in the task, and then, optionally, it returns a result.
+
+The framework is based on the following two operations:
+
+Fork operation: When you divide a task into smaller tasks and execute them using the framework.
+Join operation: When a task waits for the finalization of the tasks it has created. It's used to combine the results of those tasks.
+
+The main difference between the fork/join and the Executor frameworks is the work-stealing algorithm. Unlike the Executor framework, 
+when a task is waiting for the finalization of the subtasks it has created using the join operation, the thread that is executing 
+that task (called worker thread) looks for other tasks that have not been executed yet and begins their execution.
+
+
+
+The main difference between the fork/join and the Executor frameworks is the work-stealing algorithm. Unlike the Executor framework, when a task is waiting for the finalization of the subtasks it has created using the join operation, the thread that is executing that task (called worker thread) looks for other tasks that have not been executed yet and begins their execution. In this way, the threads take full advantage of their running time, thereby improving the performance of the application.
+
+To achieve this goal, the tasks executed by the fork/join framework have the following limitations:
+
+Tasks can only use the fork() and join() operations as synchronization mechanisms. If they use other synchronization mechanisms, the worker threads can't execute other tasks when they are in the synchronization operation. For example, if you put a task to sleep in the fork/join framework, the worker thread that is executing that task won't execute another one during the sleeping time.
+Tasks should not perform I/O operations such as read or write data in a file.
+Tasks can't throw checked exceptions. They have to include the code necessary to process them.
+The core of the fork/join framework is formed by the following two classes:
+
+ForkJoinPool: This class implements the ExecutorService interface and the work-stealing algorithm. It manages the worker threads and offers information about the status of the tasks and their execution.
+ForkJoinTask: This is the base class of the tasks that will execute in the ForkJoinPool. It provides the mechanisms to execute the fork() and join() operations inside a task and the methods to control the status of the tasks. Usually, to implement your fork/join tasks, you will implement a subclass of three subclasses of this class: RecursiveAction for tasks with no return result, RecursiveTask for tasks that return one result, and CountedCompleter for tasks that launch a completion action when all the subtasks have finished.
+
+
+Most of the features provided by this framework were included in Java 7, but Java 8 included minor features in it. It included a default ForkJoinPool object. You can obtain it using the static method, commonPool(), of the ForkJoinPool class. This default fork/join executor will by default use the number of threads determined by the available processors of your computer. You can change this default behavior by changing the value of the system property, java.util.concurrent.ForkJoinPool.common.parallelism. This default pool is used internally by other classes of the Concurrency API. For example, Parallel Streams use it. Java 8 also included the CountedCompleter class mentioned earlier.
+
+The main characteristics of the fork/join framework you're going to use in this example are as follows:
+
+You will create ForkJoinPool using the default constructor.
+Inside the task, you will use the structure recommended by the Java API documentation:
+        if (problem size > default size){ 
+          tasks=divide(task); 
+          execute(tasks); 
+        } else { 
+          resolve problem using another algorithm; 
+        } 
+You will execute the tasks in a synchronized way. When a task executes two or more subtasks, it waits for their finalizations. In this way, the thread that was executing that task (called worker thread) will look for other tasks to execute, taking full advantage of their execution time.
+The tasks you're going to implement won't return any result, so you'll take the RecursiveAction class as the base class for their implementation.
+
+Creating for join pool:
+------------------------
+
+private ExecutorService pool = ForkJoinPool.commonPool();
+
+How to do it...
+In this recipe, you are going to implement a task to update the price of a list of products. The initial task will be responsible for updating all the elements in a list. You will use a size 10 as the reference size, so if a task has to update more than 10 elements, it divides the part of the list assigned to it in two parts and creates two tasks to update the prices of the products in the respective parts.
+
+Follow these steps to implement the example:
+
+Create a class named Product that will store the name and price of a product:
+        public class Product { 
+Declare a private String attribute named name and a private double attribute named price:
+        private String name; 
+        private double price; 
+Implement getter and setter methods for those fields. They are very simple to implement, so its source code is not included.
+Create a class named ProductListGenerator to generate a list of random products:
+        public class ProductListGenerator { 
+Implement the generate() method. It receives an int parameter with the size of the list and returns a List<Product> object with the list of generated products:
+        public List<Product> generate (int size) { 
+Create the object to return the list of products:
+        List<Product> ret=new ArrayList<Product>(); 
+Generate the list of products. Assign the same price to all of the products, for example, 10, to check that the program works well:
+          for (int i=0; i<size; i++){ 
+            Product product=new Product(); 
+            product.setName("Product "+i); 
+            product.setPrice(10); 
+            ret.add(product); 
+          } 
+          return ret; 
+        } 
+Create a class named Task. Specify that it extends the RecursiveAction class:
+        public class Task extends RecursiveAction { 
+Declare a private List<Product> attribute named products:
+        private List<Product> products; 
+Declare two private int attributes named first and last. These attributes will determine the block of products this task has to process:
+        private int first; 
+        private int last; 
+Declare a private double attribute named increment to store the increment of the price of the products:
+        private double increment; 
+Implement the constructor of the class that will initialize all the attributes of the class:
+        public Task (List<Product> products, int first, int last,
+                     double increment) { 
+          this.products=products; 
+          this.first=first; 
+          this.last=last; 
+          this.increment=increment; 
+        } 
+Implement the compute() method, which will implement the logic of the task:
+        @Override 
+        protected void compute() { 
+If the difference of the last and first attributes is less than 10 (the task has to update the price of less than 10 products), increment the price of that set of products using the updatePrices() method:
+        if (last - first<10) { 
+          updatePrices(); 
+If the difference between the last and first attributes is greater than or equal to 10, create two new Task objects, one to process the first half of the products and the other to process the second half, and execute them in ForkJoinPool using the invokeAll() method:
+        } else { 
+          int middle=(last+first)/2; 
+          System.out.printf("Task: Pending tasks:%s\n",
+                            getQueuedTaskCount()); 
+          Task t1=new Task(products, first,middle+1, increment); 
+          Task t2=new Task(products, middle+1,last, increment); 
+          invokeAll(t1, t2);   
+        } 
+Implement the updatePrices() method. This method updates the products that occupy the positions between the values of the first and last attributes in the list of products:
+        private void updatePrices() { 
+          for (int i=first; i<last; i++){ 
+            Product product=products.get(i); 
+            product.setPrice(product.getPrice()*(1+increment)); 
+          } 
+        } 
+Implement the main class of the example by creating a class named Main and add the main() method to it:
+        public class Main { 
+          public static void main(String[] args) { 
+Create a list of 10000 products using the ProductListGenerator class:
+        ProductListGenerator generator=new ProductListGenerator(); 
+        List<Product> products=generator.generate(10000); 
+Create a new Task object to update the prices of all the products in the list. The parameter first takes the value 0 and the last parameter takes the value 10000 (the size of the product list):
+        Task task=new Task(products, 0, products.size(), 0.20); 
+Create a ForkJoinPool object using the constructor without parameters:
+        ForkJoinPool pool=new ForkJoinPool(); 
+Execute the task in the pool using the execute() method:
+        pool.execute(task); 
+Implement a block of code that shows information about the evolution of the pool every five milliseconds, writing to the console the value of some parameters of the pool until the task finishes its execution:
+        do { 
+          System.out.printf("Main: Thread Count:%d\n",
+                            pool.getActiveThreadCount()); 
+          System.out.printf("Main: Thread Steal:%d\n",
+                            pool.getStealCount()); 
+          System.out.printf("Main: Parallelism:%d\n",
+                            pool.getParallelism()); 
+          try { 
+            TimeUnit.MILLISECONDS.sleep(5); 
+          } catch (InterruptedException e) { 
+            e.printStackTrace(); 
+          } 
+        } while (!task.isDone()); 
+Shut down the pool using the shutdown() method:
+        pool.shutdown(); 
+Check if the task has finished without errors with the isCompletedNormally() method and in that case, write a message to the console:
+        if (task.isCompletedNormally()){ 
+          System.out.printf("Main: The process has completed
+                             normally.\n"); 
+        } 
+The expected price of all the products, after the increment, is 12. Write the name and price of all the products that have a price difference of 12 to check that all of them have increased their price correctly:
+        for (int i=0; i<products.size(); i++){ 
+          Product product=products.get(i); 
+          if (product.getPrice()!=12) { 
+            System.out.printf("Product %s: %f\n",
+                              product.getName(),product.getPrice()); 
+          } 
+        } 
+Write a message to indicate the finalization of the program:
+        System.out.println("Main: End of the program.\n"); 
+
+How it works...
+In this example, you created a ForkJoinPool object and a subclass of the ForkJoinTask class that you executed in the pool. To create the ForkJoinPool object, you used the constructor without arguments, so it will be executed with its default configuration. It creates a pool with a number of threads equal to the number of processors of the computer. When the ForkJoinPool object is created, those threads are created and they wait in the pool until some tasks arrive for their execution.
+
+Since the Task class doesn't return a result, it extends the RecursiveAction class. In the recipe, you used the recommended structure for the implementation of the task. If the task has to update more than 10 products, it divides that set of elements into two blocks, creates two tasks, and assigns a block to each task. You used the first and last attributes in the Task class to know the range of positions that this task has to update in the list of products. You used the first and last attributes to use only one copy of the product list and not create different lists for each task.
+
+To execute the subtasks that a task creates, it calls the invokeAll() method. This is a synchronous call, and the task waits for the finalization of the subtasks before continuing (potentially finishing) its execution. While the task is waiting for its subtasks, the worker thread that was executing it takes another task waiting for execution and executes it. With this behavior, the fork/join framework offers more efficient task management than the Runnable and Callable objects themselves.
+
+The invokeAll() method of the ForkJoinTask class is one of the main differences between the Executor and the fork/join framework. In the Executor framework, all the tasks have to be sent to the executor while in this case, the tasks include methods to execute and control the tasks inside the pool. You used the invokeAll() method in the Task class, which extends the RecursiveAction class, which in turn extends the ForkJoinTask class.
+
+You sent a unique task to the pool to update all the lists of products using the execute() method. In this case, it's an asynchronous call, and the main thread continues its execution.
+
+You used some methods of the ForkJoinPool class to check the status and the evolution of the tasks that are running.
+
+The ForkJoinPool class provides other methods to execute a task. These methods are as follows:
+
+execute (Runnable task): This is another version of the execute() method used in the example. In this case, you send a Runnable task to the ForkJoinPool class. Note that the ForkJoinPool class doesn't use the work-stealing algorithm with Runnable objects. It's only used with ForkJoinTask objects.
+invoke(ForkJoinTask<T> task): While the execute() method makes an asynchronous call to the ForkJoinPool class, as you learned in the example, the invoke() method makes a synchronous call to the ForkJoinPool class. This call doesn't return until the task passed as a parameter finishes its execution.
+You can also use the invokeAll() and invokeAny() methods declared in the ExecutorService interface. These methods receive Callable objects as parameters. The ForkJoinPool class doesn't use the work-stealing algorithm with the Callable objects, so you'd be better off executing them using a ThreadPoolExecutor.
+The ForkJoinTask class also includes other versions of the invokeAll() method used in the example. These versions are as follows:
+
+invokeAll(ForkJoinTask<?>... tasks): This version of the method uses a variable list of arguments. You can pass to it as parameters as many ForkJoinTask objects as you want.
+invokeAll(Collection<T> tasks): This version of the method accepts a collection (for example, an ArrayList object, a LinkedList object, or a TreeSet object) of objects of a generic type T. This generic type T must be the ForkJoinTask class or a subclass of it.
+Although the ForkJoinPool class is designed to execute an object of ForkJoinTask, you can also execute the Runnable and Callable objects directly. You may also use the adapt() method of the ForkJoinTask class that accepts a Callable object or a Runnable object and returns a ForkJoinTask object to execute that task
+
+Joining the results of the tasks:
+----------------------------------
+if (problem size > size){ 
+      tasks=Divide(task); 
+      execute(tasks); 
+      joinResults() 
+      return result; 
+    } else { 
+      resolve problem; 
+      return result; 
+    } 
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named DocumentMock. It will generate a string matrix that will simulate a document:
+        public class DocumentMock { 
+Create an array of strings with some words. This array will be used in the generation of the strings matrix:
+        private String words[]={"the","hello","goodbye","packt",
+                                "java","thread","pool","random",
+                                "class","main"}; 
+Implement the generateDocument() method. It receives as parameters the number of lines, the number of words per line, and the word the example is going to look for. It returns a matrix of strings:
+        public String[][] generateDocument(int numLines, int numWords,
+                                           String word){ 
+First, create the necessary objects to generate the document-the String matrix and a Random object to generate random numbers:
+        int counter=0; 
+        String document[][]=new String[numLines][numWords]; 
+        Random random=new Random(); 
+Fill the array with strings. Store in each position the string that is at a random position in the array of words and count the number of appearances of the word the program will look for in the generated array. You can use this value to check whether the program does its job properly:
+        for (int i=0; i<numLines; i++){ 
+          for (int j=0; j<numWords; j++) { 
+            int index=random.nextInt(words.length); 
+            document[i][j]=words[index]; 
+            if (document[i][j].equals(word)){ 
+              counter++; 
+            } 
+          } 
+        } 
+Write a message with the number of appearances of the word and return the matrix generated:
+        System.out.println("DocumentMock: The word appears "+ counter+"
+                            times in the document"); 
+        return document; 
+Create a class named DocumentTask and specify that it extends the RecursiveTask class parameterized with the Integer class. This class will implement the task that will calculate the number of appearances of the word in a set of lines:
+        public class DocumentTask extends RecursiveTask<Integer> { 
+Declare a private String matrix named document and two private int attributes named start and end. Also, declare a private String attribute named word:
+        private String document[][]; 
+        private int start, end; 
+        private String word; 
+Implement the constructor of the class to initialize all its attributes:
+        public DocumentTask (String document[][], int start, int end,
+                             String word){ 
+          this.document=document; 
+          this.start=start; 
+          this.end=end; 
+          this.word=word; 
+        } 
+Implement the compute() method. If the difference between the end and start attributes is smaller than 10, the task calculates the number of appearances of a word in the lines between those positions by calling the processLines() method:
+        @Override 
+        protected Integer compute() { 
+          Integer result=null; 
+          if (end-start<10){ 
+            result=processLines(document, start, end, word); 
+Otherwise, divide the group of lines into two objects, create two new DocumentTask objects to process those two groups, and execute them in the pool using the invokeAll() method:
+        } else { 
+          int mid=(start+end)/2; 
+          DocumentTask task1=new DocumentTask(document,start,mid,word); 
+          DocumentTask task2=new DocumentTask(document,mid,end,word); 
+          invokeAll(task1,task2); 
+Then, add the values returned by both the tasks using the groupResults() method. Finally, return the result calculated by the task:
+          try { 
+            result=groupResults(task1.get(),task2.get()); 
+          } catch (InterruptedException | ExecutionException e) { 
+            e.printStackTrace(); 
+          } 
+        } 
+        return result; 
+Implement the processLines() method. It receives the string matrix, the start attribute, the end attribute, and the word attribute the task is searching for as parameters:
+        private Integer processLines(String[][] document, int start,
+                                     int end,String word) { 
+For every line the task has to process, create a LineTask object to process the complete line and store them in a list of tasks:
+        List<LineTask> tasks=new ArrayList<LineTask>(); 
+        for (int i=start; i<end; i++){ 
+          LineTask task=new LineTask(document[i], 0,
+                                     document[i].length, word); 
+          tasks.add(task); 
+        } 
+Execute all the tasks in that list using the invokeAll() method:
+        invokeAll(tasks); 
+Sum the value returned by all these tasks and return the result:
+        int result=0; 
+        for (int i=0; i<tasks.size(); i++) { 
+          LineTask task=tasks.get(i); 
+          try { 
+            result=result+task.get(); 
+          } catch (InterruptedException | ExecutionException e) { 
+            e.printStackTrace(); 
+          } 
+        } 
+        return result; 
+Implement the groupResults() method. It adds two numbers and returns the result:
+        private Integer groupResults(Integer number1,Integer number2) { 
+          Integer result; 
+          result=number1+number2; 
+          return result; 
+        } 
+Create a class named LineTask and specify that it extends the RecursiveTask class parameterized with the Integer class. This class will implement the task that will calculate the number of appearances of the word in a line:
+        public class LineTask extends RecursiveTask<Integer>{ 
+Declare a private String array attribute named line and two private int attributes named start and end. Finally, declare a private String attribute named word:
+        private String line[]; 
+        private int start, end; 
+        private String word; 
+Implement the constructor of the class to initialize all its attributes:
+        public LineTask(String line[],int start,int end,String word) { 
+          this.line=line; 
+          this.start=start; 
+          this.end=end; 
+          this.word=word; 
+        } 
+Implement the compute() method of the class. If the difference between the end and start attributes is smaller than 100, the task searches for the word in the fragment of the line determined by the start and end attributes using the count() method:
+        @Override 
+        protected Integer compute() { 
+          Integer result=null; 
+          if (end-start<100) { 
+            result=count(line, start, end, word); 
+Otherwise, divide the group of words in the line in two, create two new LineTask objects to process those two groups, and execute them in the pool using the invokeAll() method:
+        } else { 
+          int mid=(start+end)/2; 
+          LineTask task1=new LineTask(line, start, mid, word); 
+          LineTask task2=new LineTask(line, mid, end, word); 
+          invokeAll(task1, task2); 
+Then, add the values returned by both the tasks using the groupResults() method. Finally, return the result calculated by the task:
+          try { 
+            result=groupResults(task1.get(),task2.get()); 
+          } catch (InterruptedException | ExecutionException e) { 
+            e.printStackTrace(); 
+          } 
+        } 
+        return result; 
+Implement the count() method. It receives the string array with the complete line, the start attribute, the end attribute, and the word attribute the task is searching for as parameters:
+        private Integer count(String[] line, int start, int end,
+                              String word) { 
+Compare the words stored in the positions between the start and end attributes with the word attribute the task is searching for, and if they are equal, increment the counter variable:
+        int counter; 
+        counter=0; 
+        for (int i=start; i<end; i++){ 
+          if (line[i].equals(word)){ 
+            counter++; 
+          } 
+        } 
+To slow the execution of the example, put the task to sleep for 10 milliseconds:
+        try { 
+          Thread.sleep(10); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        } 
+Return the value of the counter variable:
+        return counter; 
+Implement the groupResults() method. It sums two numbers and returns the result:
+        private Integer groupResults(Integer number1,Integer number2) { 
+          Integer result; 
+          result=number1+number2; 
+          return result; 
+        } 
+Implement the main class of the example by creating a class named Main with a main() method:
+        public class Main{ 
+          public static void main(String[] args) { 
+Create Document with 100 lines and 1000 words per line using the DocumentMock class:
+        DocumentMock mock=new DocumentMock(); 
+        String[][] document=mock.generateDocument(100, 1000, "the"); 
+Create a new DocumentTask object to update the products of the entire document. The start parameter takes the value 0 and the end parameter takes the value 100:
+        DocumentTask task=new DocumentTask(document, 0, 100, "the"); 
+Get the default ForkJoinPool executor using the commmonPool() method and execute the task on it using the execute() method:
+        ForkJoinPool commonPool=ForkJoinPool.commonPool(); 
+        commonPool.execute(task); 
+Implement a block of code that shows information about the progress of the pool, writing every second to the console the value of some parameters of the pool until the task finishes its execution:
+        do { 
+          System.out.printf("*************************
+                             *****************\n"); 
+          System.out.printf("Main: Active Threads: %d\n",
+                            commonPool.getActiveThreadCount()); 
+          System.out.printf("Main: Task Count: %d\n",
+                            commonPool.getQueuedTaskCount()); 
+          System.out.printf("Main: Steal Count: %d\n",
+                            commonPool.getStealCount()); 
+          System.out.printf("***********************************
+                             *******\n"); 
+          try { 
+            TimeUnit.SECONDS.sleep(1); 
+          } catch (InterruptedException e) { 
+            e.printStackTrace(); 
+          } 
+        } while (!task.isDone()); 
+Shut down the pool using the shutdown() method:
+        pool.shutdown(); 
+Wait for the finalization of the tasks using the awaitTermination() method:
+        try { 
+          pool.awaitTermination(1, TimeUnit.DAYS); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        } 
+Write the number of the appearances of the word in the document. Check that this number is the same as the number written by the DocumentMock class:
+        try { 
+          System.out.printf("Main: The word appears %d in the
+                             document",task.get()); 
+        } catch (InterruptedException | ExecutionException e) { 
+          e.printStackTrace(); 
+        } \
+
+How it works...
+In this example, you implemented two different tasks:
+
+DocumentTask: A task of this class has to process a set of lines of the document determined by the start and end attributes. If this set of lines has a size smaller than 10, it creates LineTask per line, and when they finish their execution, it sums the results of those tasks and returns the result of the sum. If the set of lines the task has to process has a size of 10 or bigger, it divides the set in two and creates two DocumentTask objects to process those new sets. When those tasks finish their execution, the tasks sum their results and return that sum as a result.
+LineTask: A task of this class has to process a set of words of a line of the document. If this set of words is smaller than 100, the task searches the word directly in that set of words and returns the number of appearances of the word. Otherwise, it divides the set of words into two and creates two LineTask objects to process those sets. When those tasks finish their execution, the task sums the results of both the tasks and returns that sum as a result.
+In the Main class, you used the default ForkJoinPool (obtained from the static method, commonPool()) and executed in it a DocumentTask class that has to process a document of 100 lines and 1000 words per line. This task will divide the problem using other DocumentTask objects and LineTask objects, and when all the tasks finish their execution, you can use the original task to get the total number of appearances of the word in the whole document. Since the tasks return a result, they extend the RecursiveTask class.
+
+To obtain the result returned by Task, you used the get() method. This method is declared in the Future interface implemented by the RecursiveTask class.
+
+When you execute the program, you can compare the first and the last lines written in the console. The first line is the number of appearances of the word calculated when the document is generated and the last is the same number calculated by the fork/join tasks.
+
+The ForkJoinTask class provides another method to finish the execution of a task and return a result, that is, the complete() method. This method accepts an object of the type used in the parameterization of the RecursiveTask class and returns that object as a result of the task when the join() method is called. It's use is recommended to provide results for asynchronous tasks.
+
+Since the RecursiveTask class implements the Future interface, there's another version of the get() method:
+
+get(long timeout, TimeUnit unit): This version of the get() method, if the result of the task isn't available, waits the specified time for it. If the specified period of time passes and the result isn't yet available, the method returns a null value. The TimeUnit class is an enumeration with these constants: DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, and SECONDS.
+
+Running task async:
+--------------------
+You should be aware of a big difference between the two methods. When you use the synchronous methods, the task that calls one of these methods (for example, the invokeAll() method) is suspended until the tasks it sent to the pool finish their execution. This allows the ForkJoinPool class to use the work-stealing algorithm to assign a new task to the worker thread that executed the sleeping task. On the contrary, when you use the asynchronous methods (for example, the fork() method), the task continues with its execution, so the ForkJoinPool class can't use the work-stealing algorithm to increase the performance of the application. In this case, only when you call the join() or get() methods to wait for the finalization of a task, the ForkJoinPool class can use that algorithm.
+
+In addition to the RecursiveAction and RecursiveTask classes, Java 8 introduced a new ForkJoinTask class with the CountedCompleter class. With this kind of tasks, you can include a completion action that will be executed when it is launched and there is no pending child task. This mechanism is based on a method included in the class (the onCompletion() method) and a counter of pending tasks.
+
+This counter is initialized to zero by default and you can increment it when you need in an atomic way. Normally, you will increment this counter one by one as and when you launch a child task. Finally, when a task has finished its execution, you can try to complete the execution of the task and consequently execute the onCompletion() method. If the pending count is greater than zero, it is decremented by one. If it's zero, the onCompletion() method is executed and then the parent task is tried to be completed.
+
+
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named FolderProcessor and specify that it extends the CountedCompleter class parameterized with the List<String> type:
+        public class FolderProcessor extends
+                                CountedCompleter<List<String>> { 
+Declare a private String attribute named path. This attribute will store the full path of the folder the task is going to process:
+        private String path; 
+Declare a private String attribute named extension. This attribute will store the name of the extension of the files the task is going to look for:
+        private String extension; 
+Declare two List private attributes named tasks and resultList. We will use the first one to store all the child tasks launched from this task and the other one to store the list of results of this task:
+        private List<FolderProcessor> tasks; 
+        private List<String> resultList;      
+Implement one constructor for the class to initialize its attributes and its parent class. We declare this constructor as protected as it will only be used internally:
+        protected FolderProcessor (CountedCompleter<?> completer,
+                                   String path, String extension) { 
+          super(completer); 
+          this.path=path; 
+          this.extension=extension; 
+        } 
+We implement the other public constructor to be used externally. As the task created by this constructor won't have a parent task, we don't include this object as a parameter:
+        public FolderProcessor (String path, String extension) { 
+          this.path=path; 
+          this.extension=extension; 
+        } 
+Implement the compute() method. As the base class of our task is the CountedCompleter class, the return type of this method is void:
+        @Override 
+        public void compute() { 
+First, initialize the two list attributes:
+        resultList=new ArrayList<>(); 
+        tasks=new ArrayList<>(); 
+Get the contents of the folder:
+        File file=new File(path); 
+        File content[] = file.listFiles(); 
+For each element in the folder, if there is a subfolder, create a new FolderProcessor object and execute it asynchronously using the fork() method. We use the first constructor of the class and pass the current task as the completer task of the new one. We also increment the counter of pending tasks using the addToPendingCount() method:
+        if (content != null) { 
+          for (int i = 0; i < content.length; i++) { 
+            if (content[i].isDirectory()) { 
+              FolderProcessor task=new FolderProcessor(this,
+                              content[i].getAbsolutePath(), extension); 
+              task.fork(); 
+              addToPendingCount(1); 
+              tasks.add(task); 
+Otherwise, compare the extension of the file with the extension you are looking for, using the checkFile() method, and if they are equal, store the full path of the file in the list of strings declared earlier:
+          } else { 
+            if (checkFile(content[i].getName())){ 
+              resultList.add(content[i].getAbsolutePath()); 
+            } 
+          } 
+        } 
+If the list of the FolderProcessor subtasks has more than 50 elements, write a message to the console to indicate this circumstance:
+          if (tasks.size()>50) { 
+            System.out.printf("%s: %d tasks ran.\n",
+                              file.getAbsolutePath(),tasks.size()); 
+          } 
+        } 
+Finally, try to complete the current task using the tryComplete() method:
+          tryComplete(); 
+        } 
+Implement the onCompletion() method. This method will be executed when all the child tasks (all the tasks that have been forked from the current task) have finished their execution. We add the result list of all the child tasks to the result list of the current task:
+        @Override 
+        public void onCompletion(CountedCompleter<?> completer) { 
+          for (FolderProcessor childTask : tasks) { 
+            resultList.addAll(childTask.getResultList()); 
+          } 
+        } 
+Implement the checkFile() method. This method compares if the name of a file passed as a parameter ends with the extension you are looking for. If so, the method returns the true value, otherwise it returns the false value:
+        private boolean checkFile(String name) { 
+          return name.endsWith(extension); 
+        } 
+Finally, implement the getResultList() method to return the result list of a task. The code of this method is very simple so it won't be included.
+Implement the main class of the example by creating a class named Main with a main() method:
+        public class Main { 
+          public static void main(String[] args) { 
+Create ForkJoinPool using the default constructor:
+        ForkJoinPool pool=new ForkJoinPool(); 
+Create three FolderProcessor tasks. Initialize each with a different folder path:
+        FolderProcessor system=new FolderProcessor("C:\\Windows",
+                                                   "log"); 
+        FolderProcessor apps=new FolderProcessor("C:\\Program Files",
+                                                 "log"); 
+        FolderProcessor documents=new FolderProcessor("C:\\Documents
+                                                 And Settings","log"); 
+Execute the three tasks in the pool using the execute() method:
+        pool.execute(system); 
+        pool.execute(apps); 
+        pool.execute(documents); 
+Write to the console information about the status of the pool every second until the three tasks have finished their execution:
+        do { 
+          System.out.printf("**********************************
+                             ********\n"); 
+          System.out.printf("Main: Active Threads: %d\n",
+                            pool.getActiveThreadCount()); 
+          System.out.printf("Main: Task Count: %d\n",
+                            pool.getQueuedTaskCount()); 
+          System.out.printf("Main: Steal Count: %d\n",
+                            pool.getStealCount()); 
+          System.out.printf("**********************************
+                             ********\n"); 
+          try { 
+            TimeUnit.SECONDS.sleep(1); 
+          } catch (InterruptedException e) { 
+            e.printStackTrace(); 
+          } 
+        } while ((!system.isDone())||(!apps.isDone())||
+                 (!documents.isDone())); 
+Shut down ForkJoinPool using the shutdown() method:
+        pool.shutdown(); 
+Write the number of results generated by each task to the console:
+        List<String> results; 
+ 
+        results=system.join(); 
+        System.out.printf("System: %d files found.\n",results.size()); 
+ 
+        results=apps.join(); 
+        System.out.printf("Apps: %d files found.\n",results.size()); 
+ 
+        results=documents.join(); 
+        System.out.printf("Documents: %d files found.\n",
+                           results.size()); 
+
+The key to this example is in the FolderProcessor class. Each task processes the contents of a folder. As you know, this content has the following two kinds of elements:
+
+How it works...
+
+Files
+Other folders
+If the task finds a folder, it creates another FolderProcessor object to process that folder and sends it to the pool using the fork() method. This method sends the task to the pool that will execute it if it has a free worker thread, or it can create a new one. The method returns immediately, so the task can continue processing the contents of the folder. For every file, a task compares its extension with the one it's looking for and, if they are equal, adds the name of the file to the list of results.
+
+Once the task has processed all the contents of the assigned folder, we try to complete the current task. As we explained in the introduction of this recipe, when we try to complete a task, the code of the CountedCompleter looks for the value of the pending task counter. If this value is greater than 0, it decreases the value of that counter. On the contrary, if the value is 0, the task executes the onCompletion() method and then tries to complete its parent task. In our case, when a task is processing a folder and it finds a subfolder, it creates a new child task, launches that task using the fork() method, and increments the counter of the pending tasks. So, when a task has processed its entire content, the counter of pending tasks of the task will be equal to the number of child tasks we have launched. When we call the tryComplete() method, if the folder of the current task has subfolders, this call will decrease the number of pending tasks. Only when all its child tasks have been completed, its onCompletion() method is executed. If the folder of the current task hasn't got any subfolders, the counter of pending tasks will be zero; the onComplete() method will be called immediately, and then it will try to complete its parent task. In this way, we create a tree of tasks from top to bottom that are completed from bottom to top. In the onComplete() method, we process all the result lists of the child tasks and add their elements in the result list of the current task.
+
+The ForkJoinPool class also allows the execution of tasks in an asynchronous way. You used the execute() method to send the three initial tasks to the pool. In the Main class, you also finished the pool using the shutdown() method and wrote information about the status and the evolution of the tasks that are running in it. The ForkJoinPool class includes more methods that can be useful for this purpose. 
+
+In this example we used the addToPendingCount() method to increment the counter of pending tasks, but we have other methods we can use to change the value of this counter:
+
+setPendingCount(): This method establishes the value of the counter of pending tasks.
+compareAndSetPendingCount(): This method receives two parameters. The first one is the expected value and the second one is the new value. If the value of the counter of pending tasks is equal to the expected value, establish its value to the new one.
+decrementPendingCountUnlessZero(): This method decrements the value of the counter of pending tasks unless it's equal to zero.
+The CountedCompleter class also includes other methods to manage the completion of the tasks. The following are the most significant ones:
+
+complete(): This method executes the onCompletion() method independently of the value of the counter of pending tasks and tries to complete its completer (parent) task.
+onExceptionalCompletion(): This method is executed when the completeExceptionally() method has been called or the compute() method has thrown an Exception. Override this method to include your code to process such exceptions.
+In this example, you used the join() method to wait for the finalization of tasks and get their results. You can also use one of the following two versions of the get() method with this purpose:
+
+get(long timeout, TimeUnit unit): This version of the get() method, if the result of the task isn't available, waits the specified time for it. If the specified period of time passes and the result isn't yet available, the method returns a null value. The TimeUnit class is an enumeration with the following constants: DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, and SECONDS
+The join() method can't be interrupted. If you interrupt the thread that called the join() method, the method throws an InterruptedException exception.
+
+Throwing exceptions in the tasks:
+-----------------------------------
+There are two kinds of exceptions in Java:
+
+Checked exceptions: These exceptions must be specified in the throws clause of a method or caught inside them. For example, IOException or ClassNotFoundException.
+Unchecked exceptions: These exceptions don't have to be specified or caught. For example, NumberFormatException.
+You can't throw any checked exception in the compute() method of the ForkJoinTask class because this method doesn't include any throws declaration in its implementation. You have to include the necessary code to handle the checked exceptions. On the other hand, you can throw (or it can be thrown by any method or object used inside the method) an unchecked exception. The behavior of the ForkJoinTask and ForkJoinPool classes is different from what you may expect. The program doesn't finish execution and you won't see any information about the exception in the console. It's simply swallowed as if it weren't thrown. Only when you call the get() method of the initial task, the exception will be thrown. You can, however, use some methods of the ForkJoinTask class to know if a task has thrown an exception and if so, what kind of exception it was
+
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named Task. Specify that it implements the RecursiveTask class, parameterized with the Integer class:
+        public class Task extends RecursiveTask<Integer> { 
+Declare a private int array named array. It will simulate the array of data you are going to process in this example:
+        private int array[]; 
+Declare two private int attributes named start and end. These attributes will determine the elements of the array this task has to process:
+        private int start, end; 
+Implement the constructor of the class that initializes its attributes:
+        public Task(int array[], int start, int end){ 
+          this.array=array; 
+          this.start=start; 
+          this.end=end; 
+        } 
+Implement the compute() method of the task. As you have parameterized the RecursiveTask class with the Integer class, this method has to return an Integer object. First, write a message to the console with the value of the start and end attributes:
+        @Override 
+        protected Integer compute() { 
+          System.out.printf("Task: Start from %d to %d\n",start,end);  
+If the block of elements that this task has to process, determined by the start and end attributes, has a size smaller than 10, check if the element in the fourth position in the array (index number three) is in that block. If that is the case, throw RuntimeException. Then, put the task to sleep for a second:
+        if (end-start<10) { 
+          if ((3>start)&&(3<end)){ 
+            throw new RuntimeException("This task throws an"+
+                            "Exception: Task from  "+start+" to "+end); 
+          } 
+          try { 
+            TimeUnit.SECONDS.sleep(1); 
+          } catch (InterruptedException e) { 
+            e.printStackTrace(); 
+          } 
+Otherwise (the block of elements that this task has to process has a size of 10 or bigger), divide the block of elements in two, create two Task objects to process those blocks, and execute them in the pool using the invokeAll() method. Then, we write the results of these tasks to the console:
+        } else { 
+          int mid=(end+start)/2; 
+          Task task1=new Task(array,start,mid); 
+          Task task2=new Task(array,mid,end); 
+          invokeAll(task1, task2); 
+          System.out.printf("Task: Result form %d to %d: %d\n",
+                            start,mid,task1.join()); 
+          System.out.printf("Task: Result form %d to %d: %d\n",
+                            mid,end,task2.join()); 
+        } 
+Write a message to the console indicating the end of the task, writing the value of the start and end attributes:
+        System.out.printf("Task: End form %d to %d\n",start,end); 
+Return the number 0 as the result of the task:
+        return 0; 
+Implement the main class of the example by creating a class named Main with a main() method:
+        public class Main { 
+          public static void main(String[] args) { 
+Create an array of 100 integer numbers:
+        int array[]=new int[100]; 
+Create a Task object to process that array:
+        Task task=new Task(array,0,100); 
+Create a ForkJoinPool object using the default constructor:
+        ForkJoinPool pool=new ForkJoinPool(); 
+Execute the task in the pool using the execute() method:
+        pool.execute(task); 
+Shut down the ForkJoinPool class using the shutdown() method:
+        pool.shutdown(); 
+Wait for the finalization of the task using the awaitTermination() method. As you want to wait for the finalization of the task however long it takes to complete, pass the values 1 and TimeUnit.DAYS as parameters to this method:
+        try { 
+          pool.awaitTermination(1, TimeUnit.DAYS); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        } 
+Check if the task, or one of its subtasks, has thrown an exception using the isCompletedAbnormally() method. In such a case, write a message to the console with the exception that was thrown. Get that exception with the getException() method of the ForkJoinTask class:
+        if (task.isCompletedAbnormally()) { 
+          System.out.printf("Main: An exception has ocurred\n"); 
+          System.out.printf("Main: %s\n",task.getException()); 
+        } 
+        System.out.printf("Main: Result: %d",task.join()); 
+
+How it works...
+The Task class you implemented in this recipe processes an array of numbers. It checks if the block of numbers it has to process has 10 or more elements. In that case, it splits the block in two and creates two new Task objects to process those blocks. Otherwise, it looks for the element in the fourth position of the array (index number three). If that element is in the block the task has to process, it throws RuntimeException.
+
+When you execute the program, the exception is thrown, but the program doesn't stop. In the Main class you have included a call to the isCompletedAbnormally() method of the ForkJoinTask class using the original task. This method returns true if that task, or one of its subtasks, has thrown an exception. You also used the getException() method of the same object to get the Exception object that it has thrown.
+
+When you throw an unchecked exception in a task, it also affects its parent task (the task that sent it to the ForkJoinPool class) and the parent task of its parent task, and so on. If you revise the entire output of the program, you'll see that there aren't output messages for the finalization of some tasks. The starting messages of those tasks are as follows:
+
+    Task: Starting form 0 to 100 
+    Task: Starting form 0 to 50 
+    Task: Starting form 0 to 25 
+    Task: Starting form 0 to 12 
+    Task: Starting form 0 to 6 
+These tasks are the ones that threw the exception and its parent tasks. All of them have finished abnormally. Take this into account when you develop a program with the ForkJoinPool and ForkJoinTask objects that can throw exceptions if you don't want this behavior.
+
+
+You can also use one of the following two versions of the get() method with this purpose:
+
+get(): This version of the get() method returns the value returned by the compute() method if ForkJoinTask has finished its execution, or it waits until its finalization.
+get(long timeout, TimeUnit unit): This version of the get() method, if the result of the task isn't available, waits the specified time for it. If the specified period of time passes and the result isn't yet available, the method returns a null value. The TimeUnit class is an enumeration with the following constants: DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, and SECONDS.
+There are two main differences between the get() and join() methods:
+
+The join() method can't be interrupted. If you interrupt the thread that called the join() method, the method throws InterruptedException.
+While the get() method will return ExecutionException if the tasks throw any unchecked exception, the join() method will return RuntimeException.
+You can obtain the same result obtained in the example if, instead of throwing an exception, you use the completeExceptionally() method of the ForkJoinTask class. The code would be as follows:
+
+    Exception e=new Exception("This task throws an Exception: "+
+                              "Task from  "+start+" to "+end); 
+    completeExceptionally(e); 
+
+
+Cancelling a task:
+-------------------
+When you execute the ForkJoinTask objects in a ForkJoinPool class, you can cancel them before they start their execution. The ForkJoinTask class provides the cancel() method for this purpose. There are some points you have to take into account when you want to cancel a task, which are as follows:
+
+The ForkJoinPool class doesn't provide any method to cancel all the tasks it has running or waiting in the pool
+When you cancel a task, you don't cancel the tasks this task has executed
+In this recipe, you will implement an example of the cancellation of ForkJoinTask objects. You will look for the position of a number in an array. The first task that finds the number will cancel the remaining tasks. As that functionality is not provided by the fork/join framework, you will implement an auxiliary class to do this cancellation.
+
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named ArrayGenerator. This class will generate an array of random integer numbers with the specified size. Implement a method named generateArray(). It will generate the array of numbers. It receives the size of the array as a parameter:
+        public class ArrayGenerator { 
+          public int[] generateArray(int size) { 
+            int array[]=new int[size]; 
+            Random random=new Random(); 
+            for (int i=0; i<size; i++){ 
+              array[i]=random.nextInt(10); 
+            } 
+            return array; 
+          } 
+Create a class named TaskManager. We will use this class to store all the tasks executed in ForkJoinPool used in the example. Due to the limitations of the ForkJoinPool and ForkJoinTask classes, you will use this class to cancel all the tasks of the ForkJoinPool class:
+        public class TaskManager { 
+Declare a list of objects parameterized with the ForkJoinTask class, parameterized with the Integer class named List:
+        private final ConcurrentLinkedDeque<SearchNumberTask> tasks; 
+Implement the constructor of the class. It initializes the list of tasks:
+        public TaskManager(){ 
+          tasks=new ConcurrentLinkedDeque<>(); 
+        } 
+Implement the addTask() method. It adds a ForkJoinTask object to the lists of tasks:
+        public void addTask(ForkJoinTask<Integer> task){ 
+          tasks.add(task); 
+        } 
+Implement the cancelTasks() method. It will cancel all the ForkJoinTask objects stored in the list using the cancel() method. It receives as a parameter the ForkJoinTask object that wants to cancel the rest of the tasks. The method cancels all the tasks:
+        public void cancelTasks(SearchNumberTask cancelTask){ 
+          for (SearchNumberTask task  :tasks) { 
+            if (task!=cancelTask) { 
+              task.cancel(true); 
+              task.logCancelMessage(); 
+            } 
+          } 
+        } 
+Implement the SearchNumberTask class. Specify that it extends the RecursiveTask class parameterized with the Integer class. This class will look for a number in a block of elements of an integer array:
+        public class SearchNumberTask extends RecursiveTask<Integer> { 
+Declare a private array of int numbers named numbers:
+        private int numbers[]; 
+Declare two private int attributes named start and end. These attributes will determine the elements of the array this task has to process:
+        private int start, end; 
+Declare a private int attribute named number to store the number you are going to look for:
+        private int number; 
+Declare a private TaskManager attribute named manager. You will use this object to cancel all the tasks:
+        private TaskManager manager; 
+Declare a private int constant and initialize it to -1. It will be the returned value by the task when it doesn't find the number:
+        private final static int NOT_FOUND=-1; 
+Implement the constructor of the class to initialize its attributes:
+        public SearchNumberTask(int numbers[], int start, int end,
+                                int number, TaskManager manager){ 
+          this.numbers=numbers; 
+          this.start=start; 
+          this.end=end; 
+          this.number=number; 
+          this.manager=manager; 
+        } 
+Implement the compute() method. Start the method by writing a message to the console indicating the values of the start and end attributes:
+        @Override 
+        protected Integer compute() { 
+          System.out.println("Task: "+start+":"+end); 
+If the difference between the start and end attributes is greater than 10 (the task has to process more than 10 elements of the array), call the launchTasks() method to divide the work of this task into two subtasks:
+        int ret; 
+        if (end-start>10) { 
+          ret=launchTasks(); 
+Otherwise, look for the number in the block of the array that the task calling the lookForNumber() method has to process:
+        } else { 
+          ret=lookForNumber(); 
+        } 
+Return the result of the task:
+        return ret; 
+Implement the lookForNumber() method:
+        private int lookForNumber() { 
+For all the elements in the block of elements this task has to process, compare the value stored in that element with the number you are looking for. If they are equal, write a message to the console indicating, in such a circumstance, to use the cancelTasks() method of the TaskManager object to cancel all the tasks, and return the position of the element where you found the number:
+        for (int i=start; i<end; i++){ 
+          if (numbers[i]==number) { 
+            System.out.printf("Task: Number %d found in position %d\n",
+                              number,i); 
+            manager.cancelTasks(this); 
+            return i; 
+          } 
+Inside the loop, put the task to sleep for one second:
+          try { 
+            TimeUnit.SECONDS.sleep(1); 
+          } catch (InterruptedException e) { 
+            e.printStackTrace(); 
+          } 
+        } 
+Finally, return the -1 value:
+          return NOT_FOUND; 
+        } 
+Implement the launchTasks() method. First, divide the block of numbers this task has to process into two, and then create two Task objects to process them:
+        private int launchTasks() { 
+          int mid=(start+end)/2; 
+ 
+          Task task1=new Task(numbers,start,mid,number,manager); 
+          Task task2=new Task(numbers,mid,end,number,manager); 
+Add the tasks to the TaskManager object:
+        manager.addTask(task1); 
+        manager.addTask(task2); 
+Execute the two tasks asynchronously using the fork() method:
+        task1.fork(); 
+        task2.fork(); 
+Wait for the finalization of the tasks, and return the result of the first task if it is not equal to -1 or the result of the second task, otherwise:
+        int returnValue; 
+        returnValue=task1.join(); 
+        if (returnValue!=-1) { 
+          return returnValue; 
+        } 
+ 
+        returnValue=task2.join(); 
+        return returnValue; 
+Implement the writeCancelMessage() method to write a message when the task is canceled:
+        public void logCancelMessage(){ 
+          System.out.printf("Task: Canceled task from %d to %d",
+                            start,end); 
+        } 
+Implement the main class of the example by creating a class named Main with a main() method:
+        public class Main { 
+          public static void main(String[] args) { 
+Create an array of 1000 numbers using the ArrayGenerator class:
+        ArrayGenerator generator=new ArrayGenerator(); 
+        int array[]=generator.generateArray(1000); 
+Create a TaskManager object:
+        TaskManager manager=new TaskManager(); 
+Create a ForkJoinPool object using the default constructor:
+        ForkJoinPool pool=new ForkJoinPool(); 
+Create a Task object to process the array generated before:
+        SearchNumberTask task=new SearchNumberTask (array,0,1000,
+                                                    5,manager); 
+Execute the task in the pool asynchronously using the execute() method:
+        pool.execute(task); 
+Shut down the pool using the shutdown() method:
+        pool.shutdown(); 
+Wait for the finalization of the tasks using the awaitTermination() method of the ForkJoinPool class:
+        try { 
+          pool.awaitTermination(1, TimeUnit.DAYS); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        } 
+Write a message to the console indicating the end of the program:
+        System.out.printf("Main: The program has finished\n"); 
+
+How it works...
+The ForkJoinTask class provides the cancel() method that allows you to cancel a task if it hasn't been executed yet. This is a very important point. If the task has begun its execution, a call to the cancel() method has no effect. The method receives a parameter as a Boolean value called mayInterruptIfRunning. This name may make you think that, if you pass the true value to the method, the task will be canceled even if it is running. The Java API documentation specifies that, in the default implementation of the ForkJoinTask class, this attribute has no effect. The tasks are only canceled if they haven't started their execution. The cancellation of a task has no effect over the tasks that the cancelled task sent to the pool. They continue with their execution.
+
+A limitation of the fork/join framework is that it doesn't allow the cancellation of all the tasks that are in ForkJoinPool. To overcome that limitation, you implemented the TaskManager class. It stores all the tasks that have been sent to the pool. It has a method that cancels all the tasks it has stored. If a task can't be canceled because it's running or has finished, the cancel() method returns the false value, so you can try to cancel all the tasks without being afraid of the possible collateral effects.
+
+In the example, you have implemented a task that looks for a number in an array of numbers. You divided the problem into smaller subproblems as the fork/join framework recommends. You are only interested in one occurrence of the number, so when you find it, you cancel the other tasks.
+
+

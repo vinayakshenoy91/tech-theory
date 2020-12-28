@@ -1,0 +1,67 @@
+TCP, HTTP/1.1, and HTTP 2
+TCP:
+- Reliable - gaurantee data delivery sent
+- Establish connection- shutdown connection
+- Works as straming interface.
+
+One of the often-overlooked strategies is of optimizing TCP. Here are some tips:
+1.	
+Upgrade server kernel to the latest version: Even though the MSS or the Maximum Segment Size had been increased from 4 to 10 a few years ago, a lot of servers (especially the ones that run legacy applications) have not been upgraded to take the advantage. In order to often take advantage of upgrades, we should upgrade the server kernel to the latest version. Usually with legacy apps upgrades are not that easy. However, if it could be done without disrupting any business, it’s completely worth it.
+
+ 
+2.	
+Increase the initial congestion size.
+
+ 
+3.	
+Enable window scaling. This increases the receive congestion window size. The previous limit used to be 65,534 bytes. The current limit is one GB.
+
+ 
+4.	
+Disable slow start after idle. This is important because we do not want TCP two have to go through the same slow start scenario described above after it’s been idle for quite some time.
+
+ 
+5.	
+Use TCP fast open. It allows data to be carried in the SYN and SYN-ACK packets and consumed by the receiving end during the initial connection handshake. This saves up to one full round-trip time (RTT) compared to the standard TCP.
+
+ 
+In case of applications over HTTP 1.1, please consider making some other performance improvements discussed below:
+1.	
+Investigate DNS lookups and try to reduce them.
+
+ 
+2.	
+Redirects must be avoided at all costs.
+
+ 
+3.	
+Reduce HTTP requests by using bundling and minification.
+
+ 
+4.	
+Critical resources might need to be inline in case of a web application. Bundling and minification are great for most of the scripts and stylesheets; however, sometimes it’s worth sending inline scripts and stylesheets for rendering the critical areas of the page without which the website may not function at all.
+
+ 
+5.	
+Compress text using GZip.
+
+ 
+6.	
+Optimize images per device. Using the same size of images for an iPhone and desktop could unnecessary reduce performance.
+
+ 
+7.	
+Add ETags to avoid fetching duplicate content.
+
+ 
+8.	
+Make sure to add an expires header on resources.
+
+ 
+9.	
+Investigate using local storage for stylesheets and scripts in case of a web application.
+
+ 
+HTTP/2 provides many features that are a huge improvement over HTTP/1.1. It solves a lot of problems that were created by the previous protocol, and most of the performance hacks suggested above are not required for HTTP/2-based applications. Some of the features of HTTP/2 are new binary framing, parallel requests, header compression, server push, and stream prioritization. Binary framing is allowed such that translation from text to binary is not needed, thereby increasing performance. The server has the ability to push resources to the client. That means as long as the client doesn’t specifically bar the server from sending data toward it, the server can send additional resources to a client for future use. One of the best features of HTTP/2 is single connection, which remains open as long as the website is open. This reduces the number of round trips. It also allows multiple requests on the same connection. This feature is called multiplexing. Prioritization is another great feature in which the server can assign dependency levels to resources. This way the resources with higher priority will download first. It allows interleaving of requests and response messages. HTTP/2 supports header compression, which reduces overhead. It’s a matter of time and all browsers will support HTTP/2. Currently all major browsers support it over HTTPs (not on HTTP though).
+
+

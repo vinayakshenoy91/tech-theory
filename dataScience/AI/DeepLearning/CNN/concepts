@@ -1,0 +1,120 @@
+- CNN have managed to achieve superhuman perf on some complex visual tasks.
+It has shown great amount of performance in video, audio and images.
+- Each layer is represented in 2 layer
+
+This was possbile due to:
+1) Availability in compute power
+2) Available training data
+3) Tricks in training DNN
+
+- They power:
+    - Image search service
+    - self driving cars
+    - Automatic video classification systems
+    - Voice recognition
+    - NLP
+
+- DNN -> Work fine for small images such as MNIST. But they break for larger images because of huge number
+of parameters. If 10000 pixel and 1000 neurons  in first layer, so 10m connection in first layer.
+CNN solves this problem by using partially connected layers.
+
+- once the CNN has learned to recognisea pattern in one location, it can recognise it in any other location.
+
+Memeory reqt:
+--------------
+- CNN require huge RAM, coz the reverse pass of backpropagation requires all the intermediate values
+computed during the fwd pass.
+
+If filter is 5x5 and 200 feature maps and 3 colors. Each of 200 feature maps, contains 150 x 100 neurons.
+Each of the neurons needs to compute a weighted sum of its 5x5x3=75 inputs.225m float multiplications.
+
+(5 x 5 x 3 + 1) x 200 = 15200
+
+If feature maps are represented as 32bits float , conv layer's output will occupy:
+200 x 150 x 100 x32 =96m bits [11.4MB] RAM
+
+This is for one instance and if training batch contains 100 instances, then this layer will use up over 1GB RAM.
+
+During prediction : When making a prediction for a new instance then RAM occupied by one layer can be released as soon 
+as the next layer has been computed. So you only need as much RAM as required by two consecutive layers.
+
+During Training: But during training everything computed during the forward pass needs to be preserved for the reverse pass.
+So the amount of RAM needed is at least the total amount of RAM required by all layers.
+
+
+Convolution layer:
+-------------------
+- Most imp building block of CNN
+- Neurons in the first convolution layer are not connected to every single pixel in image, 
+but only to pixel in their receptive fields.
+- Each neuron in thesecond convolution layer is connected only to neurons located within a small 
+rectangle in first layer.
+- This architecture allows the network to concentrate on low-level features in the first hidden layer, then assemble
+then into higher-level features in the next hidden layer and so on.
+
+- The hierarchical structure is common in real world images, which is one of the reason why CNNs work so well
+for image recognition.
+
+- steps taken to move rectangle is "stride". Distance between two receptive fields is called a stride.
+Stride need not be same in both direction.
+
+for(i in range(height))
+   for(i in range(width))
+      rect = reactangle(i,j,i+height-1,j+width-1)
+
+- Using zero padding we let the rectangle go out of the picture with atleast some pixel is in picture.
+
+- The 2nd layer depends on size of image, the small rectangle taken and the stride.
+
+- The neuron located at row i and column j in the upper layer is connected to the outputs of the 
+neurons in the previous layer located in rows i x sh to i x sh +fh - 1, columns j x sw + fw - 1.
+sh and sw are the vertical and horizontal strides.
+
+Convolution layer - Filter:
+----------------------------
+- Neuron's weight can be represented as small image the size of the receptive field.
+
+[6x6] matrix  + [3x3 filters applied] -> 4x4 matrix
+
+Applying filter is called multiplying the cube.
+
+- Note: Within one feature map, all neurons share the same params ie weights and bias term.
+
+- diff features -> diff params
+
+- A convolution layer simultaneously applies multiple filters to its input, making it capable of detecting mutliple features
+anywhere in its input.
+- The fact that all neurons in a feature map share the same param dynamically reduces number of parameters in model.
+
+- In tensorflow, each input image is typically represented as 3Dtrnsor of shape.[height, width, channels]
+- tf 4D => [mini-batch size, height, width, channels] weights of convolutional layer with 4D sensor of shape [fh,fw,fn,fn]
+- the bias terms of a convolutional layer  are simply represented as ID tensor of shape [fn]
+- you can use cross-validation to find the right hyperparam values -> time consuming.
+
+Pooling layer:
+--------------
+- The goal of pooling layer is to subsample the input image in order to reduce the computational load , memory usages
+and number of parameters(limiting the risk of overfitting)
+- Also, reducing the input image size makes the neural network tolerate a little bit of image shift. 
+This is called location invariance.
+- just like convolution layer, each neuron in a pooling layer is connected to the outputs of a limited number of 
+neurons in the previosu layer located within a small rectangular receptive field. We must define its size, the stride 
+and the padding type.A Pooling neuron has no weights, it just aggregates the inputs using an aggregation function
+such as the max or mean.
+- Max pooling layer(2x2pooling kernel, stride 2, no padding) -> Image size reduces by 1/4 [dropping 75% values]
+Only max input value in each kernel makes it to next layer and other inputs are dropped.
+- A poolign layer works on every input channel independently . So the output depth is the same input depth 
+- We may also pool over the depth dimension in which case image's spatial dimensions(height and width)
+remain unchanged but the number of channels is reduced.
+
+Convolution layers offered by TF:
+--------------------------------
+conv1d()
+conv3d()
+conv2d_transpose()
+
+
+
+
+
+

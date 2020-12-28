@@ -34,3 +34,55 @@ Circular linked list:
 ---------------------
 - used for queue impl [Inserting at beginning or end is O(1)]
 - Round robin
+
+Note: Linked list impl in java is doubly linked list
+
+Advantages:
+----------
+- Dynamic DS
+- It can allocate needed memory in runtime
+- Effecient to manipulate first element
+- Used to impl stacks or queues
+
+Disadvtge:
+----------
+- Waste memory because of references
+- Single link list difficult to navigate backwards
+- Each node has sequential access
+
+
+Single linked list
+---------------------
+- Impl list , queue and deque
+- Not thread safe
+
+Where to use linked list?
+--------------------------
+- Remove heavy apps
+Low level memory mgmt(malloc, free) -> Doubly linked list is used
+- Syslinux -> memory management [Refer this blog for memeory mgmt]
+- Multiple windows (alt+tab)
+- Photo viewer
+- Block chains and bit coins -> blocks are cryptographically linked together
+
+Insertion operation:
+--------------------
+List are:
+
+Insert at Head
+Insert at End
+Insert After
+
+Deletion imp:
+-------------
+1) Deletion at head:
+
+This operation simply deletes a node from the head of the list, which means that it always deletes the first element of the list. 
+This type of deletion is used when your list is ordered, 
+and you want to implement a priority queue–via a linked list-- to keep track of all the elements.
+
+2) Deletion by value
+
+
+
+. A loop in a linked list occurs if any node contains a reference to any previous node, then a loop will be formed. An illustration is also provided for your understanding.

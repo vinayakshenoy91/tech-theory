@@ -1,0 +1,54 @@
+- This process of moving some varying behavior outside of the class using it is very similar to the process of 
+normalization in databases where you move columns into their own table and refer to them by a foreign key.
+
+- Define a family of algorithms, encapsulate each one, and make them interchangeable. 
+Strategy lets the algorithm vary independently from clients that use it.6
+
+- The Strategy pattern is a way to define a family of algorithms. 
+Conceptually, all of these algorithms do the same things. They just have different implementations.
+
+The Strategy pattern is based on a few principles:
+
+•   Objects have responsibilities.
+
+•   Different, specific implementations of these responsibilities are manifested through the use of polymorphism.
+
+•   There is a need to manage several different implementations of what is, conceptually, the same algorithm.
+
+The Strategy Pattern: Key Features
+
+Intent
+
+Enables you to use different business rules or algorithms depending on the context in which they occur.
+
+Problem
+
+The selection of an algorithm that needs to be applied depends on the client making the request or the data being acted on. If you just have a rule in place that does not change, you do not need a Strategy pattern.
+
+Solution
+
+Separates the selection of algorithm from the implementation of the algorithm. Allows for the selection to be made based upon context.
+
+Participants and collaborators
+
+•   Strategy specifies how the different algorithms are used.
+
+•   ConcreteStrategies implement these different algorithms.
+
+•   Context uses a specific ConcreteStrategy with a reference of type Strategy. Strategy and Context interact to implement the chosen algorithm. (Sometimes Strategy must query Context.) The Context forwards requests from its client to Strategy.
+
+Consequences
+
+•   The Strategy pattern defines a family of algorithms.
+
+•   Switches and/or conditionals can be eliminated.
+
+•   You must invoke all algorithms in the same way. (They must all have the same interface.) The interaction between the ConcreteStrategies and the Context may require the addition of methods that get state to the Context.
+
+Implementation
+
+Have the class that uses the algorithm (Context) contain an abstract class (Strategy) that has an abstract method specifying how to call the algorithm. Each derived class implements the algorithm as needed. Note: This method wouldn’t be abstract if you wanted to have some default behavior.
+
+Note: In the prototypical Strategy pattern, the responsibility for selecting the particular implementation to use is done by the Client object and is given to the Context object of the Strategy pattern.
+
+

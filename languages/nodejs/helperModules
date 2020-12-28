@@ -1,0 +1,176 @@
+Restify will be the basis of everything we do. It’ll provide the structure needed to handle and process the requests and to provide a response to them.
+
+Swagger will be used to create the documentation. In Chapter 5, I talked about swagger-node-express, but just like that, there is one that works with Restify called (unsurprisingly enough) swagger-node-restify.7 This module was chosen because it integrates into our project, allowing us to autogenerate our documentation based on our original code, instead of having to maintain two different repositories.
+
+Halson will be our module of choice for adding hypermedia to our responses. Mainly chosen because it appears to be more mature than HAL (the other modules examined for this task).
+
+The validation of our JSONs will be done using TV4, mainly because it allows us to gather all validation errors at once.
+
+HAPI - Framework similar to express
+HAPI is a framework used for building both applications and services (APIs). It’s actively maintained and has more than half a million downloads a month.
+
+Express.js
+This is one of the most common and used frameworks for Node. As you’re about to see, it provides all the required building blocks for creating both web apps, and microservices. 
+
+npm install express-generator -g
+express ./express-test
+
+- Check restify
+
+For swagger use: 
+swagger-node-express
+This module bridges the gap between Swagger and Express, allowing you to auto-document your express APIs
+
+JSON-Gate
+JSON validation is useful to ensure that both the requests your API gets and the responses it provides are always in check against a publicly defined standard. 
+
+
+
+Parallel Flow
+The idea behind parallel flow is that the program can run a set of nonrelated tasks in parallel but only call the callback function provided (to gather their collective outputs) after all tasks have finished executing.
+
+Basically, Listing 3-4 shows what you want.
+
+//functionX symbols are references to individual functions
+parallel([function1, function2, function3, function4], data => {
+   ///do something with the combined output once they all finished
+})
+
+
+To enable a JSON parse inside all the API’s routes, we must install the body-parser moduleby running this command.
+
+1   npm install body-parser@1.15.0 --save
+
+  app.use(bodyParser.json());
+
+
+Uisng compression modules:
+--------------------------
+
+
+Compacting Requests Using GZIP Middleware
+To make the requests lighter and enable them to load faster, let’s enable another middleware that will compact the JSON responses and the entire API documentation static files into GZIP format, a format compatible with several browsers. We’ll do this simple, but important refactoring just using the module compression. First, let’s install it.
+
+1   npm install compression@1.6.1 --sav
+After installing it, it will be necessary to include its middleware into the libs/middlewares.js file.
+
+ 1   import bodyParser from "body-parser";
+ 2   import express from "express";
+ 3   import morgan from "morgan";
+ 4   import cors from "cors";
+ 5   import compression from "compression";
+ 6   import logger from "./logger.js";
+ 7
+ 8   module.exports = app => {
+ 9     app.set("port", 3000);
+10     app.set("json spaces", 4);
+11     app.use(morgan("common", {
+12       stream: {
+13         write: (message) => {
+14           logger.info(message);
+15         }
+16       }
+17     }));
+18     app.use(cors({
+19       origin: ["http://localhost:3001"],
+20       methods            : ["GET", "POST", "PUT", "DELETE"],
+21       allowedHeaders: ["Content-Type", "Authorization"]
+22     }));
+23     app.use(compression());
+24     app.use(bodyParser.json());
+25     app.use(app.auth.initialize());
+26     app.use((req, res, next) => {
+27       delete req.body.id;
+28       next();
+29     });
+30     app.use(express.static("public"));
+31   };
+
+
+Creating https:
+--------------
+import https from "https";
+ 2   import fs from "fs";
+ 3
+ 4   module.exports = app => {
+ 5     if (process.env.NODE_ENV !== "test") {
+ 6     const credentials = {
+ 7       key: fs.readFileSync("ntask.key", "utf8"),
+ 8       cert: fs.readFileSync("ntask.cert", "utf8")
+ 9     }
+10     app.db.sequelize.sync().done(() => {
+11       https.createServer(credentials, app)
+12         .listen(app.get("port"), () => {
+13           console.log(`NTask API - Port ${app.get("port")}`);
+14         });
+15       });
+16     }
+17   };
+
+
+Configuring helmet for security:
+-------------------------------
+Armoring the API with Helmet
+To complete the development of our API, let’s include a very important module, which is a security middleware that handles several kinds of attacks in the HTTP/HTTPS protocols. This module is called helmet, which is a set of nine internal middlewares, responsible for treating the following HTTP settings:
+
+Configures the Content Security policy.
+
+Removes the header X-Powered-By that informs the name and the version of a server.
+
+Configures rules for HTTP Public Key Pinning.
+
+Configures rules for HTTP Strict Transport Security.
+
+Treats the header X-Download-Options for Internet Explorer 8+.
+
+Disables client-side caching.
+
+Prevents sniffing attacks on the client Mime Type.
+
+Prevents ClickJacking attacks.
+
+Protects against Cross-Site Scripting (XSS) attacks.
+
+To sum up, even if you do not understand a lot about HTTP security, use helmetmodules, because in addition to having a simple interface, it will armor your web application against many kinds of attacks. To install it, run this command.
+
+1   npm install helmet            @1.1.0 --save
+
+
+import bodyParser from "body-parser";
+ 2   import express from "express";
+ 3   import morgan from "morgan";
+ 4   import cors from "cors";
+ 5   import compression from "compression";
+ 6   import helmet from "helmet";
+ 7   import logger from "./logger.js";
+ 8
+ 9   module.exports = app => {
+10     app.set("port", 3000);
+11     app.set("json spaces", 4);
+12     app.use(morgan("common", {
+13       stream: {
+14         write: (message) => {
+15           logger.info(message);
+16         }
+17       }
+18     }));
+19     app.use(helmet            ());
+20     app.use(cors({
+21       origin: ["http://localhost:3001"],
+22       methods: ["GET", "POST", "PUT", "DELETE"],
+23       allowedHeaders: ["Content-Type", "Authorization"]
+24     }));
+25     app.use(compression());
+26     app.use(bodyParser.json());
+27     app.use(app.auth.initialize());
+28     app.use((req, res, next) => {
+29       delete req.body.id;
+30       next();
+31     });
+32     app.use(express.static("public"));
+33   };
+
+
+Client side lib:
+-----------------
+https://learning.oreilly.com/library/view/building-apis-with/9781484224427/A435096_1_En_12_Chapter.html

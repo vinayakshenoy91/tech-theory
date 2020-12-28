@@ -1,0 +1,8 @@
+- Use case is when migrating from cloud, instead of  re-engineering the application to use SQS and SNS,
+we can use AmazonMQ. The traditional apps runnign on-premise may use open protocol like: MQTT, AMQp, STOMP,
+Openwire, WSS
+- Managed Apache active MQ
+- It doesnt scale as much as SQS/SNS
+- Amazon MQ runs on a dedicated machine , can run in HA with failover.
+- Has both queue and topic feature
+

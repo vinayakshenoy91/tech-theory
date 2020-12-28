@@ -3,6 +3,7 @@
 - Node which is just below is child and just above is parent
 - Degree of a node is number of children it has
 - Trees which do not have degree 0 or which are not leafs -> Internal nodes
+- cycle cannot exist in a Tree => Diff between tree and graph
 
 Application:
 -------------
@@ -19,3 +20,168 @@ Types:
 - Suffix tree - Search patterns in a text
 - Segment tree -> Range query searches
 - Binary index tree -> Range query searches
+- N-ary Tree ->  each node can have child nodes anywhere from 0 to N. 
+So if it’s a 2-ary tree, commonly known as a Binary Tree, it can have a max. of 0-2 child nodes
+- Balanced Tree
+Height(Tree)= O(log_2 (nodes))Height(Tree)=O(log2(nodes))
+Or in simpler words, make the tree “height-balanced”; i.e. the difference between the height of the left and right 
+sub-trees of each node should not be more than one. Mathematically, it can be written as:
+
+|Height(LeftSubTree) - Height(RightSubTree) |<= 1
+
+
+- Binary Tree
+
+The only characteristic which separates Binary Tree from N-ary trees is that any internal-node (non-leaf node) 
+can only contain a maximum of two child nodes. 
+Each node strictly has reference to a left and a right node; we call them its left and right child. 
+
+Types of binary tree:-
+---------------------
+Complete Binary Tree:
+
+A Binary Tree is said to be complete if it satisfies the following properties:
+All levels are filled except possibly the last one
+Nodes at the last level are as far left as possible
+The maximum number of nodes in a complete binary tree of height “h” are expressed as 2^{h+1}-1
+The total number of non-leaf nodes in a complete binary tree of height “h” are expressed as 2^{h} -1
+The maximum number of leaf nodes in a complete binary tree of height “h” is expressed as 2^{h}
+​​ 
+The nodes are present in between the range of:
+2^h<Nodes<2^{h+1}-1
+
+The total number of non-leaf nodes in a complete binary tree of height “h” is expressed as:
+\lfloor{2^{(h-1)}}\rfloor <={non-leaf nodes}<=> 2^{h}-1
+
+The total number of leaf-nodes in a complete binary tree of height “h” is expressed as:
+2^{(h-1)} <={leaf nodes} <=> 2^{h}
+​​ 
+The nodes are present in between the range of:
+2^h <= {nodes} <= 2^{h+1}-1
+
+
+Full Binary Tree:
+
+A full or proper Binary Tree has the following characteristics:
+
+Every node has 0 or 2 children. No node can have 1 child.
+The total number of nodes in a Full Binary Tree of height ‘h’ can be expressed as:
+2h+1 <={total number of nodes} <=>2^{(h+1)}-1
+
+
+Perfect Binary Tree:
+
+Perfect Binary Tree #
+A Binary Tree is said to be Perfect if its Full and Complete. Also note that,
+
+- The total number of nodes in a perfect binary tree of height ‘h’ are given as: 2^{(h+1)}-1
+The total number of leaf nodes are given as 2^{h} or {(n+1)}/{2}
+
+
+- BinarySearchTree:
+ is a variant of a Binary Tree with a strict condition based on node value.
+
+ - For all the nodes in a BST, the values of all the nodes in the left sub-tree of the current node are less than or equal 
+ to the value of the node itself. All the node values in the right subtree are greater than the value of the current node. 
+ This is referred to as the BST rule.
+ NodeValues(LeftSubtree)<=CurrentNodeValue<NodeValues(RightSubTree)NodeValues(LeftSubtree)<=CurrentNodeValue<NodeValues(RightSubTree)
+
+In the worst case, the height of a skewed tree may become n and the time complexity may become linear, , 
+i.e. O(n). However, in the case of a binary tree, the complexity will be O(log(n))
+
+
+
+
+- AVL Tree
+- Red-Black Tree
+- 2-3 Tree
+- Skewed binary tree:
+A Skewed Binary Tree is a type of Binary Tree where all nodes are shifted to either the left or right side. It can also 
+be defined as a Binary Tree in which the number of children is firmly restricted to one at each node. Furthermore, 
+the side at which that single child node is present, either left or right, is also fixed throughout the tree. This type 
+of Binary Tree structure is avoided at all cost, as we will have to 
+perform n number of comparisons to search for a node, where n is the total number of nodes in the tree.
+
+Types of Skewed Binary Tree #
+There are two types of Skewed Binary Trees based on which side is dominated:
+
+Left-Skewed Binary Tree:
+As all the nodesat the right are null, thereforethis is aleft-skewed tree!
+
+Right-Skewed Binary Tree
+As all the nodesat the left are null, thereforethis is aright-skewed tree! 
+
+Tree terminologies:
+--------------------
+
+Sub-tree:
+--------
+A subtree is a portion of a tree that can be viewed as a complete tree on its own. Any node in a tree, together with
+all the connected nodes below it, comprise a subtree of the original tree. Think of the sub-tree as an analogy for the term, 
+proper subset.
+
+Degree:
+-------
+The degree of a node refers to the total number of sub-trees of a node
+
+Depth:
+------
+The number of connections (edges) from the root to a node is known as the depth of that node.
+
+Level:
+-------
+(Depth Of Node) + 1(DepthOfNode)+1
+
+Height of a Node:
+-----------------
+The maximum number of connections between the node and a leaf node in its path is known as the height of that node.
+
+Height of a Tree:
+-----------------
+The height of a tree is simply the height of its root node.
+
+
+Deletion in BST:
+----------------
+- Deletion at leaf node:
+If the node we want to delete is present at the leaf node in a Binary Search Tree, we simply remove that leaf node. 
+After deletion, its parent node will point to null. If the leaf node was the left child of Node X, 
+then make leftChild of Node X null; if it was the right one, then make the rightChild pointer of node X point to null
+
+- Deletion at parent node, node has only one child:
+If the parent node that you want to delete has only one child, then delete the parent node first. 
+After doing that, take the deleted parent-node’s child and link it with the parent node of the deleted node. 
+
+- Deletion at parent node, node has only two children
+It is a little more complex than the first two cases. Here’s the list of steps you perform when deleting 
+a parent node with two children in a BST:
+
+1) Start by traversing the right subtree of the soon-to-be deleted parent node in such a way that you reach the 
+left-most value—the value that will appear to be the smallest value in the whole subtree.
+
+2) Replace the value of the node, found in the last step, with the parent’s node value.
+
+3) Finally, delete the leaf node.
+
+
+Traversal types:
+----------------
+
+1) Pre-order traversal:-
+------------------------
+- root-left-right
+- We first visit the root/parent node and then the children; First the left child and then the right one.
+- The base case for this recursive function is to return to the previous calling stack when we reach null value.
+
+2) Inorder Traversal:
+----------------------
+- left-root-right
+
+3) Post order traversal:
+------------------------
+- left-right-root
+
+AVL vs Red-Black Trees #
+Although AVL Trees are more balanced than Red-Black Trees, AVL Trees take more rotations during insertion and deletion operations 
+than Red-Black Trees. So, if you have a search intensive application where insertion and deletion are not that frequent, then use 
+AVL Trees. Otherwise, use Red-Black Trees for those applications involving more insertions and deletions.

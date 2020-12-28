@@ -1,0 +1,30 @@
+Cloud costs incur due to :
+---------------------------
+- services
+- storage
+- Network traffic: Auzre only charges for egress.
+- software license
+
+Cost managment options in azure:
+---------------------------------
+- Azure cost mgmt + billing
+- Azure advisor
+
+- You can set budgets on subscriptions, resource group
+- If you set spending limit, all services will be stopped
+- If you set budget limit,  you will just get a notification
+- You can see cloud provider connector in single dashboard, like AWS in Azure as  well.
+
+How reduce cost?
+- General cost reduction
+- use discounts
+  - Using microsoft managed service providers
+  - Get enterprise agreement
+- azure spot vms
+- Reserved capacity
+- Auto start/stopped , scaledown
+  - Azure dev test labs
+- Bring your own license
+- Scale to right tiers
+- Create policies -> Only certain resource tier created
+- Clean up unused resources from azure advisor

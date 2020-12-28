@@ -1,0 +1,51 @@
+ACID:
+------
+- Promises that concurrent txn for same customer will be serialized
+
+
+Two phase commit:
+----------------
+1) prepare:
+2) commit:
+
+- Need a component called coordinator, who takes care of two phase commit,
+
+Prepare wallet
+Prepare order
+Ok prepare wallet
+Ok prepare order
+
+commit wallet
+commit order
+ok commit
+ok commit
+
+Pros:
+Gives strong consistency but makes dev slow
+
+Cons:
+- Single point of failure
+- Chattly:  atleast O(4n) mesages with retiresO(n^2) -> O(n^2) messages in worst case
+- Reduced throughput due to locks
+- Not supported ny nosql and message brokers
+- CAP theorem => imacts availability
+
+3 phase commit:
+---------------
+
+- can commit
+- pre commit
+- do commit
+
+Saga:
+-----
+- async
+- Sequence of local txn
+- Design a compensting txn for every fwd txn
+
+order ms -> queue -> wallet ms
+
+- Request must be idempotent and can abort
+- Compensating request must be idempotent, commutative and cannot abort
+
+- Compensating request must be commutative with requests

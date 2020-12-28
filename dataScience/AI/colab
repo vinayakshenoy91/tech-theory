@@ -1,7 +1,36 @@
-!ls -> This will let you execute shell commands in google colab
-!cat /proc/cpuinfo
-!cat /proc/meminfo
+Colab works:
+------------
+
 
 Get to write formulas in text:
 
 $\LaTeX$ -> Then click shift+enter
+
+
+//Doing installations
+!pip install -q tensorflow==2.0.0-beta1
+
+//Execute shell commands
+!ls 
+!cat /proc/cpuinfo
+!cat /proc/meminfo
+
+//Plotting s sin wave
+import numpy as np
+import matplotlib.pyplot as plt
+x=np.linspace(0,10*np.pi,1000)
+y=np.sin(x)
+plt.plot(x,y)
+
+//Get library version:
+- import sklearn
+- print(sklearn.__version__)
+
+//Accessing custom files in colab
+!wget dataurl
+- Check if header has data :
+!head   arrhtyhmia.data
+import pandas as pd
+df = pd.read_csv('filename', header:none)
+data=df[[01,1,2,3,4,5]]
+data.columns = ['age','sex','height']'

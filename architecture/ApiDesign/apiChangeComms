@@ -1,0 +1,78 @@
+Planning for and Communicating Change
+Many technical design resources can help you craft your design for a greenfield project. But if your API is successful, you’ll be working for years in a nongreenfield area. This means that you and your developers will be interfacing with your past decisions for a long time, and all new design decisions will carry context from before.
+
+You need to decide how tolerant your system should be of different types of changes. In addition to that, you should develop a robust communication system with your API users. Think about the types of changes you will make, the impact of those changes on developers, and what the appropriate communication should be. This can take some time and practice to refine, but having a communication plan is key.
+
+Communication Plan
+When it comes to creating a communication plan, ensure that developers have a mechanism to receive updates. A rich site summary (RSS) feed is a good start, but eventually you’ll also want a way to communicate with specific developers about changes that affect them.
+
+Using our previous example of using repositories.fetch and repositories.fetchSingle, you might want to contact all of the developers who used the repositories.fetch endpoint in the past 12 months in order to provide them with updates about the brand-new repositories.fetchSingle endpoint. You might even want to contact all developers who used the repositories.fetch endpoint and received a 500-level response after you released the product that caused timeouts.
+
+Table 7-3 shows possible communication channels and timelines for backward-compatible and backward-incompatible changes. In this particular example, backward-compatible changes can be released at any time, and developers will be given 18 months’ notice before backward-incompatible changes are released.
+
+In addition to communication mechanisms, in which you broadcast information to specific audiences, there are other built-in ways to communicate. You might consider annotating response payloads or headers with information about changes. Example 7-6 shows how that might look in the payload of the repositories.fetch endpoint.
+
+Example 7-6. Adding response metadata to communicate with developers
+// GET repositories.fetch()
+
+{
+  "repositories": [
+    {
+      "id": 12345
+    },
+    {
+      "id": 23456
+    }
+  ],
+  "response_metadata":{
+    "response_change": {
+            "date": "January 1, 2021",
+            "severity": 1,
+            "affected_object": "repository",
+            "details": "Starting January 1, 2021, a new field `date`
+                        will be added to each repository object"
+        }
+  }
+}
+Your communication plan needs to strike a balance between giving developers appropriate notice for changes and allowing your API to evolve. If you’re making a lot of changes, the overhead of communication grows proportionally to the amount of process you add. Think about where you can automate your communication alongside your code releases to reduce the overhead of customizing each communication channel.
+
+EXPERT ADVICE
+We definitely keep the lines of communication open when managing change. We’re very proactive in ensuring our developers know what to expect. We do a lot through our channels—blog posts, emails, and other outreach. We understand how important this is.
+
+Desiree Motamedi Ward, head of developer product marketing at Facebook
+
+Adding
+Of all the changes you can make to your API, additions are the easiest. Whether you’re adding a new endpoint or a new field, these changes are often simple to execute, if done correctly.
+
+In the case of adding response fields, adding a new JSON key–value pair is almost always backward compatible and won’t affect developers. This is especially true if your fields are always consistently set, regardless of their value. (Consistently typed fields will be useful for generating code, which some API providers do to create their SDKs.) The same applies for query-based interfaces: adding a “column” is easier than removing one.
+
+Even though adding response fields is more straightforward than removing them, there are still a few things to consider for backward compatibility:
+
+Was the field set before?
+If the field wasn’t set before but you’ve decided to set it consistently, ask yourself whether a developer could be relying on the fact that the field is unset.
+
+Will everyone want the new field?
+Sometimes, you need to provide a mechanism for developers to opt in to the new field(s). In this case, you might consider a new endpoint or a new request parameter.
+
+Adding new request parameters to control output may seem like an easy choice. However, use this option with caution. When you add too many request parameters, your API endpoint becomes significantly harder to describe with tools like JSON Schema. Therefore, it becomes more and more difficult to test with automated tools.
+
+Adding new endpoints can also seem like an attractive choice to enable new features. However, you want to make sure that your new endpoints are consistent with your previous ones, that developers have a seamless upgrade path (do their existing authorizations work with the new endpoint?), and that you aren’t overcrowding your namespace with a limited feature.
+
+Removing
+Given that you need to continue to evolve your API, there will be endpoints and fields that you may want to deprecate completely. So, let’s look at how you can ease the transition for developers. These types of changes require significant communication and infrastructure overhead.
+
+EXPERT ADVICE
+Don’t overcomplicate your API and don’t future-proof it too much. Often by future-proofing your API, you make it too generic and/or too complex. Developers building applications on (or using) your platform are building stuff for the “now.” They like to move quickly and are not always thinking 10 steps ahead. Your API should cater to this mindset.
+
+Yochay Kiriaty, Azure principal program manager at Microsoft
+
+When taking something away from developers, you need to ease the transition with a carrot, an incentive to get them to switch to something new. What features are you enabling? Is there a problem that you couldn’t fix with the deprecated endpoint that you’re fixing in some other way? These are things you should be clear about before you make your deprecation announcement. Sometimes, you may need to make the new feature especially enticing to developers by also packaging it with an end-user feature.
+
+As part of easing the transition, you definitely want to communicate with developers about the fields that are being deprecated. After you’ve started your communication, give developers adequate time to stop using the deprecated fields or endpoints.
+
+A deprecation timeline that’s too short can erode trust with your developers and stymie the adoption of your API. Companies often implement policies establishing the minimum length of time that they will support API releases. For example, as of this writing, Salesforce commits to supporting each API version for a minimum of three years from the date of first release. Before deprecating an API version, Salesforce gives at least one year’s notice directly to customers.
+
+Some API specifications have standards for how to handle deprecation. GraphQL offers the ability to mark certain fields as deprecated. The specification states:
+
+
+

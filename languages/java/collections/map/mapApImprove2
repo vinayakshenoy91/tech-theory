@@ -1,0 +1,35 @@
+1) replace(K key, V value):
+----------------------------
+- This method replaces the entry for the specified key only if it is currently mapped to some value. 
+If the key is not present or if the key is present but the value is null, then nothing is done.
+- Replace returns the old value.
+
+fruits.replace("apple", 50);
+
+2) replace(K key, V oldValue, V newValue):
+------------------------------------------
+- This method replaces the entry for the specified key only if it iscurrently mapped to the specified value.
+
+fruits.replace("apple", 30, 50);
+
+3) replaceAll(BiFunction<? super K, ? super V, ? extends V> function):
+------------------------------------------------------------------------
+fruits.replaceAll((k, v) -> 50);  //Value becomes 50 for all keys
+
+
+4) remove(Object key) :
+-------------------------
+fruits.remove("apple");  //apple will be removed
+
+5) remove(Object key, Object value):
+------------------------------------
+This method removes the entry for the specified key only if it is currently mapped to the specified value.
+
+ fruits.remove("apple" , 30);  //apple will not be removed because the value is 20
+ fruits.remove("apple" , 20);  //apple will be removed
+
+6) Iterating over forEach:
+---------------------------
+syntax: forEach(BiConsumer<? super K,? super V> action)
+fruits.forEach((k,v) -> System.out.println("Key: " + k + " Value: " + v));
+

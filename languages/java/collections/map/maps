@@ -1,0 +1,28 @@
+- Set<Integer> ids = mapname.keySet()
+ids.remove(element)
+
+
+- Collection<Product> products = mapname.values()
+products.remove(values)
+
+
+Set<Map.Entry<Integer,Product>> entries = idToProduct.entrySet();
+
+var entries = idToProduct.entrySet(); //Java 10 onwards
+
+
+for(Map.Entry<String,Person> entry:madMen.entrySet())
+
+- map.containsKey(id)
+- map.put()
+- map.putAll()
+- map.containsValue(v)
+- map.remove(key)
+- size()
+- isEmpty()
+
+
+mapname.forEach((k,v)->)
+
+
+- Do not mutate key with key.set(xyz)

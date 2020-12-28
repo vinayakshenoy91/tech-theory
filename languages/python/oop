@@ -11,6 +11,8 @@ class A:               # define a class called A
     pass               # do nothing
 
 a = A()                # create an instance of A and assign to a
+- The primary purpose of the constructor is to set up some instance variables to have the proper initial 
+values when the object is created.
 ---------------
 # Member variables (or attributes in Python) can be added by assigning a value at class scope.
 

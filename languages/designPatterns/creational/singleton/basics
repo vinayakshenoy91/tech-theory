@@ -1,0 +1,92 @@
+- enumeration is the right pattern to impl singletons in java
+ - The Singleton pattern works by having a special method that is used to instantiate the desired object. Here is what is most interesting about this special method:
+
+•   When this method is called, it checks to see whether the object has already been instantiated. If it has, the method just returns a reference to the object. If not, the method instantiates it and returns a reference to the new instance.
+
+•   To ensure that this is the only way to instantiate an object of this type, I define the constructor of this class to be protected or private.
+
+- The essence of the Singleton pattern is that every object in the application uses the same instance of the Singleton. I do not want to have to be responsible for passing the instance around to all the objects that want to use it. This is especially important when a change made to the instance by one collaborating object needs to be visible to another collaborating object.
+
+- The problem is that I do not want to create a separate object to keep track of what I have already instantiated. Instead, I would like the objects themselves (that is, the strategies) to be responsible for handling their own single instantiation.
+
+The Singleton Pattern: Key Features
+
+Intent
+
+You want to have only one of an object, but there is no global object that controls the instantiation of this object. You also want to ensure that all entities are using the same instance of this object, without passing a reference to all of them.
+
+Problem
+
+Several different client objects need to refer to the same thing, and you want to ensure that you do not have more than one of them.
+
+Solution
+
+Guarantees one instance.
+
+Participants and collaborators
+
+Clients create an instance of the Singleton solely through the getInstance method.
+
+Consequences
+
+Clients need not concern themselves whether an instance of the Singleton exists. This can be controlled from within the Singleton.
+
+Implementation
+
+•   Add a private static member of the class that refers to the desired object. (Initially, it is null.)
+
+•   Add a public static method that instantiates this class if this member is null (and sets this member’s value) and then returns the value of this member.
+
+•   Set the constructor’s status to protected or private so that no one can directly instantiate this class and bypass the static constructor mechanism.
+
+
+
+Multithreaded app instance check:
+
+If the Singleton is absolutely stateless, this may not be a problem.
+
+•   If the Singleton has state, and if you expect that when one object changes the state, all other objects should see the change, then this could become a serious problem. The first thread will be interacting with a different object than all other threads do. Examples of problems likely to occur:
+
+– Inconsistent state between threads using the different Singleton objects.
+
+– If the object creates a connection, there will actually be two connections (one for each object).
+
+– If a counter is used, there will be two counters.
+
+•   In C++, regardless of state, the program may create a memory leak, because it may only delete one of the objects when I have actually created two of them.
+
+
+
+Double-checked locking:
+------------------------
+public class USTax extends Tax {
+   private static USTax instance;
+   private USTax() { }
+   public static Tax getInstance() {
+      if (instance== null) {
+         synchronized(this) {
+            if (instance == null)
+               instance = new USTax();
+         }
+      }
+      return instance;
+   }
+   private synchronized static void doSync() {
+      if (instance == null)instance = new USTax();
+   }
+}
+
+When the Double-Checked Locking pattern was converted from C++ to Java, it was soon discovered that it did not work for Java.4 The reason is that the Java compiler, in its optimization efforts, may return the reference to an object from a constructor before the constructor is through instantiating the object. Thus, dosync may complete before USTax is actually completely built. This may cause a problem. Also an optimizing compiler may “notice” that there is “no way” for the “instance” member to change state between the two “if” statements, and optimize the second one out. You can avoid this problem in C# by using the keyword volatile.
+
+
+
+public class USTax extends Tax {
+   private static class Instance {
+      static final Tax instance= new USTax();
+   }
+   private static USTax instance;
+   private USTax() { }
+   public static Tax getInstance() {
+      return Instance.instance;
+   }
+}

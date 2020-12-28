@@ -1,0 +1,53 @@
+Sharding -> Paritioning a large dataset into multiple smaller chunks of data called shards.
+Using sharding we can split a large databases into smaller pieces licing on diff machines.
+
+- Smaller pieces living on diff machines
+
+- Sharding is done based on record's key. The key determines which shard to find exisitng record
+and to add  a new record with new key.
+
+Sharding stratagies:
+---------------------
+1) Hash based sharding
+- Hash on record's key generate numeric value and used to determine whihc shard record belongs to.
+- With monotonically increasing keys and a good hash function, we can achive even data distribution
+- disadvtg: Keys with close values will likely not fall in same shard
+            Range based queries will span multipel shards
+
+2) Range based sharding:
+-------------------------
+- We divide keyspace into mutliple contiguous ranges.
+- Records with nearby keys will more likely end up in the same shard.
+- Range based queries lot more effecient.[Select key based on name column, range of alphbets in each shard
+Disadvt:
+- if our keyspace is clustered in certain ranges, we will not get even dsta distribution
+- We might need to readjust the ranges on a continuous basis to guarantee good data distribution
+
+
+Sharding disadvtg:
+-----------------
+- Concurrency control becomes harder
+- Operation on records in diff shards becomes complex.
+
+Dynamic sharding with consistent hashing:
+-----------------------------------------
+- Consistent Hashing is a technique to map both the keys of our data and the database nodes 
+that store that data to the same hash space.
+
+- Consistent hashing: Both key and bode are hashed to same hash space.
+Key -> hash(key)mode M
+Node -> hash(IP address) mod M
+
+- This will act as ring with uniform record distribution among
+- Consistent hashing allows us to dynamically add and remove nodes without re-assigning too many keys 
+and hence moving fewer records.
+
+- We can assign more keys to stronger nodes. This is done by mapping physical nodes to virtual nodes.
+
+- Multiple hash function to eliminate uneven load distribution. Using multiple has functions, each node will be mapped to 
+multiple locations on the hash space ring.
+
+- Creates an illution of more nodes than we have. Statistically it distributes the load more evenly among the physical nodes.
+
+Node -> H_1(IP) mod M
+Node -> H_2(IP) mod M

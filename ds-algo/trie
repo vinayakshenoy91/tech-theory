@@ -1,0 +1,45 @@
+Prefix trees: 
+-------------
+we are going to look at a tree-like data structure which proves to be really efficient while solving 
+programming problems related to Strings
+
+- Tries are mostly used for searching words in the dictionary, providing auto-suggestions in search engines, and for IP routing.
+
+Common Applications of Tries:
+-----------------------------
+1. Auto-Complete Words #
+Today, the autocomplete feature is supported by almost all of the major applications. 
+This feature can be very efficiently implemented with the help of Tries, as they reduce the overall cost of performance.
+
+2. Spell-Checking #
+Tries come in handy when you need to perform spell-check on a word entered by the user, to check if that word already 
+exists in the dictionary or if the user needs to be corrected. 
+This feature is really helpful when the user does not know the exact spelling of a keyword he’s searching for.
+
+3. Searching for a Contact in Phone #
+Another real-life use of Tries is the searching we do while looking for a person in the contact list. 
+It provides auto-suggestions based on the combination of letters that we enter. 
+
+Properties of Trie :
+--------------------
+- Tries are similar to Graphs, as they are a combination of nodes where each node represents a unique alphabet.
+- Tries are more like ordered trees where each of the children can either be Null or points to a node.
+- The size of the Trie depends upon the number of letters. For example, 
+in English there are 26 letters, so the size of a Trie node cannot exceed 26.
+- The depth of a Trie depends on the longest word that it stores.
+- Another important property of Tries is that they provide the same path for words that share a common prefix. 
+For example, “there” and “their” have a common prefix “the”, 
+so they will share the same path till “e”. After that, they will be divided into two branches.
+
+
+Trie structure:
+-----------------
+- Representation of a Node #
+A node in a Trie represents a letter in an alphabet. For example, if we want to insert “hello” in the Trie, we will need to add 5 nodes, 
+one for each alphabet. A typical Node in a Trie consists of two data members:
+
+1) children[]: An array which consists of the children nodes. The size of this array depends on the number of alphabets 
+(26 for the English language). By default, all elements are set to Null.
+
+2) isEndWord: A flag to indicate the end of a word. It is set to false by default and is only updated when an end of the 
+word is observed during insertion.

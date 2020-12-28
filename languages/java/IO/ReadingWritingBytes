@@ -1,0 +1,191 @@
+Base class:
+
+1) InputStream:
+Basic operations:
+- Reading a single byte
+- Reading array of bytes
+- Marking and resetting a given position
+- skipping bytes
+- asking for available bytes
+- can be closed
+
+
+
+2) OutputStream
+- Writing single byte
+- Writing array of byte
+- and it can be flushed and closed.
+
+InputStream syntax:
+-------------------
+InputStream is = ...
+int nextByte = is.read();
+ while(nextByte !=-1){
+     nextByte = is.read();
+ }
+
+
+InputStream is = ..
+byte[] is = new byte[1024];
+
+int number = is.read(buffer);
+while(number != -1){
+    number = is.read(buffer);
+}
+
+OutputStream:
+--------------
+OutputStream os = ..
+os.write(0xCA); //Takes an int converted to a byte.
+
+
+Concrete classes of input and output stream:
+---------------------------------------------
+1) classes for a certain type of medium
+- Disk: FileInputStream/FileOutputStream
+- In-memory: ByteArrayInputStream/ByteArrayOutputStream
+- Network: SocketInputStream/SocketOutputStream
+
+2) Based on behaviour:
+- BufferedOutputStream/BufferedInputStream
+- GzipOutputStream/GzipInputStream
+- ZipOutputStream/ZipInputStream
+
+
+DataInputStream/DataOutputStream: [For reading and Writing primitive types]:
+----------------------------------------------------------------------------
+- Classes dedicated to the reading and writing of primitive types
+
+OutputStream os = ...
+DataOutputStream dos = new DataOutputStream(os);
+dos.writeInt(10)
+dos.writeDouble(3.14d)
+dos.writeChar('H')
+dos.writeUTF()
+
+InputStream is = ..
+DataInputStream dis = new DataInputStream(is);
+dis.readInt()
+dis.readDouble()
+dis.readChar()
+dis.readUTF()
+
+
+[Reading and writing binary data in memory]:
+-------------------------------------------
+ByteArrayInputStream/ByteArrayOutputStream:
+--------------------------------------------
+ByteArrayOutputStream bos = new ByteArrayOutputStream();
+DataOutputStream dos = new DataOutputStream(bos);
+dos.writeInt(10)
+dos.writeDouble(3.14d)
+dos.writeChar('H')
+dos.writeUTF()
+int size = dos.size();
+
+byte[] bytes = bos.toByteArray();
+ByteArrayInputStream bis = new ByteArrayInputStream(bytes);
+DataInputStream dis = new DataInputStream(bis);
+dis.readInt()
+dis.readDouble()
+dis.readChar()
+
+Compressed streams:
+---------------------
+- Gzip format: allows for one file
+- Zip format: allows for several file.
+
+
+
+Tasks 1: Writing integers to file:
+-------------------------------- 
+OutputStream os = Files.newOutputStream(Paths.get("files/file.bin"), StandardOpenOptions.CREATE); new FileOuputStream(new File())
+GzipOutputStream gzos=new GzipOutputStream(os); //Yse ZipOutputStream as well
+DataOutputStream dos = new DataOutputStream(gzos); //Write 100 ints to a compressed file.
+InputStream.range(0,100).forEach(dos.writeInt);
+
+OR
+
+File file = new File("files/ints.bin");
+try(OutputStream os = new FileOutputStream(file);){
+    DataOutputStream dos = new DataOutputStream(os);
+    dos.writeInt(10);
+    dos.writeUTF("Hello"); // Writing in UTF
+}catch(IOException e){
+
+}
+
+path path = Paths.get("files/ints.bin");
+Files.szie(path);
+
+Ex: Reading integers to file gzipped:
+--------------------------------------
+InputStream is = Files.newInputStream(Paths.get("files/file.bin.gz"), StandardOpenOptions.READ);new FileInputStream(new File())
+
+GZIPInputStream gzis = new GZIPInputStream(is); //
+DataInputStream diz = new DataInputStream(gzis);
+try{
+    while(true){
+        int i =dis.readInt();
+    }
+}catch(EOFException e){
+
+}
+
+ZipInputStream/ZipOutputStream for Archive files [Writing]:
+----------------------------------------------------------
+File file = new File("files/ints.bin");
+try(OutputStream os = new FileOutputStream(file);
+   ZipOutputStream zos = new ZipOutputStream(os);
+   DataOutputStream dos = new DataOutputStream(zos);){
+       ZipEntry dirEntry = new ZipEntry("bin/");
+       zos.putNextEntry(dirEntry);
+
+       ZipEntry binFileEntry = new ZipEntry("bin/ints.bin");
+       zos.putNextEntry(binFileEntry);
+
+       IntStream.range(0,1000)
+       .forEach(i->{try{dos.writeInt(i);}catch(IOException e){}})
+
+        ZipEntry otherdirEntry = new ZipEntry("text/");
+       zos.putNextEntry(otherdirEntry);
+
+       ZipEntry textFileEntry = new ZipEntry("text/file.txt");
+       zos.putNextEntry(textFileEntry);
+
+       dos.writeUTF("This is itext content");
+}catch(IOException e){
+
+}
+
+ZipInputStream/ZipOutputStream for Archive files [Reading]:
+----------------------------------------------------------
+
+try(InputStream is = new FileInputStream)new File(name));
+    ZipInputStream zis = new ZipInputStream(is);
+    DataInputStream dis = new DataInputStream(zis);){
+        ZipEntry  entry = zis.getNextEntry();
+        while(entry!=null){
+            if(entry.isDirectory()){
+
+           try{
+               while(true){
+                  int i =dis.readInt();
+               }
+              }catch(EOFException e){
+
+               }
+
+            }else{
+                if(entry.getName().endsWith(".bin")){
+
+                } else if(entry.getName().endsWith(".txt")){
+                     String  content = dis.readUTF();
+                }
+            }
+             entry = zis.getNextEntry();
+        }
+    }catch(IOException e){
+
+    }
+}

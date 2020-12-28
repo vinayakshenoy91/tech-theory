@@ -1,0 +1,66 @@
+- Training dataset is unlabelled. Ssystem tried to learn without a teacher.
+
+Common tasks under unsupervised learning are:
+---------------------------------------------
+- Clustering
+- anomaly detection
+- novelty detection: the difference is that novelty detection algorithms expect to
+see only normal data during training, while anomaly detection algorithms are usually
+more tolerant, they can often perform well even with a small percentage of outliers in
+the training set.
+- association rule learning: in which the goal is to dig into large amounts of data and discover interesting relations between
+attributes.
+For example, suppose you own a supermarket. Running an association rule
+on your sales logs may reveal that people who purchase barbecue sauce and potato
+chips also tend to buy steak. Thus, you may want to place these items close to each
+other.
+
+
+most important unsupervised learning algorithms:
+-------------------------------------------------
+-> Clustering
+— K-Means
+— DBSCAN
+— Hierarchical Cluster Analysis (HCA): subdivide each group to smaller group
+-> Anomaly detection and novelty detection
+— One-class SVM
+— Isolation Forest
+-> Visualization and dimensionality reduction
+— Principal Component Analysis (PCA)
+— Kernel PCA
+— Locally-Linear Embedding (LLE)
+— t-distributed Stochastic Neighbor Embedding (t-SNE)
+-> Association rule learning
+— Apriori
+— Eclat
+
+Dimensionality reduction:
+-------------------------
+In which the goal is to simplify the data without losing too much information. One way to do this is to merge several correla‐
+ted features into one.For example, a car’s mileage may be very correlated with its age,so the dimensionality reduction 
+algorithm will merge them into one feature that represents the car’s wear and tear. This is called feature extraction.
+
+Why is dimentionality reduction required?
+-----------------------------------------
+It is often a good idea to try to reduce the dimension of your training data using a dimensionality reduction algorithm 
+before youfeed it to another Machine Learning algorithm (such as a supervised learning algorithm). It will run much faster, 
+the data will take up less disk and memory space, and in some cases it may also perform better.
+
+
+
+
+Getting a cluster:
+------------------
+
+import pandas as pd
+pointsdf = pd.read_csv("/cxldata/mltut/points.csv");
+
+import numpy as np
+points = np.array(pointsdf)
+
+xs=points[:,0] 
+ys=points[:,1] 
+import matplotlib.pyplot as plt
+
+plt.scatter(xs,ys)
+plt.show()

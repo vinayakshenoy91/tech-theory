@@ -1,0 +1,15 @@
+- four basic types of functional interfaces declared in java.util.function
+
+Interface   | Args | Returns   | Sample Use Case                           | Example
+Consumer<T>    T      void       using objects                               s -> system.out.print(s)
+Predicate<T>   T     boolean     filtering values                            s -> s.isEmpty()
+Supplier<T>   none     T         factory method                              () -> new String()
+Function<T,U>  T       U         transforming or selecting from objects      s -> new Integer(s)
+
+- It is also good practice to annotate custom functional interface declarations with @FunctionalInterface so that the compiler 
+can check that your interface declares exactly one abstract method, 
+and so that the Javadoc for it will automatically have an explanatory section added.
+
+
+
+

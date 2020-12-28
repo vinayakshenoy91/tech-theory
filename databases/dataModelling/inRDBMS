@@ -1,0 +1,16 @@
+Relational databases use Normalization, which is a technique used to provide the following benefits.
+1.	
+To prevent duplication of data.
+
+ 
+2.	
+Enforcing real-life relationships so data is organized into logical groupings.
+
+ 
+3.	
+So that changes can be made in one place thereby making updates to the data easier and faster.
+
+ 
+4.	
+Preserving the integrity of the data
+Normalization slows retrieval with the increased number of tables involved. 

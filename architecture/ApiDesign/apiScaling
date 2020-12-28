@@ -1,0 +1,315 @@
+1) Scaling Throughput:
+----------------------
+Bottlenecks:
+------------
+- Disk I/O
+Expensive database queries and local disk access often lead to disk-related bottlenecks.
+- Network I/O
+Network bottlenecks in modern applications are frequently caused by dependencies on external services requiring API 
+calls across data centers.
+- CPU
+Inefficient code performing expensive computations is one of the common causes of CPU bottlenecks.
+- Memory
+Memory bottlenecks typically occur when systems do not have sufficient RAM.
+
+Database Indexes:
+------------------
+Indexing is a way to optimize the performance of data retrieval operations on a database table. Indexes help databases to 
+locate rows to return for a query without 
+having to compare every row in a database table. They do this by additionally storing the index data structure.
+
+However, adding too many indexes is not ideal, either. Each index on a table requires additional storage space, 
+and there is a performance hit every time you add, update, or delete rows because the corresponding indexes need 
+to be updated as well. Typically, you need indexes on columns that are common in your WHERE, ORDER BY, and GROUP BY clauses.
+
+- Open source task queue: You can also use an open source task queue like Celery.
+
+- Caching
+
+
+Stop polling:
+-------------
+Slack introduced the Events API (Figure 6-5), which is WebHook-based and enables developers to create bots over HTTP. 
+Instead of receiving an endless stream of data that includes all events, and rather than constantly polling Slack’s RPC API, 
+developers can use the Events API to 
+subscribe to only the events that they care about—delivered via HTTP. This helps both Slack and app developers to scale better.
+
+- Supporting Bulk Endpoints
+
+Evolving API Design Best Practices
+Here are four best practices for evolving API design that will help you with scaling:
+
+As you continue to evolve your APIs, it’s important to ensure that you do not introduce surprising breaking changes to your developers.
+
+Analyze your API usage and patterns to figure out what to optimize.
+
+Talk to your developers and partners. This will give you good insights into problems and potential solutions.
+
+Before launching new API patterns for everyone, try them out with a handful of developers and partners. This way, 
+you can iterate on the design based on their feedback before making the patterns generally available.
+
+Api pagination:
+---------------
+----------------
+Offset-Based Pagination:
+
+To paginate this way, clients provide a page size that defines the maximum number of items to return and a page number 
+that indicates the starting position in the list of items. 
+Based on these values, servers storing data in a SQL database can easily construct a query to fetch results.
+https://api.github.com/user/repos?page=5&per_page=10
+
+However, this technique has a few disadvantages:
+
+It’s inefficient for large datasets. SQL queries with large offsets are pretty expensive. The database has to count and skip 
+rows up to the offset value before it gets to returning the desired set of items.
+
+It can be unreliable when the list of items changes frequently. The addition of an item while a client is paginating through 
+results could cause the client to display the same item twice. Similarly, on the removal of an item, a client might end up skipping 
+it at the boundary.
+
+Offset-based pagination can be tricky in a distributed system. For large offsets, you might need to scan a number of shards 
+before 
+you get to the desired set of items.
+
+That said, offset paginations can be great when pagination depth is limited and clients can tolerate duplicates or missed items.
+
+Cursor-Based Pagination:
+-------------------------
+To address the problems of offset-based pagination, various APIs have adopted a technique called cursor-based pagination. 
+To use this technique, clients first send a request while passing only the desired number of items. 
+The server then responds with the requested number of items (or the maximum number of items supported and available), 
+in addition to a next cursor. In the subsequent request, along with the number of items, clients pass this cursor indicating 
+the starting position for the next set of items.
+
+
+Cursor-based pagination addresses both the issues seen with offset-based pagination:
+
+Performance
+One of the key benefits of cursor-based pagination is performance. With an index on the column used in the cursor for pagination, even queries requiring scanning large tables are fast.
+
+Consistency
+The addition or removal of items does not affect the result set of a page. While paginating across results, the server returns every item exactly once.
+
+Cursor-based pagination is great for large and dynamic datasets. However, it has a few drawbacks:
+
+Clients cannot jump to a given page. They need to traverse through the entire result set page by page.
+
+The results must be sorted on a unique and sequential database column, used for the cursor value. It should not be possible to add records at a random position in the list.
+
+Implementing cursor-based pagination is a bit more complicated than offset-based pagination, particularly for clients. Clients often need to store the cursor value to use it in subsequent requests.
+
+
+
+CHOOSING WHAT GOES IN THE CURSOR
+Common options to use for cursors include:
+
+ID as the cursor
+API providers often choose a unique ID as the cursor value. For instance, the Twitter timeline APIs support tweet IDs as cursors. To fetch older tweets in a timeline, developers can pass the lowest ID received in the first set of results as the max_id parameter. The server then returns only tweets with IDs lower than or equal to the value of the max_id parameter.
+
+Timestamp
+Another common approach adopted by APIs returning time-based data, such as news feeds, is to use the timestamp as the cursor. Facebook APIs support until and since parameters, which accept Unix timestamps. When a timestamp is passed in the since request parameter, the Facebook API returns only items newer than the given timestamp.
+
+Opaque strings
+Using opaque strings as the cursor is increasingly becoming the preferred choice for API providers. Although they appear as random sets of characters, they are generally encoded values. A key advantage of using opaque strings is the ability to encode additional information within a single cursor. Large-scale applications can encode multiple IDs or an ID-plus-pointer combination to a database shard in these cursor values. Modern versions of various APIs, including those of Slack, Facebook, GitHub, and Twitter, use opaque strings as cursors.
+
+
+Cursor-based pagination is best suited for high-traffic applications for which clients need to scan through large datasets.
+
+Pagination Best Practices
+Here are some best practices that you should keep in mind when designing pagination for an API:
+
+When implementing pagination, do not forget to set reasonable default and maximum values for the page size.
+
+Avoid using offset-based pagination if clients will run queries with large offsets.
+
+With pagination, sorting data such that newer items are returned first and older items later is sometimes better. This way clients don’t need to paginate through to the end if they are interested only in newer items.
+
+If your API does not support pagination today, introduce it later in a way that maintains backward compatibility. More on backward compatibility in Chapter 7.
+
+When implementing pagination, return the next page URL pointing to the subsequent page of results. An empty or null next page value can indicate the end of the list. By encouraging clients to follow the next page URL, over time you can change your pagination strategy without breaking clients.
+
+Do not encode any sensitive information inside cursors. Clients can generally decode them.
+
+Rate-limiting:[https://stripe.com/blog/rate-limiters]
+------------- 
+Why needed?
+
+To protect the infrastructure while increasing reliability and availability of the application
+You do not want a single misbehaving developer or user to bring your application down through a denial-of-service (DoS) attack.
+
+To protect your product
+You want to prevent abuses of your product, like mass registration of users or creation of a lot of spam content.
+
+Granular rate limits versus a global rate limit
+Many APIs choose a single global API rate limit across all API endpoints. This is easy to implement for you as well as for developers. 
+However, if some of your API endpoints consume significantly more resources than others, you might want to define rate limits 
+per endpoint. Such granular rate limits will protect your infrastructure from any unreasonable spikes for an expensive API endpoint. 
+The Twitter API defines a rate limit per API endpoint, whereas GitHub and Facebook define a single global API rate limit.
+
+Measuring traffic per user, application, or client IP		
+
+
+
+
+Often the entity which you want to rate-limit depends on the authentication 
+method required by your API. APIs requiring user authentication generally apply rate-limiting on a per-user basis, whereas APIs 
+requiring an application authentication typically rate-limit on a per-app basis. For unauthenticated API calls, API providers often 
+choose to rate-limit by IP address. 
+APIs from GitHub, Facebook, Twitter, and Slack apply rate limits per user for authenticated API calls.
+
+Supporting occasional traffic bursts or not
+Some APIs, particularly the ones used by enterprise developers, support traffic bursts beyond a sustained rate limit. 
+This way, developers’ applications experiencing a surge in traffic can continue to work well with the API. If you choose 
+to support occasional traffic bursts, you probably want to use the token bucket algorithm to implement rate-limiting. 
+In the next section, we discuss this and other algorithms.
+
+Allowing exceptions
+You need not have a single rate-limiting policy or a single set of rate limits (or quota) that are applicable to all your developers. 
+It’s possible that some of your trusted developers or partners will need higher rate limits. You can always have exceptions for them, 
+if they request additional quota. That said, before you grant exceptions, you might want to:
+Ensure that the developer’s use case is valid and beneficial to customers.
+Verify that there is no better way to achieve the same result with your existing APIs and constraints.
+Validate whether your infrastructure can support the rate limit ask.
+
+
+ToS for rate limting: Another way to ensure reasonable use of your API is with terms of service (ToS) agreement documentation. 
+These documents detail permitted uses of your API to developers, including rate limits. Developers hitting your API 
+at higher rates than specified in your ToS might be subject to API token invalidation or other actions you deem necessary.
+
+
+Implementation Strategies
+As you build a rate-limiting system, ensure that the system does not slow your API response time. 
+To ensure high performance and the ability to scale horizontally, most API services use in-memory data stores, 
+like Redis and Memcached, to implement the rate-limiter. Both Redis and Memcached offer fast reads and writes and are 
+often used by API providers to keep track of the number of API requests received for rate-limiting.
+
+There are a few common algorithms that are used to implement rate limits:
+
+Token bucket
+
+Implementing this algorithm using an in-memory key–value data store is easy. Suppose that you want to rate-limit API requests per user to 20 requests/minute while allowing occasional bursts of up to 50 requests. Here’s how a key–value data store implementation could work:
+
+On the first request for a user, initialize a bucket with the capacity of 50 tokens. Store the request timestamp and this token count in the data store, with the user’s identifier as the key.
+
+On subsequent requests, refill the bucket with new tokens per the defined fixed rate and time elapsed since the last request.
+
+Then, remove one token from the bucket and update the timestamp to the current timestamp.
+
+Finally, if the available token count drops to zero, reject the request.
+
+The token bucket algorithm is easy to implement and is used by several API providers, including Slack, Stripe, and Heroku. If you want to be lenient on “bursty” traffic, this is a great choice
+FIXED-WINDOW COUNTER
+The fixed-window counter algorithm allows a fixed number of requests to go through the system over a specified time interval. You can easily implement the fixed window by using an in-memory key–value data store. Implementing a per-user rate limit of 20 requests/minute could work, as described here:
+
+On the first request, store the request count as 1 for a key representing the user and timestamp rounded to the current minute value. This key can expire after the current minute is over.
+
+Increment the aforementioned request count key by one on every subsequent request.
+
+If the request count exceeds the rate limit, reject the request.
+
+Although this is easy to implement, this algorithm can allow up to twice the specified number of requests within the one-minute window. For instance, if there were 20 requests for a user at 11:01:40 a.m., the client can do another 20 requests at 11:02:05
+
+SLIDING-WINDOW COUNTER
+As the name suggests, the sliding-window counter algorithm allows you to keep track of traffic in a sliding window of time, ensuring that the API can reject the “bursty” traffic that’s possible with the token bucket and fixed-window counter algorithm.
+
+To implement the sliding-window algorithm, just incrementing a single counter is not enough. Instead, we divide the rate-limit window into individual buckets of time. For example, to implement a 20 requests/minute rate limit, we might divide a 1-minute window into 60 buckets and maintain a counter for each second. These buckets can simply expire after one minute. On each request, we sum up the counters recorded in the last minute. If the total exceeds the rate limit, we reject the request. If you want to implement a lenient sliding window, you can sum the last 59 buckets before deciding whether the current request should be accepted.
+
+If you want to ensure that traffic to your API remains steady from each developer, the sliding-window counter could be suitable for you.
+
+
+What next?
+
+Before launching a new rate-limiting policy or algorithm, dark launch it to understand how much and which traffic it will block. To do that, use logging to analyze how many requests would be rejected, without actually rejecting any requests. You might want to adjust your thresholds as you learn about the impact they will have.
+
+RETURN APPROPRIATE HTTP STATUS CODES
+When developers hit your rate limit, deny the request by returning an HTTP 429 status code,
+
+$ curl -I https://slack.com/api/rtm.connect
+HTTP/2 429
+Date: Sun, 17 Jun 2018 14:43:38 GMT
+retry-after: 36
+
+RATE-LIMIT CUSTOM RESPONSE HEADERS
+Along with the status code, you should include custom response headers explaining the rate limit. These headers will help developers decide programmatically when they should retry the API call. Here are a few commonly used custom headers:
+
+X-RateLimit-Limit
+The maximum rate at which a developer can call this endpoint in a given amount of time.
+X-RateLimit-Remaining
+The number of requests that are available to the developer in the current interval. If you’re using the token bucket algorithm, this can indicate the number of tokens remaining in the applicable bucket.
+X-RateLimit-Reset
+The time at which the current rate-limit window resets in UTC epoch seconds.
+
+$ curl -I https://api.github.com/users/saurabhsahni
+
+HTTP/1.1 200 OK
+Date: Sat, 11 Nov 2017 04:37:22 GMT
+Status: 200 OK
+X-RateLimit-Limit: 60
+X-RateLimit-Remaining: 59
+X-RateLimit-Reset: 1510378642
+
+RATE-LIMIT STATUS API
+If you have different rate limits for different API endpoints, your developers might like to have an API that they can call to query the rate-limit status across various API endpoints. This way, they can programmatically keep track of available requests per endpoint.
+
+DOCUMENTING RATE LIMITS
+Developers need to mind their rate-limit constraints when using an API. By documenting your rate-limit values, you will help your developers in making the right architectural choices. Most of the popular APIs clearly document rate limits. This way, developers can learn about them before actually running into rate-limit errors. Apart from rate-limit values, you should also consider documenting best practices that developers can follow to avoid hitting the rate limit.
+
+Rate-Limiting Best Practices
+Here are a few best practices to like to consider when adding rate-limiting to an API:
+
+Pick the rate-limiting algorithm based on the traffic pattern that you want to support. Generally, paid services are lenient with traffic bursts and choose the token bucket algorithm. Others choose a fixed window or sliding window.
+
+Choose rate-limit thresholds such that common API use cases are not rate-limited.
+
+Provide clear guidance to external developers on what your rate-limit thresholds are and how can they request additional quota.
+
+Before granting additional quota to a developer, you might want to understand why they need to exceed the rate limits, what their use case is, and what the current usage pattern is. If your infrastructure can support additional quota and there is no better way to achieve the same result, you might want to consider giving them an exception.
+
+Starting with lower rate-limit thresholds is helpful. Increasing rate-limit thresholds is easier than reducing them because reducing them can negatively affect active developer apps.
+
+Implement exponential back-off in your client SDKs and provide sample code to developers on how to do that. This way, developers are less likely to continue hitting your API when they are rate-limited. For more information, see “Error Handling and Exponential Back-Off”.
+
+Use rate limits to reduce the impact of incidents by heavily rate-limiting noncritical traffic during an outage.
+
+Developer SDK:
+--------------
+The following sections describe a few things that you should consider when creating an SDK to help with scaling of your API.
+
+Rate-Limiting Support
+Developers do not want to write additional code to work with your rate limits. So, if you provide SDKs, you should ensure that they work well with your rate limits. Your SDK code should parse the rate-limit headers returned in API responses and slow down the request rate, if necessary. Your SDK should also gracefully handle 429 errors and retry only after the time indicated by the rate-limit headers.
+
+Pagination Support
+Retrieving results that spread across pages is often difficult. It’s especially easy to hit rate limits when requesting multiple pages in a loop. By adding support for working with your paginated APIs, you can ensure that rate limits and errors are gracefully handled. At the same time, you probably want to support some upper limit on how many pages to fetch.
+
+Using gzip
+Using gzip compression in your SDKs is a simple and effective way to reduce the bandwidth needed for each API call. Although compressing and decompressing content consumes additional CPU resources, this is often a great trade-off for reducing network costs.
+
+Caching Frequently Used Data
+You can add support for storing API responses or frequently used data locally in a cache. This can help in reducing the number of API calls you will receive. If you have concerns or policies around what data clients can store, ensuring that the cache automatically expires in a few hours can help.
+
+Error Handling and Exponential Back-Off
+Errors are often handled poorly by developers. It’s difficult for developers to reproduce all possible errors during development, and that’s why they might not write code to handle those errors gracefully.
+
+As you build your SDK, first, you could implement local checks to return errors on invalid requests. For example, your SDK can reject an API call locally if it’s missing a required parameter for an API method. This way, you can often prevent invalid API requests from hitting your servers.
+
+You should also build support for the actions the client application should take when a request fails. Some failures, like authorization errors, cannot be addressed by a retry. Your SDK should surface appropriate errors for these failures to the developer. For other errors, it’s simply better for the SDK to automatically retry the API call.
+
+To help developers avoid making too many API calls to your server, your SDK should implement exponential back-off. This is a standard error-handling strategy in which client applications periodically retry a failed request over an increasing amount of time. Exponential back-off can help in reducing the number of requests your server receives. When your SDKs implement this, it helps your web application recover gracefully from outages.
+
+SDK Best Practices
+Here are some best practices for building SDKs that will help you with scaling your API:
+
+Stability, security, and reliability for SDKs are critical. Any bug in an SDK might require updates from several developers. Depending on how many developers are using your SDK, even a simple upgrade can be quite difficult. Thoroughly testing your SDK before releasing is highly recommended.
+
+If you’re building a mobile SDK, you need to further optimize size, memory usage, CPU usage, network interactions, and battery performance.
+
+Implementing complex API operations like OAuth in your SDKs helps to speed up the onboarding experience for your developers.
+
+Handle rate limits and errors gracefully. Build protections into your SDK to avoid too many concurrent calls to your API servers.
+
+Make troubleshooting easy by surfacing errors to developers and allowing them to turn on logging.
+
+The way you package your SDK affects adoption. Use appropriate platforms, like npm, CocoaPods, RubyGems, or pip, to distribute your SDKs.
+
+
+

@@ -1,2 +1,46 @@
-def add(x, y):         # define a function that takes two arguments
+def add(x, y):   
+    """define a function that takes two arguments""" -> Defining what an argument does
     return x + y
+
+
+
+-> return x, y    and  when you receive it use: x,y=even_odd(p)    
+
+Built.in functions:
+-------------------
+str(5)
+type()
+max() -> max(['p','y','t','h','o','n'])
+min() -> min("python")
+len() -> len("myname")
+sorted(x) //X is an array, use help(x) to know inbuilt fn for array
+
+
+print(max("Hellow world")) => w is printed as it has max ascii value
+
+Typical qns:
+------------
+
+Default arg:
+------------
+def power(number,pow=1):
+
+Flexible args:
+--------------
+def add_all(*args):
+    
+     sum_all=0
+
+     for num in args:
+        sum_all+=num
+
+     return sum_all
+
+Flexible args[Key as well]:
+----------------------------
+ def print_all(**kwags):
+      for key, value in kwargs.items():
+
+
+While calling you can mention as : big_no_echo("Hey",intense=True)
+

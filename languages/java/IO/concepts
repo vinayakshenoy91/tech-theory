@@ -1,0 +1,8 @@
+Java IO is organised on four base classes:
+1) Reader and Writer -> For chars
+2) InputStrean and OutputStream -> Raw bytes
+
+Two util class:
+- File
+- Path
+

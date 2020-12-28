@@ -1,0 +1,25 @@
+- You must show care in how you name your Domain Event types. The words you use should reflect your model’s 
+Ubiquitous Language. These words will form a bridge between the happenings in your model and the outside world.
+- Your Domain Event type names should be a statement of a past occurrence, that is, a verb in the past tense.
+- It’s important that the modified Aggregate and the Domain Event be saved together in the same transaction. 
+If you are using an object-relational mapping tool, you would save the Aggregate to one table and the Domain 
+Event to an event store table, and then commit the transaction.
+
+- VVIP: Missing sequence problem: Note that just saving the Domain Event in its causal order doesn’t guarantee that 
+it will arrive at other distributed nodes in the same order. Thus, it is also the responsibility of the consuming 
+Bounded Context to recognize proper causality. It might be the Domain Event type itself that can indicate causality, 
+or it may be metadata associated with the Domain Event, such as a sequence or causal identifier. The sequence or 
+causal identifier would indicate what caused this Domain Event, and if the cause was not yet seen, the consumer 
+must wait to apply the newly arrived event until its cause arrives. In some cases it is possible to ignore latent 
+Domain Events that have already been superseded by the actions associated with a later one; in this case causality 
+has a dismissible impact.
+
+
+Domain events vs Commands:
+--------------------------
+
+A command is different from a Domain Event in that a command can be rejected as inappropriate in some cases, such as 
+due to supply and availability of some resources (product, funds, etc.), or another kind of business-level validation. 
+So, a command may be rejected, but a Domain Event is a matter of history and cannot logically be denied. Even so, 
+in response to a time-based Domain Event it could be that the application will need to generate one or more commands in 
+order to ask the application to carry out some set of actions.

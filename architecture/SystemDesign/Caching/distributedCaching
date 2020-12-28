@@ -1,0 +1,77 @@
+- put and get ops
+- keep a doubly linked list alogn with hash table to keep track of the age fr LRU evication.
+- Distributed shared should always be replicated and sharded
+
+memcached, redis.
+
+Get ops:
+--------
+- If item in cache, move it to head of list
+- If item not in cache, return null
+
+Put ops:
+--------
+- if item in cache, set item value in hash table and move it to head of list
+- If item not in cache, check if full -> detail tail element from table and list.
+Add new item to hash table and head
+  If cache is not full, add new item to hash table and add it to list head
+
+
+Distributed cache types:
+-----------------------
+- Dedicated cache cluster -> Isolation of resources, used my multiple services, flexibility hw
+- Co-located cache -> Now hw and ops cost, scale together
+
+Naive approach: CacheHostNumber = Has_function(key) MOD NumberOfCacheHosts
+
+Consistent hashing:
+--------------------
+- Name or ip address of host is hashed. Hash ranges to each host. Put each host  in a circle.
+- You get a hash key and move backwards in circle
+
+Issues with consisten hashing are:
+1) Domino effect -> Chain reaction of server failures due to on server failing and loading another.
+2) Servers dont split circle evenly  jump hash alog-> bhy google, proportional alog by yahoo videos
+
+Cache client:
+-------------
+- Cache client in the client side does this hashing and move it to right host. 
+It knows about all servers. All cache cliient should have same list of servers.
+Client stores list of servers in sorted order(Tree map in java)
+- Binary search used to find server O(log n) -> that owns the key
+- Cache client used TCP or UDP protocol to talk to servers.If server unavailable, client 
+proceeds as though it was a cache miss.
+
+
+Config servcie:-
+----------------
+Use: zookeeper which is a config service to check list of servers died and added. 
+Cache servers registers itself with config service and send periodic heartbeat.
+Cache client greps list of servers from config service periodically
+Also handles leader election. redis centinal.
+
+Replication:
+-------------
+Probability protocoals: Gossip, Epidemic boardcast 3 -> Favour eventual consistency
+Consensus protocol -> 2/3 phase commit, chain replication, axus, raft -> strong consistency
+
+Leader and 2 read replicas. Replicas live in diff DC. Put goes to master. Get handled by master and read 
+replicas.Config service to elect leader or 
+
+Tradeoff/Support tasks:
+--------
+- Consistency
+- Data expiration: Maintanence thread that removes expired record[Active] or when a request thread access it 
+and meta info sys it is expired.[Passive]. 
+In active case, some probabililistic algos are used.
+- usign local and remote cache called guava cache.
+- Security -> Firewall to port.
+- monitor and logging -> hits/miss, CPU, memoery, network io, latency. Who, what entity, when -> logging
+- TwinProxy project created by twitter to pick the shard -> proxy between cache client and server.
+Redis cluster uses a mechnism where cache client sends to random server and server redirects it to right server.
+
+
+Discovery happens:
+------------------
+1) Centrak registry(zoopkeeper)-> Service asks zoo keeper, which service has the value base don hashing
+2) Gossip protocol: Frontend host discover metadata service host

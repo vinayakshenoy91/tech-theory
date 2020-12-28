@@ -1,0 +1,75 @@
+Basics:
+--------
+- Entities in the domain: objects and their attributes
+- Relationship among entities: Whihc belong to which and how
+- Cardinality among entities:one-to-one,,one-to-many
+
+Three broad phases:
+--------------------
+- Conceptual: diagram of entities and relationships 
+Define the SLA as well in this stage like document size and time to retrieve.
+ER notation,crow foot notation, chen notation. Create high level overview of anticipated connections.
+
+
+- Logical: Description of conceptual design in terms of target db tech
+Diagram out domain objects and how they should be structured.
+
+
+- Physical: Impl of logical  design in target db
+Ex: document design, schema design
+Developer drafts JSOn documents withJava domain objects in mind.
+
+
+- They are optimised for data use than RDBMS which are optimised for data entry
+
+Denormalisation benefits:
+-------------------------
+- Data model can be optimised for planned/actual access patterns
+- Duplication trade-offs can massively increase speed
+- supports clustered architecture and reduced server overhead
+
+
+Designing document ids:
+-----------------------
+- Upto 250 bytes
+- Content of document is any value upto 20MB
+- Check for PII,SPI, or PHI
+- Surrogate key: Unique arbitrary values generated to identify a document. [UUID, sha-1/sha-2, Counter]
+Couchbase supports atomic, unique, cluster-wide counters. UUID() function in N1QL.
+You use surrogate key when you need sequencing, no natural key due to regulatory concerns, smaller than natural keys.
+
+Common practises used:
+ - Documettype::ID
+ - AppName::Documettype::ID::ID
+ - DocumentType::ParentID::ChildID::ID
+
+Strucutral choices:
+--------------------
+- Key and doc size:Understand transfer times, serialization, replication , metadata cache impact and mobile power use.
+- Update atomicity: Whole document or attribute updates are atomic. If you require multiple attibutes to be updated at once,
+place them in same doc.
+- Update complexity: data can be duplicated across docs. Should duplicate data be updated?
+how often? how will this be tracked.?
+- Strength of entity relation: related data can co-locate in one document.
+- Complexity of code mapping.
+- Data must be in same document for atomic update.
+- Duplicating and snapshoting the data are not the same thing. In snapshot you update the time with "updated" field.
+
+
+Best practise:
+---------------
+- Instead of nesting entire object as {order:{}} do { type:order} . Here we put document type as embedded attribute
+- When would you embed?
+  1) Must have an atomic write of a set of related data
+  2) Data and cardinality are relatively small.
+
+- When might you refer from one document to another?
+  1) Need to access this same data by diff keys
+  2) Data and cardinality are relatively large.
+  3) Data set is frequently updated.
+
+
+
+
+
+

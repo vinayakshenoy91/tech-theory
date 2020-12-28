@@ -1,0 +1,61 @@
+sklearn:
+--------
+- Doesn't provide perf like pytorch or tf.
+- Not provide you DNN frameworks
+
+
+
+
+
+Fetching MNIST dataset in skLearn:
+-----------------------------------
+from sklearn.datasets import fetch_mldata
+mnist=fetch_mldata("MNIST original") 
+x, y = mnist["data"],mnist["target"] //Target contains labels, data contains data of bin images.
+x.shape -> tell us the dimensions
+
+Plot the image:
+--------------
+%matplotlib  inline
+import matplotlib
+import matplotlib.pyplot as plt
+
+some_digit = x[36000]
+some_digit_image = some_digit.reshape(28,28)
+plt.imshow(some_digit_image,cmap=matplotlib.cm.binary, interpolation="nearest")
+plt.axis("off")
+plt.show()
+
+//Negative of image
+plt.imshow(255-some_digit_image,cmap=matplotlib.cm.binary, interpolation="nearest")
+
+
+Dividing datset into train and test:
+------------------------------------
+X_train,X_test,y_train,y_test=X[:60000],X[60000:],y[:60000],y[60000:]
+
+import numpy as np
+np.random.seed(42)
+shuffle_index = np.random.permutation(60000)
+X_train, y_train = X_train[shuffle_index], y_train[shuffle_index]
+
+
+Target vector for classification:
+---------------------------------
+y_train_5 = (y_train==5)
+y_test_5 = (y_test==5)
+
+
+------------------
+
+Image slicing:
+---------------
+from sklearn.datasets import load_sample_image
+china = load_sample_image("china.jpg")
+image = china[120:250,110:230]
+
+height, width, channels = image.shape
+image_grayscale = image.mean(axis=2).astype(np.float32) //Converting to greyscale image
+
+Converting to 4D array:
+<<your code comes here>> = image_grayscale.reshape(1, height, width, 1)

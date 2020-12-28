@@ -1,0 +1,51 @@
+-XX:+PrintCompilation -> Print the level of compilation of code.
+-XX:+UnlockDiagnosticVMOptions -XX:+LogCompilation ->  Check for C1 and C2 compilation logs.
+-XX:+PrintCodeCache -> Print size of code cache.
+
+//Setting code cache size is full
+-XX:InitialCodeCacheSize
+-XX:ReservedCodeCacheSize
+-XX:CodeCacheExpansionSize
+
+
+-client
+-server
+-d64 -> 64 bit server compiler
+
+//Modifying native compilation
+-XX:CICompilerCount=n //Min 2 
+-XX:CompileThreshold=n //Reduce this, number of times method should run before it can be compiled natively
+
+jinfo -flag CICompilerCount 10192  //Check value of a particular flag
+
+-Xms300m -> Initial heap size of 300m 
+//In java 11 , JVM goes and asks OS for memory and this tasks a perf hit,
+
+Runtime.getRuntime().freeMemory()
+
+ Max heap size
+
+-XX:MaxHeapSize=600m  -> -Xmx10m ->
+-XX:InitialHeapSize=1g -> -Xms
+
+Check for how frequently gc happens:
+-verbose:gc
+
+
+Prevent continuous resizing:
+-XX:-UseAdaptiveSizePolicy
+
+Tuning garbage collection:
+---------------------------
+-XX:NewRatio=n -> how many times should old gen be bigger than young gen.
+-XX:SurvivorRatio=n -> space taken by s0 and s1 -> s0a nd S1 are going to be 1/n of existing young gen
+-XX:MaxTenuringThreshold=n -> how many gen should object survive before it becomes part of old gen. //Cannot be modified
+
+
+-XX:+PrintStringTableStatistics ->  Tells how big string pool is
+-XX:StringTableSize=120121 -> Heap space
+
+
+Diagnose and check heap space:
+
+java -XX:+UnlockDiagnosticVMOptions -XX:+PrintFlagsFinal

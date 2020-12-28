@@ -1,0 +1,16 @@
+Logical operators:
+------------------
+and
+or
+not => not (a > b )
+
+For numpy use:
+np.logical_and()
+np.logical_or()
+np.logical_not()
+
+
+boolean operators:
+------------------
+x is y
+x is not y

@@ -1,0 +1,20 @@
+- Event Sourcing can be described as persisting all Domain Events that have occurred for an Aggregate instance as a 
+record of what changed about that Aggregate instance. Rather than persisting the Aggregate state as a whole, 
+you store all the individual Domain Events that have happened to it.
+
+- As new Domain Events occur for a given Aggregate instance, they are appended to the end of its event stream. 
+Reapplying the event stream to the Aggregate allows its state to be reconstituted from persistence back into memory. 
+In other words, when using Event Sourcing, an Aggregate that was removed from memory for any reason is reconstituted 
+entirely from its event stream.
+
+- Stream id, stream version, Event type, Event content
+
+- The event store is just a sequential storage collection or table where all Domain Events are appended. 
+Because the event store is append-only, it makes the storage mechanism extremely fast, so you can plan on a 
+Core Domain that uses Event Sourcing to have very high throughput, low latency, and be capable of high scalability.
+
+
+- One of the greatest advantages of using Event Sourcing is that it saves a record of everything that has ever 
+happened in your Core Domain, at the individual occurrence level. This can be 
+very helpful to your business for many reasons, ones that you can imagine today, such as compliance and analytics.
+

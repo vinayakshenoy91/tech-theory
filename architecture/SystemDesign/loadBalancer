@@ -1,0 +1,74 @@
+Software load balancers are known to implement a combination of algorithms such as Weighted Scheduling Algorithm, 
+round robin scheduling, least connection first scheduling. Some of the examples are HAProxy, NGINX, Varnish, LVS, 
+mod_athena etc.  Thisisi a softwre that we configure and run in a geenral purpose computer. They are cheaper.
+
+Hardware load balancers consist of specialized routers or switches that balance the load between 
+the server and the client. Some of the examples are Cisco system catalyst, Barracuda, Coytepoint, F5 Big-IP, etc. 
+It’s really not that one is better than the other, it’s more about what features are more important to the business.
+More reliable.
+
+-  If it’s a web server, it’s better to tune it for high I/O performance, and hence a better upgraded CPU is sometimes 
+preferred over memory and the configuration should open it up to perform better for scaling requests. Whereas if it’s 
+a database server, generally speaking, memory may be preferred over CPU, and it needs to be tuned to perform better as 
+a database.
+
+- It can add or remove some servers as per load
+
+
+However, can we horizontally scale the load balancers to start with? Generally speaking, this is very easy. 
+There are two ways we can do this.
+
+1.Active-Active
+
+2.Active-Passive
+
+
+LB stratagies and algo:
+------------------------
+1) Round robin
+2) Weighted round robin -> Higher rate to servers we want to send more request to.
+Also helps in directing small portion of traffic.
+3) Hash source IP to attain stickiness
+4) Least connection -> Servers with more open connections are assumed to be busy handling requests.
+5) Weighted response time -> Measures time of health check and based on that distributes the traffic.
+6) Agent based policies -> Agenst in servers reports metric to LB
+
+LB networking layer:
+--------------------
+1) Transport layer -> Replace source and dest address by LB with its ip while forwarding and vice versa.
+That is right, to keep the latency at the very minimum, we can default to the TCP layer for the communication, 
+and for that a TCP mode load balancer will be the best choice
+
+2) App layer -> Load balancer inspects TCP packet and HTTP headers . Make smarter routing decision based on http header.
+Can route traffic to diff cluster of server based on :
+1)Request URL
+2) Type of requested data
+3) HTTP method
+4) Browser cookies
+Based on header we can route to particular cluster of servers and use a diff LB strategy there.
+
+
+HA proxy:
+---------
+- Relaiable and high perf TCP/HTTP load balancer 
+- Free and open source
+- Easy to setup
+- Supports onluy linux distribution
+- Config comes from haproxy.cfg
+This has two parts:
+1) global section -> Parameters for entire LB process (OS specific)
+2) proxies section -> Prameters for proxying incoming traffic to our backend.
+   a) default -> optional param for all proxies
+   b) frontend -> how to handle incoming traffic
+   c) backend -> servers to proxy the incoming traffic
+   d) listen -> optional frontend + backend
+
+Commands:
+---------
+starting haproxy -> haproxy -f haproxy.cfg
+
+
+
+ 
+
+

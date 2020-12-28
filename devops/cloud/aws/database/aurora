@@ -1,0 +1,22 @@
+- Work o MYSQL and Postgresql compatibility modes.
+- 5 times faster than mysql
+- 3 times fastr then postgres
+- Global database
+
+3 endpoints:-
+-------------
+1) Cluster Endpoint:
+----------------------- 
+- Points to current primary instance
+- Suitable for reads and writes.
+
+2) Reader endpoints:
+---------------------
+- Points to read replicas
+- suitable for reads
+- Multiple read replicas are LB
+
+3) instance endpoints:
+------------------------
+- Points to individual aurora instances.
+

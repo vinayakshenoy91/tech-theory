@@ -1,0 +1,91 @@
+Hands On: Implementing a Sharded Redis
+Redis is a fast key-value store that can be used as a cache or for more persistent storage. In this example, we’ll be using it as a cache. We’ll begin by deploying a sharded Redis service to a Kubernetes cluster. We’ll use the StatefulSet API object to deploy it, since it will give us unique DNS names for each shard that we can use when configuring the proxy.
+
+The StatefulSet for Redis looks like this:
+
+apiVersion: apps/v1beta1
+kind: StatefulSet
+metadata:
+  name: sharded-redis
+spec:
+  serviceName: "redis"
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      terminationGracePeriodSeconds: 10
+      containers:
+      - name: redis
+        image: redis
+        ports:
+        - containerPort: 6379
+          name: redis
+
+Save this to a file named redis-shards.yaml and you can deploy this with kubectl create -f redis-shards.yaml. This will create three containers running redis. You can see these by running kubectl get pods; you should see sharded-redis-[0,1,2].
+
+Of course, just running the replicas isn’t sufficient; we also need names by which we can refer to the replicas. In this case, we’ll use a Kubernetes Service, which will create DNS names for the replicas we have created. The Service looks like this:
+
+apiVersion: v1
+kind: Service
+metadata:
+  name: redis
+  labels:
+    app: redis
+spec:
+  ports:
+  - port: 6379
+    name: redis
+  clusterIP: None
+  selector:
+    app: redis
+
+You should now have DNS entries for sharded-redis-0.redis, sharded-redis-1.redis, etc. We can use these names to configure twemproxy. twemproxy is a lightweight, highly performant proxy for memcached and Redis, which was originally developed by Twitter and is open source and available on GitHub. We can configure twemproxy to point to the replicas we created by using the following configuration:
+
+redis:
+  listen: 127.0.0.1:6379
+  hash: fnv1a_64
+  distribution: ketama
+  auto_eject_hosts: true
+  redis: true
+  timeout: 400
+  server_retry_timeout: 2000
+  server_failure_limit: 1
+  servers:
+   - sharded-redis-0.redis:6379:1
+   - sharded-redis-1.redis:6379:1
+   - sharded-redis-2.redis:6379:1
+In this config, you can see that we are serving the Redis protocol on localhost:6379 so that the application container can access the ambassador. We will deploy this into our ambassador pod using a Kubernetes ConfigMap object that we can create with:
+
+kubectl create configmap twem-config --from-file=./nutcracker.yaml
+Finally, all of the preparations are done and we can deploy our ambasssador example. We define a pod that looks like:
+
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ambassador-example
+spec:
+  containers:
+    # This is where the application container would go, for example
+    # - name: nginx
+    #   image: nginx
+    # This is the ambassador container
+    - name: twemproxy
+      image: ganomede/twemproxy
+      command:
+      - "nutcracker"
+      - "-c"
+      - "/etc/config/nutcracker.yaml"
+      - "-v"
+      - "7"
+      - "-s"
+      - "6222"
+      volumeMounts:
+      - name: config-volume
+        mountPath: /etc/config
+  volumes:
+    - name: config-volume
+      configMap:
+        name: twem-config
+This pod defines the ambassador; then the specific user’s application container can be injected to complete the pod.

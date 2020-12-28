@@ -1,0 +1,856 @@
+- Java Thread pool represents a group of worker threads that are waiting for the job and reuse many times.
+- pass task to a pool of threads
+-  Executor is an interface with an execute method. A pool of thread is an instance of executor interface.
+-  Executor service extends executor. Impl of both executor and executor svc are same.
+
+Real time usage:
+It is used in Servlet and JSP where container creates a thread pool to process the request.
+
+- The executor comes with a built in queue. To add a task into queue and execute, you use:
+executor.execute(task) //Tasks passed are executed in order
+
+- That's correct! Since the threads are not in the "running" state, all the time while serving the incoming requests, 
+we may have all of the threads blocked on IO (waiting for a response from the database), but the CPU is not actually 
+executing any tasks). So if we create more threads to handle the incoming requests, we will get better throughput. 
+There is no way of knowing the best number of threads ahead of time since more threads means more requests 
+can be handled, but also more overhead and context switching. So we need to perform a load test
+
+Examples:
+----------
+
+1) File: WorkerThread.java:
+----------------------------
+import java.util.concurrent.ExecutorService;  
+import java.util.concurrent.Executors;  
+class WorkerThread implements Runnable {  
+    private String message;  
+    public WorkerThread(String s){  
+        this.message=s;  
+    }  
+     public void run() {  
+        System.out.println(Thread.currentThread().getName()+" (Start) message = "+message);  
+        processmessage();//call processmessage method that sleeps the thread for 2 seconds  
+        System.out.println(Thread.currentThread().getName()+" (End)");//prints thread name  
+    }  
+    private void processmessage() {  
+        try {  Thread.sleep(2000);  } catch (InterruptedException e) { e.printStackTrace(); }  
+    }  
+}  
+
+2) File: JavaThreadPoolExample.java: [Fixed threadpool]
+------------------------------------
+public class TestThreadPool {  
+     public static void main(String[] args) {  
+        ExecutorService executor = Executors.newFixedThreadPoolExecutor(5);//creating a pool of 5 threads  
+        for (int i = 0; i < 10; i++) {  
+            Runnable worker = new WorkerThread("" + i);  
+            executor.execute(worker);//calling execute method of ExecutorService  
+          }  
+        executor.shutdown();   //shutdownNow() //hald running task and do not execute waiting task
+        //awaitTermination(timeout) //shutdown, wait for timeout, if remaining tasks , halt it.
+        while (!executor.isTerminated()) {   }  
+  
+        System.out.println("Finished all threads");  
+    }  
+ } 
+
+
+Types of threadpools:
+----------------------
+- Single thread executor: ExecutorService executor = Executors.newSingleThreadExecutor();
+- 
+- Cached thread pool : new CachedThreadPool()
+  - creates threads on demand.
+  - keeps unused threads for 60s and then terminates them.
+  - Idle threads are reused
+  - Threads are automatically created if no thread is available for a task.
+  - Light  weight ocassiaonly process, comes during spikes.
+- newScheduleThreadPool(poolSize)//Return ScheduleExecutor Service.  
+  - schedule(task,delay)
+  - scheduleAtFixedRate(task,delay,period)
+  - scheudkeWithFixedDealy(task, intialDelay, delay) 
+
+- If task is runnable, we will not get to know task is done or not.
+  If the task has not yet started, we can cancel it.
+
+- Executors.newWorkStealingPool();//Get a forkjoin, return concurrency level = number of cpu
+ 
+
+Runnable:
+--------
+@FunctionaInterface
+public interface Runnable{
+    void run();
+}
+
+
+Callable interface:
+-------------------
+@FunctionaInterface
+public interface Callable<V>{
+    V call() throws Exception;
+}
+
+- Executor does not handle callable
+- ExecutorService interface has a submit() method
+<T> Future<T> submit(Callable<T> task); //Returns a future object
+
+//In main thread
+Callable<String> task = () -> buildPatientReport();
+Future<String> future = executor.submit(task);
+String result = future.get(100,Timunit.MS); //Throws interrupted Exception - incase thread of executor is interrupted.
+//Task throws an exception -> it is wrapped in ExecutionException and re-thrown
+
+-If task compeleted, get call will return produced result immediately.
+If not, get call blocked until the result is ready.
+- Pass timeout to avoid infinte blocking.
+
+
+- Note always put executor.shutdown() in finally:
+
+try{
+
+}finally{
+    executor.shutdown()
+}
+
+Ex: Cllable<List<Integer>> task = () -> findPrimes(inputSet);
+
+
+//Set things as processor with exception:
+
+public Server(){ 
+          executor =( ThreadPoolExecutor ) Executors.newFixedThreadPool(
+                        Runtime.getRuntime().availableProcessors() ); 
+          RejectedTaskController controller=new
+                                         RejectedTaskController(); 
+          executor.setRejectedExecutionHandler(controller); 
+        }
+
+
+public class RejectedTaskController implements
+                                              RejectedExecutionHandler { 
+          @Override 
+          public void rejectedExecution(Runnable r,
+                                        ThreadPoolExecutor executor) { 
+            System.out.printf("RejectedTaskController: The task %s has been
+                              rejected\n",r.toString()); 
+            System.out.printf("RejectedTaskController: %s\n",
+                              executor.toString()); 
+            System.out.printf("RejectedTaskController: Terminating: %s\n",
+                              executor.isTerminating()); 
+            System.out.printf("RejectedTaksController: Terminated: %s\n",
+                              executor.isTerminated()); 
+          }
+
+Some logs about executor:
+-------------------------
+You also printed some log messages with information about the executor. Specifically, you used the following methods:
+
+getPoolSize(): This method returned the actual number of threads in the pool of the executor.
+getActiveCount(): This method returned the number of threads that were executing tasks in the executor.
+getTaskCount(): This method returned the number of tasks that were scheduled for execution. The returned value is only 
+an approximation because it changes dynamically.
+getCompletedTaskCount(): This method returned the number of tasks completed by the executor.
+
+
+The ThreadPoolExecutor class also provides other methods related to the finalization of the executor. These methods are:
+
+shutdownNow(): This shuts down the executor immediately. It doesn't execute pending tasks. It returns a list with all the pending tasks. Tasks that are running when you call this method continue with their execution, but the method doesn't wait for their finalization.
+isTerminated(): This method returns true if you call either the shutdown() or shutdownNow() method; the executor finishes the process of shutting it down accordingly.
+isShutdown(): This method returns true if you call the shutdown() method of the executor.
+awaitTermination(long timeout, TimeUnit unit): This method blocks the calling thread until the tasks of the executor end or a timeout occurs. The TimeUnit class is an enumeration with the following constants: DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, and SECONDS.
+
+
+Executor that returns a result:
+--------------------------------
+
+Callable: This interface has the call() method. In this method, you have to implement the logic of the task. 
+The Callable interface is a parameterized interface, meaning you have to indicate the type of data the call() method will return.
+Future: This interface has some methods to obtain the result generated by a Callable object and manage its state.
+
+
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named FactorialCalculator. Specify that it implements the Callable interface parameterized by the Integer type:
+        public class FactorialCalculator implements Callable<Integer> {
+Declare a private Integer attribute called number to store the number that this task will use for its calculations:
+        private final Integer number;
+Implement the constructor of the class that initializes the attribute of the class:
+        public FactorialCalculator(Integer number){ 
+          this.number=number; 
+        }
+Implement the call() method. This method returns the factorial of the number attribute of FactorialCalculator:
+        @Override 
+        public Integer call() throws Exception {
+First, create and initialize the internal variables used in the method:
+        int result = 1;
+If the number is 0 or 1, return 1. Otherwise, calculate the factorial of the number. Between two multiplications, for educational purposes, put this task to sleep for 20 milliseconds:
+        if ((number==0)||(number==1)) { 
+          result=1; 
+        } else { 
+          for (int i=2; i<=number; i++) { 
+            result*=i; 
+            TimeUnit.MILLISECONDS.sleep(20); 
+          } 
+        }
+Write a message to the console with the result of the operation:
+        System.out.printf("%s: %d\n",Thread.currentThread().getName(),
+                          result);
+Return the result of the operation:
+        return result;
+Implement the main class of the example by creating a class named Main and adding the main() method to it:
+        public class Main { 
+          public static void main(String[] args) {
+Create ThreadPoolExecutor to run the tasks using the newFixedThreadPool() method of the Executors class. Pass 2 as the parameter, that is, as the number of threads in the executor:
+        ThreadPoolExecutor executor=(ThreadPoolExecutor)Executors
+                                               .newFixedThreadPool(2);
+Create a list of Future<Integer> objects:
+        List<Future<Integer>> resultList=new ArrayList<>();
+Create a random number generator with the Random class:
+        Random random=new Random();
+Make a loop with ten steps. In every step, we generate a random number:
+        for (int i=0; i<10; i++){ 
+          Integer number= random.nextInt(10);
+Then, we create a FactorialCalculator object passing the generated random number as parameter:
+        FactorialCalculator calculator=new FactorialCalculator(number);
+Call the submit() method of the executor to send the FactorialCalculator task to the executor. This method returns a Future<Integer> object to manage the task and eventually get its result:
+        Future<Integer> result=executor.submit(calculator);
+Add the Future object to the list created before:
+          resultList.add(result); 
+        }
+Create a do loop to monitor the status of the executor:
+        do {
+First, write a message to the console indicating the number of completed tasks, using the getCompletedTaskNumber() method of the executor:
+        System.out.printf("Main: Number of Completed Tasks: %d\n",
+                          executor.getCompletedTaskCount());
+Then, for the 10 Future objects in the list, write a message indicating whether the tasks that it manages have finished or not. Do this using the isDone() method:
+        for (int i=0; i<resultList.size(); i++) { 
+          Future<Integer> result=resultList.get(i); 
+          System.out.printf("Main: Task %d: %s\n",i,result.isDone()); 
+        }
+Put the thread to sleep for 50 milliseconds:
+        try { 
+          TimeUnit.MILLISECONDS.sleep(50); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        }
+Repeat this loop when the number of completed tasks of the executor is less than 10:
+        } while (executor.getCompletedTaskCount()<resultList.size());
+In the console, write the results obtained by each task. For each Future object, get the Integer object returned by its task, using the get() method:
+        System.out.printf("Main: Results\n"); 
+        for (int i=0; i<resultList.size(); i++) { 
+          Future<Integer> result=resultList.get(i); 
+          Integer number=null; 
+          try { 
+            number=result.get(); 
+          } catch (InterruptedException e) { 
+            e.printStackTrace(); 
+          } catch (ExecutionException e) { 
+            e.printStackTrace(); 
+          }
+Then, print the number to the console:
+          System.out.printf("Main: Task %d: %d\n",i,number); 
+        }
+Finally, call the shutdown() method of the executor to finalize its execution:
+        executor.shutdown();
+
+You can control the status of the task you can cancel the task and check whether it has finished or not. For this purpose, you used 
+the isDone() method.
+You can get the result returned by the call() method. For this purpose, you used the get() method. This method waits until the
+ Callable object has finished the execution of the call() method and has returned its result. If the thread is interrupted while 
+ the get() method is waiting for the result, it throws an InterruptedException exception. 
+If the call() method throws an exception, then the get() method throws an ExecutionException exception as well.
+
+When you call the get() method of a Future object and the task controlled by this object hasn't finished yet, the method is blocked until the task is finished. The Future interface provides another version of the get() method:
+get(long timeout, TimeUnit unit): This version of the get method, if the result of the task isn't available, waits for the specified time. If the specified period of time passes and the result is still not available, it throws a TimeoutException exception. The TimeUnit class is an enumeration with the following constants: DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, and SECONDS.
+
+
+
+
+Executor run multiple put return result of first task: (invokeAny)
+--------------------------------------------------------
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named UserValidator that will implement the process of user validation:
+        public class UserValidator {
+Declare a private String attribute called name that will store the name of the user validation system:
+        private final String name;
+Implement the constructor of the class that initializes its attributes:
+        public UserValidator(String name) { 
+          this.name=name; 
+        }
+Implement the validate() method. It receives two String parameters with the name and password of the user you want to validate:
+        public boolean validate(String name, String password) {
+Create a Random object named random:
+        Random random=new Random();
+Wait for a random period of time to simulate the process of user validation:
+        try { 
+          long duration=(long)(Math.random()*10); 
+          System.out.printf("Validator %s: Validating a user during %d
+                             seconds\n", this.name,duration); 
+          TimeUnit.SECONDS.sleep(duration); 
+        } catch (InterruptedException e) { 
+          return false; 
+        }
+Return a random Boolean value. The validate() method returns true when the user is validated, and false otherwise:
+          return random.nextBoolean(); 
+        }
+Implement getName(). This method returns the value of the name attribute:
+        public String getName(){ 
+          return name; 
+        }
+Now, create a class named ValidatorTask that will execute a validation process with the UserValidation object as a concurrent task. Specify that it implements the Callable interface parameterized by the String class:
+        public class ValidatorTask implements Callable<String> {
+Declare a private UserValidator attribute named validator:
+        private final UserValidator validator;
+Declare two private String attributes, named user and password:
+        private final String user; 
+        private final String password;
+Implement the constructor of the class that will initialize all the attributes:
+        public ValidatorTask(UserValidator validator, String user,
+                             String password){ 
+          this.validator=validator; 
+          this.user=user; 
+          this.password=password; 
+        }
+Implement the call() method that will return a String object:
+        @Override 
+        public String call() throws Exception {
+If the user is not validated by the UserValidator object, write a message to the console indicating this and throw Exception:
+        if (!validator.validate(user, password)) { 
+          System.out.printf("%s: The user has not been found\n",
+                            validator.getName()); 
+          throw new Exception("Error validating user"); 
+        }
+Otherwise, write a message to the console indicating that the user has been validated and return the name of the UserValidator object:
+        System.out.printf("%s: The user has been found\n",
+                          validator.getName()); 
+        return validator.getName();
+Now implement the main class of the example by creating a class named Main and adding the main() method to it:
+        public class Main { 
+          public static void main(String[] args) {
+Create two String objects named user and password and initialize them with the test value:
+        String username="test"; 
+        String password="test";
+Create two UserValidator objects, named ldapValidator and dbValidator:
+        UserValidator ldapValidator=new UserValidator("LDAP"); 
+        UserValidator dbValidator=new UserValidator("DataBase");
+Create two TaskValidator objects, named ldapTask and dbTask. Initialize them with ldapValidator and dbValidator, respectively:
+        TaskValidator ldapTask=new TaskValidator(ldapValidator,
+                                                 username, password); 
+        TaskValidator dbTask=new TaskValidator(dbValidator,
+                                               username,password);
+Create a list of TaskValidator objects and add to it the two objects that you have created:
+        List<TaskValidator> taskList=new ArrayList<>(); 
+        taskList.add(ldapTask); 
+        taskList.add(dbTask);
+Create a new ThreadPoolExecutor object using the newCachedThreadPool() method of the Executors class and a string variable named result:
+        ExecutorService executor=(ExecutorService)Executors
+                                             .newCachedThreadPool(); 
+        String result;
+Call the invokeAny() method of the executor object. This method receives taskList as a parameter and returns String. Also, it writes the String object that is returned to the console:
+        try { 
+          result = executor.invokeAny(taskList); 
+          System.out.printf("Main: Result: %s\n",result); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        } catch (ExecutionException e) { 
+          e.printStackTrace(); 
+        }
+Terminate the executor using the shutdown() method and write a message to the console to indicate that the program has ended:
+        executor.shutdown(); 
+        System.out.printf("Main: End of the Execution\n");
+
+Both tasks return the true value. Here, the result of the invokeAny() method is the name of the task that finishes in the first place.
+The first task returns the true value and the second one throws Exception. Here, the result of the invokeAny() method is the name of the first task.
+The first task throws Exception and the second one returns the true value. Here, the result of the invokeAny() method is the name of the second task.
+Both tasks throw Exception. In such a class, the invokeAny() method throws an ExecutionException exception.
+
+invokeAny(Collection<? extends Callable<T>> tasks, long timeout, TimeUnit unit): This method executes all the tasks and returns the result of the first one that finishes without throwing an exception, if it does so before the given timeout is passed. 
+
+
+
+Multiple task processing all result: (invoke all)
+------------------------------------- 
+When you want to wait for the finalization of a task, you can use the following two methods:
+
+The isDone() method of the Future interface returns true if the task has finished its execution
+The awaitTermination() method of the ThreadPoolExecutor class puts the thread to sleep until all the tasks have finished their execution after a call to the shutdown() method
+These two methods have some drawbacks. With the first one, you can only control the completion of a task. With the second one, you have to shut down the executor to wait for a thread; otherwise, the method's call is returned immediately.
+
+The ThreadPoolExecutor class provides a method that allows you to send a list of tasks to the executor and wait for the finalization of all the tasks in the list. In this recipe, you will learn how to use this feature by implementing an example with 10 tasks executed and their results printed out when they have finished.
+
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named Result to store the results generated in the concurrent tasks of this example:
+        public class Result {
+Declare two private attributes, namely a String attribute called name and an int attribute named value:
+        private String name; 
+        private int value;
+Implement the corresponding get() and set() methods to set and return the value of the name and value attributes:
+        public String getName() { 
+          return name; 
+        } 
+        public void setName(String name) { 
+          this.name = name; 
+        } 
+        public int getValue() { 
+          return value; 
+        } 
+        public void setValue(int value) { 
+          this.value = value; 
+        }
+Create a class named Task that implements the Callable interface parameterized by the Result class:
+        public class Task implements Callable<Result> {
+Declare a private String attribute called name:
+        private final String name;
+Implement the constructor of the class that initializes its attribute:
+        public Task(String name) { 
+          this.name=name; 
+        }
+Implement the call() method of the class. In this case, the method will return a Result object:
+        @Override 
+        public Result call() throws Exception {
+First, write a message to the console to indicate that the task is getting started:
+        System.out.printf("%s: Staring\n",this.name);
+Then, wait for a random period of time:
+        try { 
+          long duration=(long)(Math.random()*10); 
+          System.out.printf("%s: Waiting %d seconds for results.\n",
+                            this.name,duration); 
+          TimeUnit.SECONDS.sleep(duration); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        }
+To generate an int value to be returned in the Result object, calculate the sum of five random numbers:
+        int value=0; 
+        for (int i=0; i<5; i++){ 
+          value+=(int)(Math.random()*100); 
+        }
+Create a Result object and initialize it with the name of this Task object and the result of the operation done earlier:
+        Result result=new Result(); 
+        result.setName(this.name); 
+        result.setValue(value);
+Write a message to the console to indicate that the task has finished:
+        System.out.println(this.name+": Ends");
+Return the Result object:
+          return result; 
+        }
+Finally, implement the main class of the example by creating a class named Main and adding the main() method to it:
+        public class Main { 
+         
+          public static void main(String[] args) {
+Create a ThreadPoolExecutor object using the newCachedThreadPool() method of the Executors class:
+        ExecutorService executor=(ExecutorService)Executors
+                                               .newCachedThreadPool();
+Create a list of Task objects. Create 10 Task objects and save them on this list:
+        List<Task> taskList=new ArrayList<>(); 
+        for (int i=0; i<10; i++){ 
+          Task task=new Task("Task-"+i); 
+          taskList.add(task); 
+        }
+Create a list of Future objects. These objects are parameterized by the Result class:
+        List<Future<Result>>resultList=null;
+Call the invokeAll() method of the ThreadPoolExecutor class. This class will return the list of the Future objects created earlier:
+        try { 
+          resultList=executor.invokeAll(taskList); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        }
+Finalize the executor using the shutdown() method:
+        executor.shutdown();
+Write the results of the tasks processing the list of Future objects:
+        System.out.println("Main: Printing the results"); 
+        for (int i=0; i<resultList.size(); i++){ 
+          Future<Result> future=resultList.get(i); 
+          try { 
+            Result result=future.get(); 
+            System.out.println(result.getName()+": "+result.getValue()); 
+          } catch (InterruptedException | ExecutionException e) { 
+            e.printStackTrace(); 
+          } 
+        }
+
+  In this recipe, you learned how to send a list of tasks to an executor and wait for the finalization of all of them using the invokeAll() method. This method receives a list of Callable objects and returns a list of Future objects. This list will have a Future object per task. The first object in the list of Future objects will be the object that controls the first task in the list of Callable objects, the second object the second task, and so on.
+
+The first point to take into consideration is that the type of data used for the parameterization of the Future interface in the declaration of the list that stores the result objects must be compatible with the one used to parameterize Callable objects. In this case, you used the same type of data: the Result class.
+
+Another important point about the invokeAll() method is that you will use Future objects only to get the results of the tasks. As the method finishes when all the tasks finish, if you call the isDone() method of Future objects that are returned, all the calls will return the true value.
+
+
+Running Executor after a deplay:
+--------------------------------
+
+You may want to execute a task after a period of time or do it periodically. For these purposes, the Executor framework provides 
+the ScheduledExecutorService 
+interface along with its implementation, namely the ScheduledThreadPoolExecutor class.
+
+ScheduledExecutorService executor=Executors
+                                           .newScheduledThreadPool(1);
+
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named Task that implements the Callable interface parameterized by the String class:
+        public class Task implements Callable<String> {
+Declare a private String attribute called name that will store the name of the task:
+        private final String name;
+Implement the constructor of the class that initializes the name attribute:
+        public Task(String name) { 
+          this.name=name; 
+        }
+Implement the call() method. Write a message to the console with the actual date and return some text, for example, Hello, world:
+        public String call() throws Exception { 
+          System.out.printf("%s: Starting at : %s\n",name,new Date()); 
+          return "Hello, world"; 
+        }
+Implement the main class of the example by creating a class named Main and adding the main() method to it:
+        public class Main { 
+          public static void main(String[] args) {
+Create an executor of the ScheduledThreadPoolExecutor class using the newScheduledThreadPool() method of the Executors class, passing 1 as a parameter:
+        ScheduledExecutorService executor=Executors
+                                           .newScheduledThreadPool(1);
+Initialize and start a few tasks (five in our case) with the schedule() method of the ScheduledThreadPoolExecutor instance:
+        System.out.printf("Main: Starting at: %s\n",new Date()); 
+        for (int i=0; i<5; i++) { 
+          Task task=new Task("Task "+i); 
+          executor.schedule(task,i+1 , TimeUnit.SECONDS); 
+        }
+Request the finalization of the executor using the shutdown() method:
+        executor.shutdown();
+Wait for the finalization of all the tasks using the awaitTermination() method of the executor:
+        try { 
+          executor.awaitTermination(1, TimeUnit.DAYS); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        }
+Write a message to indicate the time when the program will finish:
+        System.out.printf("Main: Ends at: %s\n",new Date());
+
+
+You can also use the Runnable interface to implement the tasks because the schedule() method of the ScheduledThreadPoolExecutor class accepts both types of tasks.
+
+Although the ScheduledThreadPoolExecutor class is a child class of the ThreadPoolExecutor class (and therefore inherits all its features), Java recommends that you use ScheduledThreadPoolExecutor only for scheduled tasks.
+
+Finally, you can configure the behavior of the ScheduledThreadPoolExecutor class when you call the shutdown() method, and there are pending tasks waiting for the end of their delay time. The default behavior is that these tasks will be executed despite the finalization of the executor. You can change this behavior using the setExecuteExistingDelayedTasksAfterShutdownPolicy() method of the ScheduledThreadPoolExecutor class. If you call the setExecuteExistingDelayedTasksAfeterShutdownsPolicy() passing the false value as parameter, pending tasks won't be executed after you call the shutdown() method.
+
+
+
+Scheduled tasks periodically:
+------------------------------
+ScheduledFuture<?> result=executor.scheduleAtFixedRate(task, 1,
+                                                  2, TimeUnit.SECONDS);
+
+        for (int i=0; i<10; i++){ 
+          System.out.printf("Main: Delay: %d\n",result
+                                     .getDelay(TimeUnit.MILLISECONDS));
+
+The scheduleAtFixedRate() method returns a ScheduledFuture object, which extends the Future interface, with methods to work with scheduled tasks. ScheduledFuture is a parameterized interface. In this example, as your task was a Runnable object that was not parameterized, you had to parameterize them with the ? symbol as a parameter.
+
+You used one method of the ScheduledFuture interface. The getDelay() method returns the time until the next execution of the task. This method receives a TimeUnit constant with the time unit in which you want to receive the results.
+
+
+Canceling a task in an executor:
+--------------------------------
+
+Follow these steps to implement the example:
+
+Create a class named Task and specify that it implements the Callable interface parameterized by the String class. Implement the call() method. Write a message to the console and put it to sleep for 100 milliseconds inside an infinite loop:
+        public class Task implements Callable<String> { 
+          @Override 
+          public String call() throws Exception { 
+            while (true){ 
+              System.out.printf("Task: Test\n"); 
+              Thread.sleep(100); 
+            } 
+          }
+Implement the main class of the example by creating a class named Main and adding the main() method to it:
+        public class Main { 
+          public static void main(String[] args) {
+Create a ThreadPoolExecutor object using the newCachedThreadPool() method of the Executors class:
+        ThreadPoolExecutor executor=(ThreadPoolExecutor)Executors
+                                               .newCachedThreadPool();
+Create a new Task object:
+        Task task=new Task();
+Send the task to the executor using the submit() method:
+        System.out.printf("Main: Executing the Task\n"); 
+        Future<String> result=executor.submit(task);
+Put the main task to sleep for 2 seconds:
+        try { 
+          TimeUnit.SECONDS.sleep(2); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        }
+Cancel the execution of the task using the cancel() method of the Future object, named result, returned by the submit() method. Pass the true value as a parameter of the cancel() method:
+        System.out.printf("Main: Canceling the Task\n"); 
+        result.cancel(true);  //Cancelling
+Write the result of a call to the isCancelled() and isDone() methods to the console. This is to verify that the task has been canceled, and hence, already done:
+        System.out.printf("Main: Canceled: %s\n",result.isCancelled()); 
+        System.out.printf("Main: Done: %s\n",result.isDone());
+Finish the executor with the shutdown() method and write a message indicating the finalization of the program:
+        executor.shutdown(); 
+        System.out.printf("Main: The executor has finished\n");
+
+Facts:
+
+If the task has finished or has been canceled earlier, or it can't be cancelled due to any other reason, the method will return the false value and the task won't be canceled.
+If the task is waiting in the executor to get a Thread object that will execute it, the task is canceled and will never begin its execution. If the task is already running, it depends on the parameter of the method. The cancel() method receives a Boolean value as a parameter. If the value of this parameter is true and the task is running, it will be canceled. If the value of the parameter is false and the task is running, it won't be canceled.
+
+Controlling a task finishing in an executor:
+--------------------------------------------
+The Java API provides the FutureTask class as a cancelable asynchronous computation. It implements the Runnable and Future interfaces 
+and provides the basic implementation 
+of the Future interface. We can create a FutureTask class using a Callable or Runnable object (Runnable objects doesn't return a result, 
+so we have to pass as parameter too in this case the result that the Future object will return). It provides methods to cancel the 
+execution and obtain the result of the computation. It also provides a method called done() that allows you to execute some code after 
+the finalization of a task executed in an executor. It can be used to make some postprocess operations, such as generating a report, 
+sending results by e-mail, or releasing some resources. This method is called internally by the FutureTask class when the execution of 
+the task that this FutureTask object is controlling finishes. The method is called after the result of the task is set and its status 
+is changed to isDone, regardless of whether the task has been canceled or finished normally.
+
+By default, this method is empty. You can override the FutureTask class and implement this method to change the behavior. In this recipe, 
+you will learn how to override this method to execute code after the finalization of the tasks.
+
+
+Create a class named ExecutableTask and specify that it implements the Callable interface parameterized by the String class:
+        public class ExecutableTask implements Callable<String> {
+Declare a private String attribute called name. It will store the name of the task. Implement the getName() method to return the value of this attribute:
+        private final String name; 
+        public String getName(){ 
+          return name; 
+        }
+Implement the constructor of the class to initialize the name of the task:
+        public ExecutableTask(String name){ 
+          this.name=name; 
+        }
+Implement the call() method. Put the task to sleep for a random period of time and return a message with the name of the task:
+        @Override 
+        public String call() throws Exception { 
+          try { 
+            long duration=(long)(Math.random()*10); 
+            System.out.printf("%s: Waiting %d seconds for results.\n",
+                              this.name,duration); 
+            TimeUnit.SECONDS.sleep(duration); 
+          } catch (InterruptedException e) {}     
+          return "Hello, world. I'm "+name; 
+        }
+Implement a class named ResultTask that extends the FutureTask class parameterized by the String class:
+        public class ResultTask extends FutureTask<String> {
+Declare a private String attribute called name. It will store the name of the task:
+        private final String name;
+Implement the constructor of the class. It has to receive a Callable object as a parameter. Call the constructor of the parent class and initialize the name attribute using the attribute of the task received:
+        public ResultTask(ExecutableTask callable) { 
+          super(callable); 
+          this.name= callable.getName(); 
+        }
+Override the done() method. Check the value of the isCancelled() method and write a different message to the console, depending on the returned value:
+        @Override 
+        protected void done() { 
+          if (isCancelled()) { 
+            System.out.printf("%s: Has been canceled\n",name); 
+          } else { 
+            System.out.printf("%s: Has finished\n",name); 
+          } 
+        }
+Implement the main class of the example by creating a class named Main and adding the main() method to it:
+        public class Main { 
+          public static void main(String[] args) {
+Create ExecutorService using the newCachedThreadPool() method of the Executors class:
+        ExecutorService executor=Executors.newCachedThreadPool();
+Create an array to store five ResultTask objects:
+        ResultTask resultTasks[]=new ResultTask[5];
+Initialize the ResultTask objects. For each position in the array, first you have to create ExecutorTask and then ResultTask using the object. Then, send ResultTask to the executor using the submit() method:
+        for (int i=0; i<5; i++) { 
+          ExecutableTask executableTask=new ExecutableTask("Task "+i); 
+          resultTasks[i]=new ResultTask(executableTask); 
+          executor.submit(resultTasks[i]); 
+        }
+Put the main thread to sleep for 5 seconds:
+        try { 
+          TimeUnit.SECONDS.sleep(5); 
+        } catch (InterruptedException e1) { 
+          e1.printStackTrace(); 
+        }
+Cancel all the tasks you have sent to the executor:
+        for (int i=0; i<resultTasks.length; i++) { 
+          resultTasks[i].cancel(true); 
+        }
+Write the result of those tasks that haven't been canceled to the console, using the get() method of the ResultTask objects:
+        for (int i=0; i<resultTasks.length; i++) { 
+          try { 
+            if (!resultTasks[i].isCancelled()){ 
+              System.out.printf("%s\n",resultTasks[i].get()); 
+            } 
+          } catch (InterruptedException | ExecutionException e) { 
+            e.printStackTrace(); 
+          }     
+        }
+Finish the executor using the shutdown() method:
+            executor.shutdown(); 
+          } 
+        }
+
+
+How it works.. :
+----------------
+The done() method is called by the FutureTask class when the task that is being controlled finishes its execution. In this example, 
+you implemented a Callable object, the ExecutableTask class, and then a subclass of the FutureTask class that controls the execution 
+of the ExecutableTask objects.
+
+The done() method is called internally by the FutureTask class after establishing the return value and changing the status of the task 
+to isDone. You can't change the result value of the task or change its status, but you can close resources used by the task, write log 
+messages, or send notifications. The FutureTask class might be used to ensure that a specific task is run only once, as calling its run() 
+method will 
+execute its wrapped Runnable/Callable interface only once (and the result can be fetched with get when it's available).
+
+Separating the launching of tasks and the processing of their results in an executor:
+-------------------------------------------------------------------------------------
+
+The CompletionService class has a method to send tasks to an executor and a method to get the Future object for the next task that has finished its execution. Internally, it uses an Executor object to execute the tasks. This behavior has the advantage of sharing a CompletionService object and sending tasks to the executor so others can process the results. The limitation is that the second object can only get the Future objects for those tasks that have finished their execution, so these Future objects can only be used to get the results of the tasks.
+
+In this recipe, you will learn how to use the CompletionService class to separate the process of launching tasks in an executor from the processing of their results.
+
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named ReportGenerator and specify that it implements the Callable interface parameterized by the String class:
+        public class ReportGenerator implements Callable<String> {
+Declare two private String attributes named sender and title. These attributes will represent the data of the report:
+        private final String sender; 
+        private final String title;
+Implement the constructor of the class that initializes the two attributes:
+        public ReportGenerator(String sender, String title){ 
+          this.sender=sender; 
+          this.title=title; 
+        }
+Implement the call() method. First, put the thread to sleep for a random period of time:
+        @Override 
+        public String call() throws Exception { 
+          try { 
+            Long duration=(long)(Math.random()*10); 
+            System.out.printf("%s_%s: ReportGenerator: Generating a
+                              report during %d seconds\n",this.sender,
+                              this.title,duration); 
+            TimeUnit.SECONDS.sleep(duration); 
+          } catch (InterruptedException e) { 
+            e.printStackTrace(); 
+          }
+Then, generate the report as a string with the sender and title attributes and return that string:
+          String ret=sender+": "+title; 
+          return ret; 
+        }
+Create a class named ReportRequest and specify that it implements the Runnable interface. Thiss class will simulate some report requests:
+        public class ReportRequest implements Runnable {
+Declare a private String attribute called name to store the name of ReportRequest:
+        private final String name;
+Declare a private CompletionService attribute named service. The CompletionService interface is a parameterized interface. Use the String class:
+        private final CompletionService<String> service;
+Implement the constructor of the class that initializes the two attributes:
+        public ReportRequest(String name, CompletionService<String>
+                             service){ 
+          this.name=name; 
+          this.service=service; 
+        }
+Implement the run() method. Create three ReportGenerator objects and send them to the CompletionService object using the submit() method:
+        @Override 
+        public void run() { 
+          ReportGenerator reportGenerator=new ReportGenerator(name,
+                                                              "Report"); 
+          service.submit(reportGenerator); 
+     
+        }
+Create a class named ReportProcessor. This class will get the results of the ReportGenerator tasks. Specify that it implements the Runnable interface:
+        public class ReportProcessor implements Runnable {
+Declare a private CompletionService attribute named service. As the CompletionService interface is a parameterized interface, use the String class as a parameter of this CompletionService interface:
+        private final CompletionService<String> service;
+Declare a private Boolean attribute named end. Add the volatile keyword to ensure that all the threads have access to the actual value of the attribute:
+        private volatile boolean end;
+Implement the constructor of the class to initialize the two attributes:
+        public ReportProcessor (CompletionService<String> service){ 
+          this.service=service; 
+          end=false; 
+        }
+Implement the run() method. While the end attribute is false, call the poll() method of the CompletionService interface to get the Future object of the next task executed by the completion service that has finished:
+        @Override 
+        public void run() { 
+          while (!end){ 
+            try { 
+              Future<String> result=service.poll(20, TimeUnit.SECONDS);
+Then, get the results of the task using the get() method of the Future object and write the results to the console:
+              if (result!=null) { 
+                String report=result.get(); 
+                System.out.printf("ReportReceiver: Report Received: %s\n",
+                                  report); 
+              }       
+            } catch (InterruptedException | ExecutionException e) { 
+              e.printStackTrace(); 
+            } 
+          } 
+          System.out.printf("ReportSender: End\n"); 
+        }
+Implement the stopProcessing() method that modifies the value of the end attribute:
+        public void stopProcessing() { 
+          this.end = true; 
+        }
+Implement the main class of the example by creating a class named Main and adding the main() method to it:
+        public class Main { 
+          public static void main(String[] args) {
+Create ThreadPoolExecutor using the newCachedThreadPool() method of the Executors class:
+        ExecutorService executor=Executors.newCachedThreadPool();
+Create CompletionService using the executor created earlier as a parameter of the constructor:
+        CompletionService<String> service=new
+                                   ExecutorCompletionService<>(executor);
+Create two ReportRequest objects and the threads to execute them:
+        ReportRequest faceRequest=new ReportRequest("Face", service); 
+        ReportRequest onlineRequest=new ReportRequest("Online", service);   
+        Thread faceThread=new Thread(faceRequest); 
+        Thread onlineThread=new Thread(onlineRequest);
+Create a ReportProcessor object and the thread to execute it:
+        ReportProcessor processor=new ReportProcessor(service); 
+        Thread senderThread=new Thread(processor);
+Start the three threads:
+        System.out.printf("Main: Starting the Threads\n"); 
+        faceThread.start(); 
+        onlineThread.start(); 
+        senderThread.start();
+Wait for the finalization of the ReportRequest threads:
+        try { 
+          System.out.printf("Main: Waiting for the report generators.\n"); 
+          faceThread.join(); 
+          onlineThread.join(); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        }
+Finish the executor using the shutdown() method and wait for the finalization of the tasks with the awaitTermination() method:
+        System.out.printf("Main: Shutting down the executor.\n"); 
+        executor.shutdown(); 
+        try { 
+          executor.awaitTermination(1, TimeUnit.DAYS); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        }
+Finish the execution of the ReportSender object setting the value of its end attribute to true:
+        processor.stopProcessing(); 
+        System.out.println("Main: Ends");
+
+
+How it works...
+In the main class of the example, you created ThreadPoolExecutor using the newCachedThreadPool() method of the Executors class. Then, you used that Executor object to initialize a CompletionService object because the completion service uses an executor to execute its tasks. To execute a task using the completion service, use the submit() method, as in the ReportRequest class.
+
+When one of these tasks is executed when the completion service finishes its execution, the service stores the Future object used to control its execution in a queue. The poll() method accesses this queue to check whether there is any task that has finished its execution; if yes, it returns the first element of the queue, which is a Future object of a task that has finished its execution. When the poll() method returns a Future object, it deletes it from the queue. In this case, you passed two attributes to the method to indicate the time you want to wait for the finalization of a task, in case the queue with the results of the finished tasks is empty.
+
+Once the CompletionService object is created, you create two ReportRequest objects that execute a ReportGenerator task, execute a ReportGenerator task using the CompletionService object create before and passed as parameter to the constructor of the ReportRequest objects
+
+The CompletionService class can execute Callable or Runnable tasks. In this example, you used Callable, but you could have also sent Runnable objects. Since Runnable objects don't produce a result, the philosophy of the CompletionService class doesn't apply in such cases.
+
+This class also provides two other methods to obtain the Future objects of the finished tasks. These methods are as follows:
+
+poll(): The version of the poll() method without arguments checks whether there are any Future objects in the queue. If the queue is empty, it returns null immediately. Otherwise, it returns its first element and removes it from the queue.
+take(): This method, without arguments, checks whether there are any Future objects in the queue. If it is empty, it blocks the thread until the queue has an element. If the queue has elements, it returns and deletes its first element from the queue.
+In our case, we used the poll() method with a timeout to control when we would like to end the execution of the ReportProcessor task.
+
+

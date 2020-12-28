@@ -1,6 +1,21 @@
+Hash Tables #
+---------------
+The major target of Hash Tables is to minimize the searching time of any sort of data that needs to be fetched.
+
+The Working #
+Hash Tables are generally implemented using Arrays, as they are the only data structures that provide access 
+to elements in constant O(1) time.
+
+The performance of the Hashing data structure depends upon these three factors:
+
+Hash Function #
+Size of the Hash Table #
+Collision Handling Method #
+
+
 Hashing:
 -------
-- Search,Insert,Delete in O(1) time undert eh assumption that input keys are uniformly distributed
+- Search,Insert,Delete in O(1) time under the assumption that input keys are uniformly distributed
 by hash function
 
 - hashSet, hashmap, linkedHashset and linkedHashmap
@@ -8,6 +23,7 @@ by hash function
 HashSet -> Doesn't have duplicate but maintains no order
 linkedHashSet -> Doesn't have duplicate but maintains insertion order
 linkedHashmap -> maintains insertion order
+TreeMap -> keys are in sorted order
 
 - For count of elements add everything to hashset and then provide it
 
@@ -32,16 +48,62 @@ Improve sensitiveness using linear and quadratic probing
 
 Probing:
 --------
-- Linear
+- Linear:
+1. Linear Probing #
+Linear Probing suggests that if the index is already filled, move to the next index. It could be achieved by adding an offset value to an already computed index. If that index is also filled, add it again and so on.
+
+Disadvantage: One drawback of using this strategy is that if you don’t pick an offset wisely, you can jump back to where you started and miss out on so many possible positions in the array.
+
+Example: Let’s say the size of your array is 20. You pass a key to the Hash function which returns 2 (index of the array) by computing the key as key%size. If that position is already filled, then you can jump to another location by adding an offset value, let’s say 4. However, if that is filled too then you can add the offset again and jump to the next value, which will be 10 in this case. 
+We will keep adding the offset until we find an empty spot. See the following illustration for better understanding:
+
 - Quadratic
 
 i-> number of attempts to resolve the collision
 (hash(x)+i^2)% prime_num 
 
 
+2. Chaining #
+Chaining was initially implemented by combining multiple arrays as buckets, but we shifted to more efficient data structures later on. For example, each cell of the table holds a pointer to a linked-list on any other suitable data structure, such as a Doubly Linked-List or even a tree.
+
+In case of a linked-list, each cell at the Hash Table points to the head of a different linked-list. Each list stores records, and all the content stored in one linked-list shares the same Hashed key. This strategy guarantees no collisions, but it gets costly in terms of space. An illustration is provided below for better understanding:
+
+svg viewer
+Collisions Handled by Forming a Linked-List at each index
+
+In the above example, we can observe that due to a collision, the indices 0 and 2 both contain multiple-element linked lists. This strategy also increases the look-up time.
+
+3. Resizing the Array #
+Another way to reduce collisions is to resize the list. We can set a threshold and once it is crossed, we can create a new table which is double the size of the original. All we have to do then is to copy the elements from the previous table.
+
+Resizing the list significantly reduces collisions, but the function itself is costly. Therefore, we need to be careful about the threshold we set. A typical convention is to set the threshold at 0.6, which means that when 60% of the table is filled, the resize operation needs to take place.
+
+Another factor to keep in mind is the content of the Hash Table. The stored records might be concentrated in one region, leaving the rest of the list empty. However, this behavior will not be picked up by the resize function and you will end up resizing inappropriately.
 
 
 
+Commonly Used Hash Functions #:
+-------------------------------
+These are the most common hashing functions in use:
+
+Arithmetic Modular #
+Take mod of the key with the size of an array (called table)
+index = key \text{ } MOD \text{ } tableSizeindex=key MOD tableSize
+
+Hence, the index will always stay between 0 and tableSize - 1.
+
+Truncation #
+Select a part of the key as the index rather than the whole key. Once again, we can use a mod function for this operation, although it does not need to be based on the list size:
+
+key = 123456 \text{ } -> \text{ } index = 3456key=123456 −> index=3456
+
+Folding #
+Divide the key into smaller chunks and apply different strategies at each chunk. For example, you can add the divided chunks and re-build a different Hashed key:
+key = 456789 \text{ } \text{ } -> \text{ } index = 45+67+89key=456789  −> index=45+67+89
 
 
-
+//Hash Set  =>  HashSet<Integer> hSet = new HashSet<>();
+//HashMap   =>  HashMap<Integer,String> hMap = new HashMap<>();  
+//HashTable =>  Hashtable<Integer,String> hTable = new Hashtable<>();  
+//Hash Set Functions => {add(), remove(), contains()}
+//Hash Map and Table Functions => {put(key,value), get(key), remove(key), containsKey(key), containsValue(value)}

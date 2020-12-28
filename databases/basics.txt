@@ -1,1 +1,205 @@
-test
+We can partition the database in three different ways:
+1.Vertical Partitioning
+2.Horizontal Partitioning
+3.Hardware Partitioning
+
+ 
+1. VERTICAL PARTITIONING
+Now that the load balancer is taken care of, we do not have any SPOF except at the Data Layer. 
+It’s really our RDBMS that is running on a single server. Most of the time, scaling of the RDBMS 
+can start with replicationand denormalization. However, vertical partitioning a database 
+might not be a bad option. It’s almost the first logical step to scaling the database.
+
+There are two types of vertical partitioning. They are:
+1.Normalization:
+Normalization is the process of removing redundancy in a database by finding the right 
+linkages between tables and linking them using primary key and foreign key relationships.
+
+2.Row Splitting
+
+Row splitting: Even though the normalization is a very good technique to remove redundant data and establish 
+relationships between data tables, there are times when row splitting must be used to reduce scan times. 
+It works by dividing the original table into multiple tables with the same number of rows but fewer columns each. 
+All the split tables continue to use the same unique key. In order to retrieve 
+the original table with all the columns, all we need to do is query on the split tables with the same ID.
+
+RDBMS VERTICAL PARTITIONING:
+----------------------------
+Depending on the business needs, we can easily find tables that do not interact much with other tables and place 
+them in one cluster. As we discussed above, in row splitting we create new tables by separating out certain columns 
+from the original table. One of the good ways to partition vertically is by gathering enough data to find tables 
+that have slow scan time. Once we have figured out which tables need to be scaled vertically, 
+we need to look at the data and find which columns are the ones that are accessed more frequently than others.
+
+For searching problems, 
+search engine like Lucene, solar, elastic search, etc., for search functionality. 
+
+However, for now, let’s assume that we are not allowed to use any external search engine. 
+Well, in that case, we will need to work with what we have. We can create an index column that has the 
+indices and a link to the blog post and move the blog posts out in a completely different table.
+
+What about the pictures in the BlogPost table? In an ideal scenario, we will use some kind of blob storage outside 
+the database. If it is public, it might make sense to use CDN. However, assuming that we are not allowed to use any 
+external tool or CDN, we can use vertical partitioning and move the pictures to a completely different table and reference 
+them via relationships. One thing to keep in mind is that in case of vertical partitioning, the new table will have 
+a completely different name altogether. Later, when we end up doing some kind of hardware partitioning, it’s important 
+to categorize tables per disk in order to get optimum performance. One of the common practices is to colocate tables 
+in a cluster that are related. For example, old e-commerce data could be in a completely different cluster as compared 
+to verbose data like blog posts, and comments, etc., could be a completely different cluster.
+
+Even though we can solve a lot of these problems in a much better way with hybrid persistence models, commonly known as 
+polyglot persistence , we’re trying to work under a constraint (which is scaling an RDBMS).
+
+Even though the structure looks very simple and has its own benefits, including helping with scalability, it has certain downsides. One of the major disadvantages of this approach is having to do cross-cluster joins in situations where we have relationships that exist in separate clusters. For example, if we have a User table in database cluster 2, that means we will need the AuthorID in the blog posts table as well as the user ID in the comments table to be referenced to the users table in order to get the identity. Well, if that’s the case why can’t we move the user table to cluster 1? We surely can. However, that will create another problem for users in the payments table as well as other tables like order, customer, etc., that are part of e-commerce business for the company. Now they will need to do a cross join to cluster 1. Both of these could be very inefficient. Of course, these are just simple examples of the kind of things to look for before making a decision on how to segregate the data. In many cases, vertical partitioning is very fruitful for scalability purposes. However, if the strategy is not fully vetted and sorted out, it can lead to problems like the ones discussed above.
+
+Just as a clarification, we need the global hash map so that the app servers know which Db clusters to call for a particular kind of data.
+
+
+2. HORIZONTAL PARTITIONING
+
+In contrast to vertical partitioning, horizontal partitioning divides the table into multiple tables that have 
+the same number of columns but fewer rows. Imagine running an e-commerce business for 20 years. Imagine getting 
+hundreds of thousands of orders in a month. Even though the Order table can grow to a huge size, it might make 
+sense to start partitioning that table horizontally per year. Partitioning data according to the age of the data 
+is very common. Depending on the use case, it may also make sense to partition the data per quarter or even per 
+month. So even though the table will have the same number of columns, the number of rows in that table will decrease 
+drastically.
+
+RDBMS horizontal partitioning:
+------------------------------
+We can use multiple kinds of techniques or strategies to create horizontal partitioning solutions. The example above elucidates age- based or balanced (least-used) strategy where we segregate the clusters according to the usage pattern. If the users are prone to accessing new or older data in the same priority, we can also use a round-robin strategy . In this strategy, data gets added on a round-robin basis in different clusters. Another well-known strategy is first-come first-served , and as the name suggests, it segregates data based on a first-come first-served basis. In our example, if we have multiple clients and we choose to add the first 100 clients to one cluster and keep adding every set of 100 clients to subsequent clusters, we shall be following the first-come first-served strategy. The first-come first-served strategy is very similar to value-based strategy except that the value-based strategy is a little bit more flexible and can work on any particular value. In a value-based strategy, assuming that every client has an ID and clients with ID 1 to 100 are in one cluster, 101 to 200 are in another cluster. However, as mentioned, value-based strategy is a little bit more flexible and can work on any available value. In this case, we can take any column and use that to generate a value classification. For example, we may want to segregate data by the name of the state. In that case, we will be creating a cluster per state or a cluster for multiple states depending on the business needs. Lastly, we can also use a hash-based strategy that uses a custom hash function that decides which cluster the user data should be written to.
+
+At first glance, horizontal partitioning might seem to be selectively simple and attractive. However, we live in a world where business changes more often than we think it does. Constant changes redefine our architecture and even though we may have used the best possible horizontal partitioning mechanism, we cannot guarantee that our solution will be the best solution for all future purposes. Let’s assume that client No. 10 acquires client No. 200. The transition is not that hard but may still require some manual work like making sure that there is no conflicting data. Since after merging the data, the client No. 10 would be the only client appropriate tests need to be done to make sure we don't end up overwriting some referential data.  What if there is a business case to add shared data among different clients based on a new business requirement. Where do we keep the overlapping data? You will be surprised I have seen production systems where clients have chosen to keep two copies of overlapping data (in both the client tables) and have decided to update both the copies with every single write. Even in a simple scenario like the one above, every single write call that affects overlapping data in one cluster would require another call to the other cluster and will slow the system down. What if we have multiple such clusters and multiple clients with overlapping data? That will mean not just slowing the system down but potential for data inconsistencies. The more the clients to be updated, the more we run into distributed system related problems too. What if the data is in different servers geographically? Anything is possible. For the most part, if horizontal partitioning of the data layer is not done very smartly or in a futuristic manner, it’s nothing more than a hack and is bound to create problems.
+
+
+3. HARDWARE PARTITIONING:
+With servers with multiple CPU cores, it’s quite common to use multiple threads so that multiple queries can run at 
+the same time. One of the common scenarios is using one thread per table to speed up queries. Another way to partition 
+the hardware is to use RAID (redundant array of independent disks) devices. These devices enable data to be striped 
+across multiple disk drives. For example, if we are storing tables on different drives, this can drastically improve 
+the query performance when it comes to joining those tables. At the same time, the table 
+that has been stored on a single drive will be slower to the same table stripped over multiple drives.
+
+Using SAN[Storage Area Network]: 
+However, with increased load the disk I/O would be the one that becomes the bottleneck. It won’t be able to 
+keep up with the CPU. At that juncture, one of the ways to scale up an RDBMS is using a Storage Area Network. 
+A SAN is basically a network of switches that connect servers with storage arrays such as disk arrays, tape libraries, 
+and optical jukeboxes. They are accessible to servers so that the devices appear to the operating system as locally 
+attached devices. In order for traffic from the storage network to not appear on a LAN (Local Area Network),
+the SAN has its own network of devices. These devices are generally not accessible to the LAN.
+
+
+With a topology similar to Ethernet switches, a SAN's physical layer comprises a network of either Fibre 
+Channel or Ethernet switches. Being a combination of hardware and software not only allows automatic backup of data, 
+it also allows monitoring of the storage and backup process. It’s composed of three layers:
+- Host layer
+- Fabric layer
+- Storage layer
+
+The host layer is composed of servers that allow access to the SAN. The operating system of the host uses Host Bus 
+Adapters, which are hardware cards used to communicate with the storage devices in the SAN.
+
+The fabric layer is composed of the networking devices used by the SAN to move data from the initiator to the target. 
+It’s comprised of a varied number of devices that include SAN routers, switches, bridges, gateway devices, and cables.
+
+A storage layer comprises all sorts of storage devices in a SAN. A multitude of hard disks and magnetic tape devices 
+may constitute the storage layer because they are joined through a RAID (redundant array of independent disks). RAID 
+is a disk system that contains multiple disk drives, 
+called an array, to provide greater performance, reliability, storage capacity, and lower cost.
+
+Nowadays the storage arrays are a lot more sophisticated and cost effective. 
+They come with features like data snapshots and have better availability and performance. They are capable of 
+data mirroring not just within the storage array but also across storage arrays.
+
+They also have the ability to allocate storage to a server outside the physical disk boundaries that support the storage.
+
+SAN brings along with it a multitude of benefits:
+
+1.	
+Increased performance (by reducing disk contention): While architecting we need to look for contenting objects 
+as well as figure out which objects are accessed frequently and which are not. It might make sense to colocate 
+frequently accessed objects with objects that are barely accessed together. However, we may choose to separate 
+contending objects on different disks. If needed, we may also consider separating them across SCSI adapters.
+
+ 
+2.	
+Improved availability: Typically, the database gets improved availability by using RAID 1 or RAID 5, which provides 
+redundancy in return. However, allocation of storage for each server can be a tedious task and overestimating 
+as well as underestimating storage needs are a common problem. SAN comes in handy to overcome the issues of capacity 
+and availability.
+
+ 
+3.	
+Backups: Unlike traditional backups that need to be small backups in order to reduce restore times, SANs 
+could be counted upon to have faster backups. SANs are capable of continuously capturing database snapshots. 
+They do it smartly by not copying actual data but duplicating pointers to original data.
+
+ 
+4.	
+Database updates: SANs can help reduce risks while updating databases. Depending on the SAN configuration, 
+the storage arrays can help quickly clone the database. A read-only clone, after testing, could be converted to a 
+writeable clone. This method is far superior to restoration of the database and reduces the risks caused by upgrade, 
+outages, corruption of the data, etc.
+
+
+Most major databases support replication and, if needed, we can also use agents that are capable of replicating not just a major RDBMS but also replicating data among different kinds of RDBMSs. For example, we can use an agent that will replicate data between SQL Server, Oracle, Postgres, and MySQL. Different kinds of replications are the following:
+1.	
+Transactional replication : This is based on transactional consistency. That means even with multiple servers (with one publisher and multiple subscribers), the system would continue to behave the same way as it would with one RDBMS server. As we all know that an RDBMS is a transactional data base that upholds ACID guarantees, transactional consistency means that these servers would do the same.
+
+Transactional replication is used in the following circumstances:
+1.	
+When we want the changes to be propagated from the publisher to the subscriber as they occur in real time . This is usually the case in applications that require latency between the publisher and the subscribers.
+
+ 
+2.	
+When changes to the data are very frequent.
+
+ 
+3.	
+When the data is very critical and consistency of the data is more important than performance of the overall app.
+
+ 
+4.	
+When the application triggers certain functionality and needs to access intermediate states rather than just the net change to that particular row.
+ 
+ In this kind of replication, the publisher is invoked for all the writes and the subscribers are updated by the publisher in real time.
+
+One of the major disadvantages of this approach is performance. Imagine having one publisher and many different 
+subscribers. In that situation, it will be very hard to scale. In fact, after a certain number of subscribers 
+depending on the app load, it might not be a viable option. Imagine being an e-commerce company that does thousands 
+of transactions per second on a peak day like Thanksgiving. Even though it’s a good step toward adding redundancy and 
+data location and helps back up your data in real time, 
+in may not be the most suitable way to deal with applications that require tremendous scale.
+
+b).	
+Merge replication: In case of Merge replication , as the name suggests, the publishers as well as different subscribers 
+merge their data. Consider a situation where the publisher takes a snapshot of its data and shares it with the subscribers initially. Once that is done the subscribers may go offline, update their data, go back online and not only receive but also merge their changes with the current publishers and subscribers.
+
+Merge replication is used in the following cases:
+1.	
+When the application cares about the net change rather than incremental state changes.
+
+ 
+2.	
+When the application cares about availability and performance more than consistency of the data. The data will eventually be consistent, but that may mean a certain read from a subscriber that hasn’t been updated may not have the most current copy of the data.
+
+Merge replication has some disadvantages too. One of the major disadvantages is making sure that there are no conflicts during merging and, if there are, resolving them efficiently and accurately. Another big disadvantage is the presence of inconsistent data in real time. So even though it makes sense for a lot of applications, applications requiring real-time consistency are not suitable for merge replication.
+
+
+
+Snapshot replication: Both merge and transactional replication use snapshot replication for initial data, which simply means taking a snapshot from the publisher initially and copying it over to the subscriber. Later, the changes are propagated according to the type of replication. 
+
+However, we still haven’t fixed the problem of scaling beyond the capacity of an individual server. Beyond a certain limit, no increase in hardware will help increase the performance much. The disk I/O won’t be able to keep up with the increase in CPU and eventually get to a point that we will need to scale beyond that one database. Keep in mind these are just replicas and will have the same set of data. This is not the same as scaling out web servers. When we scaled out web servers it was very clear that they would service similar but different requests. In this case, that is simply being replicated to all the servers.
+
+
+Using transactional consistency: One is that you can make the No-Sql guarantee transactional consistent
+
+websockets on the API and observables on the UI to make sure the value is always updated. 
+This will provide a very similar experience.
+
+Transactional data in RDBMS:
+---------------------------
+When she selects the Add to Cart option we can now add the data to a relational database. Why now? 
+Simply because order-related data is very important for any business. This is data we cannot afford to lose.
+And everything from adding to the cart all the way to adding customer information as well as payment 
+and shipping information needs to be in the relational database. 

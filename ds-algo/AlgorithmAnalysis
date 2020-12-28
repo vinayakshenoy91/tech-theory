@@ -1,0 +1,14 @@
+Best Case Analysis #
+In the best case analysis, we consider the specific input that results in the execution of the fewest possible primitive operations.
+This gives us a lower bound on the execution time of that algorithm for a given input size.
+
+Worst-Case Analysis #
+In the worst-case analysis, we consider the specific input that results in the execution of the maximum possible primitive operations. 
+This gives us an upper bound on the execution time of that algorithm for a given input size.
+
+Average Case Analysis #
+In the average case analysis, we try to determine the average number of primitive operations executed for all possible inputs 
+of a given size. This is not as easy as it may sound to the uninitiated. In order to compute the average-case running time of 
+an algorithm, we must know the relative frequencies of all possible inputs of a given size. We compute the weighted average of 
+the number of primitive operations executed for each input. But how can we accurately predict the distribution of inputs? 
+If the algorithm encounters a different distribution of inputs in the field, our analysis is useless.

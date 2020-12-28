@@ -1,0 +1,165 @@
+Different kinds of caches are listed below.
+1.	
+Query cache
+
+ 
+2.	
+Object cache
+
+ 
+3.	
+Session cache
+
+ 
+4.	
+API cache
+
+ 
+5.	
+Page cache
+
+ 
+Query cache , as discussed earlier, is a common technique of caching the query results. As we know, databases are persisted on the disk. Caching some queries in the RAM of the database server makes the retrieval faster. The application can also query the database and choose to cache the query results on the application server. This would mean using the memory of the API or the application server to store these results.
+
+Object cache is mainly a cache for application objects that are stored in memory. The retrieval is faster that a cached query. If there is a clear separation of concerns in the application architecture, for example, having an API that has a business logic layer, data access layer and the caching layer, it makes more sense to cache objects than a query sometimes. In case of a query we may retrieve data and then manipulate the data before we create what is known as a data transfer object (or DTO). It’s not the queried columns but usually a subset of it that makes it to the DTO and then is consumed by the User Interface. If we cache the query, we will still need to manipulate the objects before we have the final object. However, caching exactly the object that is needed by the UI can speed up retrieval.
+
+Session cache is when a user’s session information is stored. A second-level cache engine is a very good place to store a user’s session data. Making a call to the database on every request increases database load, reduces performance, and eventually, reduces the quality of the user experience. If it’s stored in a cache the retrieval is faster. For scalability purposes it’s a great thing to introduce as now we have reduced not just the additional data that gets added to the database but also the number of calls to the database. Why cache the user session? As we all know HTTP is stateless, but we need the state to improve the user experience. So, we use the session with a configurable timeout to make sure that the user has a seamless experience. Session information is stored in order to make sure that the user is identified and served correctly by the system regardless of the actual server serving the request behind the scenes.
+
+API cache is when we cache responses at the API level. GET requests can be cached but POST, PUT, and DELETE cannot be cached. It might be valuable to cache resources that don’t change that often. Anything from text, pdf, images, and even videos can be cached at the API level. There are times when for reasons, especially security, that some companies prohibit the use of GET. In such cases, the retrieval of resources is also done via POST, which cannot be cached unfortunately. API cache is usually implemented using a gateway cache or a reverse proxy. In order to invalidate the cache, there is a purge request to the proxy that notifies it to remove the resource. Note: The proxy must be configured to handle this method and actually implement the logic to remove and update the actual resource in question.
+
+Page Cache is when the entire page could be cached and served as if there is no change. A good use case of something like that would be a documentation website like Microsoft MSDN. It has documentation for a lot of frameworks as well as technologies. Very rarely the documentation would change. So, it makes perfect sense to cache the entire page. It’s mostly suited for a write-once, read-frequently kind of a paradigm. If the page is write-heavy or prone to updates quite frequently, this might not be a great approach.
+
+
+
+
+What to cache?
+---------------
+Reference Data happens to be heavy on reads and with almost little or zero updates to it once it’s part of the system of record. It’s also data that allows concurrent access for the most part. Good examples of this kind of data are product descriptions, static content like blog posts, questions in a survey, and similar data.
+
+Activity Data happens to be both read and write data. However, this data is the result of user activity for the most part and is specific to the user. Some examples of activity data are shopping cart content, comments added by the users, reviews made by the user, and even responses to questions or surveys.
+
+Resource Data happens to be both read and write data, but unlike activity data, this data is shared between different users. One of the good examples of resource data could be the number of units in stock. Another good example is the final rating for a product based on data from multiple users.
+
+
+
+CACHING GUIDELINES:
+-------------------
+1.	
+Key is the key: When caching data, it’s simply a bunch of key-value pairs. For a second-level cache like Memcached, which is super fast and incredibly scalable, it accepts data that is a bunch of string key-value pairs. For something more involved like Redis, it supports a lot of other data structures including hashes, lists, sets, sorted sets, etc. When retrieving data, it’s advisable to use the minimal but complete set of unique identifiers we need to retrieve that data. The reason it needs to be minimal is because keys consume space in the cache, and if we don’t craft them smartly it will lead to reduced performance over time.
+
+2.	
+Caching the right data: This could be understood better by the use of a real-world example. For an e-commerce website, we may have a service that provides the recommendations for a particular user. Recommendations might be further divided based on a particular category, for example, electronics, books, videos, etc. This could be further divided into subcategories like laptops, tablets, and phones with the Electronics category. For the first time when the user makes a call, we might get the generic user preferences and cache them. Let’s call it UP1 which stands for User Preferences for user No. 1. Once he selects his category (Electronics), we may be able to retrieve U1-Electronics preferences and now cache them. We can now choose to cache UP1 and U1-Electronics separately as well as merge them together in a separate category called UP1:: U1-Electronics.
+
+3.	
+Categorize the data appropriately: First and foremost, it’s very important to distinguish and categorize data that will be cached and not cached. Often what’s overlooked is data that must never be cached. This can vary per business. Resources that are critical, change frequently, and are considered data of utmost importance usually don’t make a good candidate to be cached. For example, account balances in a bank should not be cached. The customer can make a decision based on a cached but stale version of the data, and that could result in a not-so- great customer experience. Second, it’s important to categorize the data as reference data, activity data, and resource data and come up with a customized policy on how to handle this. Invalidating the cache is extremely important and technologies like Redis provide a good publisher-subscriber model that can be used to refresh the caches relatively quickly. There are times when additional application logic is written to be more proactive in looking for changes between the system of record and the cache. This doesn’t mean we need to retrieve the entire table. It could be something as simple as querying for a timestamp like LastUpdatedDateTime and accordingly flushing the cache.
+
+4.	
+Fall back to the system of record:
+
+5.	
+Be careful with the type of data stored in the cache: The general guidelines are not to store important data in the system of record and refresh the cache from it. However, there are times when it might make sense to add some data in the cache temporarily, especially data that might not need to be stored in the database permanently but might make sense for some user interaction temporarily. For example, temporary settings based on the session information of an authenticated but not authorized user, could be directly stored in the cache. Since, the data is linked to an anonymous user for whom there is no actual record in the database, the temporary settings could be written into the cache and removed automatically after some time. That said, data that is important, costly to reproduce, has legal ramifications if lost, as well as needed for the accuracy of the business transactions should be first saved in the system of record and then in the cache.
+
+
+6.	
+Cache the smallest objects: The example in point No. 1 shows that we started with smaller settings and then clubbed them together. Whenever we need data from the cache we should be smart about how to retrieve it in a way that we get the least amount of data needed for our use. This improves the overall performance of the application. Even though caches are fast reducing the number of round trips to the cache, a cluster will significantly improve the performance of the application.
+
+7.	
+Do not alter data coherency to reduce the data size: Caching the smallest available objects is a good idea. However, this doesn’t mean breaking an object down to multiple small ones and then reconstructing it on the fly. There are some challenges with that approach. The actual process of combining various small objects might be flawed. Sometimes, it could be more expensive in terms of performance. One of the common examples to compare Memcached vs. Redis performance is regarding strings. Memcached doesn’t natively support different data structures like Redis does. It stores everything as a string. The problem with that is that in the real world we may need to store an entire data structure in cache. Even though Memcached may be mostly faster than Redis on retrieving the same strings as it is, it may actually be slower in circumstances where Redis might be able to retrieve the entire object as it is, compared to Memcached where we might have to run a function on the fly to convert it to the format we need it in.
+
+
+CACHED ITEM REMOVAL
+Deleting an item from a cache is as important as adding an item to a cache. There are three different ways an object can be removed from the cache.
+1.	
+Expiration
+
+ 
+2.	
+Explicit removal
+
+ 
+3.	
+Eviction
+
+ 
+Expiration is configurable at different levels. We can provide expiration time frames at the cache cluster level. We can also choose to enforce expiration time frames per resource. So, for example, any time an item is added to the cache it can have an expiration period associated with it. Every time the item is updated it will restart the expiration period.
+
+Explicit removal is when we explicitly remove an item from the cache. This happens when the item has been changed in the system of record and we need to remove the item and add the latest version of that item in our caching engine.
+
+Eviction is when an object (mostly the least recently used object) gets removed due to lack of space. This could be a situation where we may lose objects that may not have actually expired. With second-level caches being automatically scalable on commodity-level hardware, these kinds of situations are rare but may still occur depending on the architecture and the amount of data in the cache. However, this is definitely a challenge with write-aside cache strategy or a caching strategy that calls for using a data store nearby for quick access. For example, caching in memory on a web server would be an example of write-aside cache and anytime the cache is full, it will start evicting objects that may not be due for expiration.
+
+
+While working with clients on critical projects we have policies that include, but are not limited to, the following:
+1.	
+Data protection especially for important cached data like user sessions, shopping cart, mainframe data.
+
+ 
+2.	
+Persisting cached data very frequently without losing performance benefits.
+
+ 
+3.	
+Publisher-subscriber model to keep the data as fresh as possible.
+
+ 
+4.	
+High availability and replication while keeping accurate data in the replicated caches.
+
+ 
+5.	
+Prevention from node failures and strategies to combat it.
+
+ 
+6.	
+Alternate strategies to identify, resolve, as well withstand data loss without degradation of user experience.
+
+ 
+7.	
+Reducing costs of high availability.
+
+ 
+8.	
+Graceful degradation while planned upgrades and patches to the operating system as well as the caching engine and the system.
+
+
+it’s important for us to identify which out of these are consistent across the board. For example, the 
+return policy could be easily the same across the entire system simply because as a business it makes sense to do that. 
+Things that are consistent throughout the system need to live in the second-level cache and could be cached on the 
+browser. One thing most often overlooked is the aspect of cache failing. Of course, 
+in that case we should be pointing to the source of truth. In this case, that could be a document database.
+
+
+Cache:
+-----
+Client side cache:
+- Browser cache
+- Forward proxy 
+
+Server side cache:
+- In reverse proxy
+
+Cache invalidation:
+
+- Keeping a cache expiry -> TTL
+
+Cache update happens:
+- Fetch from DB and update in cache
+- App will update the value
+
+Eviction: LRU, FIFO, LFU[Number of times it was accessed]
+
+
+Cache patterns:
+----------------
+
+1) Cache aside patterns -> cache sits besides DB. Advtg: cache goes down, system will still work. Heavy read worloads.
+When update comes, invalidate cache and update to DB.
+2) Read through pattern -> Cache sits between app and DB. Read heavy workloads. Prewarm the cache.
+3) Write through pattern -> Cache will update the DB and fetch from DB. (Mix of read and write heavy)
+4) Write around pattern -> Same as write through cache, but here you read from cache but app updates to DB.
+Use for write heavy load.
+5) Write back pattern -> Writes in bulk are flushed  from cache to DB.
+Use for write heavy loads
+
+- Data that is cached must not change often and must be accessed often
+- Prepopulate the cache.
+- put expiration policies

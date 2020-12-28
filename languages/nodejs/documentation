@@ -1,0 +1,380 @@
+- swagger-node-express
+
+
+Introduction to ApiDoc.js;
+---------------------------
+In this chapter, we’ll learn how to write and generate API documentation; after all, it is a good practice to provide documentation about how the client applications can connect to consume the data from an API. The best part is that we are going to use a very simple tool and all the documentation of our application will be built using the code’s comments.
+
+Our project will use ApiDoc.js (see Figure 10-1), which is a Node.js module to generate elegant documentation for APIs.
+
+A435096_1_En_10_Fig1_HTML.jpg
+Figure 10-1. ApiDoc.js home page
+This module is a command-line interface (CLI) and it is highly advisable to install it as a global module (using the command npm install –g). However, in our case, we can use it as local module and we’ll create an npm alias command to use every time we start the API server. Therefore, its installation is going to be as a local module, similar to the others. Install it using this command.
+
+1   npm install apidoc@0.15.1 --save-dev
+First, let’s create the command npm run apidoc to execute internally the command apidoc -i routes/ -o public/apidoc. Then, modify the attribute scripts.start so it can generate the API documentation before starting the API server. We also include the attribute apidoc.name to set a title and apidoc.template.forceLanguage to set the default language to be used in the API documentation.
+
+Open and edit the package.json, making these changes.
+
+ 1   {
+ 2     "name": "ntask-api",
+ 3     "version": "1.0.0",
+ 4     "description": "Task list API",
+ 5     "main": "index.js",
+ 6     "scripts": {
+ 7       "start": "npm run apidoc && babel-node index.js",
+ 8       "apidoc": "apidoc -i routes/ -o public/apidoc",
+ 9       "test": "NODE_ENV=test mocha test/**/*.js"
+10     },
+11     "apidoc": {
+12       "name": "Node Task API - Documentation",
+13       "template": {
+14         "forceLanguage": "en"
+15       }
+16     },
+17     "author": "Caio Ribeiro Pereira",
+18     "dependencies": {
+19       "babel-cli": "^6.5.1",
+20       "babel-preset-es2015": "^6.5.0",
+21       "bcrypt": "^0.8.5",
+22       "body-parser": "^1.15.0",
+23       "consign": "^0.1.2",
+24       "express": "^4.13.4",
+25       "jwt-simple": "^0.4.1",
+26       "passport": "^0.3.2",
+27       "passport-jwt": "^2.0.0",
+28       "sequelize": "^3.19.2",
+29       "sqlite3": "^3.1.1"
+30     },
+31     "devDependencies": {
+32       "apidoc": "^0.15.1",
+33       "babel-register": "^6.5.2",
+34       "chai": "^3.5.0",
+35       "mocha": "^2.4.5",
+36       "supertest": "^1.2.0"
+37     }
+38   }
+Now, every time you run the command npm start, if you want to generate new documentation without initiating the server, you can just run the npm run apidoc command. Both of the commands are going to search all the existing comments in the routes directory to generate new API documentation, which will be published in the public/apidoc folder, and then start the server.
+
+To be able to view the documentation page, first we have to enable our API server static file from the folder public. To enable it, you have to import the express module to use the middleware app.use(express.static("public")) at the end of the libs/middlewares.js file, and don’t forget to create the public empty folder. The code should look like this.
+
+ 1   import bodyParser from "body-parser";
+ 2   import express from "express";
+ 3
+ 4   module.exports = app => {
+ 5     app.set("port", 3000);
+ 6     app.set("json spaces", 4);
+ 7     app.use(bodyParser.json());
+ 8     app.use(app.auth.initialize());
+ 9     app.use((req, res, next) => {
+10       delete req.body.id;
+11       next();
+12     });
+13     app.use(express.static("public"));
+14   };
+To validate if everything is working correctly, let’s start documenting the GET / endpoint. For this endpoint, we’ll use the following comments.
+
+@api: Informs the type, the address, and the title of the endpoint.
+
+@apiGroup: Informs the endpoint group name.
+
+@apiSuccess: Describes the fields and their data types for a successful response.
+
+@apiSuccessExample: Shows an output sample of a successful response.
+
+To document this endpoint, edit the file routes/index.js using this code.
+
+ 1   module.exports = app => {
+ 2     /**          
+ 3      * @api {get} / API Status          
+ 4      * @apiGroup Status          
+ 5      * @apiSuccess {String} status API Status' message          
+ 6      * @apiSuccessExample {json} Success          
+ 7      * HTTP/1.1 200 OK          
+ 8      * {"status": "NTask API"}          
+ 9      */          
+10     app.get("/", (req, res) => {
+11       res.json({status: "NTask API"});
+12     });
+13   };
+To test these changes, restart the server, then open the browser and go to http://localhost:3000/apidoc. If no errors occur, you will see a beautiful documentation page about your API, as shown in Figure 10-2.
+
+A435096_1_En_10_Fig2_HTML.jpg
+Figure 10-2. API documentation page
+Documenting Token Generation
+Now, we are going to explore the ApiDoc’s features deeper, documenting all of the API’s routes.
+
+To start, let’s document the route POST /token. This has some extra details to be documented. To do this, we’ll use not only the items from the last section, but some new ones as well.
+
+@apiParam: Describes an input parameter, which might or might not be required to be submitted in a request.
+
+@apiParamExample: Shows a sample of an input parameter; in our case, we will display a JSON input format.
+
+@apiErrorExample: Shows a sample of some errors that could be generated by the API if something goes wrong.
+
+To understand in practice the usage of these new items, let’s edit routes/token.js, following the comments in this code.
+
+ 1   import jwt from "jwt-simple";
+ 2
+ 3   module.exports = app => {
+ 4     const cfg = app.libs.config;
+ 5     const Users = app.db.models.Users;
+ 6
+ 7     /**          
+ 8      * @api {post} /token Authentication Token          
+ 9      * @apiGroup Credentials          
+10      * @apiParam {String} email User email          
+11      * @apiParam {String} password User password          
+12      * @apiParamExample {json} Input          
+13      *   {          
+14      *     "email": "john@connor.net",          
+15      *     "password": "123456"          
+16      *   }          
+17      * @apiSuccess {String} token Token of authenticated user          
+18      * @apiSuccessExample {json} Success          
+19      *    HTTP/1.1 200 OK          
+20      *   {"token": "xyz.abc.123.hgf"}          
+21      * @apiErrorExample {json} Authentication error          
+22      *    HTTP/1.1 401 Unauthorized          
+23      */          
+24    app.post("/token", (req, res) => {
+25      // The code here was explained in Chapter 7.          
+26    });
+27   };
+Documenting User Resource
+In this section and in the next one, we focus on documenting the main resources of our API. As the majority of the routes of these resources need an authenticated token—which is sent in the request’s header—we are going to use the following items to describe more about this header:
+
+@apiHeader: Describes the name and data type of a header.
+
+@apiHeaderExample: Shows a sample of the header to be used in the request.
+
+Open routes/users.js and let’s document it. First, we’ll document the GET /user endpoint.
+
+ 1   module.exports = app => {
+ 2   const Users = app.db.models.Users;
+ 3
+ 4   app.route("/user")
+ 5     .all(app.auth.authenticate())
+ 6     /**          
+ 7      * @api {get} /user Return the authenticated user's data          
+ 8      * @apiGroup User          
+ 9      * @apiHeader {String} Authorization Token of authenticated user          
+10      * @apiHeaderExample {json} Header          
+11      *    {"Authorization": "JWT xyz.abc.123.hgf"}          
+12      * @apiSuccess {Number} id User id          
+13      * @apiSuccess {String} name User name          
+14      * @apiSuccess {String} email User email          
+15      * @apiSuccessExample {json} Success          
+16      *     HTTP/1.1 200 OK          
+17      *     {          
+18      *       "id": 1,          
+19      *       "name": "John Connor",          
+20      *       "email": "john@connor.net"          
+21      *     }          
+22      * @                              apiErrorExample                                                     {json} Find error          
+23      *     HTTP/1.1 412 Precondition Failed          
+24      */          
+25     .get((req, res) => {
+26       // GET /user logic...          
+27     })
+Then, let’s document the route DELETE /user.
+
+ 1   /**          
+ 2    * @api {delete} /user Deletes an authenticated user          
+ 3    * @apiGroup User          
+ 4    * @apiHeader {String} Authorization Token of authenticated user          
+ 5    * @apiHeaderExample {json} Header          
+ 6    * {"Authorization": "JWT xyz.abc.123.hgf"}          
+ 7    * @apiSuccessExample {json} Success          
+ 8    * HTTP/1.1 204 No Content          
+ 9    * @apiErrorExample {json} Delete error          
+10    * HTTP/1.1 412 Precondition Failed          
+11    */          
+12   .delete((req, res) => {
+13   // DELETE /user logic...          
+14   })
+To finish this endpoint, we need to document its last route, the POST /user. Now we’ll use several items to describe the input and output fields of this route.
+
+ 1     /**          
+ 2      * @api {post} /users Register a new user          
+ 3      * @apiGroup User          
+ 4      * @apiParam {String} name User name          
+ 5      * @apiParam {String} email User email          
+ 6      * @apiParam {String} password User password          
+ 7      * @apiParamExample {json} Input          
+ 8      *    {          
+ 9      *      "name": "John Connor",          
+10      *      "email": "john@connor.net",          
+11      *      "password": "123456"          
+12      *    }          
+13      * @apiSuccess {Number} id User id          
+14      * @apiSuccess {String} name User name          
+15      * @apiSuccess {String} email User email          
+16      * @apiSuccess {String} password User encrypted password          
+17      * @apiSuccess {Date} updated_at Update's date          
+18      * @apiSuccess {Date} created_at Register's date          
+19      * @apiSuccessExample {json} Success          
+20      *    HTTP/1.1 200 OK          
+21      *    {          
+22      *      "id": 1,          
+23      *      "name": "John Connor",          
+24      *      "                              email                                                                ": "john@connor.net",          
+25      *      "password": "$2a$10$SK1B1",          
+26      *      "updated_at": "2016-02-10T15:20:11.700Z",          
+27      *      "created_at": "2016-02-10T15:29:11.700Z",          
+28      *    }          
+29      * @apiErrorExample {json} Register error          
+30      *    HTTP/1.1 412 Precondition Failed          
+31      */          
+32     app.post("/users", (req, res) => {
+33       // POST /users logic...          
+34     });
+35   };
+Documenting Tasks Resource
+Continuing our API documentation, now we need to finish the tasks routes documentation. Let’s edit the routes/tasks.js file, initially describing the GET /tasks route.
+
+ 1   module.exports = app => {
+ 2     const Tasks = app.db.models.Tasks;
+ 3  
+ 4   app.route("/tasks")
+ 5     .all(app.auth.authenticate())
+ 6     /**          
+ 7      * @api {get} /tasks List the user's tasks          
+ 8      * @apiGroup Tasks          
+ 9      * @apiHeader {String} Authorization Token of authenticated user          
+10      * @apiHeaderExample {json} Header          
+11      *    {"Authorization": "JWT xyz.abc.123.hgf"}          
+12      * @apiSuccess {Object[]} tasks Task list          
+13      * @apiSuccess {Number} tasks.id Task id          
+14      * @apiSuccess {String} tasks.title Task title          
+15      * @apiSuccess {Boolean} tasks.done Task is done?          
+16      * @apiSuccess {Date} tasks.updated_at Update's date          
+17      * @apiSuccess {Date} tasks.created_at Register's date          
+18      * @apiSuccess {Number} tasks.user_id Id do usuário          
+19      * @apiSuccessExample {json} Success          
+20      *    HTTP/1.1 200 OK          
+21      *    [{          
+22      *      "                              id                                                                ": 1,          
+23      *      "title": "Study",          
+24      *      "done": false          
+25      *      "updated_at": "2016-02-10T15:46:51.778Z",          
+26      *      "created_at": "2016-02-10T15:46:51.778Z",          
+27      *      "user_id": 1          
+28      *    }]          
+29      * @apiErrorExample {json} List error          
+30      *    HTTP/1.1 412 Precondition Failed          
+31      */          
+32      .get((req, res) => {
+33       // GET /tasks logic...          
+34      })
+Then, let’s document the route POST /tasks.
+
+ 1   /**          
+ 2    * @api {post} /tasks Register a new task          
+ 3    * @apiGroup Tasks          
+ 4    * @apiHeader {String} Authorization Token of authenticated user          
+ 5    * @apiHeaderExample {json} Header          
+ 6    *    {"Authorization": "JWT xyz.abc.123.hgf"}          
+ 7    * @apiParam {String} title Task title          
+ 8    * @apiParamExample {json} Input          
+ 9    *    {"title": "Study"}          
+10    * @apiSuccess {Number} id Task id          
+11    * @apiSuccess {String} title Task title          
+12    * @apiSuccess {Boolean} done=false Task is done?          
+13    * @apiSuccess {Date} updated_at Update's date          
+14    * @apiSuccess {Date} created_at Register's date          
+15    * @apiSuccess {Number} user_id User id          
+16    * @apiSuccessExample {json} Success          
+17    *    HTTP/1.1 200 OK          
+18    *    {          
+19    *      "id": 1,          
+20    *      "title": "Study",          
+21    *      "done": false,          
+22    *      "updated_at": "2016-02-10T15:46:51.778Z",          
+23    *      "created_at": "2016-02-10T15:46:51.778Z",          
+24    *      "user_id": 1          
+25    *    }          
+26    * @apiErrorExample {json} Register error          
+27    *    HTTP/1.1 412 Precondition Failed          
+28    */          
+29    .post((req, res) => {
+30    // POST /tasks logic...          
+31    })
+Then, we are going to document the route GET /tasks/:id with the following comments.
+
+ 1     /**          
+ 2      * @api {get} /tasks/:id Get a task          
+ 3      * @apiGroup Tasks          
+ 4      * @apiHeader {String} Authorization Token of authenticated user          
+ 5      * @apiHeaderExample {json} Header          
+ 6      *    {"Authorization": "JWT xyz.abc.123.hgf"}          
+ 7      * @apiParam {id} id Task id          
+ 8      * @apiSuccess {Number} id Task id          
+ 9      * @apiSuccess {String} title Task title          
+10      * @apiSuccess {Boolean} done Task is done?          
+11      * @apiSuccess {Date} updated_at Update's date          
+12      * @apiSuccess {Date} created_at Register's date          
+13      * @apiSuccess {Number} user_id User id          
+14      * @apiSuccessExample {json} Success          
+15      *    HTTP/1.1 200 OK          
+16      *    {          
+17      *      "id": 1,          
+18      *      "title": "Study",          
+19      *      "done": false          
+20      *      "updated_at": "2016-02-10T15:46:51.778Z",          
+21      *      "created_at": "2016-02-10T15:46:51.778Z",          
+22      *      "user_id": 1          
+23      *    }          
+24      * @apiErrorExample {json} Task not found error          
+25      *    HTTP/1.1 404 Not Found          
+26      * @apiErrorExample {json} Find error          
+27      *    HTTP/1.1 412 Precondition Failed          
+28      */          
+29      .get((req, res) => {
+30       // GET /tasks/:id logic...          
+31      })
+Next is PUT /tasks/:id.
+
+ 1     /**          
+ 2      * @api {put} /tasks/:id Update a task          
+ 3      * @apiGroup Tasks          
+ 4      * @apiHeader {String} Authorization Token of authenticated user          
+ 5      * @apiHeaderExample {json} Header          
+ 6      *    {"Authorization": "JWT xyz.abc.123.hgf"}          
+ 7      * @apiParam {id} id Task id          
+ 8      * @apiParam {String} title Task title          
+ 9      * @apiParam {Boolean} done Task is done?          
+10      * @apiParamExample {json} Input          
+11      *    {          
+12      *      "title": "Work",          
+13      *      "done": true          
+14      *    }          
+15      * @apiSuccessExample {json} Success          
+16      *    HTTP/1.1 204 No Content          
+17      * @apiErrorExample {json} Update error          
+18      *    HTTP/1.1 412 Precondition Failed          
+19      */          
+20     .put((req, res) => {
+21      // PUT /tasks/:id logic...          
+22     })
+Finally, let’s finish this chapter by documenting the route DELETE /tasks/:id.
+
+ 1     /**          
+ 2      * @api {delete} /tasks/:id Remove a task          
+ 3      * @apiGroup Tasks          
+ 4      * @apiHeader {String} Authorization Token of authenticated user          
+ 5      * @apiHeaderExample {json} Header          
+ 6      *    {"Authorization": "JWT xyz.abc.123.hgf"}          
+ 7      * @apiParam {id} id Task id          
+ 8      * @apiSuccessExample {json} Success          
+ 9      *    HTTP/1.1 204 No Content          
+10      * @apiErrorExample {json} Delete error          
+11      * HTTP/1.1 412 Precondition Failed          
+12      */          
+13      .delete((req, res) => {
+14       // DELETE /tasks/:id logic...          
+15      });
+16   };
+Let’s test our efforts. Just restart the server and then go to http://localhost:3000/apidoc.
+
+This time, we have a complete documentation page that describes step-by-step for a new developer how to create a client application to consume data from our API, as shown in Figure 10-3.

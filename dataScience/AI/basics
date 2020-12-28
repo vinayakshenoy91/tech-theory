@@ -55,3 +55,18 @@ Cross entropy loss
 - Top 3 accuracy
 - Precision and recall
 - Evaluate on test data
+
+Supervised learning:
+--------------------
+- you provide labelled Dataset
+Linear regresssion; Continuous data, demand forecasting
+Logistic: Clasification data
+- Always has one or multiple targets associated with it.
+- Here we are required to predict a value.
+
+
+Unsupervised:
+-------------
+- Clustering sort of algo
+- Customer segmentation
+- Does not have any target variable.

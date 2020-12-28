@@ -1,0 +1,130 @@
+Implement a simple RNN model
+------------------------------
+- Lets create an RNN composed of a layer of five recurrent neurons.
+using the tanh activation function and assume that the RNN runs over only two time steps 
+and taking input vectors of size 3 at each time step.
+
+- This network looks like a two layer feedforward neural network with two diff.
+  -> The same weights and bias terms are shared by both layers
+  -> We feed inputs at each layer  and we get outputs from eahc layer.
+
+TF:
+---
+
+import tensorflow as tf
+
+n_inputs = 3
+n_neurons = 5
+
+X0=tf.placeholder(tf.float32,[None,n_inputs])
+X1=tf.placeholder(tf.float32,[None,n_inputs])
+
+Wx = tf.Variable(tf.random_normal(shape=[n_inputs,n_neurons],dtype=tf.float32))
+Wy = tf.Variable(tf.random_normal(shape=[n_neurons,n_neurons],dtype=tf.float32))
+b= tf.Variable(tf.zeros([1,n_neurons],dtype=tf.float32))
+
+Y0=tf.tanh(tf.matmul(X0,Wx)+b)
+Y1 = tf.tanh(tf.matmul(Y0,Wy)+tf.matmul(X1,Wx)+b)
+
+init = tf.global_variables_initilizer()
+
+import numpy as np
+
+
+X0_batch = np.array([[0,1,2],[3,4,5],[6,7,8],[9,0,1]])
+X1_batch = np.array([[9,8,7],[0,0,0],[6,5,4],[3,2,1]])
+
+with tf.Session() as sess:
+    init.run()
+    Y0_val, Y1_val = sess.run([Y0,Y1], feed_dict={X0:X0_batch, X1:X1_batch})
+print(Y0_val)
+print(Y1_val)
+
+Static RNN:
+------------
+X0=tf.placeholder(tf.float32,[None,n_inputs])
+X1=tf.placeholder(tf.float32,[None,n_inputs])
+basic_cell = tf.contrib.rnn.BasicRNNCell(num_units=n_neurons) //Used to create copied of cell to build the unrolled RNN
+output_seqs, states = tf.contrib.rnn.static_rnn(basic_cell,[X0,X1], dtype=tf.float32)
+Y0,Y1=output_seqs
+
+-> python lsit containing the output tensors  fro each time step
+-> is a tensor containing the final states of the network
+
+X0_batch = np.array([[0,1,2],[3,4,5],[6,7,8],[9,0,1]])
+X1_batch = np.array([[9,8,7],[0,0,0],[6,5,4],[3,2,1]])
+
+with tf.Session() as sess:
+    init.run()
+    Y0_val, Y1_val = sess.run([Y0,Y1, states], feed_dict={X0:X0_batch, X1:X1_batch})
+print(Y0_val)
+print(Y1_val)
+
+
+- When we use basic cell , the final state is equal to the last output.
+
+
+Dynamic unrolling through time:
+-------------------------------
+- The dynamic_rnn() function uses a while_loop() operation to run over the cell the appropriarte number of times
+- We can set swap_memory = True, fi we wnat to swap the GPU's memory to CPU's
+- Memory during back propagation to avoid out of memory errors
+- It also accepts a single tensor
+- All inputs at every time  step (shape[None,n_steps,n_inputs])
+- It outputs a single tensor for all outputs at every time step
+  (shape[None, n_steps, n_neurons])
+- No need to stack , unstack or transpose.
+
+n_steps=2
+
+X=tf.placeholder(tf.float32,[None,n_steps, n_inputs])
+basic_cell = tf.contrib.rnn.BasicRNNCell(num_units=n_neurons) //Used to create copied of cell to build the unrolled RNN
+outputs, states = tf.nn.dynamic_rnn(basic_cell,X, dtype=tf.float32)
+
+-> python lsit containing the output tensors  fro each time step
+-> is a tensor containing the final states of the network
+
+X -> Get this from code git
+
+with tf.Session() as sess:
+    init.run()
+    Y0_val, Y1_val = sess.run([Y0,Y1, states], feed_dict={X0:X0_batch, X1:X1_batch})
+print(Y0_val)
+print(Y1_val)
+
+
+- During backpropagation, the while_loop() operation does the magic . 
+it stores the tensor values for each iteration durign the fwd pass.
+So it can use them to compute gradients during the reverse pass.
+
+Handling variable length input seq:
+-------------------------------------
+- seq_length = tf.placeholder(tf.int32,[None])
+outputs, states = tf.nn.dynamic_rnn(basic_cell,X, dtype=tf.float32, sequence_length=seq.length)
+
+
+Handling variable length output seq:
+-------------------------------------
+A special output called an end-of-seq toekn (EOS token) should be defined.
+
+
+Training an RNN:
+----------------
+To train an RNN, the trick is to unroll it through time and then simply use regular back propagation
+This strategy is called backpropagation though time(BPTT)
+
+- Just like regular back propagation, there is a first forward pass through the unrolled network, represented by dashed arrows.
+- Then the output seq is evaluated using a cost function C(Y(tmin),Y(tmin+1),...,Y(tmax)) where tmin and tmax are the first 
+and last output time steps, not counting the ignored outputs
+- Then the gradients of that cost function are propagated backwards through the unrolled network, represented by solid arrows.
+- Finally the model parameters  are updated using the gradients computed during BPTT
+- Note that the gradients flow backward through all the outputs used by the cost function, not just through the final output.
+- In back-propagation, we evaluate impact of W on the cost.
+- Since the sme param W and b are used at each time step, backpropagation will do the right thing and sum over all time steps.
+
+
+
+
+
+
+

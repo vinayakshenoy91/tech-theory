@@ -1,0 +1,60 @@
+In this section, we are going to set up our application to report and generate logs files about the user’s requests. 
+To do this, let’s use the module winston, which is useful in treating several kinds of logs.
+
+In our case, the log requests will be treated by the module morgan, which is a middleware for generating request logs in 
+the server. We also will get logs for any SQL command from the database to generate a full log in the API. First, install 
+the modules winston and morgan.
+
+1   npm install winston@2.1.1 morgan@1.6.1 --save
+
+import fs from "fs";
+ 2   import winston from "winston";
+ 3
+ 4   if (!fs.existsSync("logs")) {
+ 5     fs.mkdirSync("logs");
+ 6   }
+ 7
+ 8   module.exports = new winston.Logger({
+ 9     transports: [
+10       new winston.transports.File({
+11         level: "info",
+12         filename: "logs/app.log",
+13         maxsize: 1048576,
+14         maxFiles: 10,
+15         colorize: false
+16       })
+17     ]
+18   });
+
+
+To send these logs to our module logger, add the attribute stream as a callback function called write(message) and then send the variable message to our log function, logger.info(message). To understand this implementation better, edit the file libs/middlewares.js as the following code shows.
+
+ 1   import bodyParser from "body-parser";
+ 2   import express from "express";
+ 3   import morgan from "morgan";
+ 4   import cors from "cors";
+ 5   import logger from "./logger.js";
+ 6
+ 7   module.exports = app => {
+ 8     app.set("port", 3000);
+ 9     app.set("json spaces", 4);
+10     app.use(morgan("common", {
+11       stream: {
+12         write: (message) => {
+13           logger.info(message);
+14         }
+15       }
+16     }));
+17     app.use(cors({
+18       origin: ["http://localhost:3001"],
+19       methods: ["GET", "POST", "PUT", "DELETE"],
+20       allowedHeaders: ["Content-Type", "Authorization"]
+21     }));
+22     app.use(bodyParser.json());
+23     app.use(app.auth.initialize());
+24     app.use((req, res, next) => {
+25       delete req.body.id;
+26       next();
+27     });
+28     app.use(express.static("public"));
+29   };

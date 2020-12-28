@@ -1,0 +1,272 @@
+import numpy as np
+
+Creating a numpy array: //This creates a type of ndarray
+--------------------
+a= np.array([1,2,3])
+x=np.asarray([1,2,3])
+np.asarray(l, float)  #Converting normal list to numpy array , float will give floating point
+
+
+Create arrays of zeros , ones or all particular values or range:
+---------------------------------------------------------------
+A=np.ones((2,3))
+B=np.ones((3,2))
+np.zeros((3,4))
+np.zeros((2,3,4))// 3D array
+A=np.ones((2,3), dtype=np.int16) //Specify or change data type, np.float64
+
+//Array with specific value
+np.full((3,4),0.11)
+np.full((3,4),np.pi)
+
+//Shortcut o create array: 
+my_2d_arr = np.arange(20).reshape(2,3)
+
+//Identity matrix
+Identity matrix (array) is a square matrix with all its elements as zero 
+(0) except for the diagonal elements whose value is one (1). That is, all the main diagonal values are 1s (one).
+
+my_identity_array = np.identity(4, dtype=np.float64) //This is for 4x4 matrix
+
+//Sample data creation
+height=np.round(np.random.normal(1.75,0.2,5000),2)
+np.column_stack(height,weight)
+np.transpose() on np_aw //transpose
+
+Generate evenly distributed elements between two extremes and range values:
+--------------------------------------------------------------------------
+//Even distibutiobn between extremes
+np.linspace(0,5/3,6)
+
+//Array with range
+np.arange(10,30,5) // array(10,15,20,25)
+
+Populating matrix with random nos:
+-----------------------------------
+np.random.rand(2,3)
+np.empty((2,3)) //Create an arry awith random floating points
+
+Find Attributes of array:
+--------------------------
+x.shape
+print(x.dtype)
+(1) ndarray.ndim
+ndim represents the number of dimensions (axes) of the ndarray.
+(2) ndarray.shape
+shape is a tuple of integers representing the size of the ndarray in each dimension.
+(3) ndarray.size
+size is the total number of elements in the ndarray. 
+(4) ndarray.dtype
+dtype tells the data type of the elements of a NumPy array.
+(5) ndarray.itemsize
+itemsize returns the size (in bytes) of each element of a NumPy array.
+
+Number if bytes:
+----------------
+c.itemsize
+
+Change dimensions of a array:
+-----------------------------
+1) reshape() function is used to create a new array of the same size (as the original array) but of different desired dimensions.
+reshape() function will create an array with the same number of elements as the original array, i.e. of the same size as that of the original array. If you want to convert the original array to a bigger array, reshape() can’t add more elements(than available in the original array) to give you a bigger array.
+There may be two cases, as mentioned below when we are reshaping the array:
+
+(1) We already know the desired number dimensions (say rows and columns) of the reshaped array.
+
+(2) We know the desired number of columns, but don't know the desired number of rows of the reshaped array.[my_new_arr = my_arr.reshape(-1,3)]
+
+You can't use reshape() function, when the size of the original array is different from your desired reshaped array. 
+If you try to reshape(), it will throw an error.
+
+
+nparr.reshape(2,3)
+
+
+
+2)ndarray.resize(new_shape, refcheck=True) //resize() function is used to create a new array of different sizes and dimensions.
+//resize() can create an array of larger size than the original array
+
+ndarray.resize(new_shape, refcheck=True)
+With the above resize() function, enlarging an array to a larger size 
+will retain the existing values of the original array, but missing entries/values will be filled with zeros.
+
+import numpy as np
+my_arr = np.array([[1,2,3,4],[5,6,7,8]])
+my_arr.resize((3,4))
+print(my_arr)
+
+
+Select sub arrays:
+-------------------
+print(a[2::2]) //Starting at index 2 and select element with gap of 2
+print(a[::-1]) //starting from end with diff of 1 , selects alternate one
+
+x[0:2,0:2,0:2]
+
+//Update subarrays: x[1:3]=-1
+
+
+
+Handling text files:
+--------------------
+import numpy as np
+name_arr, address_arr, zipcode_arr = np.loadtxt('my_file.txt', skiprows=2, unpack=True)
+
+- skiprows=2 means, skip the first two rows of the my_file.txt file while loading the data.
+- unpack=True means, unpack the columns of the dataset being loaded and return the data of each column separately in separate arrays ( name column data in name_arr array, address column data in address_arr array, zipcode column data in zipcode_arr array).
+- unpack=False means, return only a single array as output from the loadtxt() function.
+
+Array operations:
+------------------
+1) Reverse and array:
+my_orig_arr = np.array([1, 15, 3, 9, 26, 7, 89, 12])
+my_rev_arr = my_orig_arr[ : : -1]
+print(my_rev_arr)
+
+2) Replacing array with certain item:
+
+my_orig_arr2 = np.array([2, 9, 17, 13, 1, 4, 20, 57])
+my_orig_arr2[2 : 5] = -6
+print(my_orig_arr2)
+
+If you don't want origin al array to get affected use => apple_slice_new = apple[2 : 5].copy()
+
+3) Filter out rows in a matrix:
+array( [ [ 0, 1, 2, 3], 
+         [ 4, 5, 6, 7],
+         [ 8, 9, 10, 11] ] )
+
+rows_wanted = np.array( [True, False, True] )
+
+4) Converting 2D,3D array into 1D array:
+my_1d_arr = my_2d_arr.ravel()
+
+
+5) Computing dot product:
+- np.dot(a,b)
+- np.dot(a,b)/np.linalg.norm(b) #Calculating projection , used while multiplying matrix.
+Normal multiplication -> M = A * B 
+
+
+Statistical ops:
+----------------
+nparr.mean(np_city[:,0])
+nparr.median(np_city[:,0])
+nparr.corrcoef(np_city[:,0],np_city[:,1])
+nparr.std(np_city[:,0])
+nparr.sum()
+nparr.sort()
+X.var()) //Variance
+X.min()
+X.max()
+Ex: A.sum(axis=0) //Column sum
+X.sum(axis=0) //sum of two matrix => Sum along row
+X.sum(axis=1)//Sum along column
+X.prod()
+z=x.T // tranpose
+nparr.floor()
+
+Numpy - Broadcasting in NumPy Arrays:
+----------------------------------------
+In any NumPy mathematical operation, if the shape of any of the participating arrays is not sufficient, 
+broadcasting rules come into play.
+
+Broadcasting, generally, tries to adjust the shape of one or both of the arrays to bring them to required matching shape, 
+by copying the existing elements required number of times, so that the mathematical operation could be performed between 
+the two NumPy arrays.
+
+There are two broadcasting rules:
+
+First Rule: If the arrays do not have the same rank, then a 1 will be prepended to the smaller ranking arrays until their 
+ranks match.
+
+Q = np.array( [ [ [1, 3 ] ] ] )
+P = np.array( [ 5 ] )
+
+S = Q + P
+
+print(S)
+This will print
+
+[ [ [6, 8] ] ]
+
+Second Rule: Arrays with a 1 along with a particular dimension act as if they had the size of the array with the largest 
+shape along that dimension. The value of the array element is repeated along that dimension.
+
+
+
+x=np.eye(4,5) #diagonal matrix will have 1
+
+np.inner(u,v)# u and v are two list. It multiplies each column and adds all.
+
+np.outer(u,v)
+
+
+//Sample code for completely loading a text file from csv:
+------------------------------------------------------------
+import numpy as np
+import os
+
+import pandas as pd
+# defining housing.csv file path
+HOUSING_PATH = '../ml/machine_learning/datasets/housing/'
+# reading the large housing.csv file using pandas
+housing_raw = pd.read_csv(os.path.join(HOUSING_PATH, "housing.csv"))
+# extracting only a few rows (5 rows) of data from the pandas dataframe 'my_df'
+my_df = housing_raw.iloc[ : 5]
+# creating a new small csv file - 'housing_short.csv' - containing the above extracted 5 rows of data
+my_df.to_csv('housing_short.csv', index=False)
+
+FILE = 'housing_short.csv'
+
+def load_housing_data(file = FILE ):
+    return np.loadtxt(file, dtype={'names': ('longitude','latitude','housing_median_age','total_rooms','total_bedrooms','population','households','median_income','median_house_value','ocean_proximity'),'formats': ('f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', '|S15')}, delimiter=',', skiprows=1, unpack=True)
+
+loadtxt() function parameters
+first parameter - file. It is the name of the file from which the data is to be loaded.
+
+second parameter - data type dtype of columns of the loaded csv file housing_short.csv. It is a Python dictionary with key as names of the columns, and values as the data types of these respective columns e.g. f8, |S15, etc.
+
+'f8' means 64-bit floating-point number
+
+'|S15' -means a string of length of 15 characters
+
+third parameter - delimiter. It is the character by which values in a row of our csv file are separated. For example, in our case values of a row of our csv file - housing_short.csv - are separated by ',' (comma)
+
+fourth parameter - skiprows. You can specify here, how many initial rows of the csv file you want to skip loading. E.g. you may want to skip the first row of this csv file, as it may contain header information in the first row, which you may not want to load.
+
+fifth parameter - unpack. When unpack is True, the returned array is transposed, so that arguments may be unpacked using x, y, z = loadtxt(...). When used with a structured data-type, arrays are returned for each field. The default value for unpack is False. But here we are returning the individual arrays so we have kept it here asTrue.
+
+longitude_arr,latitude_arr,housing_median_age_arr,total_rooms_arr,total_bedrooms_arr,population_arr,households_arr,median_income_arr,median_house_value_arr,ocean_proximity_arr = load_housing_data()
+
+
+2) File reading using gentxt:
+------------------------------
+import numpy as np
+import os
+
+HOUSING_PATH = '../ml/machine_learning/datasets/housing/'
+FILE = os.path.join(HOUSING_PATH, 'housing.csv')
+
+def load_housing_dataset(file =FILE ):
+    return np.genfromtxt(file, dtype={'names': ('longitude','latitude','housing_median_age','total_rooms','total_bedrooms','population','households','median_income','median_house_value','ocean_proximity'),'formats': ('f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', 'f8', '|S15')}, delimiter=',', skip_header=1, filling_values = 99999999, unpack=False)
+
+result_arr = load_housing_dataset()
+
+print(len(result_arr))
+print(result_arr)
+
+genfromtxt() function parameters:
+
+first parameter - name of the file from which the data is to be loaded.
+
+second parameter - data type (dtype) of columns of the loaded csv file housing.csv. It is a Python dictionary with key as 'names' of the columns, and 'values' as the data types of these respective columns e.g. f8, |S15, etc.
+
+'f8' means 64-bit floating-point number '|S15' -means a string of length of 15 characters
+
+third parameter - delimiter. Character by which values in a row of our csv file are separated. For example, in our case values of a row of our csv file housing.csv are separated by ',' (comma)
+
+fourth parameter - skiprows. You can specify here, how many initial rows of the csv file you want to skip loading. E.g. you may want to skip the first row of this csv file, as it may contain header information in the first row, which you may not want to load.
+
+fifth parameter - unpack. Same meaning as explained in loadtxt() function chapter.
+

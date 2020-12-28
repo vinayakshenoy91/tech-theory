@@ -1,0 +1,53 @@
+
+1. Codebase: One codebase tracked in revision control, many deploys
+
+Each Java application (or service) should be tracked in a single, shared code repository, and Docker configuration files, such as Dockerfiles, should be stored alongside the application code.
+
+2. Dependencies: Explicitly declare and isolate dependencies
+
+Dependencies are commonly managed within Java applications using Maven or Gradle, and OS-level dependencies should be clearly specified in the associated Dockerfile.
+
+3. Config: Store config in the environment
+
+The Twelve-Factor App guidelines suggest that configuration data should be injected into an application via environment variables, although in practice many Java developers prefer to use configuration files, and there can be security issues with exposing secrets via environment variables. Storing nonsensitive configuration data in a remote service like Spring Cloud Config (backed by Git or Consul) and secrets in a service like HashiCorp’s Vault can be a good compromise. It is definitely not recommended to include secrets in a Dockerfile or Docker image.
+
+4. Backing services: Treat backing services as attached resources (typically consumed over the network)
+
+Java developers are accustomed to treating data stores and middleware in this fashion, and in-memory substitutes (e.g., HSQLDB, Apache Qpid, and Stubbed Cassandra) or service virtualization (e.g., Hoverfly) can be used for in-process component testing within the build pipeline.
+
+5. Build, release, run: Strictly separate build and run stages
+
+For a compiled language such as Java, this guideline comes as no surprise (and with little choice of implementation!). It is worth mentioning that the flexibility provided by Docker means that separate containers can be used to build, test, and run the application, each configured as appropriate. For example, a container can be created for build and test with a full OS, JDK, and diagnostic tools; and a container can be built for running an application in production with only a minimal OS and JRE. However, some may see this as an antipattern, as there should only be one “source of truth” artifact that is created, tested, and deployed within the pipeline, and using multiple Docker images can lead to an impedance mismatch and configuration drift between images.
+
+6. Processes: Execute the app as one or more stateless processes
+
+Building and running a Java application as a series of microservices can be made easier by using Docker (the concept of microservice is explained later in this chapter).
+
+7. Port binding: Export services via port binding
+
+Java developers are used to exposing application services via ports (e.g., running an application on Jetty or Apache Tomcat). Docker compliments this by allowing the declarative specification of exposed ports within an application’s Dockerfile, and Docker Compose also enables the same functionality when orchestrating multiple containers.
+
+8. Concurrency: Scale out via the process model
+
+Traditional Java applications typically take the opposite approach to scaling, as the JVM runs as a giant “uberprocess” that is often vertically scaled by adding more heap memory, or horizontally scaled by cloning and load-balancing across multiple running instances. However, the combination of decomposing Java applications into microservices and running these components within Docker containers can enable this approach to scalability. Regardless of the approach taken to implement scalability, this should be tested within the build pipeline.
+
+9. Disposability: Maximize robustness with fast startup and graceful shutdown
+
+This can require a mindset shift with developers who are used to creating a traditional long-running Java application, where much of the expense of application configuration and initialization was front-loaded in the JVM/application startup process. Modern, container-ready applications should utilize more just-in-time (JIT) configuration, and ensure that best efforts are taken to clean up resource and state during shutdown. The JDK exposes hooks for JRE/application startup and shutdown, and Docker (and the OS) can be instructed to call these, such as by issuing SIGTERM (versus SIGKILL) to running processes within a container.
+
+10. Dev/prod parity: Keep development, staging, and production as similar as possible
+
+The use of Docker in combination with orchestration technologies like Docker Swarm, Kubernetes, and Mesos can make this easier in comparison with traditional bare metal deployments where the underlying hardware and OS configuration is often significantly different than developer or test machines. As an application artifact moves through the build pipeline, it should be exposed to more and more realistic environments (e.g., unit testing can run in-memory [or within a Docker container] on a build box). However, end-to-end testing should be conducted in a production-like environment (e.g., if you are running Docker Swarm in production, you should be testing on Docker Swarm).
+
+11. Logs: Treat logs as event streams
+
+Java has had a long and sometimes arduous relationship with logging frameworks, but modern frameworks like Logback and Log4j 2 can be configured to stream to standard output (and hence viewed when running in a container by using the docker logs command) or streamed to disk (which can be mounted from the host running the container).
+
+12. Admin processes: Run admin/management tasks as one-off processes
+
+The ability to create simple Java applications that can be run within a Docker container allows administrative tasks to be run as one-off processes. However, these processes must be tested within (or as part of) the build pipeline.
+
+https://pivotal.io/beyond-the-twelve-factor-app
+
+
+

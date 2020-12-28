@@ -1,0 +1,27 @@
+Producer:
+
+
+- BlockingQueue<Task> tasks = new LinkedBlockingQueue<>();
+- tasks.offer(task);
+- tasks.take();
+
+new ForJoinPool(4).execute(new Consumer())
+
+
+
+- Blocking queue is a thread safe queue.
+
+private Consumer extends RecursiveAction{
+ 
+  @Override
+  protected void compute(){
+      try{
+      Runnable r = todo.take();
+      new Consumer.fork();
+      r.run();
+      }catch(InterrutpedException e){
+          Thread.currentThread.interrupt();
+      }
+  }
+
+}

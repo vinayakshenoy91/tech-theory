@@ -1,0 +1,14 @@
+- APIs at UI end and at BFF end have to be put in services.
+- BFF can be on node js with express.js or nest.js
+- The session management and caching other data has to be maintained centailly using redis or document store
+- Each of the apis have to be protected by roles. The role definition document can be stored for each role 
+in document store. The role definition document can contain CRUD role for each api/components and can be 
+put in a the session  on login.
+
+
+
+Security related:
+-----------------
+- Only the session id encrypted needs to be sent to UI. This will be automatically handled usign express sessions
+
+

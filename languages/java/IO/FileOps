@@ -1,0 +1,11 @@
+- For java.nio.file.Files
+
+long uniqueWords = 0;
+
+try(Stream<String>lines = Files.lines(Paths.get("data.txt"),Charset.defautlCharset())){
+uniqueWords =lines.flatMap(line -> Arrays.stream(line.split("")))
+                  .distinct()
+                  .count();
+}catch(IOException e)
+
+}

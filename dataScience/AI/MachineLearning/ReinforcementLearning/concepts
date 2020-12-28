@@ -1,0 +1,26 @@
+Semisupervised learning:
+------------------------
+- Some algorithms can deal with partially labeled training data, usually a lot of unlabeled data 
+and a little bit of labeled data. This is called semisupervised learning.
+
+Ex: Google photos:
+This is the unsupervised part of the algorithm (clustering). Now all
+the system needs is for you to tell it who these people are. Just one label per person,4
+and it is able to name everyone in every photo, which is useful for searching photos.
+
+- Most semisupervised learning algorithms are combinations of unsupervised and
+supervised algorithms. For example, deep belief networks (DBNs) are based on unsu‐
+pervised components called restricted Boltzmann machines (RBMs) stacked on top of
+one another. RBMs are trained sequentially in an unsupervised manner, and then the
+whole system is fine-tuned using supervised learning techniques.
+
+
+Reinforcemnt Learning:
+----------------------
+- The learning system, called an agent in this context, can observe the environment, select and perform actions, and get
+rewards in return  (or penalties in the form of negative rewards).
+-  It must then learn by itself what is the best strategy, called a policy, to get the most reward over time. A policy 
+defines what action the agent should choose when it is in a given situation.
+
+Ex: DeepMind’s AlphaGo program 
+

@@ -1,0 +1,162 @@
+ThreadGroup in Java:
+---------------------
+Java provides a convenient way to group multiple threads in a single object. In such way, we can suspend, resume or interrupt 
+group of threads by a single method call.
+
+Java provides the ThreadGroup class to work with a groups of threads. A ThreadGroup object can be 
+formed by thread objects and another ThreadGroup object, generating a tree structure of threads.
+
+Note: Now suspend(), resume() and stop() methods are deprecated.
+Java thread group is implemented by java.lang.ThreadGroup class.
+
+A ThreadGroup represents a set of threads. A thread group can also include the other thread group. The thread group creates a 
+tree in which every thread 
+group except the initial thread group has a parent.
+
+A thread is allowed to access information about its own thread group, but it cannot access the information about its thread group's parent thread group or any other thread groups.
+
+Constructors of ThreadGroup class
+There are only two constructors of ThreadGroup class.
+
+No.	Constructor	Description
+1)	ThreadGroup(String name)	creates a thread group with given name.
+2)	ThreadGroup(ThreadGroup parent, String name)	creates a thread group with given parent group and name.
+Methods of ThreadGroup class
+There are many methods in ThreadGroup class. A list of ThreadGroup methods are given below.
+
+S.N.	Modifier and Type	Method	Description
+1)	void	checkAccess()	This method determines if the currently running thread has permission to modify the thread group.
+2)	int	activeCount()	This method returns an estimate of the number of active threads in the thread group and its subgroups.
+3)	int	activeGroupCount()	This method returns an estimate of the number of active groups in the thread group and its subgroups.
+4)	void	destroy()	This method destroys the thread group and all of its subgroups.
+5)	int	enumerate(Thread[] list)	This method copies into the specified array every active thread in the thread group and its subgroups.
+6)	int	getMaxPriority()	This method returns the maximum priority of the thread group.
+7)	String	getName()	This method returns the name of the thread group.
+8)	ThreadGroup	getParent()	This method returns the parent of the thread group.
+9)	void	interrupt()	This method interrupts all threads in the thread group.
+10)	boolean	isDaemon()	This method tests if the thread group is a daemon thread group.
+11)	void	setDaemon(boolean daemon)	This method changes the daemon status of the thread group.
+12)	boolean	isDestroyed()	This method tests if this thread group has been destroyed.
+13)	void	list()	This method prints information about the thread group to the standard output.
+14)	boolean	parentOf(ThreadGroup g	This method tests if the thread group is either the thread group argument or one of its ancestor thread groups.
+15)	void	suspend()	This method is used to suspend all threads in the thread group.
+16)	void	resume()	This method is used to resume all threads in the thread group which was suspended using suspend() method.
+17)	void	setMaxPriority(int pri)	This method sets the maximum priority of the group.
+18)	void	stop()	This method is used to stop all threads in the thread group.
+19)	String	toString()	This method returns a string representation of the Thread group.
+Let's see a code to group multiple threads.
+
+ThreadGroup tg1 = new ThreadGroup("Group A");   
+Thread t1 = new Thread(tg1,new MyRunnable(),"one");     
+Thread t2 = new Thread(tg1,new MyRunnable(),"two");     
+Thread t3 = new Thread(tg1,new MyRunnable(),"three");    
+Now all 3 threads belong to one group. Here, tg1 is the thread group name, MyRunnable is the class that implements Runnable interface and "one", "two" and "three" are the thread names.
+
+Now we can interrupt all threads by a single line of code only.
+
+Thread.currentThread().getThreadGroup().interrupt();  
+ThreadGroup Example
+File: ThreadGroupDemo.java
+
+public class ThreadGroupDemo implements Runnable{  
+    public void run() {  
+          System.out.println(Thread.currentThread().getName());  
+    }  
+   public static void main(String[] args) {  
+      ThreadGroupDemo runnable = new ThreadGroupDemo();  
+          ThreadGroup tg1 = new ThreadGroup("Parent ThreadGroup");  
+            
+          Thread t1 = new Thread(tg1, runnable,"one");  
+          t1.start();  
+          Thread t2 = new Thread(tg1, runnable,"two");  
+          t2.start();  
+          Thread t3 = new Thread(tg1, runnable,"three");  
+          t3.start();  
+               
+          System.out.println("Thread Group Name: "+tg1.getName());  
+         tg1.list();  
+  
+    }  
+   }  
+Output:
+
+one
+two
+three
+Thread Group Name: Parent ThreadGroup
+java.lang.ThreadGroup[name=Parent ThreadGroup,maxpri=10]
+    Thread[one,5,Parent ThreadGroup]
+    Thread[two,5,Parent ThreadGroup]
+    Thread[three,5,Parent ThreadGroup]'
+
+How to do it...
+Follow these steps to implement the example:
+
+First, extend the ThreadGroup class by creating a class called MyThreadGroup that would be extended from ThreadGroup. You have to declare a constructor with one parameter because the ThreadGroup class doesn't have a constructor without it. Extend the ThreadGroup class to override the uncaughtException() method in order to process the exceptions thrown by the threads of the group:
+        public class MyThreadGroup extends ThreadGroup { 
+          public MyThreadGroup(String name) { 
+            super(name); 
+          }
+Override the uncaughtException() method. This method is called when an exception is thrown in one of the threads of the ThreadGroup class. In this case, the method will write information about the exception and the thread that throws it; it will present this information in the console. Also, note that this method will interrupt the rest of the threads in the ThreadGroup class:
+        @Override 
+        public void uncaughtException(Thread t, Throwable e) { 
+          System.out.printf("The thread %s has thrown an Exception\n",
+                            t.getId()); 
+          e.printStackTrace(System.out); 
+          System.out.printf("Terminating the rest of the Threads\n"); 
+          interrupt(); 
+        }
+Create a class called Task and specify that it implements the Runnable interface:
+        public class Task implements Runnable {
+Implement the run() method. In this case, we will provoke an AritmethicException exception. For this, we will divide 1,000 with random numbers until the random generator generates zero to throw the exception:
+        @Override 
+        public void run() { 
+          int result; 
+          Random random=new Random(Thread.currentThread().getId()); 
+          while (true) { 
+            result=1000/((int)(random.nextDouble()*1000000000)); 
+            if (Thread.currentThread().isInterrupted()) { 
+              System.out.printf("%d : Interrupted\n",
+                                Thread.currentThread().getId()); 
+              return; 
+            } 
+          } 
+        }
+Now, implement the main class of the example by creating a class called Main and implement the main() method:
+        public class Main { 
+          public static void main(String[] args) {
+First, calculate the number of threads you are going to launch. We use the availableProcessors() method of the Runtime class (we obtain the runtime object associated with the current Java application with the static method, called getRuntime(), of that class). This method returns the number of processors available to the JVM, which is normally equal to the number of cores of the computer that run the application:
+        int numberOfThreads = 2 * Runtime.getRuntime()
+                                      .availableProcessors();
+Create an object of the MyThreadGroup class:
+        MyThreadGroup threadGroup=new MyThreadGroup("MyThreadGroup");
+Create an object of the Task class:
+        Task task=new Task();
+Create the calculated number of Thread objects with this Task class and start them:
+        for (int i = 0; i < numberOfThreads; i++) { 
+          Thread t = new Thread(threadGroup, task); 
+          t.start(); 
+        }
+Then, write information about ThreadGroup in the console:
+        System.out.printf("Number of Threads: %d\n",
+                          threadGroup.activeCount()); 
+        System.out.printf("Information about the Thread Group\n"); 
+        threadGroup.list();
+Finally, write the status of the threads that form the group:
+            Thread[] threads = new Thread[threadGroup.activeCount()]; 
+            threadGroup.enumerate(threads); 
+            for (int i = 0; i < threadGroup.activeCount(); i++) { 
+              System.out.printf("Thread %s: %s\n", threads[i].getName(),
+                                threads[i].getState()); 
+            } 
+          } 
+        }
+Run the example and see the results.
+
+
+When an uncaught exception is thrown in a Thread object, the JVM looks for three possible handlers for this exception.
+
+First, it looks for the uncaught exception handler of the thread, as explained in the Processing uncontrolled exceptions in a thread recipe. If this handler doesn't exist, then the JVM looks for the uncaught exception handler of the ThreadGroup class of the thread, as learned in this recipe. If this method doesn't exist, the JVM looks for the default uncaught exception handler, 
+
+If none of the handlers exists, the JVM writes the stack trace of the exception in the console and ends the execution of the thread that had thrown the exception.
+

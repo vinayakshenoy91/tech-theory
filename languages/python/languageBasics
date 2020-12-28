@@ -1,16 +1,23 @@
+//Comments:
+------------
+Written using #
+
 # get some help:
 ----------------
 help(print)
 type(print)
 print(x)
 print('Rank {}: {} and {}'.format(idx, girl_name, boy_name))
-dir(class) #ex: dir(df)
+dir(class) #ex: dir(df) //Get name of methods on that object. , tells all the methods defined int he class
 
 import pdb; pdb.set_trace() #Debugger for debugging
 
 %xmode Verbose
 
 Comments in python: #
+
+ord('a') //Gives ascii value
+
 
 #Variables:
 -----------
@@ -30,6 +37,13 @@ print(d)
 c = {(1, 2): '3'}              # dict with a tuple as a key and string as a value    
 print(c)
 
+europe.keys() #Getting the keys
+
+del(world["sealand"]) #delete a key
+
+
+"sealand" in world  #check if a key exist in dict
+
 Operator:
 ---------
 - Slice Operator -> sequence[start:stop:step] ==> Very powerful
@@ -41,6 +55,8 @@ y = x[4:-3]             # slice from the 4th element to the 8th element
 print(y)                # y is now 'o Wo'
 y = x[::-1]             # -1 steps backwards, y is now 'dlroW olleH'
 print(y)
+
+- side ** 2 -> Raised to power of 2 
 
 # importing modules:
 --------------------
@@ -54,6 +70,11 @@ print(height)
 #functions:
 ------------
 
+//Converting to string:
+------------------------
+str(x)
+ ("Hey " * 2) -> prints hey twice
+
 1) csv fn:
 --------------
 pd.read_csv() -> Turns csv file to table
@@ -62,4 +83,78 @@ pd.read_csv() -> Turns csv file to table
 -----------------------
 plt.plot(x,y,label="Ransom")
 plt.show()
+
+
+//Inbuilt functions:
+---------------------
+max(listname)
+round(x,1)
+complex(real,imag(optional))
+sorted(full, reverse=True)
+
+//Methods:
+----------
+Methods are functions that belong to objects
+listname.index('x') //Available for string and list
+listname.reverse()
+listname.count(1.73)
+strname.capitalize()
+strname.replace("z","sa")
+strname.append("me")
+strname.upper()
+
+
+Generating random numbers:
+--------------------------
+import numpy as numpy
+
+np.random.seed(123)
+np.random.rand()
+np.random.randint(0,2) # randomly generate 0 or 1
+
+Try catch block:
+----------------
+ try:
+     print (int(prompt))
+ except:
+    print('You should have entered a number')
+
+Array ops:
+----------
+arrayname.append("cereals");
+arrayname.reverse()
+arrayname.sort()
+
+
+Language substitution/Useful while logging:
+-------------------------------------------
+b =  "%d is an integer, %g is floating-point and %s is string" % (23, 23.34, "Twenty-Three")
+print(b)
+
+Replicate an array like string:
+------------------------------
+a = [1,2,3]    
+c = a * 3
+[1, 2, 3, 1, 2, 3, 1, 2, 3]
+
+or
+
+a.extend(a)
+
+Appending item to array => a.append(4)
+
+
+Split and join operation:
+--------------------------
+delimiter = "am"    
+print(delimiter.join(sp))
+
+" ".join(tempArr)
+
+s = "I am learning Python at CloudxLab"
+sp = s.split("am")
+print(sp)
+strm.split(" ")
+
+If you want to split a word when do => list(wordname)
 

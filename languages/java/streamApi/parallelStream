@@ -1,5 +1,14 @@
+- how parallel streams work under the hood by employing the fork/join framework introduced in Java 7.
 - in the case of a parallel stream, two threads are spawned simultaneously, and the stream internally uses ForkJoinPool to create and 
 manage threads. Parallel streams create a ForkJoinPool instance via the static ForkJoinPool.commonPool() method.
+- Parallel streams internally use the default ForkJoinPool (you’ll learn more about the fork/join framework in 
+section 7.2), which by default has as many threads as 
+you have processors, as returned by Runtime.getRuntime().availableProcessors().
+
+But you can change the size of this pool using the system property 
+java.util.concurrent.ForkJoinPool.common.parallelism, as in the following example:
+
+System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism", "12");
 
 - Stream.of(1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14)
                 .parallel()
@@ -32,3 +41,23 @@ Lazy evaluation in stream:
 --------------------------
 Each intermediate operation creates a new stream, stores the provided operation/function, and returns the new stream. 
 When a terminal operation is called, the traversal of streams begins and the associated function is performed one by one on each element.
+
+
+Stream.iterate(1L,i->i+1)
+      .limit(n)
+      .parallel()
+      .reduce(0L,Long::sum)
+
+How fork join works?
+
+public static long forkJoinSum(long n) {
+    long[] numbers = LongStream.rangeClosed(1, n).toArray();
+    ForkJoinTask<Long> task = new ForkJoinSumCalculator(numbers);
+    return new ForkJoinPool().invoke(task);
+}
+
+
+If paralleising:
+---------------
+Recursion with result -> extend Recursive task
+Recursion without result -> RecursiveAction

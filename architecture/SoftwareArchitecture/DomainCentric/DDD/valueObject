@@ -1,0 +1,206 @@
+- A Value Object, or simply a Value, models an immutable conceptual whole. Within the model the Value is just that, a value. 
+Unlike an Entity, it does not have a unique identity, and equivalence is determined by comparing the attributes 
+encapsulated by the Value type. Furthermore, a Value Object is not a thing but is often used to describe, quantify, 
+or measure an Entity.
+
+- A Value Object may possess just one, a few, or a number of individual attributes, each of which is related to the others. 
+Each attribute contributes an important part to a whole that collectively the attributes describe. Taken apart from the 
+others, each of the attributes fails to provide a cohesive meaning. Only together do all the attributes form the 
+complete intended measure or description. This is different from merely grouping a set of attributes together in an object. 
+The grouping itself accomplishes little if the whole fails to adequately describe another thing in the model.
+Make sure that allowed domain logic central to the name of a ThingOfWorth to leak out of the model.
+Sp use value object when required so that domain logic is encapsulated.
+
+- Value Objects can serve as holders of unique identity. They are immutable, which ensures identity stability, and 
+any behavior specific to the kind of identity is centralized. Having a focal point for 
+identity behavior, however simple, keeps the know-how from leaking into other parts of the model and into clients.
+
+- Value types that measure, quantify, or describe things are easier to create, test, use, optimize, and maintain.
+
+- It may surprise you to learn that we should strive to model using Value Objects instead of Entities wherever possible.
+
+- When you care only about the attributes of an element of the model, classify it as a VALUE OBJECT. 
+Make it express the meaning of the attributes it conveys and give it related functionality. 
+Treat the VALUE OBJECT as immutable. 
+Don’t give it any identity and avoid the design complexities necessary to maintain ENTITIES. 
+
+Decision making for Value obj vs Entity:
+----------------------------------------
+When you are trying to decide whether a concept is a Value, 
+you should determine whether it possesses most of these characteristics:
+
+1) It measures, quantifies, or describes a thing in the domain.
+When you have a true Value Object in your model, whether you realize it or not, it is not a thing in your domain. Instead,
+it is actually a concept that measures, quantifies, or otherwise describes a thing in the domain. A person has an age. 
+The age is not really a thing but measures or quantifies the number of years the person (thing) has lived. 
+A person has a name. The name is not a thing but describes what the person (thing) is called.
+
+2) It can be maintained as immutable.
+package com.saasovation.agilepm.domain.model.product;
+public final class BusinessPriority implements Serializable  {
+    private BusinessPriorityRatings ratings;
+    public BusinessPriority(BusinessPriorityRatings aRatings) {
+        super();
+        this.setRatings(aRatings);
+        this.initialize();
+    }
+}
+
+Depending on your taste, you can at times design Value Objects that hold references to Entities. 
+But some caution may be warranted. When the referenced Entities change state—by the Entity’s behavior—the Value changes,
+too, which violates the quality of immutability. Thus, it may be best to employ the mindset that Entity references held 
+by Value types are used for the sake of compositional immutability, expressiveness, and convenience. Otherwise, if 
+Entities are held with the express purpose of mutating 
+their state through the Value Object’s interface, that’s probably the wrong reason to compose them.
+Sometimes it makes no sense for an object to be immutable. 
+That’s perfectly fine, and it indicates that the object should be modeled as an Entity.
+
+3)  The constructors of a Value class play into the effectiveness of a conceptual whole. Along with immutability, 
+we require a Value class’s constructors to be the means to ensure that the Whole Value is created in one operation. 
+You must not allow the attributes of a Value instance to be populated after construction, as if to build up the 
+Whole Value piece by piece. Instead, the final state must be guaranteed to initialize all at once, atomically. 
+The previously expressed BusinessPriority and MonetaryValue constructors demonstrate this.
+
+Note:  If one or more of the attributes must change over time, 
+consider Whole Value replacement over maintaining an Entity through a long life cycle.
+
+It models a conceptual whole by composing related attributes as an integral unit.
+
+
+4) It is completely replaceable when the measurement or description changes.
+
+In your model an immutable Value should be held as a reference by an Entity as long as its constant state describes 
+the currently correct Whole Value. If that is no longer true, the entire Value is completely replaced with a new Value 
+that does represent the currently correct whole.
+The concept of replaceability is readily understood in the context of numbers.
+
+5) It can be compared with others using Value equality.
+When a Value Object instance is compared to another instance, a test of object equality is employed.
+Equality is determined by comparing the types of both objects and then their attributes. If both the types and 
+their attributes are equal, the Values are considered equal. Further, if any two or more Value instances are equal, 
+you could assign (using replacement) any one of the equal Value instances 
+to an Entity’s property of that type and the assignment would not change the value of the property.
+
+public boolean equals(Object anObject) {
+    boolean equalObjects = false;
+    if (anObject != null &&
+            this.getClass() == anObject.getClass()) {
+        FullName typedObject = (FullName) anObject;
+        equalObjects =
+            this.firstName().equals(typedObject.firstName()) &&
+            this.lastName().equals(typedObject.lastName());
+    }
+    return equalObjects;
+}
+
+Ask yourself if the concept you are designing must be an Entity identified uniquely from all other objects or 
+if it is sufficiently supported using Value equality. 
+If the concept itself doesn’t require unique identity, model it as a Value Object.
+
+6) It supplies its collaborators with Side-Effect-Free Behavior
+A function is an operation of an object that produces output but without modifying its own state. 
+Since no modification occurs when executing a specific operation, that operation is said to be side-effect free.
+Note: Any specialty behavior will be separate from the Value.
+
+Conclusion on ValueObj vs Entity:
+
+By now you may have begun to think that everything looks like a Value Object. That’s better than thinking that everything 
+looks like an Entity. Where you might use a little caution is when there are truly simple attributes that really don’t 
+need any special treatment. Perhaps those are Booleans or any numeric value that is really self-contained, needing no 
+additional functional support, and is related to no other attributes in the same Entity. On their own the simple attributes 
+are a Meaningful Whole. Still, you could certainly make the “mistake” of unnecessarily wrapping a single attribute in a 
+Value type with no special functionality and be better off than 
+those who never give Value design a nod. If you find that you’ve overdone it a bit, you can always refactor a little.
+
+
+Standard types expressed as values:
+------------------------------------
+public enum GroupMemberType {
+
+
+
+    GROUP {
+
+        public boolean isGroup() {
+
+            return true;
+
+        }
+
+    },
+
+    USER {
+
+        public boolean isUser() {
+
+            return true;
+
+        }
+
+    };
+
+
+
+    public boolean isGroup() {
+
+        return false;
+
+    }
+
+
+
+    public boolean isUser() {
+
+        return false;
+
+    }
+
+}
+
+
+
+protected GroupMember toGroupMember() {
+
+    GroupMember groupMember =
+
+        new GroupMember(
+
+                this.tenantId(),
+
+                this.username(),
+
+                GroupMemberType.USER); // enum standard type
+
+
+
+    return groupMember;
+
+}
+
+
+State Pattern Considered Harmful?
+
+Some consider the State pattern to be less than desirable. A common complaint is the need to create an abstract implementation of each of the behaviors supported by the type (the two methods at the bottom of GroupMemberType) and then to override those behaviors when the given State must provide a specialized implementation. In Java this typically requires a separate class (usually in a separate file) for the abstract type and also for each State. Like it or not, that is the way of the State pattern.
+
+I agree that when separate State classes must be developed—one for each unique state plus an abstract type—it can become an unwieldy mess. The distinct behaviors in each class, perhaps mixed with some default behavior from the abstract class, can lead to tight coupling of subclasses and lack of readability between types. This burden is especially taxing if you have a large number of States. However, I think that the use of a Java enum is a very simple and possibly the more optimal way to use the State pattern to produce a set of Standard Types. I think you get the best of both approaches. You get a very simple Standard Type and a way to interrogate the standard for its current State. This keeps behavior cohesive to the type. Limiting the State behavior makes for practical use.
+
+But it’s still possible that you don’t like even this simple implementation of State, and to each his or her own.
+
+If you decide that you dislike the use of Java enums to support Standard Types, you can always use a unique Value instance for each type. However, if your concern is primarily that you don’t like the idea of using the State pattern, you can easily use an enum for elegant Standard Type support without thinking of it as the State pattern. After all, I may be the first person to have put the enum-as-State thought into your mind. That being said, there are alternatives to implementing Standard Types other than the enum and Value approaches.
+
+
+Note VVIP: Standard types should generally not be maintained inside the Bounded Context that consumes them. 
+Widely used Standard Types should normally be maintained in a separate Context with very carefully planned 
+updates to consumers. Instead, you could choose to expose Standard Type Aggregates as immutable in consumer Contexts. 
+But ask yourself if an immutable Entity is by definition really an Entity. 
+If you think not, you should consider modeling it as a shared immutable Value Object instead.
+
+
+A shared immutable Value Object can be obtained from a hidden persistence store. This is a viable choice if obtained 
+from a Standard Type Service (7) or Factory (11). If employed, you should probably have one Service or Factory provider 
+for each set of Standard Types (one for phone number types, another for postal address types, one for currency types), 
+as depicted in Figure 6.3. In both cases the concrete implementations of a Service or Factory would access the persistence 
+store to obtain the shared Values as needed, but clients would never know that the Values are stored in a standards database.
+Using either a Service or a Factory to provide the types also enables you to put a number of viable caching strategies to 
+work easily and safely because the Values are read-only from the store and immutable in the system.
+

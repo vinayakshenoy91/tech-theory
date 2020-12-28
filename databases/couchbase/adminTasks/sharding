@@ -1,0 +1,14 @@
+- Couchbase has 1024 fixed shareds also called v-buckets.
+- Document will be in one of the v bucket based on hashing algo
+- Based on numbetr of nodes, the v-buckets on each node will be 1024/nodes
+- Process of redistributing the v-bucket when adding a node is called rebalancing
+
+
+- Replicas  have separate set of v-bucket called replica-buckets.
+If you select 2 replicas, there will be 1024*3=3072 replica-buckets.
+1024 are v-bucket and 2048 replica v-bucket. 
+
+If we have 0-340 v-bucket in node 1, 0-340 replica v-bucket will lie in other buckets 
+
+- As data changes, it is communicated between nodes using couchbase Data Change Protocol (DCP)
+- That's why client need access to every node as the documents are distributed among v-buckets.

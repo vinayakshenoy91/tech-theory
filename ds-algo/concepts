@@ -1,0 +1,110 @@
+Linear Data Structures #
+-------------------------
+In linear data structures, each element is connected to either one (the next element) 
+or two (the next and previous) more elements. Traversal in these structures is linear, meaning that 
+insertion, deletion, and search work in O(n).
+
+Arrays, linked lists, stacks and queues are all example of linear data structures.
+
+Non-Linear Data Structures #
+-----------------------------
+The exact opposite of linear data structures are non-linear data structures. 
+In a non-linear data structure, each element can be connected to several other data elements. 
+Traversal is not linear; hence, search, insertion, and deletion can work in O(log n) and even O(1) time.
+
+Trees, graphs and hash tables are all non-linear data structures.
+
+
+Data Structure	Insert	Delete	Search	Space complexity
+Array	O(n)	O(n)	O(n)	O(n)
+Single linked list	O(1) (insert at head)	O(1) (delete head)	O(n)	O(n)
+Doubly linked list	O(1) (insert at head)	O(1) (delete head)	O(n)	O(n)
+Doubly linked list (with tail pointer)	O(1) (insert at head or tail)	O(1) (delete head or tail)	O(n)	O(n)
+Stack	O(1) (push)	O(1) (pop)	O(n)	O(n)
+Queue	O(1) (enqueue)	O(1) (dequeue)	O(n)	O(n)
+Binary heap	O(lg n)	O(1) (removeMin())	O(n)	O(n)
+Binary tree	O(n)	O(n)	O(n)	O(n)
+Binary search tree	O(n)	O(n)	O(n)	O(n)
+Red-Black / AVL / 2-3 Tree	O(lg n)	O(lg n)	O(lg n)	O(n)
+Hash table	O(n): worst case O(1): amortized	O(n): worst case O(1): amortized	O(n): worst case O(1): amortized	O(n): worst case O(1): amortized
+Trie (size of alphabet: d, length of longest word: n)	O(n)	O(n)	O(n)	O(d^n)
+
+Graph operations #
+Time complexities of some common operations in a graph with n vertices and m edges.
+
+Operation	Adjacency list	Adjacency matrix
+Add vertex	O(1)	O(1)
+Remove vertexx	O(m+n)	O(n^2)
+Add edge	O(1)	O(1)
+Remove edge	O(n)	O(1)
+Depth / Breadth first search	O(m+n)	O(n^2)
+Space complexity	O(m+n)	O(n^2)
+
+Tries vs hash table:
+-------------------
+If your dictionary contains a lot of words with common prefixes or suffixes 
+then Tries would be an efficient data structure to use as compared to Hash-Tables.
+if you need a fast lookup and have long words which share common prefixes then a Trie is the perfect data structure for you.
+
+1. Common Prefixes #
+In Tries, the words having common prefixes share a common path until the end of the prefix. After that, they are divided 
+into two branches. We cannot do that in Hash Tables; no matter how similar the words are, we would still need to store them 
+at different locations. This would result in irrelevant iterations while searching. Here is an interesting example to explain 
+what we just said: two words “interest” and “interesting” will be stored 
+differently in a HashTable, but in a Trie we only need to add 3 new nodes for “ing” at the end of the “t” Node.
+
+2. Lookup for Exact Words #
+As discussed in the previous lesson, Tries can perform a spell-check, but in Hashing. 
+We can only look up exact words, otherwise, it will not be able to identify the word.
+
+3. No Re-hashing Required #
+The most important part of a HashTable is the Hash function. It is often very difficult to build as the performance of HashTable 
+is entirely dependent on it. But in Tries, 
+we do not need to perform re-hashing to generate an index. It just traverses the nodes and inserts new nodes, that’s it!
+
+4. Collision Resolution #
+One downside of using a HashTable is that we always need to come up with good collision resolution strategies to avoid 
+collisions if the data is huge. A collision can never occur in Trie because 
+all words are unique and can act like a “key”. This makes the implementation of Tries so much simpler!
+
+5. Memory Requirements #
+In worst case scenarios, a Trie will definitely perform better than a HashTable, but HashTables will be more 
+convenient to use in average cases-- depending upon the efficiency of the Hash function. As in Trie, we need to allocate 
+26 pointers at every node even if most of them are Null,so a HashTable would be more of a wise choice here!
+
+HashMap vs HashSet:
+-------------------
+Before we solve any challenges regarding Hast Tables, it is necessary to look at the definitions of HashMap and HashSet and 
+see how they are different. Both are implemented in Java using the Hash Table class, which is why 
+it is also a common misconception that these two structures are the same, but they are very different from each other.
+
+HashMap also allows multiple null values and only one null key.This mechanism does not support 
+synchronous operations and is not thread-safe.
+
+HashSet class is implemented in Java using Set interface. It is also built in the same way as HashMap, 
+i.e., using the Hash Table class, but it is still quite different from the HashMap class. 
+
+HashSet also stores values in an unordered way, using hashing, but this happens in the backend. On the backend, the 
+HashSet class is implemented using the HashMap class. The value that we add to the HashSet is then added to the HashMap as a key, 
+corresponding to a dummy value Object. The retrieval remains O(1)O(1)
+
+- HashSet is a class which implements the Set interface and this interface only stores values, not a key-value pair.
+- HashSet restricts storing multiple null values and only allows one null value in the whole table
+- HashSet also does not support synchronous operations
+
+
+
+Array vs LinkedList:
+--------------------
+Operation	Linked List	Array
+Access
+O(n)
+O(1)
+Insert (at head)
+O(1)
+O(n)
+Delete (at head)
+O(1)
+O(n)
+Insert (at tail)	O(n)	O(n)
+Delete (at tail)	O(n)	O(n)

@@ -1,0 +1,328 @@
+ntroduction to Passport.js and JWT
+ABOUT PASSPORT.JS
+There is a very cool Node.js module that is easy to work with for user authentication called Passport. Passport is a framework that is extremely flexible and modular. It allows you to work with the main authentication strategies: Basic & Digest, OpenID, OAuth, OAuth 2.0, and JWT . It also allows you to work with external services authentication as single sign-on by using existing social networking account information, such as Facebook, Google+, Twitter, and more. By the way, on the official Passport web site at http://passportjs.org (see Figure 7-1), there is a list with more than 300 authentication strategies created and maintained by third parties.
+
+A435096_1_En_7_Fig1_HTML.jpg
+Figure 7-1. Passport home page
+ABOUT JWT
+JSON Web Tokens (JWT) is a very simple and secure authentication strategy for REST APIs. It is an open standard for web authentication and is based on the JSON token’s requests between client and server. Its authentication engine works like this.
+
+Client makes a request once by sending login credentials and password.
+
+Server validates the credentials and, if everything is right, it returns to the client a JSON with token that encodes data from a user logged into the system. Optionally, this token could have a expiration date, to enforce the authentication’s security.
+
+Client, after receiving this token, can store it the way it wants, whether via LocalStorage, cookie, or other client-side storage mechanisms.
+
+Every time the client accesses a route that requires authentication, it will only send this token to the API to authenticate and release consumption data.
+
+Server always validates this token to allow or deny a customer request.
+
+For specific details about JWT , go to http://jwt.io (see Figure 7-2).
+
+A435096_1_En_7_Fig2_HTML.jpg
+Figure 7-2. JWT home page
+Installing Passport and JWT
+To start the fun, we’ll use the following modules:
+
+Passport: This will be used as the authentication engine.
+
+Passport JWT: This is the JWT authentication strategy for Passport.
+
+JWTSimple: This is used as encoder and decoder JSON tokens.
+
+Now, let’s install them by running this command:
+
+1   npm install passport@0.3.2 passport-jwt@2.0.0 jwt-simple@0.4.1 --save
+To start this implementation, first we are going to add two new settings items for JWT (jwtSecret and jwtSession). Edit the libs/config.js file and in the end, add the following attributes:
+
+ 1   module.exports = {
+ 2     database: "ntask",
+ 3     username: "",
+ 4     password: "",
+ 5     params: {
+ 6       dialect: "sqlite",
+ 7       storage: "ntask.sqlite",
+ 8       define: {
+ 9         underscored: true
+10       }
+11     },
+12     jwtSecret: "Nta$K-AP1",
+13     jwtSession: {session: false}
+14   };
+The field jwtSecret keeps a secret key string that serves as a base to encode and decode tokens. It’s highly advisable to use a complex string that uses many different characters. Never share or publish this secret key in public, because if it leaks, you will leave your application vulnerable, making it possible for those with bad intentions to access the system and manage the tokens from logged users without using the correct credentials in the system.
+
+To finish, the last included field is jwtSession, which has the value {session: false}. This item is going to be used to inform Passport that the API won’t manage the session.
+
+Implementing JWT Authentication
+Now that we have the Passport and JWT settings ready, let’s implement the rules on how the client will be authenticated in our API. To start, we are going to implement the authentication rules that will also have middleware functions provided by Passport to use into the API’s routes. This code is going to have a middleware and two functions. The middleware will be executed when it starts the application, and it basically receives in this callback a payload that contains a decoded JSON that was decoded using the secret key cfg.jwtSecret. This payload will have the attribute id that will be a user id to be used as an argument for the Users.findById(payload.id) function. As this middleware is going to be frequently accessed, to avoid some overheads, we are going to send a simple object containing only the id and email of the authenticated user, using the callback function:
+
+1   done(null, {id: user.id, email: user.email});
+This middleware will be injected via the passport.use(strategy) function. To finish, two functions will be included from Passport to be used on the application. They are the initialize() function, which starts Passport, and authenticate(), which is used to authenticate the access for a route.
+
+To understand this implementation better, let’s create in the root folder the auth.js file, using this code:
+
+ 1   import passport from "passport";
+ 2   import {Strategy, ExtractJwt} from "passport-jwt";
+ 3   
+ 4   module.exports = app => {
+ 5     const Users = app.db.models.Users;
+ 6     const cfg = app.libs.config;
+ 7     const params = {
+ 8       secretOrKey                          : cfg.jwtSecret,
+ 9       jwtFromRequest: ExtractJwt.fromAuthHeader()
+10     };
+11     const strategy = new Strategy(params, (payload, done) => {
+12         Users.findById(payload.id)
+13           .then(user => {
+14             if (user) {
+15               return done(null, {
+16                 id: user.id,
+17                 email: user.email
+18               });
+19             }
+20             return done(null, false);
+21           })
+22            .catch(error => done(error, null));
+23       });
+24     passport.use(strategy);
+25     return {
+26       initialize: () => {
+27         return passport.initialize();
+28       },
+29       authenticate: () => {
+30         return passport.authenticate("jwt", cfg.jwtSession);
+31       }
+32     };
+33   };
+To load the auth.js during the server boot time, edit the index.js code like this.
+
+ 1   import express from "express";
+ 2   import consign from "consign";
+ 3   
+ 4   const app = express();
+ 5   
+ 6   consign()
+ 7     .include("libs/config.js")
+ 8     .then("db.js")
+ 9     .then("auth.js")
+10     .then("libs/middlewares.js")
+11     .then("routes")
+12     .then("libs/boot.js")
+13     .into(app);
+To initiate the Passport middleware, edit the libs/middlewares.js and include the middleware app.use(app.auth.initialize()). The following code shows where to include it.
+
+ 1   import bodyParser from "body-parser";
+ 2   
+ 3   module.exports = app => {
+ 4     app.set("port", 3000);
+ 5     app.set("json spaces", 4);
+ 6     app.use(bodyParser.json());
+ 7     app.use(app.auth.initialize());
+ 8     app.use((req, res, next) => {
+ 9       delete req.body.id;
+10       next();
+11     });
+12   };
+Generating Tokens for Authenticated Users
+To finish the JWT authentication , we are going to prepare the model Users to be able to encrypt the user’s password. We also will create a route to generate tokens for users who are going to authenticate themselves using their login and password on the system, and we’ll do a refactoring in the tasks and users routes so that their access properly uses the id of an authenticated user. Doing this, we complete this authentication step, making our application reliable and safer.
+
+The encryption of user passwords will be performed by the module bcrypt. To do this, install it by running this command.
+
+1   npm install bcrypt@0.8.5 --save
+Now, let’s edit the Users model, including the function hooks, which executes functions before or after a database operation. In our case, we will include a function to be executed before registering a new user, via the function beforeCreate(), to use the bcrypt to encrypt the user’s password before saving it.
+
+A new function inside the classMethods will be included as well. It is used to compare if the given password matches with the user’s encrypted one. To encode these rules, edit the models/users.js with the following logic .
+
+ 1   import bcrypt from "bcrypt";
+ 2   
+ 3   module.exports = (sequelize, DataType) => {
+ 4     const Users = sequelize.define("Users", {
+ 5       // Users fields, defined in Chapter 5...          
+ 6     }, {
+ 7       hooks: {
+ 8         beforeCreate: user => {
+ 9           const salt = bcrypt.genSaltSync();
+10           user.password = bcrypt.hashSync(user.password, salt);
+11         }
+12       },
+13       classMethods: {
+14         associate: models => {
+15           Users.hasMany(models.Tasks);
+16         },
+17         isPassword: (encodedPassword, password) => {
+18           return bcrypt.compareSync(password, encodedPassword);
+19         }
+20       }
+21     });
+22     return Users;
+23   };
+With these implemented modifications on the model Users, now we can create the endpoint /token. This route will be responsible for generating an encoded token with a payload, given to the user that sends the right e-mail and password via req.body.email and req.body.password.
+
+The payload is going to have only the user id. The token generation occurs via the jwt-simple module using the function jwt.encode(payload, cfg.jwtSecret) that must use the same secret key jwtSecret that was created on the libs/config.js file. Any error in this route will be treated using the HTTP 401 - Unauthorized status code using the res.sendStatus(401) function.
+
+To include this rule of token generation, you need to create the routes/token.js file using the following code.
+
+ 1   import jwt from "jwt-simple";
+ 2   
+ 3   module.exports = app => {
+ 4     const cfg = app.libs.config;
+ 5     const Users = app.db.models.Users;
+ 6     app.post("/token", (req, res) => {
+ 7       if (req.body.email && req.body.password) {
+ 8         const email = req.body.email;
+ 9         const password = req.body.password;
+10         Users.findOne({where: {email: email}})
+11           .then(user => {
+12             if (Users.isPassword(user.password, password)) {
+13               const payload = {id: user.id};
+14               res.json({
+15                 token: jwt.encode(payload, cfg.jwtSecret)
+16               });
+17             } else {
+18               res.sendStatus(401);
+19             }
+20           })
+21           .catch(error => res.sendStatus(401));
+22       } else {
+23         res.sendStatus(401);
+24       }
+25     });
+26   };
+We already have the user’s authentication and also the token generation’s logic. To finish, let’s use the app.auth.authenticate() function to validate the tokens sent by clients and allow (or deny) access in some routes. To do this, edit the routes/tasks.js file and add the middleware function all(app.auth.authenticate()) at the beginning of both endpoints. The code should look like this.
+
+ 1   module.exports = app => {
+ 2     const Tasks = app.db.models.Tasks;
+ 3   
+ 4     app.route("/tasks")
+ 5       .all(app.auth.authenticate())
+ 6       .get((req, res) => {
+ 7         // "/tasks": List tasks          
+ 8       })
+ 9       .post((req, res) => {
+10         // "/tasks": Save new task          
+11       });
+12   
+13     app.route("/tasks/:id")
+14       .all(app.auth.authenticate())
+15       .get((req, res) => {
+16         // "/tasks/1": Find a task          
+17       })
+18       .put((req, res) => {
+19         // "/tasks/1": Update a task          
+20       })
+21       .delete((req, res) => {
+22         // "/tasks/1": Delete a task          
+23       });
+24   };
+When a client sends a valid token, their access will be successfully authenticated and consequently, the object req.user appears to be used inside the routes. This object is only created when the auth.js logic returns an authenticated user; that is, only when the following function returns a valid user.
+
+ 1   // Do you remember this function from auth.js?.          
+ 2   Users.findById(payload.id)
+ 3     .then(user => {
+ 4       if (user) {
+ 5         return done(null, {
+ 6           id: user.id,
+ 7           email: user.email
+ 8         });
+ 9        }
+10        return done(null, false);
+11      })
+12      .catch(error => done(error, null));
+The done() callback sends the authenticated user’s data to the authenticated routes, which receive these data via the req.user object. In our case, this object only has the id and email attributes.
+
+To ensure the proper access to tasks resources, let’s do a refactoring on all Sequelize functions from the routes /tasks and /tasks/:id so their queries use as a parameter the req.user.id. To do this, edit routes/tasks.js and, in the route app.route("/tasks"), do the following modifications.
+
+ 1   app.route("/tasks")
+ 2     .all(app.auth.authenticate())
+ 3     .get((req, res) => {
+ 4       Tasks.findAll({
+ 5         where: { user_id: req.user.id }
+ 6       })
+ 7       .then(result => res.json(result))
+ 8       .catch(error => {
+ 9         res.status(412).json({msg: error.message});
+10       });
+11     })
+12      .post((req, res) => {
+13        req.body.user_id = req.user.id;
+14        Tasks.create(req.body)
+15          .then(result => res.json(result))
+16          .catch(error => {
+17            res.status(412).json({msg: error.message});
+18          });
+19     });
+In the same file, make the same modification inside the queries of the app.route("/tasks/:id")function.
+
+ 1   app.route("/tasks/:id")
+ 2     .all(app.auth.authenticate())
+ 3     .get((req, res) => {
+ 4       Tasks.findOne({ where: {
+ 5         id: req.params.id,
+ 6         user_id: req.user.id
+ 7       }})
+ 8       .then(result => {
+ 9         if (result) {
+10           return res.json(result);
+11         }
+12         return res.sendStatus(404);
+13        })
+14        .catch(error => {
+15          res.status(412).json({msg: error.message});
+16        });
+17      })
+18      .put((req, res) => {
+19        Tasks.update(req.body, { where: {
+20          id: req.params.id,
+21          user_id: req.user.id
+22        }})
+23        .then(result => res.sendStatus(204))
+24        .catch(error => {
+25          res.status(412).json({msg: error.message});
+26        });
+27      })
+28      .delete((req, res) => {
+29        Tasks.destroy({ where: {
+30          id: req.params.id,
+31          user_id: req.user.id
+32        }})
+33        .then(result => res.sendStatus(204))
+34        .catch(error => {
+35          res.status(412).json({msg: error.message});
+36        });
+37      });
+To finish this refactoring, let’s modify the users’ resources. Now we need to adapt some pieces of code inside the users’ routes. Basically, we are going to change the way of searching or deleting a user to use the authenticated user’s id.
+
+In this case, it won’t be necessary to use an id in the route parameter, because now the route/users/:id will be just /user (in the singular, because we are now dealing with a single logged user). Only to search and delete will have an authentication middleware, so now both of them can be grouped via the app.route("/user") function to reuse the middleware all(app.auth.authenticate()). Instead of req.params.id, we are going to use req.user.id, to ensure that an authenticated userid will be used.
+
+To understand better how this logic will works, edit the routes/users.js file and make the following modifications.
+
+ 1   module.exports = app => {
+ 2     const Users = app.db.models.Users;
+ 3   
+ 4     app.route("/user")
+ 5       .all(app.auth.authenticate())
+ 6       .get((req, res) => {
+ 7         Users.findById(req.user.id, {
+ 8           attributes: ["id", "name", "email"]
+ 9         })
+10         .then(result => res.json(result))
+11         .catch(error => {
+12          res.status(412).json({msg: error.message});
+13        });
+14      })
+15      .delete((req, res) => {
+16        Users.destroy({where: {id: req.user.id} })
+17          .then(result => res.sendStatus(204))
+18          .catch(error => {
+19            res.status(412).json({msg: error.message});
+20          });
+21      });
+22   
+23   app.post("/users", (req, res) => {
+24     Users.create(req.body)
+25     .then(result => res.json(result))
+26     .catch(error => {
+27       res.status(412).json({msg: error.message});
+28     });
+29   });
+30   };

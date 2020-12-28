@@ -1,0 +1,85 @@
+Host-Level Security
+Any host running containers must be hardened at the operating system level. This includes:
+
+Ensuring the latest operating system version available is being used, and that the OS is fully 
+patched (potentially with additional kernel hardening options like grsecurity)
+
+Ensuring the application attack surface exposed in minimized (e.g., correctly exposing ports, 
+running applications behind a firewall with DMZ, and using certificate-based login)
+
+Using application-specific SELinux or AppArmour
+
+Using an application-specific seccomp whitelist if possible
+
+Enabling user namespaces
+
+CIS: http://bit.ly/2eYdjAg
+
+https://github.com/docker/docker-bench-security
+
+Clair project to check container vulnerabilities: 
+
+https://github.com/coreos/clair
+
+
+App level security:
+
+https://www.owasp.org/index.php/OWASP_Zed_Attack_Proxy_Project
+https://github.com/continuumsecurity/bdd-security
+
+https://www.nccgroup.trust/us/our-research/understanding-and-hardening-linux-containers/
+
+Host level monitoring:
+------------------------
+Host-Level Monitoring
+Starting at the host level, it is essential that any machine running production containers (and applications) 
+provide hardware- and OS-level metrics. 
+
+Central processing like : Prometheus, Datadog
+
+All core host and operating system–level logs should also be collected centrally, 
+and this is typically undertaken by streaming logs to a tool like the ElasticSearch-Logstash-Kibana (ELK) stack
+
+Operators may also consider running a host intrusion detection system (HIDS) if security or governance is of paramount concern 
+(over and above hardening systems), 
+and open source offerings such as OSSEC or Bro Network Security Monitor.
+https://www.bro.org/
+
+Container-Level Metrics:
+-------------------------
+Monitoring at the container level ranges from as simple as the output to docker stats or 
+using the more detailed overview provided by cAdvisor, to the full power of Sysdig.
+
+http://dockr.ly/2eYlXyG
+https://github.com/google/cadvisor
+http://www.sysdig.org/
+
+More detailed information about a container’s resource usage can 
+also be found enabling and using the Docker Remote API, which is exposed as a REST-like API.
+
+cAdvisor (Container Advisor) is Google’s container monitoring daemon that collects, aggregates, processes, and exports 
+information about running containers (see Figure 5-3). Specifically, for each container it keeps resource isolation parameters, 
+historical resource usage, 
+histograms of complete historical resource usage, and network statistics. This data is exported by container and machine-wide.
+
+Sysdig is a container-friendly, open source, system-level exploration tool that can capture system state and activity from a 
+running Linux instance, then save, filter, and analyze this data. Sysdig is scriptable in Lua and includes a command-line interface 
+and a powerful interactive UI, csysdig, that runs in a terminal.
+
+Application-Level Metrics and Health Checks:
+--------------------------------------------
+Developers should expose important application metrics via API endpoints, like those provided by CodaHale’s Metrics library 
+and Spring Boot’s Actuator. Metrics are typically exposed as gauges, counters, histograms, and timers, and can relay vital 
+information to both operators and business stakeholders. Many Java-based metric libraries also support the creation of health-check 
+endpoints that can be queried by monitoring systems and load balancers in order 
+to determine if the application instance is healthy and ready to accept traffic
+
+Application performance management (APM) is also a useful tool for developers and operators to understand and debug a system. 
+Historically, the commercial solutions have had much more functionality in comparison with open source tooling, 
+but Naver’s Pinpoint is now offering much of the expected core functionality
+
+As many Java developers who are embracing container technology like Docker are also looking to develop 
+microservice-based applications, distributed tracing solutions like OpenZipkin’s Zipkin are very valuable 
+when exploring the request/response and data flows through a distributed system
+
+https://github.com/openzipkin

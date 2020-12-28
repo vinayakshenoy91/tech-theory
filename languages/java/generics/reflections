@@ -1,0 +1,8 @@
+- Helps you inspect app at runtime.
+
+Class Literals:
+----------------
+
+newInstance(final Class<?> className)
+
+public <T> T newInstance(final Class<T> className)

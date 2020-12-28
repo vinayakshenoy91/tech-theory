@@ -1,0 +1,87 @@
+- Prevent race condition
+- It is locking mechanism
+- Used to restrict access to a critical section or entire method to a single thread at a time.
+- If the method is static, the sync weill be on the class object.
+- If method is non-static, then sync will beon the instance object.
+
+- When you use the synchronized keyword with a method, the object reference is implicit. When you use the 
+synchronized keyword in one or more methods of an object, only one execution thread will have access to all 
+these methods. If another thread tries to access any method declared with the synchronized keyword of the same 
+object, it will be suspended until the first thread finishes the execution of the method. In other words, every 
+method declared with the synchronized keyword is a critical section, and Java only allows the execution of one of 
+the critical sections of an object at a time. In this case, the object reference used is the own object, 
+represented by the this keyword. Static methods have a different behavior. Only one execution thread will 
+have access to one of the static methods declared with the synchronized keyword, but a different thread can 
+access other non-static methods of an object of that class. You have to be very careful with this point because 
+two threads can access two different synchronized methods if one is static and the other is not. If both methods 
+change the same data, 
+you can have data inconsistency errors. In this case, the object reference used is the class object.
+
+1) Synchronized - Monitor:
+-------------------------
+public class ClassWithCiritcalSections{
+
+public synchronized method1(){
+
+}
+
+public synchronized method2(){
+     
+}
+
+}
+
+
+OR
+
+public class ClassWithCiritcalSections{
+
+public void method1(){
+   synchronized(this){
+
+   } 
+}
+
+public void method2(){
+   synchronized(this){
+       
+   }  
+}
+
+}
+
+- Synchronized is applied on object(this). So only one thread can execute either of the given methods at a given time.
+
+
+2) Synchronized - Lock:
+------------------------
+public class  ClassWithCritcalSections{
+   private final Object lockingObject1 = new Object();
+   Object lockingObject2 = new Object();
+
+   public void method1(){
+       synchronized(this.lockingObject1){
+
+       }
+   }
+
+   public void method2(){
+       synchronized(this.lockingObject2){
+
+       }
+   }
+
+}
+
+- Synchronized is applied on object. So only two threads can execute two separate methods simulateneously
+
+- Synchronized block is Reentrant. A thread cannot prevent itself from entering critical section
+
+- When Synchronization is happening on an object level, and not Class level,
+thread1 and thread2 are executing methods from different objects, they do not block each other
+
+
+Double check locking:
+---------------------
+- Problem with double check locking was that it was non-sync read byt sync write.
+

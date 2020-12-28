@@ -1,7 +1,0 @@
-- SQS is a highly-durable queue in the cloud
-- duplicate messages can emerge within SQS, so your consumers should be prepared to handle this situation
-
-# If you really need strict ordering and exactly-once delivery (no duplicates):
-- SQS has an option to enable this property by marking your queue as FIFO.
-- But these FIFO queues come with a throughput limit of 300 messages per second, 
-so they’re only viable if you’re certain that your message rate will remain well clear of that limit.

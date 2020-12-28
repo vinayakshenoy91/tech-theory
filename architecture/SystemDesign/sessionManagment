@@ -1,0 +1,9 @@
+There are three different kinds of solutions that exist when it comes to session management . They are:
+1.Sticky Sessions: As we discussed earlier, this is a scenario where if a particular user was served by, let’s say, 
+Server X, every subsequent request by the same user must go back to server X. This definitely has a few downsides.
+a.The major one being the possibility of unequal load in certain servers compared to others.
+
+b.In case server X goes down, we lose all the sessions on that server . Imagine a user having his entire shopping 
+cart in that session; it would not be a good experience.
+
+2. Centralized session store

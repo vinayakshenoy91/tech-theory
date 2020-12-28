@@ -1,0 +1,66 @@
+1.Consistency: A distributed system that returns the most current data no matter which node the request was made to is 
+considered to guarantee consistency. In layman’s terms, if a write or update request to any node in the system is 
+replicated to other nodes in the system, before the read request, it’s a consistent system. 
+So, the bottom line is that every read will return the most recent write. The system will not return stale data but the 
+most recently updated data. In order to achieve consistency, the system has to update all the relevant nodes at each 
+request, before allowing any reads from the system on that particular resource.
+Can all nodes see identical data at all times.
+ 
+2.Availability: It is the ability of a node to respond to requests if the node hasn’t failed. Availability allows for 
+failed nodes. However, if the node hasn’t failed and doesn’t respond to a legitimate request, it is considered to not be 
+available. In order to achieve availability, the system needs to replicate data between different nodes.
+Can all nodes be read from and written to at all times.
+
+ 
+3.Partition Tolerance: It is the guarantee of a system to respond to requests even when the system is partially 
+down. No failure less than a complete failure of the system should allow the system to respond incorrectly. So, if 
+the connections between some nodes in the system are lost, the system is partition tolerant, if and only if the system 
+as a whole is still consistent and available.
+Will nodes function normally, even when the cluster breaks.
+
+
+https://pages.cs.wisc.edu/~zuyu/files/fallacies.pdf 
+It elucidates common mistakes an engineer makes with architecture distributed systems. 
+These fallacies are the following:
+1.	
+Network is reliable.
+
+ 
+2.	
+Latency is zero.
+
+ 
+3.	
+Bandwidth is infinite.
+
+ 
+4.	
+Network is secure.
+
+ 
+5.	
+Topology doesn’t change.
+
+ 
+6.	
+There is one administrator.
+
+ 
+7.	
+Transport cost is zero.
+
+ 
+8.	
+Network is homogenous.
+
+ 
+CP and AP are most used
+CP -> Consistent data across a horizontally scaled cluster, even with network problems.
+Couchbase , MongoDB
+
+AP -> Availability and Partition Tolerance
+Always service requests, across multiple DCeven with network problems, data eventually consistent.
+Couchbase XDCR , HBASE, Cassandra
+
+CA -> Consistency and Availability -? Vertically scaled system
+RDBMS

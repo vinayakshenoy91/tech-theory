@@ -1,1 +1,225 @@
-SELECT ENCODED_SIZE(test) FROM bucketname;
+Tools for data modelling:
+-------------------------
+hackolade.com
+erwin
+
+
+- CB is a key value store
+- Key is made of 250 UTF-8characters per key
+
+- Heterogenous service in separate node is called multi dim scaling
+
+Note: For community edition, you need to have data , query and index on same node.
+
+- Standard global secondary index are stored on disk and memeory used for update and scaling.
+- Memory optimised -> Index are stored in memory
+
+
+Bucket type:
+-------------
+Couchbase -> Data will be stored and retrieved memeory first. Stored in ram and then flushed into disk
+Ephemeral -> Memory only
+Memecached -> No replication., compression. backup, query, etc
+
+
+
+FTS :
+
+-  In-memory inverted indexing
+- Result by relevance,  scoring
+- Tokenbization, Stemming, faceting, etc
+
+
+Eventing :
+- Respond to doc updates and delets
+- Centralized business logic
+- Familiar v8/js impl
+
+
+
+Bucket in couchbase is a keyspace. It is a logical container of uniquely keyed documents
+
+
+Why more than one bucket per app?
+- Variant replciaton demands
+- Highly distinct access patterns
+- Mixed document structures.
+
+
+- For couchbase, keys cached in metadata by default, consider sizing impact.
+- Couchbase XDCR can be filtered based on key patterns 
+
+- Cross document data access can be done through N1Ql JOIN or SDK get() operations.
+
+
+Query:
+------
+- this allows developers too build and evolve applications using couchbase's oqwn query language known as N1Ql
+
+- Indexing is a CB DS that provides a quick and effecient means to query and access all data.
+
+- Data nodes are allocated based on hash based partitioning.
+
+- Only data service memory is available for bucket data storage.
+
+
+Metadata in CB:
+- ID - doc key
+- Expiration - TTL
+- CAS - Check adn set locking value
+- Revisions, flags types, extra attr
+
+
+Indexes:
+--------
+1) PRIMARY: An index that covers all document keys in a given bucket is called Primary index.
+Syntax: CREATE PRIMARY INDEX <index_name> ON <bucket_name>
+CREATE PRIMARY INDEX <index_name> ON <bucket_name>(field1, field2,field3)
+
+Primary indexes can be used by Developers for Ad Hoc Quering to work out the final query and ultimate index.
+
+
+2) SECONDARY INDEX: An index created on selected fields in the bucket documents.
+CREATE INDEX idx_name on bucket_name(field1)
+
+
+3) COMPOSITE INDEX: An index created on more than one selected fields.
+CREATE INDEX idx_name on bucket_name(field1,field2)
+
+
+4) Partial indexes[Filtered indexs]: Covers a subset of documents in the bucket. It can consume less system resource.
+Where clause filters the documents that will be covered by the index.
+
+CREATE INDEX IDX_playlist_name ON couchmusic2 WHERE type="playlist"
+
+5) Covering & Partial Covering Indexes:
+
+Covering index: Covers all the fields that are needed for the query.
+CREATE INDEX idx_name_created_type ON couchmusic2(type,name,created)
+
+Partial Covering Index: Has all benefits of a covering index plus it consumes 
+less resources as it is covering only part of the documents.
+CREATE INDEX idx_name_created_type ON couchmusic2(name,created) WHERE type="playlist"
+
+Subdocument:
+------------
+- If an only an attribute has to be changed to a subdocument replace, than getting and replacing it.
+ 
+- Submit a list of non-mutating commands for given doc id and return LookupInResult
+Collection.lookupIn(id,List<LookupInSpec>,[LookupInOptions])
+get("my-element")
+exists("my-element")
+count("my-element")
+
+- Submit a list of mutation commands for a given doc id and returns MutateInResult
+Collection.mutateIn(id,List<MutateInSpec>,[MutateInOptions])
+
+replace("myElement","new value")
+upsert("myElement","new value")
+insert("myElement","new value")
+remove("myElement")
+
+arrayInsert("myElement","new value")
+arrayAppend("myElement","new value")
+arrayPrepend("myElement","new value")
+arrayAddUnique("myElement","new value")
+
+Locking stratagies:
+------------------
+1) Optimisitic locking:
+-----------------------
+Allows the potential for simultaneous writes, but uses a CAS value to identify if changes have occcured.
+Virtually no perf cost.
+
+
+Note:
+- Couchbase stores CAS values as metadata,returned as part of get Result
+- CAS can be supplied for replace() and remove() via ReplaceOptions or RemoveOptions.
+
+long originalCAS = getResult.cas();
+
+//Specifying CAS on subsequent mutation to state what version of an object  they believe are mutating.
+Certain multation methods on the collection object throw a CasMismatchException.
+
+ReplaceOptions replaceOptions= ReplaceOptions.replaceOptions();
+MutationResult result = collection.replace(id,value,replaceOptions.cas(originalcas));
+
+//Other mutation methdos where cas value specified
+insert()
+remove()
+mutateIn()
+
+Note: upsert() does not allow a developer to specify cas
+
+Retry pattern using CAS:
+------------------------
+
+import static com.couchbase.client.java.kv.ReplaceOptions.replaceOptions
+int maxRetries=5;
+String userkey ="cyz"
+
+for(inti=0;i<maxRetries;i++){
+
+    GetResult getResult = collection.get(userkey);
+    long originalCas = getResult.cas();
+
+    JsonObject content = getResult.contentAsObject();
+    content.put("password","new password");
+
+    try{
+          collection.replace(userKey,content,replaceOptions().cas(originalCas));
+          break;
+    }catch(CasMismatchException ex){
+        sleep(1000)
+    }
+
+}
+
+Optimistic locking with MutateIn:
+---------------------------------
+import static com.couchbase.client.java.kv.MutateInOptions.*;
+import static com.couchbase.client.java.kv.MutateInSpec.*;
+
+//Submitting single request
+
+collection.mutateIn(id,Collection.singletonList(replace("element","newValue")),mutateInOptions().cas(originalCas));
+
+
+2) Pessimistic locking:
+-----------------------
+- Exclusive write lock on the doc while mutating:
+ -> 30s max
+ -> perf cost is doc is locked for 30s
+ -> Cas is needed to unlock
+
+Duration lockDuration = Duration.ofSeconds(20);
+
+GetResult result = collection.getAndLock(id,locakDuration);
+long originalCAS = getResult.cas();
+JsonObject value = result.contentAsObject();
+
+collection.replace(id,value,replaceOptions().cas(originalCAS));
+collection.unlock(id,originalCAS);//Unlock explictly
+ 
+
+
+Production best practises:
+---------------------------
+- Duarbility options describe the Developer's ability to specify data storage behaviour in 
+light of sharding, replicas and persistance.
+- Each bucket is sharded equally between nodes.
+- Each bucket consists of 1024 vbuckets[shards], that spread out equally and automatically on Data Servers only.
+This automatic distribution is known as auto-sharding.
+- vbucket created can be replicated to other nodes to ensure fault tolerance. 
+Config during bucket creation or after from bucket settings.
+- Couchbase buckets are aiutomatically and async persisted from memory to disk.
+Protects from server restarts.Developers can set persistance properties at bucket level.
+- Greater perforamnce costs come with securing high data integrity.
+
+- UsertOptions.InsertOptions.RemoveOptions provide durability.
+collection.upsert(id,doc,upsertOptions().durability(DurabilityLevel.MAJORITY)); //Write occurs to majority of replicas.
+
+   
+
+
+

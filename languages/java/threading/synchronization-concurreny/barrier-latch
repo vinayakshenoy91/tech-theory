@@ -1,0 +1,153 @@
+Barrier:
+-------
+Several task wait for each other
+
+part of java.util.concurrent package.
+CyclicBarrier barrier = new CyclicBarrier(4, ()-> System.out.println("Barrier opening"));
+
+Callable<List<Integer>> task = () ->{
+    Set<Integer> result = findPrimes(inputset);
+    try{
+        barrier.await(); //Blocks until everybody is ready, you can specify time and unit
+    }catch(InterruptedException|BrokenBarrierException e){...}
+    return result;
+}
+
+
+
+public class Worker implements Callable<List<Integer>>{
+
+public List<Integer> call(){
+    List<Integer> result = findPrimes(inputList);
+    try{
+        barrier.await(); //Blocks until everybody is ready
+    }catch(InterruptedException|BrokenBarrierException e){...}
+    return result;
+}
+
+}
+
+ExecutorService service = Executors.newFixedThreadPool(4); //Make sure of executor.shutdown()
+Future<List<Integer>> future = service.submit(worker1); //Submit will call the call method
+
+future.get()
+
+future.cancel(true) //Stop all threads that has wrapper as future.Threads will be interrupted.
+
+- The reset() method resets the barrier exceptionally, causing th waiting task to throw a BrokernBarrierException
+
+Latch:
+-----
+The Java concurrency API provides a class that allows one or more threads to wait 
+until a set of operations are made. It's called the CountDownLatch class. 
+There's no way to re-initialize the internal counter of the CountDownLatch object or modify its value. Once the counter is initialized, the only method you can use to modify its value is the countDown() method explained earlier. When the counter reaches 0, all the calls to the await() 
+method are returned immediately and all subsequent calls to the countDown() method have no effect.
+
+However, there are some differences with respect to other synchronization methods, which are as follows:
+
+The CountDownLatch mechanism is not used to protect a shared resource or a critical section. It is used to synchronize one or more threads with the execution of various tasks.
+It only admits one use. As explained earlier, once the counter of CountDownLatch arrives at 0, all the calls to its methods have no effect. You have to create a new object if you want to do the same synchronization again.
+
+
+More methods:
+
+await(long time, TimeUnit unit): In this method, the thread will continue to sleep until it's interrupted, that is, either the internal counter of CountDownLatch arrives at 0 or the specified time passes. The TimeUnit class is an enumeration with the following constants: DAYS, HOURS, MICROSECONDS, MILLISECONDS, MINUTES, NANOSECONDS, and SECONDS.
+
+To count down operations and let a task start.
+
+Usecase: once all the services are available, we need to start the app. But the barrier should not be reset.
+This is is the diff between barrier and latch.
+
+//Same as the class above but this inside call method
+
+CountDownLatch latch = new CountdownLatch(3);
+
+public void call(){
+    service.init();
+
+    latch.countDown();
+}
+
+//In main class write below:
+
+try{
+    latch.await(10,TimeUnit.Seconds);
+    server.start();
+}catch(InterruptedException e){
+    //Error handling
+}
+
+
+How to do it...
+Follow these steps to implement the example:
+
+Create a class named Videoconference and specify that it implements the Runnable interface. This class will implement the video conference system:
+        public class Videoconference implements Runnable{
+Declare a CountDownLatch object named controller:
+        private final CountDownLatch controller;
+Implement the constructor of the class that initializes the CountDownLatch attribute. The Videoconference class will wait for the arrival of the number of participants received as a parameter:
+        public Videoconference(int number) { 
+          controller=new CountDownLatch(number); 
+        }
+Implement the arrive() method. This method will be called each time a participant arrives for the video conference. It receives a String type named name as the parameter:
+        public void arrive(String name){
+First, it writes a message with the parameter it has received:
+        System.out.printf("%s has arrived.",name);
+Then, it calls the countDown() method of the CountDownLatch object:
+        controller.countDown();
+Finally, it writes another message with the number of participants whose arrival is pending, using the getCount() method of the CountDownLatch object:
+        System.out.printf("VideoConference: Waiting for %d
+                           participants.\n",controller.getCount());
+Next, implement the main method of the video conference system. It's the run() method that every Runnable object must have:
+        @Override 
+        public void run() {
+First, use the getCount() method to write a message with the number of participants in the video conference:
+        System.out.printf("VideoConference: Initialization: %d
+                           participants.\n",controller.getCount());
+Then, use the await() method to wait for all the participants. As this method can throw an InterruptedException exception, you must include the code to process it:
+        try { 
+          controller.await();
+Finally, write a message to indicate that all the participants have arrived:
+          System.out.printf("VideoConference: All the participants have
+                             come\n"); 
+          System.out.printf("VideoConference: Let's start...\n"); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        }
+Next, create the Participant class and specify that it implements the Runnable interface. This class represents each participant in the video conference:
+        public class Participant implements Runnable {
+Declare a private Videoconference attribute named conference:
+        private Videoconference conference;
+Declare a private String attribute named name:
+        private String name;
+Implement the constructor of the class that initializes both the preceding attributes:
+        public Participant(Videoconference conference, String name) { 
+          this.conference=conference; 
+          this.name=name; 
+        }
+Implement the run() method of the participants:
+        @Override 
+        public void run() {
+First, put the thread to sleep for a random period of time:
+        long duration=(long)(Math.random()*10); 
+        try { 
+          TimeUnit.SECONDS.sleep(duration); 
+        } catch (InterruptedException e) { 
+          e.printStackTrace(); 
+        }
+Then, use the arrive() method of the Videoconference object to indicate the arrival of this participant:
+        conference.arrive(name);
+Finally, implement the main class of the example by creating a class named Main and adding the main() method to it:
+        public class Main { 
+          public static void main(String[] args) {
+Next, create a Videoconference object named conference that waits for 10 participants:
+        Videoconference conference=new Videoconference(10);
+Create Thread to run this Videoconference object and start it:
+        Thread threadConference=new Thread(conference); 
+        threadConference.start();
+Create 10 Participant objects, a Thread object to run each of them, and start all the threads:
+        for (int i=0; i<10; i++){ 
+          Participant p=new Participant(conference, "Participant "+i); 
+          Thread t=new Thread(p); 
+          t.start(); 
+        }

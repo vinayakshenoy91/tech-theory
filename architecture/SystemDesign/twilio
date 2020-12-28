@@ -1,0 +1,58 @@
+To see how this works in practice, consider the following code:
+
+def two_factor(context):
+  # Generate a random six digit code
+  code = random.randint(100000, 999999)
+
+  # Register the code with the login service
+  user = context.json["user"]
+  register_code_with_login_service(user, code)
+
+  # Use the twillio library to send texts
+  account = "my-account-sid"
+  token = "my-token"
+  client = twilio.rest.Client(account, token)
+
+  user_number = context.json["phoneNumber"]
+  msg = "Hello {} your authentication code is: {}.".format(user, code)
+  message = client.api.account.messages.create(to=user_number,
+                                               from_="+12065251212",
+                                               body=msg)
+  return {"status": "ok"}
+We can then register this FaaS with kubeless:
+
+kubeless function deploy add-two-factor \
+    --runtime python27 \
+    --handler two_factor.two_factor \
+    --from-file two_factor.py \
+    --trigger-http
+
+-----------
+
+defaulting function using the Python programming language:
+
+# Simple handler function for adding default values
+def handler(context):
+  # Get the input value
+  obj = context.json
+  # If the 'name' field is not present, set it randomly
+  if obj.get("name", None) is None:
+    obj["name"] = random_name()
+  # If the 'color' field is not present, set it to 'blue'
+  if obj.get("color", None) is None:
+    obj["color"] = "blue"
+  # Call the actual API, potentially with the new default
+  # values, and return the result
+  return call_my_api(obj)
+Save this function in a file named defaults.py. You obviously will want to update the call_my_api code so that it points to the actual API you want to call. Once you have finished writing the code, this defaulting function can be installed as a kubeless function using:
+
+kubeless function deploy add-defaults \
+    --runtime python27 \
+    --handler defaults.handler \
+    --from-file defaults.py \
+    --trigger-http
+If you want to test the handling of this function, you can also use the kubeless tool:
+
+kubeless function call add-defaults --data '{"name": "foo"}'
+The decorator pattern shows just how easy it is to adapt and extend existing APIs with additional features like validation or defaulting.
+

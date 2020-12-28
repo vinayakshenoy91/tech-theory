@@ -1,0 +1,32 @@
+- Heaps can be implemented using arrays. Initially, elements are placed in nodes in the same order as they appear in the array. 
+Then a function is called over the whole Heap in a bottom-up manner, 
+which “Max Heapifies” this Heap so that the Heap property is satisfied on all nodes.
+
+- When we say bottom-up we mean the function starts from the last parent node present at the n/2th position of the array, and 
+it checks if the values at the child nodes are smaller than the parent nodes. 
+
+
+Insertion in Max-Heap #
+If you want to insert a new element in the Max Heap, you will have to follow a list of steps to make sure 
+the Heap property still holds after adding the element. Here’s the list of steps that you will perform:
+
+- Create a new child node at the end of the heap.
+- Place the new key at that node.
+- Compare the value with its parent node key.
+- If the key is greater than the key at the parent node, swap values.
+- If both keys at the children nodes are greater than the parent node key, pick the larger one and see if the
+Heap property is satisfied.
+- Repeat until you reach the root node.
+
+Removing an Element from a Max-Heap #
+
+Deletion in a Max-Heap is mainly performed when you want to remove the largest element. 
+In most of the cases, the purpose of a Heap is to work as a priority queue. 
+
+- Delete the root node
+- Move the key of the last child node at the last level to the root
+- Now compare the key with its children
+- If the key is smaller than the key at any of the child nodes, swap values
+- If both keys at the children nodes are greater than the parent node key, pick 
+the larger one and see if the heap property is satisfied
+- Repeat until you reach the last level

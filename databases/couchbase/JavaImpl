@@ -1,0 +1,108 @@
+Spring data couchbase:
+-----------------------
+- Using spring data couchbase[Spring based programming model for data access whihc retains traits of couchbase incl N1QL query]
+- It applies spring data patterns
+- Spring config support using @Configuration
+- Object mapping with Spring Conversion Service
+- Automatic impl of repository interface incl support for custom find methods.
+
+Couchbase SDK:
+--------------
+groupId -> com.couchbase.client
+artifactID -> java-client
+version -> 3.0.5
+
+SDK specific code to connect to cluster and bucket:
+---------------------------------------------------
+Cluster cluster = Cluster.connect("localhost","cbuser","password");
+Bucket bucket = cluster.bucket("couchmusic2");
+Collection  collection = bucket.defaultCollection();
+
+
+SDK methods:
+------------
+get()
+insert()
+replace()/upsert()
+remove()
+
+
+insert operation:
+-------------------
+- MutatuonResult result = collection.insert(id,value)
+- Exceptions thrown are: DocumentExistsException, TimeOutException,CouchbaseException
+
+get operation:
+--------------
+GetResult result = colleciton.get(id);
+JSONObject json = result.contentAsObject();
+- Exceptions thrown are: DocumentNotFoundException, TimeOutException,CouchbaseException
+
+
+update operation:
+-----------------
+- MutatuonResult result = collection.replace(id,value)
+- Exception are: DocumentNotFoundException, TimeOutException, CasMismatchException, CouchbaseException
+
+OR
+
+- MutatuonResult result = collection.upsert(id,value);
+- Exception are: TimeOutException, CouchbaseException 
+- Does not test for existance
+
+use Value as : JSONObject.create().put("name","My Updated Playlist");
+JSONObject.fromJSON("{somejson}")
+
+Remove operation:
+-------------------
+- MutatuonResult result = collection.remove(id)
+- Exception are: DocumentNotFoundException, TimeOutException, CasMismatchException, CouchbaseException
+
+
+Serialization and Deserialization of data:
+--------------------------------------------
+- Transcoder and serializer to store data
+
+- The DefaultJsonSerializer usus the high-perf Jackson/JSON library for serilizing and deserilizing byte arrays
+to and from concrete objects.
+
+
+Transcoders:
+-----------
+1) JsonTranscoder -> Provided by default, Handles domain object and JsonObjectser and deser
+2) RawJsonTranscoder -> Does not perform ser/deser, allows already coded json to pass through
+3) RawStringTranscoder -> Flags content type as string. Stores string directly
+4) RawBinaryTranscoder -> Encode data as base64 | Flag content as binary type | merely passes byte[] through
+
+
+1) Coding for string:
+----------------------
+Insert:
+String document = "{\"name\":\"Mark\"}";
+collection.insert(id,JSONObject.fromJSON(document))
+
+Get: 
+GetResult result = collection.get(id);
+JSONObject json = result.contentAsObject();
+String x = result.toString();
+
+2) Coding for domain object:
+----------------------------
+Insert:
+collection.insert(id,playlist)
+
+Get:
+GetResult result = collection.get(id);
+Playlist playlist2 = result.contentAs(Playlist.class);
+
+
+3) Coding for json object natively:
+------------------------------------
+insert:
+collection.insert(id,JSONObject.create().put("name","mark"))
+
+Get: 
+GetResult result = collection.get(id);
+JSONObject json = result.contentAsObject();
+String name = json.getString("name");
+

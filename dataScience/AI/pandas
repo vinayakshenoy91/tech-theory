@@ -24,3 +24,12 @@ df['price'].mean()
 df.describe() #for all columns
 
 df_htin.groupby(['is_liked']).mean()
+
+Drop methods:
+-------------
+df.dropna(subset="total_bedrooms")
+df.drop("total_bedrooms",axis=1)
+median=df["total_bedrooms"].median()
+df["total_bedrooms"].fillna(median,inplace=True)
+
+housing[housing.isnull().any(axis=1)].head(100)

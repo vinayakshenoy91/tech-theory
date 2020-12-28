@@ -1,0 +1,53 @@
+Amazon SQS:
+----------
+- SQS is a highly-durable queue in the cloud
+- duplicate messages can emerge within SQS, so your consumers should be prepared to handle this situation
+
+# If you really need strict ordering and exactly-once delivery (no duplicates):
+- SQS has an option to enable this property by marking your queue as FIFO.
+- But these FIFO queues come with a throughput limit of 300 messages per second, 
+so they’re only viable if you’re certain that your message rate will remain well clear of that limit.
+
+Standard queue:
+---------------
+- Unlimited throughput, unlimited message in queue
+- Message will stay in queue for 4 days or 14 days
+- low latency <10ms on publish and receive
+- < 256KBs per message sent
+- Atleast once delivery
+- Can have out of order messages
+- Consumer polls SQS for messages.Consumer consumes and deletes it.
+- Metrics for horizonal scaling is Approx queue length -> Approximate NumberOfMessages
+- if message not read in 30s it will go back  into queue.
+
+Visibility timeout -> based on you consumer processing time.
+- Once message is polled by consumer, it becomes invisible to other customers.
+- A consumer could call the ChangeMessageVisibility API to get more time.
+- If visibility timeout low-> multiple messages
+
+DLQ:
+----
+- After a max number of visibility timeout for a message = Maximum Receives, the message can be pushed to a DLQ
+- use 14 days retention
+
+Delay queue:
+-----------
+- Delay a message upto 15 min so that consumers dont see it.consumer sees it onky after 15 min
+- DelaySeconds at queue level. 
+- Individual message delay  capability
+
+FIFO:
+-----
+- Ordering of message and exactly once delivery.
+- limited throughput 300msgs/s without batching, 3000msgs/s with batching
+- Queue name should end with <queuename>.fifo
+- You can have a group id
+
+Encryption:
+- In flight encryption using https api
+- At rest encryption using KMS keys
+- Client side encryption if the client wants to perform encryption/decryptionitself.
+- SQS access policies similar to S3 bucket policies.
+    - Useful for cross account access to SQS queue.
+    - Useful for other service to write to SQS queue.
+- Access controls: IAM policies to regulate access to SQS API

@@ -1,0 +1,4 @@
+- Thread safe than array list but is too costly on traversal
+- Used when multiple thread access same list.
+- lots of iterations/read
+- Few writes/additions/deletions

@@ -1,0 +1,86 @@
+- Restrict number of users to a particular resource or a group of resource.
+- Unlike locks which allow one user per resource, semaphore can allow any number of users.
+- A semaphore is a counter that protects access to one or more shared resources.
+
+Semaphore semaphore = new Semaphore(NUMBER_OF_PERMITS)
+semaphore.acquire(5)  //If onky one you need not specify the number
+
+//execute instruction
+
+sempahore.release(5)
+
+Features:
+---------
+- No notion of owner thread
+- Many threads can acquire permit.
+- same thread can acquire semaphore multiple times.
+- binary semaphore(intinilized with 1) is not reentrant.
+- semaphore can be released by any thread, even on that did not acquire it.
+
+Sempahores is great choice for producer-consumer:
+--------------------------------------------------
+Semaphore full =  new Sempahore(0);
+Semaphore empty =  new Sempahore(1);
+Item item = null
+
+Consumer:
+--------
+while(true){
+    full.acquire();
+    consume(item);
+    empty.release();
+}
+
+Producer:
+---------
+while(true){
+  empty.acquire();
+  item = produceNewItem();
+  full.release(); //Put this in finally
+}
+
+For multiple producer and consumer use:
+---------------------------------------
+Semaphore full =  new Sempahore(0, true);//True means it cabe made fair.
+Semaphore empty =  new Sempahore(CAPACITY);
+Queue queue = new ArrayDeque();
+Lock lock = new RentrantLock();
+
+To prevent concurrent access by multiple consumers and producers, we use lock as shown above.
+
+
+
+Producer:
+---------
+while(true){
+    Item item = produce();
+    empty.acquire();
+    lock.lock();
+    queue.offer(item);
+    lock.unlock();
+    full.release();
+}
+
+Consumer:
+---------
+
+while(true){
+    full.acquire();
+    lock.lock();
+    Item item = queue.poll();
+    lock.unlock();
+    consume(item);
+    empty.release();
+}
+
+Others sempahore:
+
+The Semaphore class has three additional versions of the acquire() method:
+
+acquireUninterruptibly(): The acquire() method, when the internal counter of the semaphore is 0, blocks the thread until the semaphore is released. During this period, the thread may be interrupted; if this happens, the method will throw an InterruptedException exception. This version of the acquire operation ignores the interruption of the thread and doesn't throw any exceptions.
+tryAcquire(): This method tries to acquire the semaphore. If it can, it returns the true value. But if it can't, it returns false instead of being blocked and waits for the release of the semaphore. It's your responsibility to take correct action based on the return value.
+tryAcquire(long timeout, TimeUnit unit): This method is equivalent to the previous one, but it waits for the semaphore for the period of time specified in the parameters. If the period of time ends and the method hasn't acquired the semaphore, it will return false.
+The acquire(), acquireUninterruptibly(), tryAcquire(), and release() methods have an additional version, which has an int parameter. This parameter represents the number of permits the thread that uses them wants to acquire or release, in other words, the number of units that this thread wants to delete or add to the internal counter of the semaphore.
+
+In the case of the acquire(), acquireUninterruptibly(), and tryAcquire() methods, if the value of the counter is less than the number passed as parameter value, the thread will be blocked until the counter gets the same value or a greater one.
+

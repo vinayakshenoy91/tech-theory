@@ -1,0 +1,17 @@
+- Unicast ip -> One server holds 1 ip
+- Anycast ip -> All server has same ips and client is routed to nearest one.
+
+- 2 anycast ips created for your app and they send traffic directly to edge location.
+- Works with Elastic ip, Ec2 instance, ALB, NLB, public or private
+- Intelligent routing to lowest latency and fast regional failover
+- performs health check of your apps
+- Failover to another AL in < 1 min
+- Only two external ip to be whitelisted.
+- DDOS protection via AWS shield
+
+Good fit for:
+- Non-http usecase like gaming(UDP), IOT, VOIP
+- HTTP use case that require static ip address
+- HTTP usecase that require deterministic, fas regional failovers.
+
+

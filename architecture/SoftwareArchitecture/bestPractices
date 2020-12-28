@@ -1,0 +1,15 @@
+
+
+SRE:
+----
+- get SLOs defined 
+- You can just push the data from service mesh with the trace id into  the logger.
+- system code, trace id ->  Keep a place to keep track of system code and system code can be associated with a Team DL/Queue.
+Squash aggregator.
+Envoy to service mesh.
+
+
+Clean architecutre -> Architecture that is designed for the inhabitants of the architecture.
+First concern of architect is to make the house usable and not ensure that house is made of brick.
+
+
