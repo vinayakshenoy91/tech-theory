@@ -1,0 +1,15 @@
+- Execute request, validate http response, validate http headers, validate response body
+
+
+@ExtendWith(SpringExtension.class)
+@SpringBootTest //Load app context
+@AutoConfigureMockMvc
+class ProdControllerTest{
+
+   @Autowired   //Autowire mock mvc instance to test class
+   private MockMvc mockMvc
+
+   @MockBean    //Mock of product class
+   private ProductService service;
+
+}

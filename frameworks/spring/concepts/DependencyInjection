@@ -1,0 +1,108 @@
+- Programming to interface is one way of decoupling
+- Dependency injection is a process where objects specify the dependencies they work with. The IoC container uses 
+that specification; when it constructs an object, it also injects its dependencies. This way, our code is cleaner, 
+and we no longer burden our class with construction logic. 
+It is easier to maintain and easier to do the unit and/or integration test.
+Testing is easier because we could inject a stub or mock object to verify the behavior of our object
+
+Constructor based injection:
+
+public class MoneyTransferServiceImpl implements MoneyTransferService {
+  private final AccountRepository accountRepository;
+  private final TransactionRepository transactionRepository;
+  public MoneyTransferServiceImpl(AccountRepository accountRepo,
+                                  TransactionRepository transactionRepo) {
+    this.accountRepository = accountRepo;
+    this.transactionRepository = transactionRepo;
+  }
+//transfer method omitted, same as listing 2-1
+}
+
+
+Setter based injection:
+
+public class MoneyTransferServiceImpl implements MoneyTransferService {
+  private AccountRepository accountRepository;
+  private TransactionRepository transactionRepository;
+  public void setAccountRepository(AccountRepository accountRepository) {
+    this.accountRepository = accountRepository;
+  }
+  public void setTransactionRepository(TransactionRepository transactionRepo) {
+    this.transactionRepository = transactionRepository;
+  }
+//transfer method omitted, same as listing 2-1
+}
+
+Field based injections:
+
+The main difference is that the @Autowired annotation is from the Spring Framework, 
+whereas @Resource and @Inject are Java standard annotations.
+
+
+public class MoneyTransferServiceImpl implements MoneyTransferService {
+  @Autowired
+  private AccountRepository accountRepository;
+  @Autowired
+  private TransactionRepository transactionRepository;
+//transfer method omitted, same as listing 2.1
+}
+
+ENABLING FEATURES:
+-------------------
+
+
+Annotation
+
+Description
+
+Detected by Spring Boot
+
+org.springframework.context.annotation.EnableAspectJAutoProxy
+
+Enables support for handling beans stereotyped as org.aspectj.lang.annotation.Aspect.
+
+Yes
+
+org.springframework.scheduling.annotation.EnableAsync
+
+Enables support for handling bean methods with the org.springframework.scheduling.annotation.Async or javax.ejb.Asynchronous annotations.
+
+No
+
+org.springframework.cache.annotation.EnableCaching
+
+Enables support for bean methods with the org.springframework.cache.annotation.Cacheable annotation.
+
+Yes
+
+org.springframework.context.annotation.EnableLoadTimeWeaving
+
+Enables support for load-time weaving. By default, Spring uses a proxy-based approach to AOP; however, this annotation enables us to switch to load-time weaving. Some JPA providers require it.
+
+No
+
+org.springframework.scheduling.annotation.EnableScheduling
+
+Enables support for annotation-driven scheduling, letting us parse bean methods annotated with the org.springframework.scheduling.annotation.Scheduled annotation.
+
+No
+
+org.springframework.beans.factory.aspectj.EnableSpringConfigured
+
+Enables support for applying dependency injection to non-Spring managed beans. In general, such beans are annotated with the org.springframework.beans.factory.annotation.Configurable annotation. This feature requires load-time or compile-time weaving because it needs to modify class files.
+
+No
+
+org.springframework.transaction.annotation.EnableTransactionManagement
+
+Enables annotation-driven transaction support, using org.springframework.transaction.annotation.Transactional or javax.ejb.TransactionAttribute to drive transactions.
+
+Yes
+
+org.springframework.web.servlet.config.annotation.EnableWebMvc
+
+Enables support for the powerful and flexible annotation-driven controllers with request handling methods. This feature detects beans with the org.springframework.stereotype.Controller annotation and binds methods with the org.springframework.web.bind.annotation.RequestMapping annotations to URLs.
+
+Yes
+
+org.springframework.web.reactive.config.EnableWebFlux

@@ -1,0 +1,77 @@
+- Business continuity service
+- Replication from primary onto secondary
+- You need to create site recovery vault resource
+- When you setup azure site recovery for an azure vm , the vm replicates into a diff region
+
+process:
+- You need to create a storage account , for V<M to put the changes before sending it to target region.
+The replication will create the following target resource:
+a) A RG that target VM belongs to
+b) A new VNET that target VM will reside in
+- If source Vm uses and unmanaged disk, then new storage account created in target region
+- If the sourceVMs  are part of availability set, a new availability set will be created in the target region 
+- if same source VM is part of an AZ,the same zone number will be allocated  to the target VM in target region
+
+Replication policy: default->
+- Recovery point retention -set to 24 hrs - This specifies how long the revcovery services keep the recovery points.
+- App consistent snapshot -> set to 4 hrs -> how logn the recovery services takes an app consistent snapshots
+
+The source virtual machine must conform to certain requirements
+
+Operating system – Windows Server 2019, Windows Server 2016 64-bit, Windows Server 2012 R2/ Windows Server 2012, Windows Server 2008 R2 with SP1 onwards, Windows 10, Windows 8.1 , Windows 8 and Windows 7 with SP1 64-bit.
+
+Linux – Red Hat Enterprise , CentOS, Ubuntu, Debian, SUSE Linux, Oracle Linux.
+
+OS Disk – up to 2,048 GB.
+
+Data disk size – 8,192 GB when replicating to managed disk. 4,095 GB when replicating to storage accounts.
+
+Bit Locker must be disabled before replication is enabled.
+
+
+
+Azure to Azure Disaster recovery for Azure Virtual Machines
+When you setup Azure Site Recovery for an Azure virtual machine, the Azure VM continuously replicates onto a different target region.
+
+If an outage occurs, you can fail over the VM’s onto a secondary region.
+
+When all is fine in the primary region, you can then fail back and continue operations in the primary location.
+
+What are all the components involved in disaster recovery for an Azure virtual machine.
+
+For the source region, you also need to create a storage account. This becomes the cache storage account. In the replication process, the VM changes are first stored in the cache storage account before they are sent to the target region.
+
+The replication will create the following target resources
+
+A resource group that the target VM will belong to
+
+A new virtual network that the target VM will reside in
+
+If the source virtual machine is using unmanaged disks , then a new storage account will be created in the target region.
+
+If the source VM’s are part of an availability set, a new availability set will be created in the target region.
+
+If the source VM is part of an availability zone, the same zone number will be allocated to the target VM in the target region
+
+You also have to define the replication policy
+
+Replication policy – The default policy has the following settings
+
+Recovery point retention – set to 24 hours – This specifies how long the recovery services keep the recovery points.
+
+App-consistent snapshot – set to every 4 hours – This specifies how long the recovery services takes an application consistent snapshot.
+
+App-consistent snapshots are taken in accordance with the frequency you specify. This frequency should always be less than you set for retaining recovery points. For example, if you retain recovery points using the default setting of 24 hours, you should set the frequency at less than 24 hours.
+
+They're more complex and take longer to complete than crash-consistent snapshots.
+
+They affect the performance of apps running on a VM enabled for replication.
+
+A crash consistent snapshot captures data that was on the disk when the snapshot was taken. It doesn't include anything in memory.
+
+
+
+
+Process on portal:
+------------------
+- VM -> Operations -> DR

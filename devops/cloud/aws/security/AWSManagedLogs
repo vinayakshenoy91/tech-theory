@@ -1,0 +1,7 @@
+- Load baalncer logs to S3
+- Cloud trail logs to S3 and Cloudwatch
+- VPC logs  to S3 and cloud watch logs
+- Route 53 access logs to cloud watch logs
+- S3 access logs to S3
+- Cloudfront access logs to S3
+- AWS config to S3

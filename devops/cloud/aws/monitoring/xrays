@@ -1,0 +1,8 @@
+- gives us tracing of request  and will give us a service map that allows us to find root cause of error
+- like app dynamics for distributed tracing
+- Trace request across microservices
+- Install xray agent in Ec2 and ECS
+- used in lambdas
+- Beanstalk -> agent autoinstalled
+- API gateway
+- Agent need IAm permisison to talk to xray

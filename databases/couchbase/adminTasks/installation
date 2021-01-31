@@ -1,0 +1,42 @@
+- Download couchbase server 
+
+
+OR
+
+
+Docker installation: 
+> docker --version
+> docker run
+> docker stop
+> docker start
+> docker ps
+> docker inspect
+
+
+docker run -d --name cbNode1 -p 8091-8096:8091-8096 -p 11210:11210 couchbase:enterprise-6.5.0
+docker run 0d --name cbNode2 couchbase:enterprise-6.5.0 -> This iis visible inside docker host
+
+docker inspect cbNode2 -> Get Ip address
+
+docker stop cbNode3
+
+
+
+Cluster creation:
+-----------------
+1) Questions => Check what machine is recommended by CB
+- Linux (Ubuntu 18.04) -> Azure VM
+- Public address to VM to SSH and open CB console
+- All nodes should be part of same vnet
+- Open port 22 for SSH and 8091 for console
+- Login to machine. Download couchbase installer
+  wget https://......./couchbase-server-enterprise_6.5.0-ubuntu18.04_amd64.deb
+- once down, use: sudo dpkg -i couchbase-server....deb
+  [4core, 4GB ram recommended]
+- Open console and setup cluster. All other services are optional except data.
+
+=> Repeat same step for node 2 till you install everything in the cluster, but when you access the console.
+- If you are on same vnet, you can refer other host by using provate ip address and add server from the console opened in first server
+- Once server added, click on rebalance
+- You can also add host via CLI or REST API
+

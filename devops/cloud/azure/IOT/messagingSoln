@@ -1,0 +1,56 @@
+Azure IOT hub SDK:
+- Reduce code
+- multiplatform
+- multiple languages
+- open source
+- Long term support
+- security best  practise
+
+SDKs are:
+----------
+a) IoT Hub Device
+ - connect IoT devie to IoT hub
+ - Accept direct method invocations
+ - Receive twin updates
+ - Device to cloud and cloud to device
+ - Protols used: MQTT, AMQP, HTTP
+- You need to register a device with IoT hub
+- Attestation mechanim [SAS token, x509 cert] -> Most of the time use connection string
+- Compress using avro or use json.Binary message data can be sent.
+
+//Device to cloud:
+-------------------
+Telemerty messages have : 
+1) system properties: message id, device id and chosen auth mechanism
+2) App properties: set by IOT device firmware. Data from device like should alarm be triggered.
+3) Message body
+
+//Cloud to device:
+--------------------
+a) Message:
+- one way notifications
+- Confirmation of message received
+- Single device only
+- Message reatined by IoT hub
+
+b) Direct Methods:
+- Important ops
+- Contextual reponse
+- Single device or mutiple via jobs
+- Disconnected device not contacted
+
+
+b) IoT Hub Service
+c) Provisioning device SDK
+d) Provisioning service sdk
+
+
+Configuring device to upload files to hub:
+-------------------------------------------
+- Large files
+- offline csv data
+- Requires storage account and linked to IoT hub
+- Device uploads files via IoT hub with IoT hub acting as broker
+
+Process:
+Connect to IoT hub -> Retrieve File Upload SAS URI -> Upload File -> Send Completion Notification

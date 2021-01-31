@@ -1,0 +1,30 @@
+To do this, just add two more files to your project in the resources folder: schema.sql and data.sql. 
+In the schema.sql file, you add the queries related to the structure of the database, like creating, altering, 
+or dropping tables. In the data.sql file, you add the queries that work with the data inside the tables, like INSERT, 
+UPDATE, or DELETE. Spring Boot automatically runs these files for you when you start the application. A simpler solution 
+for building examples that need databases is using an H2 in-memory database.
+This way, you don’t need to install a separate DBMS solution.
+
+schema.sql:
+
+CREATE TABLE IF NOT EXISTS `spring`.`users` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
+  `password` VARCHAR(45) NOT NULL,
+  `enabled` INT NOT NULL,
+  PRIMARY KEY (`id`));
+
+CREATE TABLE IF NOT EXISTS `spring`.`authorities` (
+  `id` INT NOT NULL AUTO_INCREMENT,
+  `username` VARCHAR(45) NOT NULL,
+  `authority` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`id`));
+
+
+
+data.sql:
+
+INSERT IGNORE INTO `spring`.`authorities` VALUES (NULL, 'john', 'write');
+INSERT IGNORE INTO `spring`.`users` VALUES (NULL, 'john', '12345', '1');
+
+

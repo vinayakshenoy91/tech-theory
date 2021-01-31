@@ -1,0 +1,30 @@
+npm isntall puppeteer mocha chai mocha-steps
+npm install --save-dev babel-cli babel-preset-es2015
+
+.babelrc:
+---------
+{
+    presets:["es2015"]
+}
+
+script in package json:
+------------------------
+test:"./node_modules/mocha/bin/mocha --timeout=30000 ./build/tests/**.js"
+clean: "rm -rf build"
+build: "babel --preset es2015 -d /build /src",
+
+
+src/tests/example.test.js
+
+before and after same as mocha. only diff is step functions instead of it
+
+step("should load google homepage",async ()=>{
+
+})
+
+src/builder.js:
+-----------
+
+export default class Builder{
+    
+}

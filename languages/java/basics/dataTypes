@@ -18,6 +18,25 @@ boolean
 - IEEE 754 floating point scheme used for float and double.
 - Exponential ex: 3.8e4
 
+Keyword	Type	Example
+boolean	true or false	true
+byte	8-bit integral value	123
+short	16-bit integral value	123
+int	32-bit integral value	123
+long	64-bit integral value	123L
+float	32-bit floating-point value	123.45f
+double	64-bit floating-point value	123.456
+char	16-bit Unicode value	'a'
+
+FLOATING-POINT NUMBERS AND SCIENTIFIC NOTATION
+While integer values like short and int are relatively easy to calculate the range for, floating-point values like double and float are decidedly not. In most computer systems, floating-point numbers are stored in scientific notation. This means the numbers are stored as two numbers, a and b, of the form a x 10b.
+
+This notation allows much larger values to be stored, at the cost of accuracy. For example, you can store a value of 3 x 10200 in a double, which would require a lot more than 8 bytes if every digit were stored without scientific notation (84 bytes in case you were wondering). To accomplish this, you only store the first dozen or so digits of the number. The name scientific notation comes from science, where often only the first few significant digits are required for a calculation.
+
+Don’t worry, for the exam you are not required to know scientific notation or how floating-point values are stored.
+
+
+
 Boxed variables:
 -------------------
 Integer.compare(person1.age(), person2.age())
@@ -78,3 +97,8 @@ double x = 2.0, y = 3.0;
 Typecasting:
 -------------
 
+
+Literals:
+---------
+int million1 = 1000000;
+int million2 = 1_000_000;

@@ -1,0 +1,95 @@
+- Spring Boot automatically configures the features it finds on the classpath by default.
+When Spring Boot detects Spring MVC classes, it starts Spring MVC. 
+When it finds a DataSource implementation, it bootstraps it.
+
+- Customizations can be done by adding properties to the application.properties or application.yml files. You can configure 
+the datasource, view handling, and server port, among others, through this. Another option is to configure things manually, 
+as you would do in a regular Spring application. 
+When Spring Boot detects the preconfigured parts of a feature, it typically refrains from autoconfiguring that feature.
+
+@SpringBootApplication
+public class BookstoreApplication extends SpringBootServletInitializer  {
+  public static void main(String[] args) {
+    SpringApplication.run(BookstoreApplication.class);
+  }
+  @Override
+  protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+    return builder.sources(BookstoreApplication.class);
+  }
+}
+
+
+- The BookstoreApplication class has @SpringBootApplication, which enables autoconfiguration of detected features 
+and third-party libraries. In this case, it extends SpringBootServletInitializer because the application is packaged 
+as a WAR and deployed onto a container. Instead of writing our own WebApplicationInitializer, 
+Spring Boot provides one out-of-the-box. It enables most Spring Boot features in a classic container.
+
+server.port=8080 # 8080 is also the default servlet port
+spring.application.name=bookstore
+
+
+Profiles:
+----------
+- Profiles make it easy to create different configurations of our application for different environments. For instance, 
+we can create separate profiles for our local environment, testing, and our deployment to CloudFoundry. Each of these 
+environments requires some environment-specific configuration or beans. 
+You can think of database configuration, messaging solutions, and testing environments, stubs of certain beans.
+
+To enable a profile, we need to tell the application context in which profiles are active. To activate certain profiles, we need to set a system property called spring.profiles.active (in a web environment, this can be a servlet initialization parameter or web context parameter). This is a comma-separated string containing the names of the active profiles
+
+
+If we now add some (in this case static inner) classes (see Listing 2-9) with the org.springframework.context.annotation.Configuration and org.springframework.context.annotation.Profile annotations, then only the classes that match one of the active profiles are processed. All other classes are ignored.
+
+
+@Configuration
+public class ApplicationContextConfiguration {
+  @Bean
+  public AccountRepository accountRepository() {
+    return new MapBasedAccountRepository();
+  }
+  @Bean
+  public MoneyTransferService moneyTransferService() {
+    return new MoneyTransferServiceImpl();
+  }
+  @Configuration
+  @Profile(value = "test")
+  public static class TestContextConfiguration {
+    @Bean
+    public TransactionRepository transactionRepository() {
+      return new StubTransactionRepository();
+    }
+  }
+  @Configuration
+  @Profile(value = "local")
+  public static class LocalContextConfiguration {
+    @Bean
+    public TransactionRepository transactionRepository() {
+      return new MapBasedTransactionRepository();
+    }
+  }
+}
+
+
+public class MoneyTransferSpring {
+  private static final Logger logger = LoggerFactory.getLogger(MoneyTransferSpring.class);
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
+    System.setProperty("spring.profiles.active", "test");
+    AnnotationConfigApplicationContext ctx1 =
+      new AnnotationConfigApplicationContext(ApplicationContextConfiguration.class);
+    transfer(ctx1);
+    ApplicationContextLogger.log(ctx1);
+    System.setProperty("spring.profiles.active", "local");
+    AnnotationConfigApplicationContext ctx2 =
+      new AnnotationConfigApplicationContext(ApplicationContextConfiguration.class);
+    transfer(ctx2);
+    ApplicationContextLogger.log(ctx2);
+  }
+  private static void transfer(ApplicationContext ctx) {
+    MoneyTransferService service = ctx.getBean("moneyTransferService", MoneyTransferService.class);
+    Transaction transaction = service.transfer("123456", "654321", new BigDecimal("250.00"));
+    logger.info("Money Transfered: {}", transaction);
+  }
+}

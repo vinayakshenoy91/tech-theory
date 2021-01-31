@@ -1,0 +1,9 @@
+- CloudHSM(Hardware Security Module)=> AWS provisions encryption Hardware
+- You amange your encryption keys entirely
+- Tamper resistant, FIPS 140-2 Level 3 compliance
+- Both symmetric and assymetric key(SSL/TLS)encryption
+- Good option to use with SSE-C encryption
+- Redshift supports CloudHSM for database encryption and key management
+- There is a cloudHSM client
+- AWS only provides you CRUD for cloudHSM cluster
+- Using cloudHSM software you can manage users and keys

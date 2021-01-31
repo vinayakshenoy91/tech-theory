@@ -1,0 +1,12 @@
+- Define IAM role within account or cross account.
+- Define which principals can access this IAM role
+- Security Token Service: To retrieve cred and impersonate the IAM role you have to access using AssumeRoleAPI
+ Temporary between 15min to 1 hr
+
+
+Used when:
+1) IAM user in one account access resource in another account both owned by you.
+2) Access to IAM users in AWS accounts owned by 3rd parties
+3) Provide access for services offered by AWS to AWS resources
+4) Provide access for externally auth users (identity federation)
+5) Revoke active session

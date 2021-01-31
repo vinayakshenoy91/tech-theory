@@ -1,0 +1,11 @@
+Dependency injection provides references to objects that the class depends on, instead of allowing the class to gather the dependencies itself. 
+At its core, dependency injection is about knowing as little as possible.
+
+
+It allows classes to “not know” how their dependencies are assembled, where they come from, or what actual implementations 
+are fulfilling their contracts. It seems like a 
+subtle change from pull to push, but it has a great impact on the flexibility of software design.
+
+
+In practice, dependency injection can be summarized as not using the “new” keyword in your classes and 
+demanding instances of your dependencies to be provided to your class by its clients

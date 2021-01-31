@@ -1,0 +1,170 @@
+- Stub gets added to wiremock server when code with stub is executed. Stub gets added first, then wiremock is called
+
+What needs to be tested for a complete restful integration:
+
+- 5xx response code
+- Latency
+- timeout
+- 4xx response
+- 2xx response
+
+Challenges:
+------------
+- Service virtualizations in microservices
+- Mokcing response when client and service built in parallel
+
+Wiremock:
+--------
+- HTTP mock webserver or http simulator
+- Job of developer to configure http request and response
+- Configure N number of stubs programatically in Wiremock
+
+- Runs in two mode: Embedded and standalone:
+
+1) Embedded: Run as part of client test case and shuts down automatically.[Like mock mvc]
+2) Standalone mode: Wiremock server lies outside of client as a standlone server
+
+
+Core setup:
+----------
+wiremock-extension:0.4.0
+wiremock-jre8-standalone:2.24.1
+
+
+@ExtendWith(WireMockExtension.class)
+
+@InjectServer
+WireMockServer wireMockServer;
+
+@ConfigureWireMock
+Options options = wireMockConfig().
+                     port(8088).notifier(new ConsoleNotifier(true))
+                     .extensions(new ResponseTemplateTransformer(true));
+WebClient webClient;
+
+@BeforeEach
+void setup(){
+    int port = wireMockServer.port();
+    webClient = WebClient.create(""baseURl"");
+    moviesRestClient = new moviesRestClient(webClient);
+    stubFor(any(anyURl));
+    .wilLReturn(aResponse().proxiedFrom("http://localhost:8081"));
+}
+
+
+Create folder:
+__files/all-movies.json  -> Put array of json there whihc should be the response
+
+
+
+Inside test use,
+
+  stubFor(get(anyUrl()).willReturn(WireMock.aResponse().withStatus(HttpStatus.OK.value())
+  .withHeader(HttpHeader.CONTENT_TYPE, MediaType.APPLICATION_JSON_VALUE)
+  .withBodyFile("all-movies.json")));
+  .withRequestBody(matchingJsonPath(("$.name"),equalTo(xyz)))); //containing
+
+  stubFor(get(urlPathEqualTo(URL))) //Exact matching
+  stubFor(get(urlPathMatching(URL/[0-9]))) //Regex
+  stubFor(get(urlEqualTo(URL/[0-9]))) //Used incase of query param
+  or
+  stubFor(get(urlPathEqualTo(URL/[0-9])))
+  .withQueryParam("key",equalTo("value"))
+
+Response templating: //This you need to put in __files in a json file
+--------------------
+{
+    fieldName: {{request.path.[3]}}
+}
+
+timestamp:"{{now}}"
+path:"{{request.path}}"
+{{request.query.movie_name}}
+
+
+Setup of embedded wiremock using springboot: [junit4]
+---------------------------------------------
+spring-cloud-contract-wiremock dependency
+
+
+@RunWith(SpringRunner.class)
+@SpringBootTest
+@AutoConfigureWireMock(port=8080)
+@TestPropertySource(properties="moviesapp.baseUrl=http://localhost:8080")
+public class MovieRestClientTest{
+
+}
+
+
+- You cannot use @AutoConfigureWireMock here, use response templating way: [Wiremock involving response templating]
+--------------------------------------------------------------------------
+
+Options options = wireMockConfig().
+                     port(8088).notifier(new ConsoleNotifier(true))
+                     .extensions(new ResponseTemplateTransformer(true));
+
+@Rule
+public WireMockRule wireMockRule = new WireMockRule(options);
+
+Springboot with junit5:
+=======================
+
+@ExtendWith(SpringExtnesion.class)
+@SpringBootTest
+@AutoConfigureWireMock(port=8090)
+@TestPropertySource(properties="moviesapp.baseUrl=http://localhost:8080")
+
+--extra---
+Add dependency wiremock-extension [use response templating way:]
+@ExtendWith(WireMockExtension.class)
+
+@ConfigureWireMock
+Options options = wireMockConfig().
+                     port(8088).notifier(new ConsoleNotifier(true))
+                     .extensions(new ResponseTemplateTransformer(true));
+
+TcpClient tcpClient = TcpClient.create().option(ChannelOption.CONNECT_TIMEOUT_MILLISEC,5000).
+                      .doOnConnected(conneciton -> {connection.addHandlerLast(new ReadTimeputHandler(5)..addHandlerLast(new WriteTimeputHandler(5) )})
+
+@InjectServer
+WireMockServer wireMockServer;
+
+@Autowired
+MoviesRestClient moviesRestClient;
+
+
+Verify DSL:
+-----------
+verify(postRequestedFor(urlPathEqualTo....))
+verify(deleteRequestedFor(urlPathEqualTo....))
+verify(exactly(1),deleteRequestedFor(urlPathEqualTo....))
+
+Simulating server/fault response: [5xx error]
+---------------------------------------------
+- Fault is network error
+
+.willReturn(serverError())
+.withStatus(HttpStatus.SERVICE_UNAVAILABLE.value())
+.withBody("service unavailable")));
+
+//Fault:
+stubFor(get(anyUrl())
+.wilLReturn(aResponse().withFault(Fault.EMPTY_RESPONSE));
+
+
+Timeout:
+-----------
+
+webClient = WebClient.builder().clientConnector(new ReactorClientHttpConnector(HttpClinet.from(tcpClient))).baseUrl(baseurl).build();
+
+
+stubFor(get(anyUrl())
+.wilLReturn(ok().withFixedDelay(10000));
+
+or
+withUniformRandomDelay(6000,10000)
+
+
+Selective proxying:
+--------------------
+- Wiremock reverse proxies the actual service for some endpoints

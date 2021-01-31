@@ -1,0 +1,7 @@
+box-sizing: border-box; -> If we add padding or border on element, it does not effect the width of it
+display:flex -> Center everything
+height: 100vh; -> take entire height of browser
+
+Note:
+-----
+- flex-direction and align-items are related. Alignment will happen accordign to direction. If column then horizontal.

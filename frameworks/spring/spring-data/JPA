@@ -1,0 +1,35 @@
+JPA stands for Java Persistence API and is a Java specification about how to handle relational data. 
+Please go to https://jcp.org/aboutJava/communityprocess/mrel/jsr338/index.html 
+for the latest specification
+
+Entity wtih JPA annotations:
+
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
+import javax.persistence.Table;
+
+@Entity
+@IdClass(ReviewEntityPK.class)
+@Table(name = "review")
+public class ReviewEntity {
+ @Id private int productId;
+ @Id private int reviewId;
+ private String author;
+ private String subject;
+ private String content;
+
+
+Repositories:
+
+public interface ReviewRepository extends CrudRepository<ReviewEntity, ReviewEntityPK> {
+    Collection<ReviewEntity> findByProductId(int productId);
+}
+
+Using repo:
+private final ReviewRepository repository;
+
+@Autowired
+public ReviewService(ReviewRepository repository) {
+ this.repository = repository;
+}

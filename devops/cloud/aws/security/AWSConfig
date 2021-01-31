@@ -1,0 +1,9 @@
+- Audit and record compiance of AWS resources
+- Records config and changes overtime
+ 
+ - Problems like : is there unrestricted access to security group, do my buckets have public access, AL config change overtime
+ - Alerts on SNS
+ - Regional service
+ - Can be aggregated across regions and accounts
+ - Custom rules defined in AWS lambda   
+ - Autoremediation using SSM Automations

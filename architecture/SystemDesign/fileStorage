@@ -1,0 +1,15 @@
+Building simple file storage is relatively easy, but making it truly scalable and highly available is a much more complex 
+task requiring both time and money. Instead of doing it all by yourself, try to opt for an “out of the box,” open-source data 
+store to store your files. For example, MongoDB allows you to store files within a MongoDB cluster by using GridFS. GridFS 
+is an extension built into MongoDB that splits files into smaller chunks and stores them inside MongoDB collections as if 
+they were regular documents. The benefit of such an approach is that you only need to scale one system, and you can leverage 
+partitioning and replication provided by MongoDB instead of implementing your own. You can find similar solutions for other 
+NoSQL data stores, like Astyanax Chunked Object Store released as open source by Netflix. It uses Cassandra as the underlying 
+data store, which allows you to leverage Cassandra’s core features like transparent partitioning, redundancy, and failover. 
+It then adds file storage–specific features on top of Cassandra’s data model. For example, it optimizes access by randomizing 
+the download order of chunks to avoid hotspots within your cluster.
+
+Remember that distributed file storage is a complex problem. Where possible, stick with a third-party provider like S3 first. When cloud-based storage is not an option, opt for a data store as a relatively cheap alternative. It may add some performance overhead, but it allows you to build your application faster and reduce the maintenance cost. Only when none of these options work should you consider building a file service from scratch. If you decide to build, be sure to learn more about distributed file systems like Google File System (GFS),w44 Hadoop Distributed File System (HDFS),w58 ClusterFS,w61,L15 and fully distributed and fault-tolerant design.
+
+
+

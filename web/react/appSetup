@@ -1,0 +1,5 @@
+Commands to setup application:
+------------------------------
+
+yarn add create react-app react-testing --template typescript
+yarn upgrade --latest 

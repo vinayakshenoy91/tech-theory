@@ -1,0 +1,9 @@
+Remove a string held at global space:
+--------------------------------------
+There are two ways that we can fix this issue. First, we can use the old-school technique and wrap it in an Immediately Invoked Function Expression (IIFE), which would look like the following:
+
+(function() { })();
+Or, if we wanted to and were writing our application only for browsers that support it, we could change the script type to a type of module. Both of these solutions make sure that our code is not now globally scoped. Let's put our entire code base in an IIFE since that is supported across all browsers. If we run a heap dump, we will see that that string is no longer there.
+
+
+

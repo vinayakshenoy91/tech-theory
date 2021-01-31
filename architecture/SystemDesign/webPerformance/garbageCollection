@@ -1,0 +1,27 @@
+Garbage collection is the process of our environment cleaning up unused items that we are no longer using.
+Since JavaScript is a memory-managed environment, meaning developers are not allocating/deallocating memory themselves like in languages such as C++ and Rust, we have a program that does this for us. V8, in particular, has two GCs, a minor GC called Scavenger, and a major one called Mark-Compact.
+
+The scavenger goes through newly allocated objects and sees whether there are any objects that are ready to be cleaned up. Most of the time, our code is going to be written to use a lot of temporary variables for a short time span. This means that they are not going to be needed within a couple of statements of the variables being initialized. Take the following piece of code:
+
+const markedEls = [];
+for(let i = 0; i < 10000; i++) {
+    const obj = els[i];
+    if( obj.marked ) {
+        markedEls.push(Object.assign({}, obj));
+    }
+}
+In this hypothetical example, we want to get objects and clone them if they are marked for some procedure. We gather the ones that we want and the rest are now unused. The scavenger would notice a couple of things. First, it would seem that we are no longer using the old list, so it would automatically collect this memory. Second, it would notice that we have a bunch of unused object pointers (except for primitive types in JavaScript, everything is passed by reference) and it can clean these up.
+
+This is a quick process and it gets either intertwined in our runtime, known as stop-and-go garbage collection, or it will run in parallel to our code, meaning that it will run at the exact same time in another thread of execution.
+
+The Mark-Compact garbage collection runs for much longer but collects a lot more memory. It will go through the list of items that are currently still in the heap and see whether there are zero references to these items. If there are no more references, it will remove these objects from the heap. It will then try to compact all of the holes that are in the heap so that way, we do not have highly fragmented memory. This is especially useful for things such as arrays.
+
+Arrays are contiguous in memory, so if the V8 engine can find a hole big enough for the array, then it will stick it there. Otherwise, it may have to grow the heap and allocate more memory for our runtime. This is what the Mark-Compact GC is trying to prevent from happening.
+
+While a full understanding of how the garbage collector works is not needed in order to write highly performant JavaScript, a good understanding will go a long way into writing code that is not only easy to read but also performs well in the environment that you are using.
+
+If you want to understand more about the V8 garbage collector, I would recommend going to the site at https://v8.dev/blog. It is always interesting to see how the V8 engine is working and how new optimizations lead to certain coding styles being more performant than they may have been in the past, such as the map function for arrays.
+We did not go into full detail regarding the Performance tab, but this should give a good overview of how to utilize it when testing code. It should also showcase some of the internal workings of Chrome and the garbage collector.
+
+
+

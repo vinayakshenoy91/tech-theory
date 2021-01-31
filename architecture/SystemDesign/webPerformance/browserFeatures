@@ -1,0 +1,62 @@
+Safari:
+-------
+
+Apple's Safari browser is based on the WebKit rendering engine and the JavaScriptCore engine. The WebKit engine is what Chrome's Blink engine is based on, and the JavaScriptCore engine is used in a few places for the OS X operating system. An interesting point regarding Safari is the fact that if we are running Windows or Linux, we will not be able to access it directly.
+
+To get access to Safari, we will need to utilize an online service. BrowserStack or LambdaTest, along with a host of others, can do this job for us. With any of these, we now have access to browsers that we may not otherwise have had. Thanks to LambdaTest, we will utilize their free service to take a brief look at Safari.
+
+Again, we will notice that there is not too much to the Safari browser development tools. All of the same tools are also available in the other browsers and they are usually more powerful in these other browsers. Getting familiar with each of the interfaces can help when debugging in that specific browser, but not a lot of time needs to be dedicated to looking at the browsers that do not have any specific features unique to them.
+
+
+Firefox:
+--------
+Firefox
+Mozilla's Firefox utilizes the SpiderMonkey JavaScript engine and the enhanced Gecko engine. The Gecko engine got some nice improvements when they added parts of their project Servo code base to it to give a nice multithreaded renderer. Mozilla has been at the forefront of the latest web technologies. They were one of the first to implement WebGL and they have been one of the first to implement WebAssembly and the WebAssembly System Interface (WASI) standard.
+
+What follows is a fairly technical discussion about shaders and the shader language, OpenGL Shading Language (GLSL). It is recommended that you read on to find out more about this, but for those of you who are lost, it may be helpful to visit the documentation to learn more about this technology, at https://developer.mozilla.org/en-US/docs/Games/Techniques/3D_on_the_web/GLSL_Shaders.
+If we open the DevTools, F12 in Windows, we may see the Shader Editor tab already. If not, go to the triple-dot menu on the right and open up Settings. On the left-hand side, there should be a list of checkboxes with a heading of Default Developer Tools. Go ahead and select the Shader Editor option. Now, if we head into this tab, we should get something that looks like the following:
+
+
+
+The tab is asking for a canvas context. Essentially, the tool is looking for a few items:
+
+A canvas element
+A 3D-enabled context
+Vertex and fragment shaders
+A file in our repository called shader_editor.html has the necessary code to get the canvas set up and also has the shaders set up so we can utilize them with the shader editor. These shaders are the way to programmatically use the GPU on the web. They utilize a version of the OpenGL specification called OpenGL ES 3.0. This allows us to use almost everything in that specification, specifically, the vertex and fragment shaders.
+
+To program with these shaders, we use a language called GL Shading Language (GLSL). This is a C-like language that has a bunch of features that are specific to it, such as swizzling. Swizzling is the ability to utilize the vector components (up to four) and combine them in any shape or form that we choose. An example of this looks like the following:
+
+vec2 item = vec2(1.0, 1.0);
+vec4 other_item = item.xyxx;
+This creates a four-element vector and sets the x, y, z, and w components to the x, y, x, and x items, respectively, from the two-element vector. The nomenclature can take a while to get used to, but it makes certain things a lot easier. An example is shown above, where we need to create a four-element vector from a two-element vector. In basic JavaScript, we would have to do the following:
+
+const item = [1.0, 1.0];
+const other_item = [item[0], item[1], item[0], item[0]];
+Instead of writing the preceding, we are able to utilize the shorthand syntax of swizzling. There are other features in the GLSL system that we will look at in later chapters, but this should give a taste of how different the languages are.
+
+Now, if we open up the shader_editor.html file and reload the page, we should be greeted with what looks like a white page. If we look at the Shader Editor, we can see on the right-hand side that we are setting a variable called gl_FragColor to a four-element vector, all of which are set to 1.0. What happens if we set it to vec4(0.0, 0.0, 0.0, 1.0)? We should now see a black box in the top-left corner. This showcases the fact that the four components of the vector are the red, green, blue, and alpha components of color, ranging from 0.0 to 1.0, just like the rgba system for CSS.
+
+Are there other color combinations besides a single flat color? Well, each shader comes with a few global variables that are defined ahead of time. One of these, in the fragment shader, is called gl_FragCoord. This is the lower left-hand coordinate in the window space ranging from 0.0 to 1.0 (there should be a theme developing here for what values are considered good in GLSL). If we set the four-vector x element to the x element of gl_FragCoord, and the y element to the y element of gl_FragCoord, we should get a simple white box, but with a single-pixel border on the left, and one on the bottom.
+
+Besides swizzling and global variables, we also get other mathematical functions that we can use in these shaders. Let's wrap these x and y elements in a sin function. If we do this, we should get a nice plaid pattern on the screen. This should give a hint as to what the fragment shader is actually doing. It is trying to paint that location in the 3D space, based on various inputs, one being the location from the vertex shader.
+
+It is then trying to draw every single pixel that makes up the inside of the mesh that we declared with the vertex shader. Also, these fragments are calculated all at the same time (or as much as the graphics card is capable of), so this is a highly parallelized operation.
+
+This should give a nice sneak peek into the world of GLSL programming, and the possibilities besides 3D work that the GLSL language can provide for us. For now, we can play a bit more with these concepts and move onto the last browser, Chrome.
+
+Chrome:
+-------
+Google's Chrome browser utilizes the Blink engine and uses the famous V8 JavaScript runtime. This is the same runtime that is used inside Node.js, so getting familiar with the development tools will help us in a lot of ways.
+
+Chrome has been at the forefront of web technologies, just like Firefox. They have been the first to implement various ideas, such as the QUIC protocol, which the HTTP/3 standard is loosely based on. They created the Native Plugin Interface (NaCL) that helped, alongside asm.js, to create the standard for WebAssembly. They have even been pioneers in making web applications start to become more native-like by giving us APIs such as the Bluetooth, Gamepad, and Notifications APIs.
+
+We will be specifically looking at the Lighthouse feature that comes with Chrome. The Lighthouse feature can be accessed from the Audits tab in the Chrome browser. Once we are here, we can set up our audit with a myriad of settings:
+
+First, we can audit our page based on it running from a mobile device or desktop. We can then audit various features of our site.
+If we are developing a progressive web application, we may decide that SEO is not needed. On the other hand, if we are developing a marketing site, we could decide that the progressive web app check is not needed. We can simulate a throttled connection.
+Finally, we can start off with clean storage. This is especially helpful if our application utilizes caching systems that are built into browsers, such as session storage or local storage.
+
+
+
+

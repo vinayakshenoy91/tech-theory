@@ -1,0 +1,6 @@
+- Manage SSO centrally-> access multiple account and 3rd party apps.
+- Integrated with AWS org
+- Saml 2.0
+- Integrate with on-premise AD
+- Central permission mgmt
+- Cental audit with cloud trail

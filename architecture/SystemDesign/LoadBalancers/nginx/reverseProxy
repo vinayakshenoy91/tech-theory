@@ -1,0 +1,21 @@
+It is acceptable to use round-robin DNS pointing to multiple load balancers (rather than web servers) 
+because you will never have any business logic on your load balancers. You will not have to redeploy or upgrade your 
+load balancers as often as you would with your web servers, and load balancers are much less likely to fail due to a bug.
+
+
+The main advantage of Nginx is that it is also a reverse HTTP proxy, so it can cache HTTP responses from your servers. 
+This quality makes it a great candidate for an internal web service load balancer, as shown in Figure 3-17. Not only can 
+you scale out your web service layer by adding more servers to the Nginx pool, but you can also benefit greatly from its 
+caching capabilities, reducing the resources needed on the web services layer. I will talk more about these benefits in 
+Chapter 4 and Chapter 6. For now, just know that Nginx is a very good candidate for a 
+reverse proxy/load balancer.
+
+
+HAPROXY:
+-------
+HAProxy, on the other hand, is simpler in design than Nginx, as it is just a load balancer. It can be configured as either a layer 4 or layer 7 load balancer. When HAProxy is set up to be a layer 4 proxy, it does not inspect higher-level protocols and it depends solely on TCP/IP headers to distribute the traffic. This, in turn, allows HAProxy to be a load balancer for any protocol, not just HTTP/HTTPS. You can use HAProxy to distribute traffic for services like cache servers, message queues, or databases. HAProxy can also be configured as a layer 7 proxy, in which case it supports sticky sessions and SSL termination, but needs more resources to be able to inspect and track HTTP-specific information. The fact that HAProxy is simpler in design makes it perform slightly better than Nginx, especially when configured as a layer 4 load balancer. Finally, HAProxy has built-in high-availability support (HAProxy stands for High Availability Proxy), which makes it more resilient to failures and simplifies failure recovery.
+
+When you do reach the limits of your load balancer capacity, you can scale out by deploying multiple load balancers 
+under distinct public IP addresses 
+and distributing traffic among them via a round-robin DNS. 
+

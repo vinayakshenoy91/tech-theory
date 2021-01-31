@@ -1,0 +1,76 @@
+1) Purpose and mission statement:
+
+You identify the purpose of your database and define it within a mission statement. This will help ensure that you develop 
+an appropriate database structure and that you collect the data necessary to support the intended purpose of the database.
+
+
+2) 
+The second phase in the database design process involves analyzing the current database if one exists. 
+Another part of the analysis involves conducting interviews with users and management to identify how 
+they interact with the database on a daily basis.You must conduct full and complete interviews in a timely, practical, 
+and effective manner if you are to design a database that truly meets your organization’s information needs.
+Next, you use the information you’ve gathered from the analysis and the interviews to compile an initial list of fields. 
+You then refine this list by removing all calculated fields and placing them on their own list. You’ll use these calculated 
+fields later in the design process. The refined list constitutes your organization’s fundamental data requirements and 
+provides a starting point for the design of a new database.After your initial field list is complete, you send it to your 
+users and management for a brief review and possible refinement. You encourage feedback (as best as possible) and take their 
+suggestions for modifications into consideration. If you think the suggestions are reasonable and well supported, you make 
+the appropriate modifications, record the list in its current state, and move on to the next phase.
+
+
+3) Creating data structures:
+
+Creating the data structures for the database is the third phase in the database design process. You define tables and fields, 
+establish keys, and define field specifications for every field.
+
+4) DETERMINING AND ESTABLISHING TABLE RELATIONSHIPS:
+
+You conduct interviews with users and management once again, identify relationships, identify relationship characteristics, 
+and establish relationship-level integrity.
+
+
+5) DETERMINING AND DEFINING BUSINESS RULES:
+
+Determining and defining business rules is the fifth phase of the database design process. During this phase, you’ll conduct 
+interviews, identify limitations on various aspects of the database, establish business rules, and define and implement 
+validation tables.you define and implement validation tables as necessary to support certain business rules. Suppose you 
+find that certain fields have a finite range of values because of the manner in which your organization 
+uses them. You can use validation tables to ensure the consistency and validity of the values stored in those fields.
+
+Business constrint examples are:
+
+The interviews you conduct with users will reveal specific limitations on various aspects of the database. For example, 
+a user working with an order processing database is very aware of specific details, such as the fact that a ship date must 
+occur later than an order date; that there must always be a daytime phone number; and that a shipping method should always 
+be indicated. Your interviews with management, on the other hand, reveal general limitations on various aspects of the database. 
+For example, the office manager for an entertainment agency is familiar with general issues such as the fact that an agent
+can represent no more than 20 entertainers and that promotional information for each entertainer must be updated every year.
+
+6) DETERMINING AND DEFINING VIEWS:
+For example, that many users require detailed information to perform their work, whereas others need only summary 
+information to help them make strategic decisions for the organization. Each group of users must access information in 
+very specific ways, and you can use views to accommodate these situations.
+
+Next, you define the views you’ve identified during the interview process using the appropriate tables and fields and 
+establish criteria for those views that are required to retrieve specific information. For instance, you would establish 
+criteria for a view that must list all customers 
+located in Texas or a view that must display the total number of authorized vendors (by city) in Washington.
+
+7) REVIEWING DATA INTEGRITY:
+
+First, you review each table to ensure that it meets the criteria of a properly designed table and check the fields 
+within each table for proper structure. You then resolve any inconsistencies or problems you encounter 
+and review the structures once more. Now you can verify that your tables have table-level integrity.
+
+Second, you review and check the field specifications for each field. You make necessary refinements to the fields and 
+then check field-level integrity. This review reaffirms the field-level integrity you identified and established earlier 
+in the database design process.
+
+Third, you review the validity of each relationship, confirm the relationship type, and confirm the participation characteristics 
+for each table within the relationship. You then review relationship integrity to ensure that there are matching values between 
+shared fields and that no problems occur when inserting, updating, or deleting data in either of the tables within the relationship.
+
+Finally, you review the business rules that you identified earlier in the database design process and confirm the constraints 
+you’ve placed on various aspects of the database. If any other limitations have come to your attention since the last 
+set of personnel interviews, you establish them as new business rules and add them to the existing set of business rules.
+

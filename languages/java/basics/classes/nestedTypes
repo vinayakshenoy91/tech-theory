@@ -1,0 +1,78 @@
+1) Nesting types for name scoping:
+- No relationship between nested type and enclosign type.
+- Type named sccope within enclosign type.
+
+Applies to following nested types:
+- Static classes nested within classes
+- All classes nested within interfaces.
+- All nested interfaces
+
+
+public class Passenger implements Comparable<Passenger>{
+    public static class RewardProgram{
+        private int memberLevel;
+        private int memberDays;
+    }
+
+    private RewardProgram rewardProgram = new RewardProgram();
+
+    public Passenger(String name, int memberLevel, int memberDays){
+        this.name=name;
+        rewardProgram.memberLevel = memberLevel;
+        rewardProgram.memberDays = memberDays;
+    }
+}
+
+
+Passenger.rewardProgram platinum = new Passenger.RewardProgram();
+
+
+2) Inner class:
+- Creates instance relationship 
+- Each instance of nested class associated with an instance of enclosing class
+- Non-static classes nested withing classes
+
+
+
+//Diff variation of iterable
+public class Flight implements Comparable<Flight>,Iterable<Passenger>{
+  
+  private ArrayList<Passenger> passengerList= new ArrayList<>();
+
+  public Iterator<Passenger> iteraror(){return passengerList.iterator();}
+
+  private class FlightIterable implements Iterable<Passenger>{
+
+      @Override
+       public Iterator<Passenger> iterator(){
+        
+        //sort and return the passenger iterator
+
+       }
+  }
+
+  public Iterable<Passenger> getOrderedPassengers(){
+     FlightIterable orderedPassengers = new FlightIterable();
+     return orderedPassengers;
+  }
+
+}
+
+
+
+3) Anonymous class:
+--------------------
+
+
+//Rewrite abo getOrderedPassengers method
+
+  public Iterable<Passenger> getOrderedPassengers(){
+     return new Iterable<passenger>(){
+       @Override
+       public Iterator<Passenger> iterator(){
+        
+        //sort and return the passenger iterator
+
+       }
+     };
+  }

@@ -1,0 +1,62 @@
+NOTES:
+-------
+- So remember, everytime a bucket is created, 
+you need to create 3 replicas for it and then rebalance.
+- NOTE: Keep automatic failover on. This is a must
+
+
+
+- Replication across data center
+- Data evenly distributed and replicated
+- Node failure or removal will not lead to any data loss
+- Each bucket can have <=3 replicas. NOTE: So remember, everytime a bucket is created, 
+you need to create 3 replicas for it and then rebalance.
+
+- If no removal button seen, only way to remove node is rebalance.
+
+Failover:
+----------
+- Promotion of replicas to active from diff node
+- Cluster manager can only deal with active data
+- Failover can be :
+1) Manual vs Automatic[NOTE: Keep automatic failover on. This is a must]
+2) Graceful & Hard
+
+Graceful failover[Means it will be brought back]: (only applicable to data service, for others use removal option)
+-------------------
+- Proactively remove a node that runs a data service.
+- No downtime or loss of client access to data
+- replica vBuckets on affected node are demoted to dead
+- replica vBuckets on other nodes are promoted to active.
+
+Hard failovers[Mean it might be removed permanently and replaced with a new one]:
+---------------
+- Applied to all node types
+- Should be applied to unresponsive nodes. If applied to functional nodes, writes and replications will be disrupted.
+- For data service nodes, replicate vBuckets will be promoted until 1024 are caive again for each bucket.
+- It can be manual by administrator or automatic if initiated by cluster manager due to node unavailability.
+- Used only incase node is unresponsive or underlying hardware has degraded
+
+Removal vs Failover:
+---------------------
+- Removal is an option for all types of nodes.
+- Removal preserves replica vBuckets from surviving nodes. In failover, some might be lost due to promoted but not replaced.
+Due to this rebalancing after failover is important, especially after failover of data service nodes as 
+vBuckets need to be redistributed.
+
+Process of graceful failover[Full recovery]  node steps:
+------------------------------------------
+1) Make note of active and inactive items from servers tab
+2) Expand node tab -> failover. No traffic to this node.
+Note:  Rebalance -> If you rebalance, that node will be dropped from cluster.
+       If delta recovery, all data will be resync to receive update and will not be recreated.
+3) DO THIS -> Full recovery + rebalance
+
+
+Process of graceful failover[Delta recovery]  node steps: [Only Updates are pushed through and it has existing data]
+-----------------------------------------------------------
+1) Make note of active and inactive items from servers tab
+2) Expand node tab -> failover. No traffic to this node.
+3) DO THIS -> delta recovery + rebalance
+
+This is faster as only updates are being pushed through

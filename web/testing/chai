@@ -1,0 +1,6 @@
+Assertions using chai:
+----------------------
+const expect = require('chai').expect;
+expect(x).to.be.a('string','name');
+expect(x).to.include('string','name');
+expect(x).to.equal(2);

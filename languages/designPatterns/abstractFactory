@@ -1,0 +1,18 @@
+An Abstract Factory gives us an interface for creating a family of products. By writing code that uses this interface, we decouple our code from the actual factory that creates the products. That allows us to implement a variety of factories that produce products meant for different contexts—such as different regions, different operating systems, or different look and feels.
+
+An Abstract Factory provides an interface for a family of products. What’s a family? In our case, it’s all the things we need to make a pizza: dough, sauce, cheese, meats, and veggies.
+
+From the abstract factory, we derive one or more concrete factories that produce the same products, but with different implementations.
+
+The Abstract Factory Pattern provides an interface for creating families of related or dependent objects without specifying their concrete classes.
+
+We’ve certainly seen that Abstract Factory allows a client to use an abstract interface to create a set of related products without knowing (or caring) about the concrete products that are actually produced. In this way, the client is decoupled from any of the specifics of the concrete products. 
+
+The job of an Abstract Factory is to define an interface for creating a set of products. Each method in that interface is responsible for creating a concrete product, and we implement a subclass of the Abstract Factory to supply those implementations. So, factory methods are a natural way to implement your product methods in your abstract factories.
+
+Abstract Factory: I provide an abstract type for creating a family of products. Subclasses of this type define how those products are produced. To use the factory, you instantiate one and pass it into some code that is written against the abstract type. So, like Factory Method, my clients are decoupled from the actual concrete products they use.
+
+
+so another advantage is that you group together a set of related products.
+
+Abstract Factory, and use me whenever you have families of products you need to create and you want to make sure your clients create products that belong together.

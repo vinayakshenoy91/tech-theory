@@ -1,3 +1,4 @@
+- SNS topic
 - pub/sub
 - one message and many receivers
 - One SNS topic subscribed by multiple consumers. Each will get their copy of message.

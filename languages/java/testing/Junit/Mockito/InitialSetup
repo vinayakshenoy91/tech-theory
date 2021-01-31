@@ -1,0 +1,82 @@
+Pom dependencies:
+------------------
+
+
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
+
+Annotations:
+-----------
+
+@ExtendWith(MockitoExtension.class)
+You need: @RunWith(MockitoJunitRunner.class) on the class
+
+@InjectMocks
+ServiceImpl serviceImpl;  //Class which you are testing
+
+@mock
+Service service; //Service which you are calling in that class
+
+
+@Spy  //Keep the impl of other method as is/expose it as  is. Only for specified one, you  create dummmy/mock
+private  Database database 
+OR Also call when(mock.method()).thenCallRealMethod()
+
+
+
+Methods:
+--------
+- With stub you get verification implicitly
+- Verification means you do not care about return value and hence you dont stub
+- Argument captors to be used only for verification
+
+1) using mock() method:
+-----------------------
+DataService svc = Mockito. mock(dataService.class)
+when(svc.methodName()).thenReturn(new int[]{1,2,3})
+verify(mockrepo).loadSales() //Calls load sales method. This is one thing you can do with mock and not with stubs
+verify(sensor,times(1)).isBlocked() //Check method is called once
+
+//Used rarely
+verifYNoMoreInteractions(ignorestubs(servicename));
+
+.thenThrow(new IOExceptions())
+
+doThrow(new RuntimeException()).when(eventPublisher).notify(accountId) //Used when exception from void
+doReturn(true).when(instance).method(x,y,z);
+
+Argument matchers:
+-------------------
+anyString(), eq(FIRST_NAME) //Pass this wherever it is required and not just anystring
+any(BigDecimal.class)
+
+Argument Captors:
+-----------------
+ArgumentCaptor<BackgroundCheckResults>backgroudnCheckResultArgCaptor = ArgumentCaptor.forClass(BAckgroudnCheckResults.class);
+verify(repo).save(backgroudnCheckResultArgCaptor.capture())
+assertThat(x.getRiskProfile(), backgroudnCheckResultArgCaptor.value().getRiskProfile())
+
+
+
+BDD mockito:
+------------
+BDDMOckito.given().willReturn() //Convert when and thenReturn to this
+then(class/obj).should().save()
+then(class/obj).shouldHaveNoMoreInteractions();
+
+
+Drawbacks:
+----------
+Mockito cannot mock static methods such as LocalDate.now()
+Solution:
+1) Powermock
+2) Using java clock class
+
+private Clock clock;
+LocalDate.now(clock), LocalDateTime.now(clock)
+
+Instant fixedTime = LocalDate.of(2019,7,4).atStartOfDay(ZoneId.systemDefault()).toInstant();
+Clock clock = Clock.fixed(fixedTime, ZoneId.systemDefault());
+
+In assert, use: assertEquals(LocalDateTime.ofInstant(fixedTime, ZoneOffset.systemDefault()),getDate());

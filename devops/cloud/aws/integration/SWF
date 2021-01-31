@@ -1,0 +1,10 @@
+Simple Workflow service:
+------------------------
+- Old
+- Run on Ec2 
+- Built in human intervention
+- Concept of activity and decsiion step
+- Step function is recommended to be used for new applciations except:
+  > If you need external signals to intervene in the process
+  > If you need child process  that return values to parent process
+  > If you need to use amazon mechnical turk

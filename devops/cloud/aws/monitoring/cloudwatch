@@ -1,0 +1,35 @@
+- CW log agent & Unified agent(new and you can send RAM, processes,etc) to be installed in Ec2 to get cloud watch data
+- Put centralized config in SSM param store
+
+Batch sends of unified log agent:
+------------------------------------
+- batch_count: number of log events to send (default 10000, min 1)
+- batch_duration: defa and min is 5000ms
+- batch _size: size of log events in batch(default and max is 1MB)
+
+CW metrics
+ - EC2 standard monitoring 5 min, detailed 1min
+ - Standard resolution 1min, high is 1 sec
+
+CW alarms:
+- Can trigger action: Ec2 ,Auto scaling, SNS
+- Alarm events can be intercepted by CW events
+
+CW events:
+- Intercept events from AWS svc
+- Intercept any api call with cloud trail integration
+
+CW logs:
+- Log groups: name, representing apps
+- Log stream: instance within apps/log files/ containers
+- Log expiration policies 
+
+
+For export to S3, 
+- Log data can take upto 12hrs for export
+- S3 buckets must be encrypted with AES-256(SSE-S3)
+- Api call is create export task
+
+For real time, use cloudwatch logs subscriptions:
+
+

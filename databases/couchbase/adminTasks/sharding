@@ -1,12 +1,26 @@
-- Couchbase has 1024 fixed shareds also called v-buckets.
+V-buckets:
+-----------
+- Virtual buckets make upa  bucket  and that will help in replication  and optimal data distribution
+across a cluster
+- V-buckets are impl of buckets
+
+
+
+- Couchbase has 1024 fixed shareds also called v-buckets that form one bucket.
+1024 v-bucket distributed across node. If 4 node, then each node has 256 vBuckets. If 10K documents, 10k/1024=10 documents per v-bucket.
+these 1024 v-buckets are called active v-buckets
+- On mac os, it is 64 vBuckets per bucket.
 - Document will be in one of the v bucket based on hashing algo
 - Based on numbetr of nodes, the v-buckets on each node will be 1024/nodes
 - Process of redistributing the v-bucket when adding a node is called rebalancing
 
-
+- For Every active vBucket , there is a replica vBucket
 - Replicas  have separate set of v-bucket called replica-buckets.
-If you select 2 replicas, there will be 1024*3=3072 replica-buckets.
+If you select 2 replicas, there will be 1024*3=3072 vbuckets.
 1024 are v-bucket and 2048 replica v-bucket. 
+- Wrtire ops are first on active vBuckets and then propagated to replicas
+- Read on replica/active vBuckets.
+- Promotion of replicas to active is called failover. 
 
 If we have 0-340 v-bucket in node 1, 0-340 replica v-bucket will lie in other buckets 
 

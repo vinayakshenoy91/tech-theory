@@ -14,7 +14,8 @@ Class Org:
 - If you use concatenate more string then use string builder. If not concatenating string in single line
 and using string builder always gives same perf.
 
-
-
-
 - if is Logger.isLoggable(Level.INFO)
+
+
+Best practise wrto classes and interfaces:
+------------------------------------------

@@ -164,3 +164,16 @@ We recommend using whatever tools are available to you in order to test your des
 
 
 Worksheet of api design; https://learning.oreilly.com/library/view/designing-web-apis/9781492026914/app01.html#appendix
+
+Uisng query params:
+--------------------
+GET /api/v1/books?limit=1&sort=created_at
+
+
+Hide the complexity of your actions behind the ? sign.
+
+PUT /api/v1/blogposts/12342 ?action=like
+
+GET /api/v1/books ?q=[SEARCH-TERM]
+
+GET /api/v1/authors ?filters=[COMMA SEPARATED LIST OF FILTERS]

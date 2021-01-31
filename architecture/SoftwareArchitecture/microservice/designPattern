@@ -1,0 +1,101 @@
+Note: https://learning.oreilly.com/library/view/hands-on-microservices-with/9781789613476/2ae28a9c-b36d-4cde-b329-4d61a698a141.xhtml
+
+
+1) Service Discovery:
+---------------------
+Problem: Microservices instances are typically assigned dynamically allocated IP addresses when they start up, for example, 
+when running in containers. This makes it difficult for a client to make a request to a microservice that, for example, 
+exposes a REST API over HTTP.
+
+Solution:  Service discovery keeps track of available microservices and the IP addresses of its instances.
+
+This design pattern can be implemented using two different strategies:
+
+Client-side routing: The client uses a library that communicates with the service discovery service to find out the proper 
+instances to send the requests to.
+
+Server-side routing: The infrastructure of the service discovery service also exposes a reverse proxy that all requests are 
+sent to. The reverse proxy forwards the requests to a proper microservice instance on behalf of the client.
+
+2) Edge Server:
+----------------
+Usecase: It is in many cases desirable to expose some of the microservices to the outside of the system landscape and 
+hide the remaining microservices from external access. 
+The exposed microservices must be protected against requests from malicious clients.
+
+Impl: An edge server behaves like  a reverse proxy and can be integrated with a discovery service to provide 
+dynamic load balancing capabilities.
+
+Some solution requirements are as follows:
+
+Hide internal services that should not be exposed outside their context; that is, only route requests to microservices 
+that are configured to allow external requests. 
+
+Expose external services and protect them from malicious requests; that is, use standard protocols and best practices 
+such as OAuth, OIDC, JWT tokens, and API keys to ensure that the clients are trustworthy.
+
+3) Reactive
+
+4) Central Configuration:
+--------------------------
+Add a new component, a configuration server, to the system landscape to store the configuration of all the microservices
+Make it possible to store configuration information for a group of microservices 
+in one place, with different settings for different environments (for example, dev, test, qa, and prod).
+
+5)Centralized log analysis:
+----------------------------
+Add a new component that can manage centralized logging and is capable of the following:
+
+Detecting new microservice instances and collecting log events from them
+Interpreting and storing log events in a structured and searchable way in a central database
+Providing APIs and graphical tools for querying and analyzing log events
+
+6) Distributed Tracing:
+------------------------
+The solution requirements are as follows:
+
+- Assign unique correlation IDs to all incoming or new requests and events in a well-known place, such as a header with a 
+recognized name.
+- When a microservice makes an outgoing request or sends a message, it must add the correlation ID to the request and message.
+- All log events must include the correlation ID in a predefined format so that the centralized logging service can extract 
+the correlation ID from the log event and make it searchable.
+
+
+7) Circuit breaker:
+--------------------
+
+This is especially common in cases where synchronous requests are executed using 
+blocking I/O, that is, blocking a thread from the underlying operating system while a 
+request is being processed. Combined with a large number of concurrent requests and a 
+service that starts to respond unexpectedly slowly, thread pools can quickly become drained, 
+causing the caller to hang and/or crash. This failure can spread unpleasantly fast 
+to the caller's caller, and so on.
+
+Solution: Add a Circuit Breaker that prevents new outgoing requests from a caller if it 
+detects a problem with the service it calls.
+
+The solution requirements are as follows:
+
+Open the circuit and fail fast (without waiting for a timeout) if problems with the service are detected.
+Probe for failure correction (also known as a half-open circuit); that is, allow a single request to go through on a regular basis to see if the service operates normally again.
+Close the circuit if the probe detects that the service operates normally again. This capability is very important since it makes the system landscape resilient to these kinds of problems; that is, it self-heal
+
+8) Control loop/ASG/k8s:
+------------------------
+Add a new component, a control loop, to the system landscape; this constantly observes the actual state of the system landscape;
+compares it with the desired state, as specified by the operators; and, if required, 
+takes action. For example, if the two states differ, it needs to make the actual state equal to the desired state.
+
+9) Centralized monitoring and alarm:
+------------------------------------
+If observed response times and/or the usage of hardware resources become unacceptably high, it can be very hard to discover 
+the root cause of the problem.
+For example, we need to be able to analyze hardware resource consumption per microservice.
+
+The solution requirements are as follows:
+
+It must be able to collect metrics from all the servers that are used by the system landscape, which includes auto-scaling servers.
+It must be able to detect new microservice instances as they are launched on the available servers and start to collect metrics from them.
+It must be able to provide APIs and graphical tools for querying and analyzing the collected metrics. 
+
+(https://12factor.net) 

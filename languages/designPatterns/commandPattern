@@ -1,0 +1,80 @@
+Defn:
+-----
+The Command Pattern allows you to decouple the requester of an action from the object that actually performs the action. 
+So, here the requester would be the remote control and the object 
+that performs the action would be an instance of one of your vendor classes.
+
+The Command Pattern encapsulates a request as an object, thereby letting you parameterize 
+other objects with different requests, queue or log requests, and support undoable operations.
+
+- Commands give us a way to package a piece of computation (a receiver and a set of actions) and 
+pass it around as a first-class object.
+
+
+
+//Core point of decoupling
+public interface Command{
+    public void execute();
+}
+
+//Implementing the command
+public class LighOnCommand implements Command{
+    Light light;
+
+    public LightOnCommand(Light light){
+        this.light=light;
+    }
+
+    public void execute(){
+        light.on();
+    }
+}
+
+//Attachign object to remote
+public class SimpleRemoteControl{
+    Command slot;
+    public SimpleRemoteControl(){};
+
+    public void setCommand(Command command){
+        slot = command;
+    }
+
+    public void buttonWasPressed(){
+        slot.execute();
+    }
+}
+
+
+//No command pattern
+public class NoCommand implements Command {
+    public void execute() { }
+}
+
+
+//Using lambdas for remote loader
+
+public class RemoteLoader{
+
+   public static void main(String[] args){
+
+       RemoteControl control = new RemoteControl();
+
+       Light livingRoomLight = new Light("Living room");
+
+       control.setCommand(0,()-> livingRoomLight.on(), livingRoomLight.off())
+
+   }
+
+}
+
+
+
+
+More uses of the Command Pattern: logging requests
+The semantics of some applications require that we log all actions and be able to recover after a crash by reinvoking those actions. The Command Pattern can support these semantics with the addition of two methods: store() and load(). In Java we could use object serialization to implement these methods, but the normal caveats for using serialization for persistence apply.
+
+How does this work? As we execute commands, we store a history of them on disk. When a crash occurs, we reload the command objects and invoke their execute() methods in batch and in order.
+
+Now, this kind of logging wouldn’t make sense for a remote control; however, there are many applications that invoke actions on large data structures that can’t be quickly saved each time a change is made. By using logging, we can save all the operations since the last checkpoint, and if there is a system failure, apply those operations to our checkpoint. Take, for example, a spreadsheet application: we might want to implement our failure recovery by logging the actions on the spreadsheet rather than writing a copy of the spreadsheet to disk every time a change occurs. In more advanced applications, these techniques can be extended to apply to sets of operations in a transactional manner so that all of the operations complete, or none of them do.
+
+Each command will do a execute, store and load.

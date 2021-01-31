@@ -1,0 +1,19 @@
+1) Transparent data encryption:-
+- Database data, log files, backup, all are encrypted.
+- Data fetched is auto decrypted.
+- Auto enabled for Azure SQL Database(Not for azure sql mgd instance)
+- Use key provided by azure or own key in vault
+
+2) Aazure SQL server - always encrypted:
+- protect sensitive data
+- Data protected at rest, when it is moved from the client and server and when data is in use.
+
+3) Azure disk encryption:
+- enable encyption of OS or data disks attached to VM
+- For linux, use DM crypt for volume encryption
+- For windowsVM, use bit locker.
+
+4) Azure storage encryption:
+- auto encrypt data at rest. Auto enabled for all storage accounts.
+- use customer mgd key from kv svc or use customer-provided keys when perform ops on blob.
+

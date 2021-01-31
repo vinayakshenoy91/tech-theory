@@ -1,0 +1,3 @@
+- Capability to rotate secert every x days
+- Integtration with RDS
+- Automate generation of secrets on rotation (uses lambda)

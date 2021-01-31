@@ -1,3 +1,33 @@
+- All factory patterns encapsulate object creation. 
+When you directly instantiate an object, you are depending on its concrete class. 
+The Factory Method Pattern encapsulates object creation by letting subclasses decide what objects to create. 
+
+- The Factory Method Pattern defines an interface for creating an object, 
+but lets subclasses decide which class to instantiate. Factory Method lets a class defer instantiation to subclasses.
+
+- As with every factory, the Factory Method Pattern gives us a way to encapsulate the instantiations of concrete types
+
+Essence of factory pattern:  Basically you are decoupling creator fromt he product.
+
+I mean, the whole point of the Factory Method Pattern is that you’re using a subclass to do your creation for you. In that way, clients only need to know the abstract type they are using; the subclass worries about the concrete type. So, in other words, I keep clients decoupled from the concrete types.
+
+use me to decouple your client code from the concrete classes you need to instantiate, or if you don’t know ahead of time all the concrete classes you are going to need. To use me, just subclass me and implement my factory method!
+
+
+
+Simple factory vs factory method:
+--------------------------------
+- The Factory Method Pattern is useful if you’ve only got one concrete creator because you are decoupling the implementation 
+of the product from its use. If you add additional products or change a product’s implementation, 
+it will not affect your Creator (because the Creator is not tightly coupled to any ConcreteProduct).
+
+- Simple Factory as a one-shot deal, while with Factory Method you are creating a 
+framework that lets the subclasses decide which implementation will be used.
+
+- By subclassing the PizzaStore class, you decide what concrete products go into making the pizza that orderPizza() returns. 
+Compare that with Simple Factory, which gives you a way to encapsulate object creation, 
+but doesn’t give you the flexibility of Factory Method because there is no way to vary the products you’re creating.
+
 Why?
 ------------
 - In object-oriented programming, objects come into being at various times and for various reasons
@@ -8,6 +38,65 @@ the object after construction—often
 even how to manage a pool of objects. This reduces cohesion, which is not what we want.
 - Decouple how objects are created from how they interact with each other.
 - Rule: Objects should either make other objects or use other objects, but never both
+
+Core problem that factory addresses:
+-------------------------------------
+when you have code that makes use of lots of concrete classes, you’re looking for trouble because that code 
+may have to be changed as new concrete classes are added. So, in other words, your code will 
+not be “closed for modification.” To extend your code with new concrete types, you’ll have to reopen it.
+
+Soln:
+-----
+- Encapsulate creation code from rest of the logic
+- Factories handle details of object creation
+
+
+//Simple factory impl:
+-----------------------
+public class SimplePizzaFactory{
+
+ public Pizza createPizza(String type){
+     
+      Pizza pizza = null;
+
+      //Pull all if else condition and concrete class instantiation here
+      return pizza;
+ }
+}
+
+
+public class PizzaStore{
+  SimplePizzaFactory factory;
+
+  public PizzaStore(SimplePizzaFactory factory){
+      this.factory = factory;
+  }
+   
+  public Pizza orderPizza(String type){
+     Pizza pizza;
+     pizza = factory.createPizza(type);
+     pizza.bake();
+     pizza.box();
+     return pizza;
+  }
+}
+
+//Factory method impl:
+-----------------------
+
+
+Things to remember due to this change:
+---------------------------------------
+- One thing to remember is that the SimplePizzaFactory may have many clients. We’ve only seen the orderPizza() method; however, 
+there may be a PizzaShopMenu class that uses the factory to get pizzas for their current description and price. We might also 
+have a HomeDelivery class that handles pizzas in a different way than our PizzaShop class but is also a client of the factory.
+So, by encapsulating the pizza creating in one class, we now have only one place to make modifications when the implementation 
+changes.
+
+-  Defining a simple factory as a static method is a common technique and is often called a static factory. 
+Why use a static method? Because you don’t need to instantiate an object to make use of the create method. 
+]But it also has the disadvantage that you can’t subclass and change the behavior of the create method.
+
 
 
 Factories are a major player here:
@@ -67,4 +156,11 @@ COre:
 This boils down to a fundamental principle: Given any two entities A and B in a system, the relationship should be limited such that A uses B or A creates/manages B, but never both!
 
 
+
+Benefits:
+---------
+By placing all my creation code in one object or method, I avoid duplication in my code and provide one place to 
+perform maintenance. That also means clients depend only upon interfaces rather than the concrete classes required 
+to instantiate objects. As I have learned in my studies, this allows me to program to an interface, not an implementation, 
+and that makes my code more flexible and extensible in the future.
 

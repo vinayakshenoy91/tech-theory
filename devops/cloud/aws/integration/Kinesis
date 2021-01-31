@@ -69,3 +69,13 @@ aws kinesis help
 aws kinesis list-streams
 aws kinesis describe-streams --stream-name <my-first-stream>
 aws kinesis put-record --stream-name my-first-stream --data "user-signup" --partition-key user_123
+
+
+Usecase:
+--------
+- You are looking to process tens of thousands of orders per second and you would like 
+to make sure the orders are going to be processed in the order they were placed for each customer.
+Kinesis Data Streams will give us the scale, and also allow us to have ordering by customer_id,
+using customer_id as our partition key
+
+

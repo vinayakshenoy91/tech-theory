@@ -1,0 +1,15 @@
+To optimize website assets, we can follow the below techniques:
+
+File compression
+File concatenation
+Offloading assets
+Re-organizing & Refining code
+Properly naming all assets
+Using CSS Sprites for Images
+Disabling e-tags
+Using internal and external style sheets and minimizing inline CSS
+Using a CDN (content delivery network) for media files and hosting
+Hosting our website’s assets on different domains while also reducing DNS lookups
+Using a domain that is cookie-free to place the assets and splitting them among different domains
+
+

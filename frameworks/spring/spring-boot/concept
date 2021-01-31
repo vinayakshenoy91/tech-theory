@@ -1,0 +1,123 @@
+-Spring Boot comes with some preconfigured, so you can override only the configurations that don’t match your implementations.
+This approach convention-over-configuration.
+
+- Spring Boot provides autoconfiguration for your project and shortens the time needed for the setup
+
+
+@SpringBootApplication
+public class MyApplication {
+
+  public static void main(String[] args) {
+    SpringApplication.run(MyApplication.class, args);
+  }
+}
+
+The following functionality will be provided by this annotation(@SpringBootApplication):
+
+It enables component scanning, that is, looking for Spring components and configuration classes in the package of the 
+application class and all its sub-packages.
+The application class itself becomes a configuration class.
+It enables autoconfiguration, where Spring Boot looks for JAR files in the classpath that it can configure automatically. 
+If you, for example, 
+have Tomcat in the classpath, Spring Boot will automatically configure Tomcat as an embedded web server. 
+
+the @SpringBootApplication annotation implies the @Configuration annotation.
+
+Constructor injection:
+-------------------------
+public class AnotherComponent {
+
+  private final MyComponent myComponent;
+
+  @Autowired
+  public AnotherComponent(MyComponent myComponent) {
+    this.myComponent = myComponent;
+  }
+I prefer using constructor injection (over field and setter injection) to keep the state in my components immutable. 
+The immutable state is important if you want to be able to run the component in a multithreaded runtime environment.
+
+
+
+Explicit component scan:
+------------------------
+@SpringBootApplication
+@ComponentScan({"se.magnus.myapp","se.magnus.utils"})
+public class MyApplication {
+
+If we want to use components that are declared in a package outside the applications package, for example, a utility 
+component shared by multiple Spring Boot applications, 
+we can complement the @SpringBootApplication annotation in the application class with a @ComponentScan annotation.
+
+We can now auto-wire components from the se.magnus.util package in the application code, for example, a utility component, as follows:
+
+package se.magnus.utils;
+
+@Component
+public class MyUtility { ...
+This utility component can be auto-wired in an application component like so:
+
+package se.magnus.myapp.services;
+
+public class AnotherComponent {
+
+ private final MyUtility myUtility;
+
+ @Autowired
+ public AnotherComponent(MyUtility myUtility) {
+   this.myUtility = myUtility;
+ }
+
+ @Configuration[Custom]:
+ -----------------------
+ @Configuration
+public class SubscriberApplication {
+
+  @Bean
+  public Filter logFilter() {
+    CommonsRequestLoggingFilter filter = new 
+        CommonsRequestLoggingFilter();
+    filter.setIncludeQueryString(true);
+    filter.setIncludePayload(true);
+    filter.setMaxPayloadLength(5120);
+    return filter;
+  }
+
+
+Code:
+------
+public Product getProduct(int productId) {
+ String url = productServiceUrl + productId;
+ Product product = restTemplate.getForObject(url, Product.class);
+ return product;
+}
+
+public List<Recommendation> getRecommendations(int productId) {
+    String url = recommendationServiceUrl + productId;
+    List<Recommendation> recommendations = 
+    restTemplate.exchange(url, GET, null, new 
+    ParameterizedTypeReference<List<Recommendation>>() 
+    {}).getBody();
+    return recommendations;
+}
+
+public List<Review> getReviews(int productId) {
+    String url = reviewServiceUrl + productId;
+    List<Review> reviews = restTemplate.exchange(url, GET, null,
+    new ParameterizedTypeReference<List<Review>>() {}).getBody();
+    return reviews;
+}
+
+
+Exception handling:
+-------------------
+@ResponseStatus(UNPROCESSABLE_ENTITY)
+@ExceptionHandler(InvalidInputException.class)
+public @ResponseBody HttpErrorInfo handleInvalidInputException(ServerHttpRequest request, Exception ex) {
+    return createHttpErrorInfo(UNPROCESSABLE_ENTITY, request, ex);
+}
+
+$BOOK_HOME/Chapter03/2-basic-rest-services/util/src/main/java/se/magnus/util/http/GlobalControllerExceptionHandler.java.
+
+To get the JSON response pretty-printed, you can use the jq tool: 
+
+curl http://localhost:7000/product-composite/1 -s | jq .

@@ -1,0 +1,10 @@
+- Host public SSL cert in AWS, either buy and uplaod to ACM using CLI,. 
+OR
+ACM provision and renew public SSL cert for you
+
+- ACM loads SSL cert on following integrations:
+  > LB
+  > CloudFront distribution
+  > APIs on API gateways
+
+- This is a regional service. So a duplicate setup required at DR

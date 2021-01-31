@@ -1,0 +1,181 @@
+Setup:
+-----
+npm install puppeteer jest jest-image-snapshot jest-puppeteer
+
+npm install @babel/core @babel/preset-env babel-jest --save-dev
+
+./node_modules/.bin/jest --init
+
+TODO in jest.config.js: 
+-----------------------
+https://tesco.udemy.com/course/automated-headless-browser-testing-with-puppeteer/learn/lecture/16842996#overview
+
+comment testEnv: node
+preset: "jest-puppeter"
+
+script in package json:
+
+test:jest --forceExit
+
+
+babel.config.js
+----------------
+module.exports = {
+  presets: [
+    [
+      "@babel/preset-env",
+      {
+        targets: {
+          node: "current"
+        }
+      }
+    ]
+  ]
+};
+
+create jest-puppeteer.config.js
+--------------------------------
+module.exports={
+    launch:{
+        headless:false
+    },
+    browserContext: "default"
+}
+
+Usual jest with puppeteer:
+---------------------------
+
+describe('', ()=>{
+      it('description', ()=>{
+          //Optional: jest.setTimeout(15000)
+          await page.goto('test');
+          await page.waitForTimeout(1000);
+      })
+})
+
+
+Two folder:
+-----------
+tests/HomePage.test.js
+pages/Homepage.js -> Put all required methods in a class
+pages/components/Topbar.js
+
+create pages/BasePage.js, which has:
+------------------------------------
+export default class BasePage{
+
+    async wait(time){
+        await page.waitForTimeout(time);
+    }
+
+    async getUrl(){
+        return await page.url();
+    }
+
+    async getTitle(){
+        return await page.title();
+    }
+
+}
+
+HomePage.test.js:
+------------------
+let homepage;
+
+beforeAll(async ()=>{
+    jest.setTimeout(15000);
+    homepage = new HomePage();
+})
+
+
+Visual regression test:
+-----------------------
+
+"test-snapshots":"jest --config=jest.config.js --detectOpenHandles --forceExit"
+"test-snapshots-update":"jest --config=jest.config.js --updateSnapshot --detectOpenHandles --forceExit"
+
+
+jest.config.js:
+----------------
+module.exports = {
+    rootDir:"./tests-snapshots",
+    testTimeout:30000,
+    bail:0
+}
+
+visual.test.js:
+--------------
+
+const puppeteer = require("puppeteer");
+const { toMatchImageSnapshot } = require('jest-image-snapshot');
+
+expect.extend({toMatchImageSnapshot})
+
+
+describe('description', ()=>{
+    let browser;
+    let page;
+
+    beforeAll(async ()=>{
+        browser = await puppeteer.launch({headless:true});
+        page = browser.newPage();
+    })
+
+     afterAll(async ()=>{
+        await browser.close();
+    })
+
+    test('description', async ()=>{
+      
+      const image = page.screenshot();
+   //Other versions:
+   page.screenshot({path: 'example.png',fullPage:true});
+   const image = page.screenshot();
+
+      expect(image).toMatchImageSnapshot({
+          failureThresholdType:"pixel",
+          failureThreshold:500,
+
+      })
+         
+    })
+})
+
+Once done, type npm run test-snapshot. a snapshot folder will be created
+
+//Single element snapshot
+
+const h1 = await page.waitForSelector('h1');
+const image = await h1.screnshot();
+
+
+test('Mobile Snapshot', async function() {
+        await page.goto('https://www.example.com')
+        await page.waitForSelector('h1')
+        await page.emulate(puppeteer.devices['iPhone X'])
+        const image = await page.screenshot()
+        expect(image).toMatchImageSnapshot({
+            failureTresholdType: 'percent',
+            failureTreshold: 0.01,
+        })
+    })
+ 
+    test('Tablet Snapshot', async function() {
+        await page.goto('https://www.example.com')
+        await page.waitForSelector('h1')
+        await page.emulate(puppeteer.devices['iPad landscape'])
+        const image = await page.screenshot()
+        expect(image).toMatchImageSnapshot({
+            failureTresholdType: 'percent',
+            failureTreshold: 0.01,
+        })
+    })
+ 
+    //You want to hide a particular things before you take a snapshot
+    test.only('Remove Element Before Snapshot', async function() {
+        await page.goto('https://www.example.com')
+        await page.evaluate(() => {
+            ;(document.querySelectorAll('h1') || []).forEach(el => el.remove())
+        })
+        await page.waitFor(5000)
+    })

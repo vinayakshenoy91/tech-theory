@@ -1,0 +1,11 @@
+1) fake:
+- Simpler impl like In memory DB
+
+2) Stub:
+- returns values for method calls like size() always returns 1
+- Preprogrammed ans
+
+3) Mock:
+- test interaction with objects. Can also stub values, ex must invoke add(1)
+
+4) Spy :Helps verify. Keeps track of how it was used.

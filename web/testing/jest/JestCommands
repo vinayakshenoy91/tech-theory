@@ -1,0 +1,24 @@
+- filename: App.test.tsx
+- Use jest extension with VS code
+
+Imports:
+--------
+import React from 'react';
+import {render} from '@testing-library/react';
+
+
+Single line test
+-------------------
+
+describe("Test suite", ()=>{
+   test('description', ()=>{
+       const { getByText } = render(<App/>);
+       const  linkElement = getByText(/learn react/i);
+       expect(linkElement).toBeInTheDocument(); 
+   })
+});
+
+Matchers:
+---------
+expect(xyz).toBe(9)
+expect(error).toBeDefined();

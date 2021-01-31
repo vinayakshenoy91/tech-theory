@@ -1,5 +1,0 @@
-Three laws of TDD:
--------------------
-- Write no pord code except pass of a failing test.
-- Write only enough test to demonstrate a failure.
-- Write only enough prod code to pass the test.

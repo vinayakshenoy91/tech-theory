@@ -1,0 +1,4 @@
+- REmote DIctonary Server [REDIS]
+- It was written in C by Salvatore Sanfilippo in 2006. It is a NoSQL advanced key-value data store. 
+- It is often referred to as a data structure server because 
+keys can contain strings, hashes, lists, sets, sorted sets, bitmaps, and hyperloglogs.

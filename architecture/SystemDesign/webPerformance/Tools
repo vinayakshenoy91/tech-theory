@@ -1,0 +1,7 @@
+Perf testing:
+--------------
+- jsperf (we need to set up our own system for debugging code. We can find it at https://benchmarkjs.com/.)
+- lighthouse report
+
+- use profiling using performance tab, memeory tab and rendering tab
+rendering: This is usually not a default tab that is available. In the toolbar, you will notice a three-dot button next to the Close button. Click that, go to More tools, and click the Rendering option.

@@ -6,3 +6,38 @@ Two util class:
 - File
 - Path
 
+
+Reading a file:
+--------------
+BufferedReader reader = null
+try{
+  
+   reader = new BufferedReader(new FileReader(args[0]));
+   String inputLine = null
+   while((inputLine=reader.readLine())!=null){
+       Sysout(inputLine);
+   }
+}catch(){
+
+}finally{
+  try{
+  if(reader!=null)  
+   reader.close();
+  }catch(){
+  }
+}
+
+Better way using try-with-resources:
+-------------------------------------
+- type that supports auto cleanup implements AutoCloseable interface
+- few use closeable that inherits from AutoCloseable
+
+try(BufferedReader reader=new BufferedReader(new FileReader(args[0]))){
+   reader = new BufferedReader(new FileReader(args[0]));
+   String inputLine = null
+   while((inputLine=reader.readLine())!=null){
+       Sysout(inputLine);
+   }
+}catch(){
+
+}

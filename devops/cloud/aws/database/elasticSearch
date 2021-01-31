@@ -1,2 +1,14 @@
-Search DB, store, analyse and correlate logs from disparate application and systems.
+- Search DB, store, analyse and correlate logs from disparate application and systems.
+- Need to run on servers
+- Usecase:
+  1) Log Analytics
+  2) Real ttime application monitoring
+  3) Security Analytics
+  4) FTS
+  5) Click stream Analytics
+  6) Indexing
 
+- Elastic search + Kibana + Logstash:
+  - Elastic search provides search and indexing capability 
+  - Kibana will give realtime dashboard of data that sits on ES
+  - Logstash: uses logstash agent, log ingestion mechnism

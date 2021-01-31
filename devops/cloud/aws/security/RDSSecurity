@@ -1,0 +1,5 @@
+- KMS encryptiojnat rest for underlyign snapshots
+- Transparent Data Encryption (TDE) for oracle and SQL server
+- SSL inflight encryption for all DBS
+- IAM auth for mysql and postgres
+- Auth still happens in RDS

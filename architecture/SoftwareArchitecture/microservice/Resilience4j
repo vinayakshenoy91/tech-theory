@@ -1,0 +1,172 @@
+Source code:
+https://github.com/PacktPublishing/Hands-On-Microservices-with-Spring-Boot-and-Spring-Cloud/tree/master/Chapter13.
+
+The openjdk:12.0.2 base Docker image is used in all the Dockerfiles.
+
+The source code contains the following Gradle projects:
+
+api
+util
+microservices/product-service
+microservices/review-service
+microservices/recommendation-service
+microservices/product-composite-service
+spring-cloud/eureka-server
+spring-cloud/gateway
+spring-cloud/authorization-server
+spring-cloud/config-server
+
+The configuration files can be found in the config repository, config-repo.
+
+
+Resilience4j can be used by all our microservices except for the edge server since 
+Spring Cloud Gateway currently only supports the older circuit breaker, Netflix Hystrix.
+
+
+The key features of a circuit breaker are as follows:
+
+If a circuit breaker detects too many faults, it will open its circuit, that is, not allow new calls.
+When the circuit is open, a circuit breaker will perform fast failure logic. This means that it doesn't wait for a new fault, for example, a timeout, to happen on subsequent calls. Instead, it directly redirects the call to a fallback method. The fallback method can apply various business logic to produce the best effort response. For example, a fallback method can return data from a local cache or simply return an immediate error message. This will prevent a microservice from getting unresponsive if the services it depends on stop responding normally. This is specifically useful under high load.
+After a while, the circuit breaker will be half-open, allowing new calls to see whether the issue that caused the failures is gone. If new failures are detected by the circuit breaker, it will open the circuit again and go back to the fast failure logic. Otherwise, it will close the circuit and go back to normal operation. This makes a microservice resilient to faults, a capability that is indispensable in a system landscape of microservices that communicate synchronously with each other!
+Resilience4j exposes information about circuit breakers at runtime in a number of ways:
+
+The current state of a circuit breaker can be monitored using the microservice's actuator health endpoint, /actuator/health.
+The circuit breaker also publishes events on an actuator endpoint, for example, state transitions, /actuator/circuitbreakerevents.
+Finally, circuit breakers are integrated with Spring Boot's metrics system and can use it to publish metrics to monitoring tools such as Prometheus.
+
+
+To control the logic in a circuit breaker, Resilience4J can be configured using standard Spring Boot configuration files. We will use the following configuration parameters:
+
+ringBufferSizeInClosedState: Number of calls in a closed state, which are used to determine whether the circuit shall be opened.
+failureRateThreshold: The threshold, in percent, for failed calls that will cause the circuit to be opened.
+waitInterval: Specifies how long the circuit stays in an open state, that is, before it transitions to the half-open state.
+ringBufferSizeInHalfOpenState: The number of calls in the half-open state that are used to determine whether the circuit shall be opened again or go back to the normal, closed state.
+automaticTransitionFromOpenToHalfOpenEnabled: Determines whether the circuit automatically will transition to half-open once the wait period is over or wait for the first call after the waiting period until it transitions to the half-open state.
+ignoreExceptions: Can be used to specify exceptions that should not be counted as faults. Expected business exceptions such as not found or invalid input are typical exceptions that the circuit breaker should ignore, that is, users that search for non-existing data or enter invalid input should not cause the circuit to open.
+Resilience4j keeps track of successful and failed calls when in the closed and half-open state using a ring buffer, hence the parameter names ringBufferSizeInClosedState and ringBufferSizeInHalfOpenState.
+
+
+To control the logic in a circuit breaker, Resilience4J can be configured using standard Spring Boot configuration files. We will use the following configuration parameters:
+
+ringBufferSizeInClosedState: Number of calls in a closed state, which are used to determine whether the circuit shall be opened.
+failureRateThreshold: The threshold, in percent, for failed calls that will cause the circuit to be opened.
+waitInterval: Specifies how long the circuit stays in an open state, that is, before it transitions to the half-open state.
+ringBufferSizeInHalfOpenState: The number of calls in the half-open state that are used to determine whether the circuit shall be opened again or go back to the normal, closed state.
+automaticTransitionFromOpenToHalfOpenEnabled: Determines whether the circuit automatically will transition to half-open once the wait period is over or wait for the first call after the waiting period until it transitions to the half-open state.
+ignoreExceptions: Can be used to specify exceptions that should not be counted as faults. Expected business exceptions such as not found or invalid input are typical exceptions that the circuit breaker should ignore, that is, users that search for non-existing data or enter invalid input should not cause the circuit to open.
+Resilience4j keeps track of successful and failed calls when in the closed and half-open state using a ring buffer, hence the parameter names ringBufferSizeInClosedState and ringBufferSizeInHalfOpenState.
+
+
+Retry mechanism:
+
+The retry mechanism is very useful for random and infrequent faults, such as temporary network glitches. The retry mechanism can simply retry a failed request a number of times with a configurable delay between the attempts. One very important restriction on the use of the retry mechanism is that the services that it retries must be idempotent, that is, calling the service one or many times with the same request parameters gives the same result. For example, reading information is idempotent but creating information is typically not. You don't want a retry mechanism to accidentally create two orders just because the response from the first order's creation got lost in the network. 
+
+Resilience4j exposes retry information in the same way as it does for circuit breakers when it comes to events and metrics but does not provide any health information. Retry events are accessible on the actuator endpoint, /actuator/retryevents. To control the retry logic, Resilience4J can be configured using standard Spring Boot configuration files. We will use the following configuration parameters:
+
+maxRetryAttempts: Number of retries before giving up, including the first call
+waitDuration: Wait time before the next retry attempt
+retryExceptions: A list of exceptions that shall trigger a retry
+
+In this chapter, we will use the following values:
+
+maxRetryAttempts = 3: We will make a maximum of two retry attempts.
+waitDuration= 1000: We will wait one second between retries.
+retryExceptions = InternalServerError: We will only trigger retries on InternalServerError exceptions, that is, when HTTP requests respond with a 500 status code.
+
+
+Dependencies:
+
+ext {
+   resilience4jVersion = "0.14.1"
+}
+dependencies {
+   implementation("io.github.resilience4j:resilience4j-spring-
+    boot2:${resilience4jVersion}")
+   implementation("io.github.resilience4j:resilience4j-
+    reactor:${resilience4jVersion}")
+
+
+//Code change:
+
+@CircuitBreaker(name = "product")
+public Mono<Product> getProduct(int productId, int delay, int faultPercent) {
+    ...
+    return getWebClient().get().uri(url)
+        .retrieve().bodyToMono(Product.class).log()
+        .onErrorMap(WebClientResponseException.class, ex -> 
+         handleException(ex))
+        .timeout(Duration.ofSeconds(productServiceTimeoutSec));
+}
+
+private final int productServiceTimeoutSec;
+
+@Autowired
+public ProductCompositeIntegration(
+    ...
+    @Value("${app.product-service.timeoutSec}") int productServiceTimeoutSec
+) {
+    ...
+    this.productServiceTimeoutSec = productServiceTimeoutSec;
+}
+
+
+public Mono<ProductAggregate> getCompositeProduct(int productId, int delay, int faultPercent) {
+    return Mono.zip(
+        ...
+        integration.getProduct(productId, delay, faultPercent)
+           .onErrorReturn(CircuitBreakerOpenException.class, 
+            getProductFallbackValue(productId)),
+        ...
+
+private Product getProductFallbackValue(int productId) {
+    if (productId == 13) {
+        throw new NotFoundException("Product Id: " + productId + " not 
+        found in fallback cache!");
+    }
+    return new Product(productId, "Fallback product" + productId, 
+    productId, serviceUtil.getServiceAddress());
+}
+
+
+
+Finally, the configuration of the circuit breaker is added to the product-composite.yml file in the config repository, as follows:
+
+app.product-service.timeoutSec: 2
+
+resilience4j.circuitbreaker:
+  backends:
+    product:
+      registerHealthIndicator: true
+      ringBufferSizeInClosedState: 5
+      failureRateThreshold: 50
+      waitInterval: 10000
+      ringBufferSizeInHalfOpenState: 3
+      automaticTransitionFromOpenToHalfOpenEnabled: true
+      ignoreExceptions:
+        - se.magnus.util.exceptions.InvalidInputException
+        - se.magnus.util.exceptions.NotFoundException
+
+Retry:
+----
+@Retry(name = "product")
+@CircuitBreaker(name = "product")
+public Mono<Product> getProduct(int productId, int delay, int faultPercent) {
+
+Handlign retry specific exceptions:
+-----------------------------------
+public Mono<ProductAggregate> getCompositeProduct(int productId, int delay, int faultPercent) {
+    return Mono.zip(
+        ...
+        integration.getProduct(productId, delay, faultPercent)
+            .onErrorMap(RetryExceptionWrapper.class, retryException -> 
+             retryException.getCause())
+            .onErrorReturn(CircuitBreakerOpenException.class, 
+             getProductFallbackValue(productId)),
+
+resilience4j.retry:
+  backends:
+    product:
+      maxRetryAttempts: 3
+      waitDuration: 1000
+      retryExceptions:
+      - org.springframework.web.reactive.function.client.WebClientResponseException$InternalServerError

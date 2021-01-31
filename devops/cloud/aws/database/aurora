@@ -1,7 +1,21 @@
-- Work o MYSQL and Postgresql compatibility modes.
+- Only upto 64 TB
+- Work for MYSQL and Postgresql compatibility modes.
 - 5 times faster than mysql
 - 3 times fastr then postgres
 - Global database
+- Grows upto 64TB, 6 copies of data across 3 AZ, multiaz
+- Read replicas -> 15RR, reader endpoint to access them all
+- Cross region RR for DR-> Entire DB is copied
+- Load/offload data directly from/to s3: effecient use of resources
+- Backup, snapshot and restore, same as RDS 
+- Storage is striped across 100 of volumes
+- 4 copies out of 6 needed for writes
+- 3 copies of 6 need for reads
+- Self healing with peer to peer replication
+- Shared storage colume -> replication+ self healing + Auto expanding
+- Auto failover for master in < 30s
+- master + upto 15 aurora read replicas to serve reads
+
 
 3 endpoints:-
 -------------
@@ -20,3 +34,24 @@
 ------------------------
 - Points to individual aurora instances.
 
+
+
+Aurora serverless:
+-------------------
+- Automated DB instantiation and autoscaling based on actual usage
+- Good for infrequent internmittent or unpredicatable workloads
+- Pay per sec
+
+Global aurora:
+---------------
+- Aurora Global DB:
+-> 1 primary region (read/write)
+-> 5 secondary (read-only) regions, replication lag is less than 1 sec
+-> Upto 16 read replicas per secondary region
+-> Helps decrease latency
+-> Promoting another region (for DR) has RTO of < 1 min
+
+Aurora Multimaster:
+-------------------
+- Immediat failover for write node (HA)
+- Every node has R/W

@@ -1,0 +1,4 @@
+- key value pair
+- Value must be binary or JSON. Size < 20MB. Binary values cannot be parsed or indexed, only retrieved by key
+JSOn documents can be parsed, indexed and queried
+- Keys must be UTF-8 string , no space, < 250 bytes and is unique within bucket

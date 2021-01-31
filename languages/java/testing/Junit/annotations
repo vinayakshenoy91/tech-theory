@@ -1,0 +1,88 @@
+@Test -> This is to mark it as a junit test.
+@BeforeEach/@AfterEach -> Before and after each test
+@BeforeAll/@AfterAll -> Before and after all test , should be static. called before instanace is created for per mthod type
+But it need not be static when callign per_class
+@Tag -> used at class or method level, @Tag("dateTime"). More than one tag can be applied on an element
+@Disabled("message") -> At class or method level
+@Nested -> Used to nest classes //Static methods in inner class not allowed can be circumvented by establishing per 
+class lifecycle mode in nested class
+@DisplayName("Hello world")
+@RepeatedTest(5) //Do not put test annotation when you put this
+@RepeatedTests(value=2,name="-{displayName}->{currentRepetition}/{totalRepetitions}")
+RepatitionInfo parameter passed to method incase you want to access paraemter inside the method
+@TestFactory -> It allows to generate test at runtime by a factory method that is annotated with @TestFactory
+It must return a Stream, Collection, Iterable, or Iterator of DynamicTest instances
+
+
+- By default , Junit create an instance of test class for every test that it executes to avoid any side-effects.
+You can set/ aleter this property by:
+
+@TestInstance(TestInstance.Lifecycle.PER_METHOD)
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+
+OR JVM options:
+-Djunit.jupiter.testinstance.lifecycle.default=per_method
+-Djunit.jupiter.testinstance.lifecycle.default=per_class
+
+
+
+
+Examples:
+---------
+#Nested class
+ @Nested
+ class TodaysTest{
+   //Write test methods in this
+
+ }
+
+
+#
+@BeforeAll
+static void setupAll(){
+
+}
+
+#
+@Test
+@DisplayName("Hello world") //You can annotate it on class also
+void testXyZ(){
+
+}
+ 
+
+Parameterised test and Argument source:
+----------------------------------------
+
+@ParameterizedTest(name="Test #{index}: productId={0}")
+@ValueSource(strings=["1;e;mike;false;349",..])  //longs={1,2,3,4,5}
+void checkGivenPoints(@ConvertWith(FlightArgumentConverter.class)Flight flight){
+
+}
+
+Instead of valueSource use:
+
+@ParameterizedTest
+@CsvSource({"1,200","2,150"})
+@CsvFileSource(resources="/flights_information.csv")
+
+@ParameterizedTest
+@EnumSource(EnumClassName.class)
+@EnumSource(value=EnumClassName.class, names={"BIG_LATTE,BIG_TEA"}, mode=EnumSource.Mode.EXCLUDE)
+//You can use regex also in names
+
+@ParameterizedTest
+@MethodSource("productIds")
+private static LongStream productIds(){
+  return LongStream.range(1,6);
+}
+//If more than two params passed to method
+static Stream<Arguments> productIdsCustomerPoints(){
+  return productIds().mapToObj(productId -> Arguments.of(productId, 100*productId));
+}
+
+@ArgumentsSource
+
+
+Argument converter:
+------------------

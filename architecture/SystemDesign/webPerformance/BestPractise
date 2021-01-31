@@ -1,0 +1,222 @@
+- Loops are faster than helper functions liek filter
+- Uisng le tand const for scoping
+- Lazy evaluation:
+Uisng generators:
+const simpleGenerator = function*() {
+    let it = 0;
+    for(;;) {
+        yield it;
+        it++;
+    }
+}
+
+const sg = simpleGenerator();
+for(let i = 0; i < 10; i++) {
+    console.log(sg.next().value);
+}
+sg.return();
+console.log(sg.next().value);
+
+
+First, we notice that function has a star next to it. This shows that this is a generator function. Next, we set up a simple variable to hold our value and then we have an infinite loop. Some may think that this will run continuously, but lazy evaluation shows that we will only run up to the yield. This yield means we will pause execution here and that we can grab the value that we send back.
+
+So, we start the function up. We have nothing to pass to it so we just simply start it. Next, we call next on the generator and grab the value. This gives us a single iteration and returns whatever was on the yield statement. Finally, we call return to say that we are done with this generator. If we wanted to, we can grab the final value here.
+
+Now, we will notice that when we call next and try to grab the value, it returns undefined. We can take a look at the generator and notice that it has a property called done. This can allow us to see with finite generators if they are finished. So, how can this be helpful when we want to do something? A rather trivial example is a timing function. What we will do is start off the timer before we want to time something and then we will call it another time to calculate the time it took for something to run (very similar to console.time and timeEnd, but it should showcase what is available with generators).
+
+This generator could look like the following:
+
+const timing = function*(time) {
+    yeild Date.now() - time;
+}
+const time = timing(Date.now());
+let sum = 0;
+for(let i = 0; i < 1000000; i++) {
+    sum = sum + i;
+}
+console.log(time.next().value);
+We are now timing a simple summing function. All this does is seed the timing generator with the current time. Once the next function is called, it runs the statements up to the yield and returns the value held in the yield. This will give us a new time against the time that we passed in. We now have a simple function for timings. This can be especially useful for environments where we may not have access to the console and we are going to log this information somewhere else.
+
+
+- Another lazy loading is node js streams:
+
+Streams have been available inside Node.js for quite some time, but the stream interface for browsers has a basic standardization and certain parts are still under debate
+
+const nums = function*(fn=null) {
+    let i = 0;
+    for(;;) {
+        yield i;
+        if( fn ) {
+            i += fn(i);
+        } else {
+            i += 1;
+        }
+    }
+}
+const data = {};
+const gen = nums();
+for(let i of gen) {
+    console.log(i);
+    if( i > 100 ) {
+        break;
+    }
+    data.push(i);
+}
+
+const fakestream = function*(data) {
+    const chunkSize = 10;
+    const dataLength = data.length;
+    let i = 0;
+    while( i < dataLength) {
+        const outData = [];
+        for(let j = 0; j < chunkSize; j++) {
+            outData.push(data[i]);
+            i+=1;
+        }
+        yield outData;
+    }
+}
+
+for(let i of fakestream(data)) {
+    console.log(i);
+}
+
+This example shows the concept of lazy evaluation along with a couple of concepts for streaming that we will see in a later chapter. First, we create a generator that can take in a function and can utilize it for our logic function in creating numbers. In our case, we are just going to use the default case and have it generate one number at a time. Next, we are going to run this through a for/of loop to generate numbers up to 101.
+
+Next, we create a fakestream generator that will chunk our data for us. This is similar to streams that allow us to work on a chunk of data at a time. We can transform this data if we want to (known as a TransformStream) or we can just let it pass through (a special type of TransformStream called a PassThrough). We create a fake chunk size at 10. We then run another for/of loop over the data we had before and simply log it. However, we could decide to do something with this data if we wanted to.
+
+This is not the exact interface that streams utilize, but it does showcase how we can have lazy evaluation inside our code with generators and that it is also built into certain concepts such as streaming. 
+
+- Tail-end recursion optimization
+This is another concept that many functional languages have, but most JavaScript engines do not have (WebKit being the exception). Tail-end recursion optimizations allow recursive functions that are built in a certain way to run just like a simple loop. In pure functional languages, there is no such thing as a loop, so the only method of working over a collection is to recursively go through it. We can see that if we build a function as a tail-recursive function, it will break our stack. The following code illustrates this:
+
+const _d = new Array(100000);
+for(let i = 0; i < _d.length; i++) {
+    _d[i] = i;
+}
+const recurseSummer = function(data, sum=0) {
+    if(!data.length ) {
+        return sum;
+    }
+    return recurseSummer(data.slice(1), sum + data[0]);
+}
+console.log(recurseSummer(_d));
+We create an array of 100,000 items and assign them all the value that is at their index. We then try using a recursive function to sum all of the data in the array. Since the last call for the function is the function itself, some compilers are able to make an optimization here. If they notice that the last call is to the same function, they know that the current stack can be destroyed (there is nothing left for the function to do). However, non-optimized compilers (most JavaScript engines) will not make this optimization so we keep adding stacks to our call system. This leads to a call stack size exceedance and makes it so we cannot utilize this purely functional concept.
+
+There is hope for JavaScript, however. A concept called trampolining can be utilized to make tail-end recursion possible by modifying the function a bit and how we call it. The following is the modified code to utilize trampolining and give us what we want:
+
+const trampoline = (fun) => {
+    return (...arguments) => {
+        let result = fun(...arguments);
+        while( typeof result === 'function' ) {
+            result = result();
+        }
+        return result;
+    }
+}
+
+const _d = new Array(100000);
+for(let i = 0; i < _d.length; i++) {
+    _d[i] = i;
+}
+const recurseSummer = function(data, sum=0) {
+    if(!data.length ) {
+        return sum;
+    }
+    return () => recurseSummer(data.slice(1), sum + data[0]);
+}
+const final = trampoline(recurseSummer);
+console.log(final(_d));
+What we are doing is wrapping our recursive function inside one that we run through in a simple loop. The trampoline function works like this:
+
+It takes in a function and returns a newly constructed function that will run our recursive function but loop through it, checking the return type.
+Inside this inner function, it starts the loop up by executing a first run of the function.
+While we still see a function as our return type, it will continue looping.
+Once we finally do not get a function, we will return the results.
+We are now able to utilize tail-end recursion to do some of the things that we would do in a purely functional world. An example of this was seen previously (which could be seen as a simple reduce function). Another example is as follows:
+
+const recurseFilter = function(data, con, filtered=[]) {
+    if(!data.length ) {
+        return filtered;
+    }
+    return () => recurseFilter(data.slice(1), con, con(data[0]) ? 
+     filtered.length ? new Array(...filtered), data[0]) : [data[0]] : filtered);
+
+const finalFilter = trampoline(recurseFilter);
+console.log(finalFilter(_d, item => item % 2 === 0));
+With this function, we are simulating what a filter-based operation may look like in a pure functional language. Again, if there is no length, we are at the end of the array and we return our filtered array. Otherwise, we return a new function that recursively calls itself with a new list, the function that we are going to filter with, and then the filtered list. There is a bit of weird syntax here. We have to pass back a single array with the new item if we have an empty list, otherwise, it will give us an empty array with the number of items that we pass in.
+
+We can see that both of these functions pass what is known as tail-end recursion and are also functions that could be written in a purely functional language. But, we will also see that these run a lot slower than simple for loops or even the built-in array methods for these types of functions. At the end of the day, if we wanted to write purely functional programming using tail-end recursion, we could, but it is wise not to do this in JavaScript.
+
+Tail end recursion:
+-------------------
+
+Tail-end recursion optimization
+This is another concept that many functional languages have, but most JavaScript engines do not have (WebKit being the exception). Tail-end recursion optimizations allow recursive functions that are built in a certain way to run just like a simple loop. In pure functional languages, there is no such thing as a loop, so the only method of working over a collection is to recursively go through it. We can see that if we build a function as a tail-recursive function, it will break our stack. The following code illustrates this:
+
+const _d = new Array(100000);
+for(let i = 0; i < _d.length; i++) {
+    _d[i] = i;
+}
+const recurseSummer = function(data, sum=0) {
+    if(!data.length ) {
+        return sum;
+    }
+    return recurseSummer(data.slice(1), sum + data[0]);
+}
+console.log(recurseSummer(_d));
+We create an array of 100,000 items and assign them all the value that is at their index. We then try using a recursive function to sum all of the data in the array. Since the last call for the function is the function itself, some compilers are able to make an optimization here. If they notice that the last call is to the same function, they know that the current stack can be destroyed (there is nothing left for the function to do). However, non-optimized compilers (most JavaScript engines) will not make this optimization so we keep adding stacks to our call system. This leads to a call stack size exceedance and makes it so we cannot utilize this purely functional concept.
+
+There is hope for JavaScript, however. A concept called trampolining can be utilized to make tail-end recursion possible by modifying the function a bit and how we call it. The following is the modified code to utilize trampolining and give us what we want:
+
+const trampoline = (fun) => {
+    return (...arguments) => {
+        let result = fun(...arguments);
+        while( typeof result === 'function' ) {
+            result = result();
+        }
+        return result;
+    }
+}
+
+const _d = new Array(100000);
+for(let i = 0; i < _d.length; i++) {
+    _d[i] = i;
+}
+const recurseSummer = function(data, sum=0) {
+    if(!data.length ) {
+        return sum;
+    }
+    return () => recurseSummer(data.slice(1), sum + data[0]);
+}
+const final = trampoline(recurseSummer);
+console.log(final(_d));
+What we are doing is wrapping our recursive function inside one that we run through in a simple loop. The trampoline function works like this:
+
+It takes in a function and returns a newly constructed function that will run our recursive function but loop through it, checking the return type.
+Inside this inner function, it starts the loop up by executing a first run of the function.
+While we still see a function as our return type, it will continue looping.
+Once we finally do not get a function, we will return the results.
+We are now able to utilize tail-end recursion to do some of the things that we would do in a purely functional world. An example of this was seen previously (which could be seen as a simple reduce function). Another example is as follows:
+
+const recurseFilter = function(data, con, filtered=[]) {
+    if(!data.length ) {
+        return filtered;
+    }
+    return () => recurseFilter(data.slice(1), con, con(data[0]) ? 
+     filtered.length ? new Array(...filtered), data[0]) : [data[0]] : filtered);
+
+const finalFilter = trampoline(recurseFilter);
+console.log(finalFilter(_d, item => item % 2 === 0));
+With this function, we are simulating what a filter-based operation may look like in a pure functional language. Again, if there is no length, we are at the end of the array and we return our filtered array. Otherwise, we return a new function that recursively calls itself with a new list, the function that we are going to filter with, and then the filtered list. There is a bit of weird syntax here. We have to pass back a single array with the new item if we have an empty list, otherwise, it will give us an empty array with the number of items that we pass in.
+
+We can see that both of these functions pass what is known as tail-end recursion and are also functions that could be written in a purely functional language. But, we will also see that these run a lot slower than simple for loops or even the built-in array methods for these types of functions. At the end of the day, if we wanted to write purely functional programming using tail-end recursion, we could, but it is wise not to do this in JavaScript.
+
+
+
+- Currying:
+-----------
+What we are doing is taking a generic function (an arbitrary one at that) and utilizing it in the map function by making it more specific, in this case by giving the precision two decimal places. This allows us to write very generic functions that can work over arbitrary data and make specific functions out of them.
+
+
+

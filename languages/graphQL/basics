@@ -1,0 +1,30 @@
+why graphQL?
+------------
+- Nesting of URL using nest becomes clumsy
+- Get customised pieces of data
+- Add data which is not required
+
+Graphql schema:
+----------------
+- How data in our application is arranged and can be accessed. This is done inside a schema file.
+
+
+Root Query: 
+----------
+- It is something that helps us to jump in graph of data. It will have a logic to where in the graph to jump to.
+- Its like an entry point into data
+
+Installation:
+-------------
+- npm init
+- npm install --save express express-graphql graphql lodash
+- npm install --save nodemon //Post this create a script in package json
+
+
+
+Process to follow in graphql:
+------------------------------
+1) Create types of entities using GraphQLObjectType from graphql lib
+2) Create root Query
+3) create a schema using root Query
+4) use it as schema in expressGraphQL

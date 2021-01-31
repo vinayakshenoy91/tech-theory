@@ -1,0 +1,5 @@
+Hardware Load Balancer
+Finally, on the high end of the scale, you have hardware load balancers. If you are hosting a high-traffic website in your own physical data center, you should consider a dedicated hardware load balancer. Devices like Big-IP from F5 or Netscaler from Citrix support very rich feature sets and provide much higher capacity than software-based load balancers. By having hardware load balancers, you mainly benefit from high throughput, extremely low latencies, and consistent performance. Hardware load balancers are highly optimized to do their job, and having them installed over a low-latency network makes a big difference. They can often handle hundreds of thousands or even millions of concurrent clients, making it much easier to scale vertically.L25–L26
+
+
+

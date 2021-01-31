@@ -1,6 +1,23 @@
 - AWS relation DB
 - Push button scaling.
 - 6 popular DB engines: Aurora, MySQL,PostgresSQL, MariaDB, Oracle, SQL Server.
+- Managed DB: Provison, backup [Automated point in time recovery. Backups expire] , monitoring, patching,
+sanpshots[manual, can make copies of snapshots cross region]
+- RDS is also guarded by security groups
+- RDS events get notified via SNS
+- MultiAz -> Standby instance for failover incase of outage. Sync replication with standby instance.
+- One-DNS name and auto failover
+- Scale reads using read replicas, Evetual consistency. Cross region
+- Reads and writes to main DB and only reads from read replicas
+- Copy an unencrypted RDS snapshot into and encrypted one
+
+Security:
+----------
+- KMS at rest for EBS volumes and snapshots
+- TDE(Transparent data encryption) for oracle and sql server
+- SSl encryption for inflight
+- IAM for postgres and mysql 
+- Auth is within RDS
 
 - Automatic backup can be taken in s3 and is for 35 days,
 Last restorable time is typically withing last 5 min

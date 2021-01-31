@@ -6,3 +6,8 @@ and relationships may be persisted.
 - Often, docuemnt structures corresponds to 1:1 to domain objects and it removes impedence mismatch between code and persistence.
 
 
+Documents Model:
+----------------
+- You either join by keeping a reference between docs or do a nesting
+- NEST: Aggregates rows into array field.
+- UNNEST: Split array into individual roles

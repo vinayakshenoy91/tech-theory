@@ -1,0 +1,229 @@
+https://github.com/bonnie/udemy-react-testing-projects
+
+File:
+----
+App.test.js
+
+- Jest will run all test since last commit
+
+Moving enzyme config to a separate file: setupTests.js:[This file should be under src folder]
+-------------------------------------------------------
+import Enzyme,{shallow} from 'enzyme';
+import EnzymeAdapter from 'enzyme-adapter-react-16';
+
+Enzyme.configure({adapter:new EnzymeAdapter()});
+
+For scratch, put below line in jest.config.js
+
+module.exports = {
+   setupFilesaAfterEnv:['<rootDir>/src/setupTests.js'],
+}
+
+
+
+Unofficial adapter Enzyme for React 17
+--------------------------------
+Until the official adapter is released, you can use this unofficial adapter by running:
+
+npm install --save-dev @wojtekmaj/enzyme-adapter-react-17
+You will also need to import from this adapter: 
+
+import Adapter from '@wojtekmaj/enzyme-adapter-react-17';
+anywhere the course imports from enzyme-adapter-react-16.
+
+There are some known issues with the unofficial adapter (it doesn't work with TypeScript), but it will fix some issues with using mount.
+
+Enzyme:
+--------
+- Creates virtual dom for testing.
+- Simulate events on dom
+- Search through dom
+Shallow rendering 
+ - Render component only one level deep
+ - Render parent, but use placeholders for children
+
+Mount:
+ - Render parent + children [Renders all]
+
+Dependencies:
+--------------
+npm install --save-dev enzyme jest-enzyme enzyme-adapter-react-16
+
+Initial:
+--------
+import React from 'react';
+import Enzyme,{shallow} from 'enzyme';
+import EnzymeAdapter from 'enzyme-adapter-react-16';
+import App from './App';
+
+Enzyme.configure({adapter:new EnzymeAdapter()});
+
+//Create a setup function and move all repetitive things here
+describe('description'=>{
+
+   beforeEach(()=>{
+      
+   })
+test('description', ()=>{ 
+   const wrapper =  shallow(<App/>);
+   const appcpt=wrapper.find("[data-test='component-app']")
+
+   //simulate a click
+   wrapper.find("[data-test='button']").simulate('click',{ preventDefault:()=>{}})
+
+
+   expect(wrapper).toBeTruthy();
+   expect(appcpt.length).toBe(1);
+
+   expect(appcpt.length).not.toBe(1);
+   expect(wrapper.text()).to.equal('important');
+   expect(wrapper.find("[data-test='component-app']").text()).to.equal('important');
+      expect(appcpt.exists()).toBe(true);
+})
+});
+
+
+//Basic props setup:
+const setup = (props={}) =>{
+   return shallow(<Congrats {...props}/>)
+}
+
+Dom testing:
+------------
+console.log(wrapper.debug())  -> Used for debugging
+
+Assertions:
+-----------
+expect(wrapper).toBeTruthy();
+
+data-test:
+----------
+<div data-test="component-app"></div>
+
+
+Remove data-test for prod:
+-------------------------
+npm install --save-dev babel-plugin-react-remove-properties //Config .babelrc file. Go to npm repo and copy stuff
+
+Testing async call/axios/moxios: =>
+-------------------------------
+
+npm install --save-dev moxios
+
+import moxios from 'moxios';
+
+beforeEach(()=>{
+moxios.install() -> set moxios as axios adapter
+})
+
+moxios.wait(()=>{  
+  const request = moxios.requests.mostRecent();
+  request.respondWith({
+     status:200,
+     response:secretWord
+  })
+})
+
+//BeforeEachand after each:
+beforeEach(()=>{
+moxios.install()
+})
+afterEach(()=>{
+moxios.uninstall()
+})
+
+const store=storeFactory()
+
+return store.dispatch(getWord()).then(()=>{
+   const newState=store.getState()
+})
+
+Best practise:
+--------------
+1) Abstract frameowk specific code and put it in test utils class
+
+export const findTestAttr = (wrapper, value ) =>{
+   wrapper.find(`"[data-test='${val}']"`)
+}
+
+//Put.text() method also abstracted here
+
+
+All about prop-types incase you are adding it:
+-----------------------------------------------
+npm install --save prop-types
+npm install  --save-dev check-prop-types 
+
+import PropTypes from 'prop-types';
+
+In test case, do this:
+
+import checkPropTypes from 'check-prop-types';
+
+const expectedProps = {success:false};
+const propError=checkPropTypes(Congrats.propTypes, expectedProps,'prop',Congrats.name);
+expect(propError).toBeUndefined();
+
+Using mocks:
+------------
+
+const mockSetCurrentGuess = jest.fn() //This can be used outside before each and then use mockSetCurrentGuess.mockClear()
+React.useState = jest.fn(()=>["",mockSetCurrentGuess]);
+
+const mockEvent = {target:{value:"train"}}
+inputBox.simulate("change", mockEvent);
+
+expect(mockSetCurrentGuess).toHaveBeenCalledWith('train')
+
+
+
+Jest async call with moxios:
+---------------------------
+test('description', async ()=>{
+
+   const secretWord = 'party';
+
+   moxios.wait(()=>{
+      const request = moxios.requests.mostRecent();'
+      request.respondWith({status:200,response: secertWord})
+   })
+
+
+   const mockSetSecretWord=jest.fn();
+   await getSecretWord(mockSetSecretWord);
+ 
+   expect(mockSetSecretWord).toHaveBeenCalledWith(secretWord)
+
+})
+
+
+useEffect hook:
+---------------
+- useEffect get called only on use mount and not on shallow. //Check if this is fixed.2086 issue
+
+import{mount} from 'enzyme';
+
+mount(<App/>)
+
+
+check if something does not run on update call:
+-----------------------------------------------
+- update() does not trigger useEffect() -> 2254
+- Will trigger update with Enzyme setProps()
+
+wrapper.setProps();
+
+mockSetSecretWord.mockClear();
+
+expect(mockSetSecretWord).not.toHaveBeenCalled();
+
+Mockign reducer:
+----------------
+const mockUseReducer = jest.fn().mockReturnValue([{secretWord},jest.fn()])
+
+React.useReducer=mockUseReducer;
+
+
+
+
+

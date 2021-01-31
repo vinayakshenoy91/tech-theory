@@ -53,3 +53,248 @@ node {
         // deploy the containers/application here
     }
 }
+
+
+Docker for java:
+----------------
+
+https://github.com/PacktPublishing/Hands-On-Microservices-with-Spring-Boot-and-Spring-Cloud $BOOK_HOME
+
+
+For java 12:
+------------
+
+echo 'Runtime.getRuntime().availableProcessors()' | docker run --rm -i openjdk:12.0.2 jshell -q
+
+echo 'Runtime.getRuntime().availableProcessors()' | docker run --rm -i --cpus 3 openjdk:12.0.2 jshell -q
+
+
+echo 'Runtime.getRuntime().availableProcessors()' | docker run --rm -i --cpu-shares 2048 openjdk:12.0.2 jshell -q
+
+
+While the --cpus option is a hard constraint, the --cpu-shares option only applies when the Docker host is under high load. This means that a container can consume more CPU than what the share option indicates whether CPU capacity is available.
+
+
+Memory:
+docker run -it --rm openjdk:12.0.2 java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+
+docker run -it --rm -m=1024M openjdk:12.0.2 java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+
+
+Memory
+With no memory constraints, Docker will allocate one-fourth of the memory to the container:
+
+docker run -it --rm openjdk:12.0.2 java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+It will respond with 4,202,692,608 bytes, which equals 4 GB, that is, 8 * 1024^3. Since my Docker host has 16 GB of memory, this is correct, that is, 16/4 = 4.
+
+However, if we constrain the Docker container to only use up to 1 GB of memory using the -m=1024M Docker option, we will see a lower memory allocation:
+
+docker run -it --rm -m=1024M openjdk:12.0.2 java -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+The JVM will respond with 268,435,456 bytes, which equals 256 MB, that is, 2 * 1024^2 bytes. 256 MB is one-fourth of 1 GB, so again, this is as expected.
+
+We can, as usual, set the max heap size ourselves. For example, if we want to allow the heap to use 800 MB of the total 1 GB we have, we can specify that using the -Xmx800m Java option:
+
+docker run -it --rm -m=1024M openjdk:12.0.2 java -Xmx800m -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+The JVM will respond with 838,860,800 bytes = 800 * 1024^2 bytes = 800 MB, as expected.
+
+Let's conclude with some out of memory tests to ensure that this really works.
+
+Let's allocate some memory using jshell in a JVM that runs in a container that has been given 1 GB of memory; that is, it has a max heap size of 256 MB.
+
+First, try to allocate a byte array of 100 MB:
+
+echo 'new byte[100_000_000]' | docker run -i --rm -m=1024M openjdk:12.0.2 jshell -q
+The command will respond with $1 ==>, meaning that it worked fine!
+
+Normally, jshell will print out the value resulting from the command, but 100 MB of bytes all set to zero is a bit too much printout, and so we get nothing.
+Now, let's try to allocate a byte array that is larger than the max heap size, for example, 500 MB:
+
+echo 'new byte[500_000_000]' | docker run -i --rm -m=1024M openjdk:12.0.2 jshell -q
+The JVM sees that it can't perform the action since it honors the container settings of max memory and responds immediately with Exception java.lang.OutOfMemoryError: Java heap space. Great!
+
+
+
+Standard use of Docker in Microservice:
+----------------------------------------
+- Dockerfile
+--
+FROM openjdk:12.0.2
+
+EXPOSE 8080
+
+ADD ./build/libs/*.jar app.jar
+
+ENTRYPOINT ["java","-jar","/app.jar"]
+
+---
+2) 
+$BOOK_HOME/Chapter04/microservices/product-service/src/main/resources/application.yml:
+---
+spring.profiles: docker
+
+server.port: 8080
+
+
+3) Create jar and then put:
+
+docker build -t product-service .
+docker images | grep product-service
+
+4)Starting service:
+
+docker run --rm -p8080:8080 -e "SPRING_PROFILES_ACTIVE=docker" product-service
+
+docker ps
+
+docker run -d -p8080:8080 -e "SPRING_PROFILES_ACTIVE=docker" --name my-prd-srv product-service
+docker logs my-prd-srv -f
+
+Stop and remove container: docker rm -f my-prd-srv
+
+
+Docker compose:
+--------------
+
+we need to create a configuration file, docker-compose.yml
+
+---
+spring.profiles: docker
+
+server.port: 8080
+
+app:
+  product-service:
+    host: product
+    port: 8080
+  recommendation-service:
+    host: recommendation
+    port: 8080
+  review-service:
+    host: review
+    port: 8080
+
+
+docker-compse.yml contains:
+----------------------------
+
+version: '2.1'
+
+services:
+  product:
+    build: microservices/product-service
+    mem_limit: 350m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  recommendation:
+    build: microservices/recommendation-service
+    mem_limit: 350m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  review:
+    build: microservices/review-service
+    mem_limit: 350m
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+  product-composite:
+    build: microservices/product-composite-service
+    mem_limit: 350m
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+
+
+
+docker-compose build
+docker images | grep chapter04
+
+docker-compose up -d
+docker-compose logs -f
+
+docker-compose logs -f product review.
+
+curl localhost:8080/product-composite/123 -s | jq .
+
+docker-compose down
+
+
+test-em-all.bash:
+-----------------
+if [[ $@ == *"start"* ]]
+then
+    echo "Restarting the test environment..."
+    echo "$ docker-compose down"
+    docker-compose down
+    echo "$ docker-compose up -d"
+    docker-compose up -d
+fi
+
+
+waitForService http://$HOST:${PORT}/product-composite/1
+
+function testUrl() {
+    url=$@
+    if curl $url -ks -f -o /dev/null
+    then
+          echo "Ok"
+          return 0
+    else
+          echo -n "not yet"
+          return 1
+    fi;
+}
+
+function waitForService() {
+    url=$@
+    echo -n "Wait for: $url... "
+    n=0
+    until testUrl $url
+    do
+        n=$((n + 1))
+        if [[ $n == 100 ]]
+        then
+            echo " Give up"
+            exit 1
+        else
+            sleep 6
+            echo -n ", retry #$n "
+        fi
+    done
+}
+Next, all the tests are executed like they were previously. Afterward, they will tear down the landscape if it finds the stop argument in the invocation of the test scripts:
+
+if [[ $@ == *"stop"* ]]
+then
+    echo "We are done, stopping the test environment..."
+    echo "$ docker-compose down"
+    docker-compose down
+fi
+Note that the test script will not tear down the landscape if some tests fail; it will simply stop, leaving the landscape up for error analysis!
+The test script has also changed the default port from 7000, which we used when we ran the microservices without Docker, to 8080, which is used by our Docker containers.
+
+Let's try it out! To start the landscape, run the tests and tear it down afterward, like so:
+
+./test-em-all.bash start stop
+
+
+docker-compose ps
+
+docker-compose logs product
+
+If errors in the log output indicate that Docker is running out of disk space, parts of it can be reclaimed with the following command:
+docker system prune -f --volumes
+
+
+
+docker-compose up -d --scale product=0
+docker-compose up -d --scale product=1
+
+docker-compose up -d --scale product=0
+docker-compose up -d --scale product=1
+
+./test-em-all.bash
+
+./gradlew clean build && docker-compose build && ./test-em-all.bash start stop

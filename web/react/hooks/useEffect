@@ -1,0 +1,8 @@
+- Runs function on component reload
+- By default, runs on every reload or specify to run only when certain values change.
+  When empty array given, it will run only on mount
+
+
+
+  React.useEffect(()=>{},[])
+

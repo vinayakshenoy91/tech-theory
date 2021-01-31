@@ -1,0 +1,10 @@
+Create a GRADLE_HOME environment variable and point it to the location where you unpacked Gradle. 
+Also, add $GRADLE_HOME/bin (%GRADLE_HOME%\bin for Windows users)
+ to the system’s general path so that you can build the project in a terminal.
+
+gradle -version
+
+gradle clean build
+
+https://learning.oreilly.com/library/view/hands-on-microservices-with/9781789613476/955dc0a8-fbf7-4911-bd76-1d98d3dbe728.xhtml
+

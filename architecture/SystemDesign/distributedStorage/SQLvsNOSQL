@@ -1,0 +1,11 @@
+- In NoSQL, you dont have joins and you keep data in one blob
+- In NoSQL, you have flexibility of schemas. In SQL, you need to have locks  to maintains concistency when adding a  column
+- NoSQl has horizontal partitioning.
+- NoSQL built for aggregations/ metrics/analytics
+
+NoSQL not used case:
+--------------------
+- In SQL you have acid, but read after update is problem here. So consistency is a problem.
+- Not read optimised to select a particular parameter in the json
+- Not built for relations 
+- No concept of joins

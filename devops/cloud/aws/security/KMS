@@ -1,0 +1,17 @@
+- Integrated with IAM for auth
+- You can encrypt: EBS, SSE, Redshift, RDS,SSM param store
+- CMK (Customer Master Key)  used to encrypt and is roatated. Cannot be retieved.
+- Help in encrypting 4KB of data per call. If data > 4kb, use envelop encyption
+
+Access to KMS using:
+ - key policy allows user
+ - IAM policy allows api calls
+
+
+types of KMS key:
+------------------
+1) Customer managed key (CMK)
+
+2) AWS managed cmk
+  - AWS svc
+  - Managed by AWS

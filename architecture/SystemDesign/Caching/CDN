@@ -1,0 +1,5 @@
+A content delivery network is a hosted service that takes care of global distribution of static files like images, 
+JavaScript, CSS, and videos. It works as an HTTP proxy. Clients that need to download images, JavaScript, CSS, or videos 
+connect to one of the servers owned by the CDN provider instead of your servers. If the CDN server does not have the requested 
+content yet, it asks your server for it and caches it from then on. Once the file is cached by the CDN, 
+subsequent clients are served without contacting your servers at all.

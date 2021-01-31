@@ -1,0 +1,1 @@
+On the other hand, if you see a single layer throughout different layers, you might want to reconsider this layer and make it an aspect of the application. In this case, we can use the Spring Framework’s AOP functionality to apply these aspects at runtime 

@@ -1,0 +1,6 @@
+Matcher -> blob of logic getting used in assertions 
+- They are compositional ->  A matcher can combine with other matchers
+
+assertThat(values, hasKey("b")); //hasEntry
+assertThat(values, containsInAnyOrder(5,4,3,1,2));
+assertThat(coffee, hasProperty("beans",is(7)));

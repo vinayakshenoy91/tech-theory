@@ -1,0 +1,16 @@
+Scaling for a global audience requires a few more tricks and poses a few more challenges. One of the additions to our configuration is the use of geoDNS service.
+
+GeoDNS is a DNS service that allows domain names to be resolved to IP addresses based on the location of the customer. 
+Regular DNS servers receive a domain name, like yahoo.com, and resolve it to an IP address, like 206.190.36.45. GeoDNS 
+behaves the same way from the client’s perspective. However, it may serve different IP addresses based on the location of 
+the client. A client connecting from Europe may get a different IP address than the client connecting from Australia. 
+As a result, clients from both Europe and Australia could connect to the web servers hosted closer to their location. 
+In short, the goal is to direct the customer to the closest data center to minimize network latency.
+
+
+Another extension of the infrastructure is to host multiple edge-cache servers located around the world to reduce 
+the network latency even further. The use of edge-cache servers depends on the nature of your application. Edge-cache 
+servers are most efficient when they act as simple reverse proxy servers caching entire pages, but they can be extended 
+to provide other services as well.
+Edge cache is a HTTP cache server located near the customer, allowing the customer to partially cache the HTTP traffic. Requests from the customer’s browser go to the edge-cache server. The server can then decide to serve the page from the cache, or it can decide to assemble the missing pieces of the page by sending background requests to your web servers. It can also decide that the page is uncacheable and delegate fully to your web servers. Edge-cache servers can serve entire pages or cache fragments of HTTP responses.
+

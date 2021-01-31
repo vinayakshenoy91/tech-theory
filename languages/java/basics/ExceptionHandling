@@ -1,0 +1,59 @@
+Exception handling:
+-------------------
+1) try-catch-finally 
+try{
+
+}catch(Exception ex){
+    ex.getMessage() 
+    ex.printStacktrace();
+}
+
+Throwing an exception:
+-----------------------
+throw new IllegalArgumentException("Hello");
+
+
+Custom exception: [Code is here]
+-----------------
+
+public class InvalidStatementException extends Exception{
+    public InvalidStatementException(String message){
+         super(message);
+    }
+
+    public InvalidStatementexception(String message,Exception ex){
+        super(message,ex);
+    }
+}
+
+
+Chaining Exceptions:
+---------------------
+- throw meaning exception but still preserve underlying exception
+- can use inhertied initCause method
+- More common type include constructor that accepts original exception
+- useGetCause method to handle the chained exception
+
+//Throw a wrapped exception
+From actual method you type: throw new InvalidStatementexception("Error processign statement",ex)
+
+//Accessign wrapped exception
+ System.out.println(ex.getMessage());
+if(ex.getCause()!=null){
+    System.out.println("Caused by"+ ex.getCause());
+}
+
+
+
+Org excption handling:
+----------------------
+1) Centralised
+- group together
+- simplify exception handlign as all lies in oneplace.
+- May make exception recovery difficult.
+- exit processing logic prematurely
+
+
+2) localised
+- handling is closer to block where issue occured.
+- error handling spread throught code

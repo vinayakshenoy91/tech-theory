@@ -1,0 +1,15 @@
+- Spring Boot 2.0 is based on Spring Framework 5.0, which came with built-in support for developing reactive applications. 
+Spring Framework uses Project Reactor as the base implementation of its reactive support, and also comes with a new web framework, 
+Spring WebFlux, which supports the development of reactive, that is, non-blocking, HTTP clients and services.
+
+Spring WebFlux supports two different programming models:
+
+An annotation-based imperative style, similar to the already existing web framework, Spring Web MVC, 
+but with support for reactive services
+A new function-oriented model based on routers and handlers
+
+
+- Spring WebFlux also provides a fully reactive HTTP client, WebClient, as a complement to the existing RestTemplate client.
+
+- Spring WebFlux supports running on a servlet container (it requires Servlet v3.1 or higher), but also supports reactive 
+non-servlet-based embedded web servers such as Netty (https://netty.io/).

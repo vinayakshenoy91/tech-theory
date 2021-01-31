@@ -1,0 +1,16 @@
+Usecase: Content management, web serving, data sharing, wordpress
+- Compatible with libnux based system and is POSIX compliant
+- uses: NFSv4.1 protocol
+- Uses security group to control access to EFS drive
+- Can only attach to one VPC, create one ENI(Mount target) per AZ
+- Encryption at rest using KMS
+- EFS scale to 1000+ concurrent connection. NFS client, 10GB+/s throughput
+- grow to petabyte scale NFS
+
+Performance mode: 
+  - geenral purpose(default): Latency sensitive usecase
+  - MAXIO - high latency, high throughput, highly parallel (big data, media processing)
+
+Throughput mode:
+  - Bursting mode: common for file systems (intensive works ,then almost nothing), linked to FS size
+  - Provisioned IO mode: hih throughput to storage ratio (if burst is not enough) expensive

@@ -1,14 +1,22 @@
+- Elastic cache to get managed redis or memcached
 - In-memory -> memcached and redis.
 - Buffer high-freq writes and periodically reconcile with backend DB
 - Deploy in your VPC
+- used to store aggregated results
 
 Memcached: 
 ----------
+- Multinode for partitioning of data(sharding)
+- Non-persistant
+- No backup and restore
+- Multithreaded architecture
 - Key value  store
 - scales upto 20 nodes and 12.7TB
 
 Redis:
 ------
+- Multi-AZ with autofailover
+- Read replicas to scale reads and have high availability
 - Use advanced DS
 - Strings, lists, sorted sets, Hash , Bit arrays
 - Built in command for geospatial data
@@ -16,4 +24,4 @@ Redis:
 - Pub Sub and messaging
 - Read replica across multiple AZ
 - Detect primary failure and promotes replica as primary
-- Backup and restore.
+- Persistant, Data durability: Read only File Feature(AOF), backup and restore.

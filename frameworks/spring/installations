@@ -1,1 +1,20 @@
 - Goto start.spring.io
+
+
+Folder structure:  api and util
+
+logging:
+  level:
+    root: INFO
+    se.magnus.microservices: DEBUG
+
+app:
+  product-service:
+    host: localhost
+    port: 7001
+  recommendation-service:
+    host: localhost
+    port: 7002
+  review-service:
+    host: localhost
+    port: 7003

@@ -1,0 +1,9 @@
+There are many patterns of development that can give us similar benefits to what immutability can without the overhead of creating a lot of temporary objects or even going into a fully pure functional style of programming. We can utilize systems such as Resource Acquisition Is Initialization (RAII). We may find that we want to use some immutability, and in this case, we can utilize built-in browser tools such as Object.freeze() or Object.seal().
+
+
+Resource allocation is initialization (RAII)
+---------------------------------------------
+- Another name for this is scope-bound resource management (SBRM), and is also utilized in another recent language called Rust.
+- We can add more bells and whistles to this centralized state system, such as eventing, or we can implement a coding standard that has been around for quite some time, called Resource Allocation Is Initialization (RAII).
+
+

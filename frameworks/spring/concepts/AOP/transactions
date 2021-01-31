@@ -1,0 +1,11 @@
+- The transaction advice, or interceptor, is org.springframework.transaction.interceptor.TransactionInterceptor. 
+This advice is placed around methods with the org.springframework.transaction.annotation.Transactional annotation.
+
+- To do this, Spring creates a wrapper around the actual object, which is known as a proxy.
+A proxy acts like an enclosing object, 
+but it allows (dynamic) behavior to be added (in this case, the transactionality of the method).
+
+- The org.springframework.transaction.annotation.EnableTransactionManagement annotation registers the beans containing 
+the pointcut (acting on the org.springframework.transaction.annotation.Transactional annotation). At this point, 
+the interceptor is ready to use. The other annotations for enabling features work similarly; 
+they register beans to enable the desired feature, including AOP (and thus proxy creation) for most features.

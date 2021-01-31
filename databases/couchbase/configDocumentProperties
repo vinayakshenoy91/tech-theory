@@ -1,0 +1,79 @@
+Metadata:
+---------
+- Every document has a metadata:
+  Values can be :
+  - Basic types: number, string, boolean
+  - Complex types: Array, embedded document 
+
+- meta: Key for metadata attribute
+- id: key of document
+- rev: revision or sequence number
+- expiration: document TTL (Unix timestamp)
+- flags: couchabse SDK flags
+- xattrs: "extended attributes"
+
+Bucket TTL:
+------------
+Bucket TTL: Property specified on buckets that sets documents to expire, after a certain length of time.
+When set, it is not applied to existign document but the one created from that point.
+
+- Bucket TTL must not be specified for Couchbase eventing or couchbase mobile buckets as
+this can leadm to system failures
+- used to impose max lifespan on documents withing the bucket.
+
+CAS: //Check and Set or Compare and swap 
+----
+- Integer comparision with little overhead
+- Document modification in CB  are made possible by a form of optimsitic locking called CAS
+- If update outdated? Throw error. Relies on each doc having constantly updated CAS value.
+- When updating doc, new cas value specified.
+- form of concurrency control using CB SDK
+  > Go for an async retry
+  > Retry with backoff
+  > Bail out after N retries
+
+ACID in CB: Atomicity(all or nothing)
+-----------
+- With 6.5, we have multidocument ACID Txn
+- Newly introduced, strong consistency with sync replication
+- Read commited level of isolation
+- writes will not be visible until durably replicated and/or durably persisted
+- Once txn commited, all updates guranteed to be durable.
+
+Txn mechnics:
+-------------
+- xattrs: store the dirty data/modified copy.. Each txn hold dirty copy of each document. Uncommitted dirty data can thus only read by txn itself.
+When txn enters commit, changes are reflected to main document. Read commited isolation.
+- Txn can span multiple bucket.
+- Only one txn  allowed to write at a time.
+- Indexes provided by Index, Search and Analytics services are not atomically updated when txn is commited.Updated on eventual consistency.
+- Query and search see only commited data. No snapshot isolation.This is an issue  and Query servie provides At_Plus feature where queries will
+wait for indexes to update.
+- Only doc size < 10MB for txn feature to be applied.
+
+
+Compaction:
+-----------
+- Applied to Db and views
+- backgrounfd process that reclaims disk space and reduces fragmentation
+- Fragmention -> Ineffecient distribution of vBuckets across diff nodes of CB cluster.
+It occurs due to failover, expiry of doc, deletion of doc
+- Fragmenting mitigated by rebalancing and compaction
+- Compaction is auto or manual. It is a bckgroudn process, no shutdoen or pause needed
+
+Best practise:
+- Perform on every node and every bucket.You enable compaction in bucket settings
+- Do this in off peak as it might fail to compelte or can occur if new file never catches up. 
+- Leads to doubling of disk space so make sure of sufficient  space.
+
+steps are: [Space goes up durign this]
+- Cb server creates a new file
+- Active info is written to this new file - but only if non-stale
+- existing data remains as before.
+- ensure availability durign compaction
+- once new file complete, old file disabled and deleted.
+
+
+
+
+

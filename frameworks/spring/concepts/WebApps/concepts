@@ -1,0 +1,74 @@
+- When developing a web application, there is actual business logic 
+(e.g., services, repositories, and infrastructure information), and there are web-based beans. 
+These things should be separated, so we need to have multiple application contexts and relationships.
+
+- Spring ships with two components that can bootstrap an application: org.springframework.web.servlet.DispatcherServlet 
+and org.springframework.web.context.ContextLoaderListener. Both components bootstrap and configure an application context.
+
+
+public class BookstoreWebApplicationInitializer implements WebApplicationInitializer {
+    @Override
+    public void onStartup(final ServletContext servletContext) throws ServletException {
+        registerDispatcherServlet(servletContext);
+    }
+    private void registerDispatcherServlet(final ServletContext servletContext) {
+        WebApplicationContext dispatcherContext =
+          createContext(WebMvcContextConfiguration.class);
+        DispatcherServlet dispatcherServlet =
+          new DispatcherServlet(dispatcherContext);
+        ServletRegistration.Dynamic dispatcher =
+          servletContext.addServlet("dispatcher", dispatcherServlet);
+        dispatcher.setLoadOnStartup(1);
+        dispatcher.addMapping("*.htm");
+    }
+    private WebApplicationContext createContext(final Class<?>... annotatedClasses) {
+        AnnotationConfigWebApplicationContext context =
+          new AnnotationConfigWebApplicationContext();
+        context.register(annotatedClasses);
+        return context;
+    }
+}
+
+
+public class BookstoreWebApplicationInitializer implements WebApplicationInitializer {
+  @Override
+  public void onStartup(final ServletContext servletContext) throws ServletException {
+    registerListener(servletContext);
+    registerDispatcherServlet(servletContext);
+  }
+// registerDispatcherServlet method ommitted see Listing 2-11
+// createContext method omitted see Listing 2-11
+  private void registerListener(final ServletContext servletContext) {
+    AnnotationConfigWebApplicationContext rootContext =
+      createContext(InfrastructureContextConfiguration.class);
+      servletContext.addListener(new ContextLoaderListener(rootContext));
+  }
+}
+
+
+@Configuration
+@EnableTransactionManagement
+@ComponentScan(basePackages = {
+    "com.apress.prospringmvc.bookstore.service",
+    "com.apress.prospringmvc.bookstore.repository"})
+public class InfrastructureContextConfiguration {
+  @Bean
+  public LocalContainerEntityManagerFactoryBean entityManagerFactory(DataSource dataSource) {
+    LocalContainerEntityManagerFactoryBean emfb = new LocalContainerEntityManagerFactoryBean();
+    emfb.setDataSource(dataSource);
+    emfb.setJpaVendorAdapter(jpaVendorAdapter());
+    return emfb;
+  }
+  @Bean
+  public JpaVendorAdapter jpaVendorAdapter() {
+    return new HibernateJpaVendorAdapter();
+  }
+  @Bean
+  public PlatformTransactionManager transactionManager(EntityManagerFactory emf) {
+    return new JpaTransactionManager(emf);
+  }
+  @Bean
+  public DataSource dataSource() {
+    return new EmbeddedDatabaseBuilder().setType(EmbeddedDatabaseType.H2).build();
+  }
+}

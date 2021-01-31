@@ -1,0 +1,38 @@
+Another important technique of scaling REST web services is to utilize the power of HTTP protocol caching. HTTP caching is a powerful scalability technique for web applications. Being able to apply the same knowledge, skills, and technologies to scale your web services makes HTTP caching so much more valuable. I will discuss HTTP caching in much more detail in Chapter 6, but let’s quickly discuss how you can leverage it when building REST web services.
+
+As I mentioned before, REST services utilize all of the HTTP methods (like GET and POST) and when implemented correctly, they should respect the semantics of each of these methods. From a caching perspective, the GET method is the most important one, as GET responses can be cached.
+
+The HTTP protocol requires all GET method calls to be read-only. If a web service request was read-only, then it would not leave anything behind. That in turn would imply that issuing a GET request to a web service or not issuing one would leave the web service in the same state. Since there is no difference between sending a request to a web service or not sending one, responses can be cached by proxies or clients and web service calls can be “skipped” by returning a response from the cache rather than asking the web service for the response.
+
+To take advantage of HTTP caching, you need to make sure that all of your GET method handlers are truly read-only. A GET request to any resource should not cause any state changes or data updates.
+
+A good example of how web applications used to notoriously break this property of the GET method was by using the GET method for state changes. In the early 2000s, it was common to see web applications make changes to the database as a result of a GET request. For example, you would be able to unsubscribe from a mailing list by issuing a GET request to a URL like http://example.com/subscribe?email=artur@ejsmont.org. It might be convenient for the developers, but it would obviously change the state of the application, and there would be a clear difference between sending such a request and not sending it at all.
+
+Nowadays it is rare to see REST web services that would break this rule in such an obvious way; unfortunately, there are other, more subtle ways to get in trouble. For example, in one of the companies I used to work for, we were unable to leverage HTTP caching on our front-end web applications because business intelligence and advertising teams depended on the web server logs to generate their reports and calculate revenue sharing. That meant that even if our web applications were implementing GET methods correctly and all of our GET handlers were read-only, we could not add a layer of caching proxies in front of our web cluster, as it would remove a large part of the incoming traffic, reducing the log entries and skewing the reports.
+
+Another subtle way in which you can break the semantics of GET requests is by using local object caches on your web service machines. For example, in an e-commerce web application you might call a web service to fetch details of a particular product. Your client would issue a GET request to fetch the data. This request would then be routed via a load balancer to one of the web service machines. That machine would load data from the data store, populate its local object cache with the result, and then return a response to the client. If product details were updated soon after the cached object was created, another web service machine might end up with a different version of the product data in its cache. Although both GET handlers were read-only, they did affect the behavior of the web service as a whole, since now, depending on which web service machine you connect to, you might see the old or the new product details as each GET request created a snapshot of the data.
+
+Another important aspect to consider when designing a REST API is which resources require authentication and which do not. REST services usually pass authentication details in request headers. These headers can then be used by the web service to verify permissions and restrict access. The problem with authenticated REST endpoints is that each user might see different data based on their permissions. That means the URL is not enough to produce the response for the particular user. Instead, the HTTP cache would need to include the authentication headers when building the caching key. This cache separation is good if your users should see different data, but it is wasteful if they should actually see the same thing.
+
+HINT
+
+You can implement caching of authenticated REST resources by using HTTP headers like Vary: Authorization in your web service responses. Responses with such headers instruct HTTP caches to store a separate response for each value of the Authorization header (a separate cache for each user).
+
+To truly leverage HTTP caching, you want to make as many of your resources public as possible. Making resources public allows you to have a single cached object for each URL, significantly increasing your cache efficiency and reducing the web service load.
+
+For example, if you were building a social music website (like www.grooveshark.com) where users can listen to music and share their playlists, you could make most of your GET handlers public. Would you need to restrict which users can get details of which album, song, artist, or even playlist? Probably not. By making GET methods public, you could ignore user information in your caching layer, thereby reusing objects much more efficiently.
+
+In the early stages of your startup development, you may not need HTTP caching in your web services layer, but it is worth thinking about. HTTP caching is usually implemented in the web services layer in a similar way to how it is done in the front-end layer. To be able to scale using cache, you would usually deploy reverse proxies between your clients and your web service. That can mean a few different things depending on how your web services are structured and how they are used. Figure 4-9 shows how web services are usually deployed with a reverse proxy between web services and the front-end application.
+
+Images
+
+Figure 4-9 Reverse proxy between clients and services
+
+As your web services layer grows, you may end up with a more complex deployment where each of your web services has a reverse proxy dedicated to cache its results. Depending on the reverse proxy used, you may also have load balancers deployed between reverse proxies and web services to distribute the underlying network traffic and provide quick failure recovery. Figure 4-10 shows how such a deployment might look.
+
+Images
+
+Figure 4-10 Reverse proxy in front of each web service
+
+The benefit of such configuration is that now every request passes via a reverse proxy, no matter where it originated from. As your web services layer grows and your system evolves towards a service-oriented architecture, you will benefit more from this mindset. Treating each web service independently and all of its clients in the same way no matter if they live in the web services layer or not promotes decoupling and higher levels of abstraction. Let’s now discuss in more detail how web service independence and isolation help scalability.
+

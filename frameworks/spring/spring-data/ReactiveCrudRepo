@@ -1,0 +1,14 @@
+Also added to the CrudRepository interface, Spring Data also provides a reactive base interface, ReactiveCrudRepository, 
+which enables reactive repositories. The methods in this interface do not return objects or collections of objects; instead, 
+they return Mono and Flux objects.  Mono and Flux objects are, as we will see in later chapters, reactive streams that are 
+capable of returning either 0..1 or 0..m entities as they become available on the stream. The reactive-based interface can 
+only be used by Spring Data subprojects that support reactive database drivers; that is, they are based on non-blocking I/O. 
+The Spring Data MongoDB subproject 
+supports reactive repositories, while Spring Data JPA does not
+
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Flux;
+
+public interface RecommendationRepository extends ReactiveCrudRepository<RecommendationEntity, String> {
+    Flux<RecommendationEntity> findByProductId(int productId);
+}

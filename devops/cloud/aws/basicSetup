@@ -1,2 +1,9 @@
+Service status calculator: http://status.aws.amazon/com
+
 Regions -> Helps with compliance with local rules and regulations, security isolation, low latency,
 Fault tolerance and stability incase of natural disaster
+
+
+Install SDK and aws-cli
+
+aws < service> <commands><arguments>

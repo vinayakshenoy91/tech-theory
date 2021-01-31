@@ -1,0 +1,92 @@
+1) Specifies the intent -> Structued way to interpret content and intent. Must be interpreted
+- Info related ot type at runtime is accessed using reflections. We first get class info.
+Annotations are associated with info for target and accessed using reflection. Call getAnnotation on target.
+Pass class info to annotation. Does this target has annotation of this type, return annotation instance else null.
+Provides access to class level annotations. Relection will give you class memeber info -> then access annotation
+
+- Each annotation has a scope of availability or lifetime and it is called retention policy.
+It is specified when declaring annotation. use retention annotation that accepts RetentionPolicy value.
+
+Types of retention policy:
+1) source -> only in source file. Discarded by compiler.
+2) Class -> source + class file, but discarded at runtime.
+3) Runtime -> Loaded into runtime and accessible with reflection.
+
+- By default, annotation target can be anything (type, field,method,constructor, package, local variable, parameter and others)
+So this has to be narrowed down and you specify a retention target.
+
+public class Person implements Comparable<Person>{
+}
+
+2) @Override -> Intent that iam overriding the method that is extended from a class.
+
+3) @Deprecated -> Mark a  particular method as deprecated so that others using it don't use it
+
+4) @SuppressWarnings -> Suppress warnings related to deprecations
+
+@SuppressWarnings("deprecation") //This can also be put on top of methods
+public class MyWorker{ 
+}
+
+
+- Annotations are declared with interface keyword and can be declared as a top-level type 
+ and can be nested within a class or interface.
+
+
+Creating custom annotation: [Support types implementing particular interface and ytpes that don't]
+--------------------------
+1) Create annotation
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.TYPE) //OR if multiple then, @Target({ElementType.TYPE, ElementType.METHOD})
+public @interface CommandKeyword{
+    String name();
+    String method() default "calculate";
+}
+
+2) Put annotation on class
+@CommandKeyword(name="add") //On top of class  //If you remove name and just put ("add") you need to add String value(); above.
+public class adder implements MathProcessing{
+
+    calculate(){
+
+    }
+
+}
+
+3) Use annotation: 
+//Place where it is used. Here you have basically passed the responsibility of keyword to classes.
+private static MathProcessing retrieveProcessor(String keyword){
+       MathProcessing[] processors = {new Adder(),new Subtractor(), new Multiplier(), new Divider()};
+       
+       //For method calculate, we cannot use MathProcessing, so use: Object[]
+
+
+      for(MathProcessing processor:processors){
+          CommandKeyword  commandKeyword = processor.getClass().getAnnotation(CommandKeyword.class);
+          String name = commandKeyword.name(); //.value();  //.method() incase you dont want interface and intent for method
+          if(keyword.equalsIgnoreCase(name)){
+              return processpr;
+          }
+          return null;
+      
+
+}
+
+
+4) Using reflection to invoke method:
+
+3) Use annotation: 
+//Place where it is used. Here you have basically passed the responsibility of keyword to classes.
+private static MathProcessing retrieveProcessor(String keyword){
+       MathProcessing[] processors = {new Adder(),new Subtractor(), new Multiplier(), new Divider()};
+       
+       //For method calculate, we cannot use MathProcessing, so use: Object[]
+
+
+      for(MathProcessing processor:processors){
+          CommandKeyword  commandKeyword = processor.getClass().getAnnotation(CommandKeyword.class);
+          String name = commandKeyword.method();
+          Method processMethod = processor.getClass().getMethod(methodName, double.class,double.class);
+          result = (double) processingMethod.invoke(processor, leftVal,rightVal)
+    
+}

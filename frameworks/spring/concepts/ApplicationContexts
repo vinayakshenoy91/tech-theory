@@ -1,0 +1,117 @@
+- To do dependency injection in Spring, you need an application context. 
+In Spring, this is an instance of the org.springframework.context.ApplicationContext interface.
+
+- The application context is responsible for managing the beans defined in it.
+
+Spring provides several different ApplicationContext implementations.Each of these implementations provides 
+the same features but differs in how it loads the application context configuration.
+
+- org.springframework.web.context.WebApplicationContext interface - specialized version of the ApplicationContext interface used in web environments.
+
+Implementation|Location|File type
+
+ClassPathXmlApplicationContext|Classpath|XML
+
+FileSystemXmlApplicationContext|File system|XML
+
+AnnotationConfigApplicationContext|Classpath|Java
+
+XmlWebApplicationContext|Web Application Root|XML
+
+AnnotationConfigWebApplicationContext|Web Application Classpath|Java
+
+
+@Bean:
+------
+- org.springframework.context.annotation.Bean. 
+- the method’s result is used as a factory to create a bean
+- The name of the bean is the method name by default.
+- @Bean(name='test')
+
+@Configuration:
+----------------
+- org.springframework.context.annotation.Configuration
+- stereotypes our class as a configuration file
+
+
+@Configuration
+public class ApplicationContextConfiguration {
+  @Bean
+  public AccountRepository accountRepository() {
+    return new MapBasedAccountRepository();
+  }
+  @Bean
+  public TransactionRepository transactionRepository() {
+    return new MapBasedTransactionRepository();
+  }
+  @Bean
+  public MoneyTransferService moneyTransferService() {
+    return new MoneyTransferServiceImpl();
+  }
+}
+
+//Bootstraping annotation with spring
+
+public class MoneyTransferSpring {
+  private static final Logger logger =
+    LoggerFactory.getLogger(MoneyTransferSpring.class);
+  /**
+   * @param args
+   */
+  public static void main(String[] args) {
+    ApplicationContext ctx =
+      new AnnotationConfigApplicationContext(ApplicationContextConfiguration.class);
+    transfer(ctx);
+    ApplicationContextLogger.log(ctx);
+  }
+  private static void transfer(ApplicationContext ctx) {
+    MoneyTransferService service =
+      ctx.getBean("moneyTransferService", MoneyTransferService.class);
+    Transaction transaction = service.transfer("123456", "654321", new BigDecimal("250.00"));
+    logger.info("Money Transfered: {}", transaction);
+  }
+}
+
+
+Advtg of App context hierarchy:
+--------------------------------
+This feature allows us to separate our application beans (e.g., services, repositories, and infrastructure) from our 
+web beans (e.g., request handlers and views). It can be useful to have this separation. For example, assume that multiple 
+servlets need to reuse the same application beans. Instead of recreating them for each servlet, we can simply reuse the 
+already existing instances. This can be when there is one servlet handling the web UI and another that is handling the 
+web services.
+
+RESOURCE LOADING:
+-----------------
+
+Prefix|Location
+
+classpath:|The root of the classpath
+file:|File system
+http:|Web application root
+
+- Below one only works for file resources:
+Expression|Description
+
+classpath:/META-INF/spring/*.xml|Loads all files with the XML file extensions from the classpath in the META-INF/spring directory
+
+file:/var/conf/*/.properties|Loads all files with the properties file extension from the /var/conf directory and all subdirectories
+
+
+COMPONENT SCANNING:
+-------------------
+- this feature enables Spring to scan your classpath for classes that are annotated with
+org.springframework.stereotype.Component, (or one of the specialized annotations like @Service, @Repository, @Controller, or org.springframework.context.annotation.Configuration). 
+
+- If we want to enable component scanning, we need to instruct the application context to do so. 
+The org.springframework.context.annotation.ComponentScan annotation enables us to 
+accomplish that. This annotation needs to be put on our configuration class to enable component scanning. 
+
+@Configuration
+@ComponentScan(basePackages = {
+    "com.apress.prospringmvc.moneytransfer.scanning",
+    "com.apress.prospringmvc.moneytransfer.repository" })
+public class ApplicationContextConfiguration {}
+
+
+

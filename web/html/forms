@@ -1,0 +1,13 @@
+Basic:
+------
+<form method="post">
+ <div>
+    <label>Email</label>
+    <input name="email"/>
+ </div>
+ <div>
+    <label></label>
+    <input name="passowrd" type="password"/>
+
+ </div> 
+</form>

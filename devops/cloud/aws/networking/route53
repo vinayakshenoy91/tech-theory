@@ -3,3 +3,10 @@
 - The lack of DNSSEC support.
 - There is a significant benefit in having CloudFormation automatically set up your load balancer together with the DNS records for your custom domain. 
 Route 53 makes this possible, whereas if you were to use a different DNS provider, you’d likely have to manage your DNS records manually.
+- DNS managment both inside and outside. Use domain names to resolve internal AWS services.
+
+- We can establish health checks at route 53 level
+
+Setup:
+-----
+- Setup hosated zone which is alike a root domain name. then used to create subdomains.

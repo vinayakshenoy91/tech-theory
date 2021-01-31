@@ -1,0 +1,94 @@
+TODO:
+----
+Check with screenshot taking available in puppeteer
+
+Setup:
+-----
+npm init
+npm install puppeteer cucumber cucumber-html-reporter chai   
+
+
+scripts in package/json:
+
+test: "cucumber-js -f json:cucumber_report.json",
+"generate:report":"node report.js"
+
+
+File and folder creation:
+--------------------------
+
+features/login.feature
+----------------------
+Feature: login
+  
+    As a user
+    I can login to application
+
+    Scenario: User can login to application
+       Given I open login page
+       When I fill login form
+       And xyz
+       Then yzr
+
+features/support/steps.js
+--------------------------
+const {Given, When, Then, Before, After} = require("cucumber");
+
+Before(async function(){
+    return await this.launchBrowser();
+})
+
+After(async function(){
+    return await this.closeBrowser();
+})
+
+
+Given("I open login page", async function(){
+    return await this.visit();
+})
+
+When("I fill login form", async function(){
+    return await this.fillLoginForm();
+})
+
+Then("I open login page", async function(){
+    return await this.verifyLogin();
+})
+
+features/support/world.js
+--------------------------
+
+const {setWorldConstructor} = require('cucumber');
+const {expect}= require('chai');
+const puppeteer = require('puppeteer');
+
+class CustomWorld{
+    //implement all methods specificed in step.js here
+    async launchBorwser(){
+        this.browser = await puppeteer.launch({headless:false});
+        this.page = await this.browser.newPage();
+    }
+
+    async closeBrowser(){
+        await this.browser.close();
+    }
+}
+
+
+setWorldConstructor(CustomWorld);
+
+
+
+In root, place report.js:
+-------------------------
+const reporter = require('cucumber-html-reporter');
+
+const options = {
+    theme:"bootstrap",
+    jsonFile:"cucumber_report.json",
+    output:"cucumber_report.html",
+    reportSuiteAsScenarios:true,
+    launchReport: false
+}
+
+reporter.generate(options);

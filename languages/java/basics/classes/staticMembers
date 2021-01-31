@@ -1,0 +1,30 @@
+- Static members can only access static members and not otehrs.
+- Associated with class itself.
+
+
+Syntax:
+-------
+private static int allPassengers; //Total across multiple instances.
+
+Flight.getAllPassengers();
+
+
+Static imports:
+----------------
+- Used with static methods
+- Allows method name to be used without being class-qualified
+
+import static  com.....Flight.resetAllPassengers;
+import static  com.....Flight.*;
+
+
+
+Static initilization block:-
+----------------------------
+- perform one-time type initilization
+- Execute before type's first use.
+
+static{ //Initilized only once when this class starts
+   Put something int he map that was Initilized as a member
+
+}

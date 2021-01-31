@@ -1,0 +1,15 @@
+The way you implement distributed locking depends mainly on the programming language you choose. If you are developing in 
+Java, I would recommend using Zookeeper with Curator library developed by Netflix.47,L16–L17 Zookeeper is often used for 
+distributed locking, application configuration management, leader election, and run-time cluster membership information.
+
+Other storage engines usually provide similar atomic primitives, and I have seen locks implemented using Redis,
+Memcached, and SQL databases like MySQL and PostgreSQL.
+
+Distributed locking is challenging, as each lock requires a remote call and creates an opportunity for your service to stall or fail. This, in turn, increases your latency and reduces the number of parallel clients that your web service can serve. Instead of resource locks, you can sometimes use optimistic concurrency control where you check the state before the final update rather than acquiring locks. You can also consider message queues as a way to decouple components and remove the need for resource locking in the first place 
+
+
+portant to strike a balance between having to acquire a lot of fine-grained locks and having coarse locks that block access to large sets of data. When you acquire a lot of fine-grained locks, you increase latency, as you keep sending requests to the distributed locks service. By having many fine-grained locks, you also risk increasing the complexity and losing clarity as to how locks are being acquired and from where. Different parts of the code acquiring many different locks is a recipe for deadlocks. On the other hand, if you use few coarse locks, you may reduce the latency and risk of deadlocks, but you can hurt your concurrency at the same time, as multiple web service threads can be blocked waiting on the same resource lock. There is no clear rule of thumb here—it is just important to keep the tradeoffs in mind.
+
+You can use locks in your scheduled batch jobs, crons, and queue workers, but it is best to avoid locks in the request–response life cycle of your web services to prevent availability issues and increase concurrency.
+
+

@@ -1,0 +1,2 @@
+- Intelligent Threat discovery to protect aws account
+- Looks at VPC flow logs, CloudTrail logs, DNS logs -> Guard durty -> Cloud watch -> Lambda or SNS

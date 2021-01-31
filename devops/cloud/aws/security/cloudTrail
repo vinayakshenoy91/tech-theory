@@ -1,0 +1,15 @@
+- Governance, compliance   and audit for your AWS accounts
+- audit of api calls made by:
+ 1)Console
+ 2)SDK
+ 3)CLI
+ 4)AWS services
+- Can put cloud trail logs to cloud watch
+- Past 90 days of activity
+
+Create a cloudtrail trail:
+--------------------------
+- Get detailed list of all events you choose
+- Can include events happening at the object level in S3
+- Store event in S3 for further analysis
+- Can be region specific or global events

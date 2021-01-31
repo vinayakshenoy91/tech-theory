@@ -1,0 +1,63 @@
+Spring Cloud Stream provides a streaming abstraction over messaging, based on the publish-and-subscribe integration pattern. 
+Spring Cloud Stream currently comes with support for Apache Kafka and RabbitMQ out of the box. A number of separate projects 
+exist that provide integration with other popular messaging systems. 
+See https://github.com/spring-cloud?q=binder for more details.
+
+The core concepts in Spring Cloud Stream are as follows:
+
+Message: A data structure that's used to describe data sent to and received from a messaging system.
+Publisher: Sends messages to the messaging system.
+Subscriber: Receives messages from the messaging system. 
+Channel: Used to communicate with the messaging system. Publishers use output channels and subscribers use input channels.
+Binder: A binder provides the actual integration with a specific messaging system,
+ similar to what a JDBC driver does for a specific type of database. 
+
+
+Dependencies:
+--------------
+RabbitMQ: spring-cloud-starter-stream-rabbit
+
+
+Sample code to send message:
+-----------------------------
+
+public class MyMessage {
+  private String attribute1 = null;
+  private String attribute2 = null;
+----
+
+import org.springframework.cloud.stream.messaging.Source;
+
+@EnableBinding(Source.class)
+public class MyPublisher {
+
+ @Autowired private Source mysource;
+
+ public String processMessage(MyMessage message) {
+   mysource.output().send(MessageBuilder.withPayload(message).build());
+
+----
+
+import org.springframework.cloud.stream.messaging.Sink;
+
+@EnableBinding(Sink.class)
+public class MySubscriber {
+
+ @StreamListener(target = Sink.INPUT)
+ public void receive(MyMessage message) {
+ LOG.info("Received: {}",message);
+
+
+For the subscriber to receive messages from the publisher, we need to configure the input 
+and output channel to use the same destination. If we use YAML to describe our configuration, 
+it might look like the following for the publisher:
+
+spring.cloud.stream:
+  default.contentType: application/json
+  bindings.output.destination: mydestination
+
+The configuration for the subscriber is as follows:
+
+spring.cloud.stream:
+  default.contentType: application/json
+  bindings.input.destination: mydestination

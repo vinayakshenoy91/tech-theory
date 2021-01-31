@@ -1,0 +1,393 @@
+- As part of user management, we use the UserDetailsService and UserDetailsManager interfaces. 
+The UserDetailsService is only responsible for retrieving the user by username. This action is the only 
+one needed by the framework to complete authentication. The UserDetailsManager adds behavior that refers to adding, 
+modifying, or deleting the user, which is a required functionality in most applications. The separation between the 
+two contracts is an excellent example of the interface segregation principle.
+
+- Spring Security offers the UserDetails contract, which you have to implement to describe a user in the 
+way the framework understands.
+
+- Spring Security represents the actions that a user can do with the GrantedAuthority interface. 
+We often call these authorities, and a user has one or more authorities.
+
+
+- To describe the authorities in Spring Security, you use the GrantedAuthority interface
+- We implement the getAuthorities() method to return the group of authorities granted for a user.
+
+public interface GrantedAuthority extends Serializable {
+    String getAuthority();
+}
+
+
+
+
+Misc:
+-----
+Simple granted auth:
+---------------------
+The SimpleGrantedAuthority class offers a way to create immutable instances of the type GrantedAuthority. 
+You provide the authority name when building the instance. In the next code snippet, you’ll find two examples 
+of implementing a GrantedAuthority. Here we make use of a lambda expression and then use the SimpleGrantedAuthority class:
+
+GrantedAuthority g1 = () -> "READ";
+GrantedAuthority g2 = new SimpleGrantedAuthority("READ");
+
+
+
+Code part:
+----------
+UserDetails interface:
+----------------------
+public interface UserDetails extends Serializable {
+  String getUsername();                        
+  String getPassword();
+  Collection<? extends GrantedAuthority> 
+  ➥ getAuthorities();                          
+  boolean isAccountNonExpired();               
+  boolean isAccountNonLocked();
+  boolean isCredentialsNonExpired();
+  boolean isEnabled();
+}
+
+Stage 1: 
+public class DummyUser implements UserDetails {
+
+  @Override
+  public String getUsername() {
+    return "bill";
+  }
+    
+  @Override
+  public String getPassword() {
+    return "12345";
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of(() -> "READ"); //Simple granted auth used here
+  }
+
+  // Omitted code
+
+   @Override
+  public boolean isAccountNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isAccountNonLocked() {
+    return true;
+  }
+
+  @Override
+  public boolean isCredentialsNonExpired() {
+    return true;
+  }
+
+  @Override
+  public boolean isEnabled() {
+    return true;
+  }
+
+}
+
+Stage 2: Capturing diff user, customn impl
+
+public class SimpleUser implements UserDetails {
+    
+  private final String username;
+  private final String password;
+    
+  public SimpleUser(String username, String password) {
+    this.username = username;
+    this.password = password;
+  }
+
+  @Override
+  public String getUsername() {
+    return this.username;
+  }
+
+  @Override
+  public String getPassword() {
+    return this.password;
+  }
+    
+  // Omitted code
+
+}
+
+
+//If you do not need a custom impl:
+Stage 3: 
+UserDetails u = User.withUsername("bill")
+                .password("12345")
+                .authorities("read", "write")
+                .accountExpired(false)
+                .disabled(true)
+                .build();
+
+Anatomy of user:
+User.UserBuilder builder1 = 
+➥ User.withUsername("bill");                              
+
+UserDetails u1 = builder1
+                 .password("12345")
+                 .authorities("read", "write")
+                 .passwordEncoder(p -> encode(p))         
+                 .accountExpired(false)
+                 .disabled(true)
+                 .build();                              
+
+User.UserBuilder builder2 = User.withUserDetails(u);    
+
+UserDetails u2 = builder2.build();
+
+
+JPA impl to retrieve data:
+--------------------------
+@Entity
+public class User {
+    
+  @Id
+  private Long id;
+  private String username;
+  private String password;
+  private String authority;
+    
+  // Omitted getters and setters
+
+}
+
+Using SecurityUser as decoration on retieved JPA user:
+--------------------------------------------------------
+public class SecurityUser implements UserDetails {
+    
+  private final User user;
+    
+  public SecurityUser(User user) {
+    this.user = user;
+  }
+
+  @Override
+  public String getUsername() {
+    return user.getUsername();
+  }
+
+  @Override
+  public String getPassword() {
+    return user.getPassword();
+  }
+
+  @Override
+  public Collection<? extends GrantedAuthority> getAuthorities() {
+    return List.of(() -> user.getAuthority());
+  }
+
+  // Omitted code
+
+}
+
+UserDetailService interface:
+------------------------------
+
+public interface UserDetailsService {
+  UserDetails loadUserByUsername(String username) 
+      throws UsernameNotFoundException;
+}
+
+
+An inmemeory impl of UserDetailsService:
+------------------------------------------
+public class InMemoryUserDetailsService implements UserDetailsService {
+
+  private final List<UserDetails> users;                       
+
+  public InMemoryUserDetailsService(List<UserDetails> users) {
+    this.users = users;
+  }
+
+  @Override
+  public UserDetails loadUserByUsername(String username) 
+    throws UsernameNotFoundException {
+    
+    return users.stream()
+      .filter(                                                 
+         u -> u.getUsername().equals(username)
+      )    
+      .findFirst()                                             
+      .orElseThrow(                                            
+        () -> new UsernameNotFoundException("User not found")
+      );    
+   }
+}
+
+
+Improving the config class:
+----------------------------
+@Configuration
+public class ProjectConfig {
+
+  @Bean
+  public UserDetailsService userDetailsService() {
+    UserDetails u = new User("john", "12345", "read");
+    List<UserDetails> users = List.of(u);
+    return new InMemoryUserDetailsService(users);
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return NoOpPasswordEncoder.getInstance();
+  }
+}
+
+UserDetailsManager:
+--------------------
+public interface UserDetailsManager extends UserDetailsService {
+  void createUser(UserDetails user);
+  void updateUser(UserDetails user);
+  void deleteUser(String username);
+  void changePassword(String oldPassword, String newPassword);
+  boolean userExists(String username);
+}
+
+
+- The JdbcUserDetailsManager manages users in an SQL database. It connects to the database directly through JDBC. 
+This way, the JdbcUserDetailsManager is independent of any other framework or specification related to database connectivity.
+
+- JdbcUserDetailsManager by creating a database and two tables. In our case, we name the database spring, 
+and we name one of the tables users and the other authorities. These names are the default table names known by the 
+JdbcUserDetailsManager. As you’ll learn at the end of this section, the JdbcUserDetailsManager implementation is flexible 
+and lets you override these default names if you want to do so. The purpose of the users table is to keep user records. The 
+JdbcUserDetails Manager implementation expects three columns in the users table: a username, a password, and enabled, which 
+you can use to deactivate the user.
+
+Configuring data source:
+-------------------------
+spring.datasource.url=jdbc:mysql://localhost/spring
+spring.datasource.username=<your user>
+spring.datasource.password=<your password>
+spring.datasource.initialization-mode=always
+
+
+Registering the JdbcUserDetailsManager in the configuration class
+Configuration
+public class ProjectConfig {
+
+  @Bean
+  public UserDetailsService userDetailsService(DataSource dataSource) {
+    return new JdbcUserDetailsManager(dataSource);
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return NoOpPasswordEncoder.getInstance();
+  }
+}
+
+
+Changing JdbcUserDetailsManager’s queries to find the user
+-----------------------------------------------------------
+@Bean
+public UserDetailsService userDetailsService(DataSource dataSource) {
+  String usersByUsernameQuery = 
+     "select username, password, enabled
+      ➥ from users where username = ?";
+  String authsByUserQuery =
+     "select username, authority
+      ➥ from spring.authorities where username = ?";
+      
+      var userDetailsManager = new JdbcUserDetailsManager(dataSource);
+      userDetailsManager.setUsersByUsernameQuery(usersByUsernameQuery);
+      userDetailsManager.setAuthoritiesByUsernameQuery(authsByUserQuery);
+      return userDetailsManager;
+}
+
+USING AN LDAPUSERDETAILSMANAGER FOR USER MANAGEMENT:
+------------------------------------------------------
+To set up the embedded LDAP server, I defined a simple LDAP Data Interchange Format (LDIF) file. 
+The following listing shows the content of my LDIF file.
+
+The definition of the LDIF file
+
+dn: dc=springframework,dc=org                      ❶ //base entity
+objectclass: top
+objectclass: domain
+objectclass: extensibleObject
+dc: springframework
+
+dn: ou=groups,dc=springframework,dc=org            ❷ //group entity
+objectclass: top
+objectclass: organizationalUnit
+ou: groups
+
+dn: uid=john,ou=groups,dc=springframework,dc=org   ❸ //User
+objectclass: top
+objectclass: person
+objectclass: organizationalPerson
+objectclass: inetOrgPerson
+cn: John
+sn: John
+uid: john
+userPassword: 12345
+
+
+I named the LDIF file server.ldif. and add it to resource folder
+
+Dependency required:
+
+<dependency>
+   <groupId>org.springframework.security</groupId>
+   <artifactId>spring-security-ldap</artifactId>
+</dependency>
+<dependency>
+   <groupId>com.unboundid</groupId>
+   <artifactId>unboundid-ldapsdk</artifactId>
+</dependency>
+
+
+In the application.properties file, you also need to add the configurations for the embedded LDAP server 
+as presented in the following code snippet. The values the app needs to boot the embedded LDAP server include the location 
+of the LDIF file, a port for the LDAP server, and the base domain component (DN) label values:
+
+spring.ldap.embedded.ldif=classpath:server.ldif
+spring.ldap.embedded.base-dn=dc=springframework,dc=org
+spring.ldap.embedded.port=33389
+
+
+The definition of the LdapUserDetailsManager in the configuration file
+
+@Configuration
+public class ProjectConfig extends WebSecurityConfigurerAdapter {
+
+  @Bean                                                       ❶
+  public UserDetailsService userDetailsService() {
+    var cs = new DefaultSpringSecurityContextSource(          ❷
+      "ldap://127.0.0.1:33389/dc=springframework,dc=org");
+    cs.afterPropertiesSet();
+
+    var manager = new LdapUserDetailsManager(cs);             ❸
+
+    manager.setUsernameMapper(                                ❹
+      new DefaultLdapUsernameToDnMapper("ou=groups", "uid"));
+
+    manager.setGroupSearchBase("ou=groups");                  ❺
+    
+    return manager;    
+  }
+
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return NoOpPasswordEncoder.getInstance();
+  }
+}
+❶ Adds a UserDetailsService implementation to the Spring context
+
+❷ Creates a context source to specify the address of the LDAP server
+
+❸ Creates the LdapUserDetailsManager instance
+
+❹ Sets a username mapper to instruct the LdapUserDetailsManager on how to search for users
+
+❺ Sets the group search base that the app needs to search for users
+

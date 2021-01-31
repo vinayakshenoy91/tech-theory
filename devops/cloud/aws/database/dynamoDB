@@ -1,3 +1,6 @@
+- NoSQL and can go upto 1M requests/sec
+- Architecture similar to cassandra
+- No disk space t provision
 - It is a partitioned B-tree structure.
 - It is immediately consistent and hihgly durable.
 - Single attribute partition key and optional single attribute sort key.
@@ -9,7 +12,28 @@
 - Supports ACID
 - Backup with point in time recovery
 - Supports TTL
-- Item size < 400KB
+- Capacity : provisioned(WCU, RCU, Autoscaling) or on-demand
+- Eventual or strong consistency can be set
+- Supports txn across multipel tables
+- Backups and point in time recovery
+- IAM for security
+- Storage can corss hundreds of TBs
+
+Basics:
+--------
+- It is made of tables
+- Each table has a primary key (decided at creation time)
+- each table can have infinite num of rows
+- Types supported are:
+  a) Scalar Types: String, Number, Binary, Boolean, Null
+  b) Document Types:   List, Map
+  c) Set Types: String Set, Number Set, Binary Set 
+
+Primary keys:
+--------------
+1) Parition key only (HASH)
+2) Partition key + sort key(timestamp) -> Data grouped by partition key and sort key == range key (User_id for parition key and game_id for sort key)
+
 
 Trade-off while choosing:
 ------------------------
@@ -27,7 +51,22 @@ you will have the burden to monitor your utilization and proactively provision t
 
 - move from on-demand to provisioned
 
-- DynamoDb indexes:
+DynamoDb indexes:
+--------------------
+1) LSI - Local secondary Index:
+--------------------------------
+- Keep same primary key 
+- select alternative sort key
+- Defined at table creation time
+
+2) Global secondary Index:
+---------------------------
+- Change priamnry key and optional sort key 
+- Can be defined after table is created
+
+- Overall, you can only query by pk + sort key ont he main table and indexes
+
+
 1) Local index:
 
 The only advantage of local indexes is that they’re immediately consistent, but they do come with a very insidious downside. 
@@ -49,3 +88,27 @@ additional capacity on the affected indexes.
 
 
 
+
+Features:
+---------
+1) TTL 
+2) DynamoDB streams : 
+    - react to change to DynamoDB tables.
+    - 24hr data retention
+    - Can bwe read by lambda or EC2
+3) Global tables: (Cross region replication): 
+- Active active replication, many regions
+- Used for low latency DR purpose
+- Must enable DynamoDB streams
+
+
+DynamoDB-DAX:
+---------------
+- DAX = DynamoDB accelerator
+- Writes go through DAX to DynamoDB
+- Seamless cache for dynamo DB, no app rewrite
+- Microsecond latency for cached reads and queries
+- 5 min TTL for cache by default
+- Upto 10 nodes in cluster
+- Multi AZ
+- secure

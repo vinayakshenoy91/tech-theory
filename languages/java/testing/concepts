@@ -1,0 +1,15 @@
+Functional requirements are actions that the product must do to be useful to its users. They arise from the work that stakeholders need to do. Almost any action such as, inspecting, publishing, or most other active verbs can be a functional requirement.
+Non-functional requirements are properties, or qualities, that the product must have. For example, they can describe properties such as performance, usability, or security. They are often called quality attributes.
+
+
+
+here are several kinds of test doubles:
+
+A dummy object simply satisfies the real object API but it is never actually used. The typical use case for dummy objects is when they are passed as parameters to meet the method signature, but then the dummy object is not actually used.
+A fake object replaces the real object with a simpler implementation, for example, an in-memory database.
+A stub object replaces the real object providing hard-coded values as responses.
+A mock object also replaces the real object, but this time with programmed expectations as responses.
+A spy object is a partial mock object, meaning that some of its methods are programmed with expectations, but the others use the real object's implementation.
+
+
+e (http://www.fitnesse.org/): 

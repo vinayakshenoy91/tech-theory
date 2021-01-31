@@ -1,0 +1,81 @@
+MVC app layers:-
+-----------------
+
+Domain:
+-------
+A popular technique to determine the domain model is to use the nouns in use case descriptions as 
+domain objects (e.g., Account or Transaction). 
+These objects contain both state (e.g., the username for the Account) and behavior (e.g., a credit method on the Account).
+
+your domain model will not need dependencies injected; however, it is still possible to do this. For example, it’s possible to use the Spring Framework and AspectJ to enable dependency injection in our domain objects. In that circumstance, we would give our domain classes the org.springframework.beans.factory.annotation.Configurable annotation. Next, we would need to set up load-time weaving or compile-time weaving and have our dependencies injected. 
+
+
+View layer:
+-----------
+
+Spring MVC helps us in isolating the user interface from the rest of the system. In Spring, the view is represented by an interface: org.springframework.web.servlet.View. This interface is responsible for transforming the result of the action from the user (the model) into the type of response the user requested. The View interface is generic, and it has no dependencies on a particular view technology. 
+There is an implementation provided either by the Spring Framework or by the view technologies for each supported view technology.
+
+Out of the box, Spring supports the following view technologies.
+JSP
+
+PDF
+
+Excel
+
+FreeMarker
+
+Thymeleaf
+
+Tiles 3
+
+XML (marshaling, XSLT, or plain)
+
+JSON (using Jackson or GSON)
+
+Groovy markup
+
+Script views (Handlebars, ERB, Kotlin Script templating)
+
+Arugments: In general, the user interface has a dependency on the domain layer. Sometimes, it is convenient to directly expose and render the domain model. This can be especially useful when we start to use forms in our application. For example, this would let us work directly with the domain objects instead of an additional layer of indirection. Some argue that this creates unnecessary or unwanted coupling between layers. However, the creation of another layer for the sole purpose of decoupling the domain from the view leads to unnecessary complexity and duplication. In any case, it is important to keep in mind that Spring MVC doesn’t require us to directly expose the domain model to the view—whether we do so is entirely up to us.
+
+THE WEB LAYER:
+---------------
+
+The web layer has two responsibilities. The first responsibility is to guide the user through the web application. The second is to be the integration layer between the service layer and HTTP.
+
+Transformations should lie here. There should not be any business logic
+
+ SERVICE LAYER:
+ --------------
+ In a web-based environment, we probably have multiple users operating on the services at the same time. 
+ The service must be stateless, so it is a good practice to make the service a singleton. In the domain model,
+  state should be kept as much as possible. Keeping the service layer stateless provides an additional benefit: it also 
+
+
+Keeping the service layer to a single point of entry, keeping the layer stateless, and applying transactions and security on that layer enables other features of the Spring Framework to expose the service layer to different clients.
+
+
+The service layer can serve as the glue between one or more domain objects to execute a business function. The service layer should coordinate which domain objects it needs and how they interact together.
+
+THE DATA ACCESS LAYER:
+---------------------
+
+The data access layer is responsible for interfacing with the underlying persistence mechanism. This layer knows how to store and retrieve objects from the datastore. It does this in such a way that the service layer doesn’t know which underlying datastore is used.
+
+There are several reasons for creating a separate data access layer. First, we don’t want to burden the service layer with knowledge of the kind of datastore (or datastores) we use; we want to transparently handle persistence.
+
+Spring provides extensive support for the following abilities.
+Transaction management
+
+Resource handling
+
+Exception translation
+
+
+Transaction management is transparent in each technology it supports. A transaction manager handles the transactions, and it has support for JTA (Java Transaction API), which enables distributed or global transactions (a transaction that spans multiple resources like a database and JMS broker). This excellent transaction support means that the transaction manager can also manage the resources for you. We no longer have to worry that a database connection or file handle is closed; this is all handled for you. The supported implementations can be found in the org.springframework.jdbc and org.springframework.orm packages.
+
+
+public interface AccountRepository extends CrudRepository<Account, Long> {
+  Account findByUsername(String username);
+}

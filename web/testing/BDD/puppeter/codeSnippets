@@ -1,0 +1,153 @@
+Folder structure:
+-----------------
+lib/helper.js
+tests/e2e/login.test.js
+tests/smoke-tests/xyz.test.js
+tests/device/tests.js
+test-snapshots/_tests_/visual.test.js
+jest.config.js
+
+
+
+Proper test writing:
+---------------------
+https://tesco.udemy.com/course/automated-headless-browser-testing-with-puppeteer/learn/lecture/18239854#overview
+
+Basics:
+-------
+tests/example.test.js
+const puppeteer = require('puppeteer');
+describe('my first puppeteer tests'()=>{
+    it('hello', async function(){
+        const browser = await puppeteer.launch({headless:false, slowMo: 500, devtools:true});//SloMo only if you want to see in slow motion
+        const page = await browser.newPage();
+        //await page.setDefaultTimeout(10000)
+         //await page.setDefaultNavigationTimeout(10000)
+        await page.goto('https://google.com', {waitUntil: "networkidle0"});
+        await page.waitForTimeout(10000);
+        await page.waitForSelector('h1');
+        await.page.reload();//Reload browser
+        await page.goBack();
+        await page.goForward();
+        await browser.close();
+        //Input/textarea interaction
+        await page.type("#develop-name",'');
+         await page.waitForTimeout(5000);
+        //Button & Checkbox
+        await page.click('#test-it', {clickCount:5});
+        //Dropdown
+        await page.select("#test-prefered",'option name');
+        //Page title
+        await page.title();
+        await page.url();
+        //Get element text
+        cosnt text = await page.$eval('selector',element => element.textContent);
+        //Get multiple elements
+        await page.$$eval('p',element=>element.length); //Get count of tags
+        //Keybaord press
+        await page.keyboard.press('Enter',{delay:10});
+        //Xpath
+        await page.waitForXPath('');
+        //Element does not exist [Testing scenarios like button disappear after click]
+        await page.waitFor(()=>!document.querySelector("#signin_button"));
+        OR
+        await page.waitForSelector('#signin_button',{hidden:true, timeout: 3000})
+        //Test
+        await page.click('input[type="submit"]')
+
+        //Screenshot
+         page.screenshot({path: 'example.png',fullPage:true});
+    
+        //pdf
+         page.pdf({path: 'example.pdf',format:"A4"});
+
+         //Grant permisison for geolocation
+         const context = browser.defaaultBrowserContext();
+         await context.overridePermisson("https://pptr.dev",['geolocation']);
+         await page.goto('https://pptr.dev')
+         await page.waitForSelector('h1');
+         await page.setGeolocation({latitute;90, longiture:0})         
+          
+        //Accessibility test
+         -> waitForSelector
+         const snapshot = await page.accessbility.snapshot();
+         await browser.close();
+
+         //Incognito mode
+         const context = await browser.createIncognitoBrowserContext()
+         page =  await context.newPage()
+
+         //Execute navigation
+         const metrics = await page.evaluate(()=> JSON.stringify(winsow.performance))
+ 
+
+    })
+})
+
+In scripts in package json use:
+"test":"./node_modules/mocha/bin/mocha --timeout=30000 ./tests"
+//for windows users use: node ./node_modules/mocha/bin/mocha --timeout=30000 ./tests
+
+Advanced:
+---------
+a) Test hooks
+--------------
+before(async ()=>{
+
+})
+
+after(()=>{
+
+})
+
+beforeEach(async()=>{
+
+})
+
+afterEach(()=>{
+
+})
+
+
+b) Setting viewport:
+--------------------
+page.setViewport({width:1650,height:1050})
+
+//Tablet:
+  const browser = await puppeteer.launch({headless:false, slowMo: 500, devtools:true});//SloMo only if you want to see in slow motion
+        const page = await browser.newPage();
+const tablet=puppeteer.devices['iPad landscape']
+await page.emulate(tablet);
+await page.goto('url')
+
+//Mobile
+  const browser = await puppeteer.launch({headless:false, slowMo: 500, devtools:true});//SloMo only if you want to see in slow motion
+        const page = await browser.newPage();
+const mobile=puppeteer.devices['iPhone X']
+await page.emulate(mobile);
+await page.goto('url')
+
+
+
+d) Customizing commands: [Wrap all things usign this design pattern]
+--------------------------
+https://tesco.udemy.com/course/automated-headless-browser-testing-with-puppeteer/learn/lecture/18247650#overview
+
+Create a folder lib
+then helpers.js
+
+module.exports = {
+    click: async  function(page,selector){
+        try{
+         await page.waitForSelector(selector);
+         await page.click(selector);
+        }catch(error){
+           throw new Error(`Could not click on selector`)
+        }
+    }
+}
+
+For firefox:
+------------
+npm install puppeteer-firefox
+const puppeteer = require('puppeteer-firefox');

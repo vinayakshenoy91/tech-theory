@@ -1,0 +1,29 @@
+a) Roles: short-term cred, uses STS
+  -> EC2 Instance Roles: uses the Ec2 metadata service. One role at a time per instance.
+  -> Service Roles: API gateway, Code Deploy, etc
+  -> Cross account roles
+
+b) Groups:
+
+c) Policies:  JSON doc with Effect, Action, Resource, Conditions, Policy Variables.
+    -> AWS managed : admin access, poweruserAccess
+    -> Customer managed
+    -> Inline policies
+
+d) Resource based policies: (S3 bucket, SQS queue, etc)
+
+e) Users: long term cred
+
+Tool to check permission:
+--------------------------
+- Access advisor: See permisison granted and when last accessed
+- Access analyser: Resource shared with external entity
+
+Note: 
+1) Put things in NotAction instead of marking Effect as DENY
+2) IAM Roles vs Resource based policy diff.
+Subtle diff is: When you assume a role (user/app/service), you give up your origin al permission
+and take permisision assigned to the role.
+When using resource based policy, principal does not give up any permissions
+[Supported by S3, SNS, SQS]
+

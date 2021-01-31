@@ -1,0 +1,8 @@
+- Secure storage of configs and secret
+- Optional seamless encryption using KMS
+- Config mgmt using path and IAM
+- Integration with cloud formation
+
+Arrange:
+
+/my-departemnt/my-app/dev/db-url, db-password

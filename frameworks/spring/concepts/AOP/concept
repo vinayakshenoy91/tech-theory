@@ -1,0 +1,13 @@
+- Spring uses aspect-oriented programming (AOP). AOP is another way of thinking about the structure of software. 
+It enables you to modularize things like transaction management or performance logging, 
+features that span multiple types and objects (cross-cutting concerns). 
+
+Concept|Description
+
+Aspect|The modularization of a cross-cutting concern. In general, this is a Java class with the org.aspectj.lang.annotation.Aspect annotation.
+
+Join Point|A point during the execution of a program. This can be the execution of a method, the assignment of a field, or the handling of an exception. In Spring, a join point is always the execution of a method!
+
+Advice|The specific action taken by an aspect at a particular join point. There are several types of advice: before, after, after throwing, after returning, and around. In Spring, an advice is called an interceptor because we are intercepting method invocations.
+
+Pointcut|A predicate that matches join points. The advice is associated with a pointcut expression and runs at any join point matching the pointcut. Spring uses the AspectJ expression language by default. Join points can be written using the org.aspectj.lang.annotation.Pointcut annotation.

@@ -1,4 +1,5 @@
 API is an interface that hides the impl
+https://semver.org/, 
 
 Explore:
 -------
@@ -303,6 +304,34 @@ Because the service was used from within the client source code and called a spe
 
 The interface is implementation-independent; the complete server-side code can be rewritten and the API’s interface will not have to be changed.
 
+
+REST api stuff:
+-----------------
+The main idea behind REST is that a distributed system, organized RESTfully, will improve in the following areas:
+
+Performance: The communication style proposed by REST is meant to be efficient and simple, allowing a performance boost on systems that adopt it.
+
+Scalability of component interaction: Any distributed system should be able to handle this aspect well enough, and the simple interaction proposed by REST greatly allows for this.
+
+Simplicity of interface: A simple interface allows for simpler interactions between systems, which in turn can grant benefits like the ones previously mentioned.
+
+Modifiability of components: The distributed nature of the system, and the separation of concerns proposed by REST (more on this in a bit), allows for components to be modified independently of each other at a minimum cost and risk.
+
+Portability: REST is technology and language agnostic, meaning that it can be implemented and consumed by any type of technology (there are some constraints that I’ll go over in a bit, but no specific technology is enforced).
+
+Reliability: The stateless constraint proposed by REST (more on this later) allows for the easier recovery of a system after failure.
+
+Visibility: Again, the stateless constraint proposed has the added benefit of improving visibility, because any monitoring system doesn’t need to look further than a single request message to determine the full state of said request (this will become clear once I talk about the constraints in a bit).
+
+From this list, some direct benefits can be extrapolated:
+
+A component-centric design allows you to make systems that are very fault tolerant. Having the failure of one component not affect the entire stability of the system is a great benefit for any system.
+
+Interconnecting components is quite easy, minimizing the risks when adding new features or scaling up or down.
+
+A system designed with REST in mind will be accessible to a wider audience, thanks to its portability (as described earlier).With a generic interface, the system can be used by a wider range of developers.
+
+In order to achieve these properties and benefits, a set of constraints were added to REST to help define a uniform connector interface.
 
 
 

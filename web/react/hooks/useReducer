@@ -1,0 +1,31 @@
+Why not useState and store object?
+- Tricky to update one property
+- Need to send state as an argument,ame sure other property is not cloberred.
+
+[state,dispatch]=React.useReducer(reducer,initialState);
+
+- dispatch function updates state. dispatch(action) -> reducer(state,action).
+dispatch will pass state automatically to reducer.
+- action is object with type and payload. Switch on type and use payload to update state.
+
+
+
+
+function reducer(statem, action){
+    const {type, payload} = action;
+
+    switch(action.type){
+        case: "secretWord":return {..., secretWord:action.payload}
+        default: 
+            throw new Error('invalid action type')
+    }
+
+
+
+}
+-------
+
+
+const [state, dispatch] = React.useReducer(reducer, {secretWord:null})
+
+const setSecretWord = (secretWord)=> dispatch({type:"setSecretWord",payload:secretWord})

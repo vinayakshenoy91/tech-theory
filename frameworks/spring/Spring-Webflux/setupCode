@@ -1,0 +1,64 @@
+Add in maven:
+spring-boot-starter-webflux
+
+Overriding Netty which is default:
+
+implementation('org.springframework.boot:spring-boot-starter-webflux') 
+{
+ exclude group: 'org.springframework.boot', module: 'spring-boot-
+ starter-reactor-netty'
+}
+implementation('org.springframework.boot:spring-boot-starter-tomcat')
+
+
+Overriding port in application.yml:
+
+server.port: 7001
+
+
+Writing rest controller:
+
+@RestController
+public class MyRestService {
+
+  @GetMapping(value = "/my-resource", produces = "application/json")
+  List<Resource> listResources() {
+    ...
+  }
+
+
+
+With Spring WebFlux came a new test client,
+
+
+@Test
+public void getProductNotFound() {
+  client.get()
+    .uri("/product-composite/" + PRODUCT_ID_NOT_FOUND)
+    .accept(APPLICATION_JSON_UTF8)
+    .exchange()
+    .expectStatus().isNotFound()
+    .expectHeader().contentType(APPLICATION_JSON_UTF8)
+    .expectBody()
+    .jsonPath("$.path").isEqualTo("/product-composite/" + 
+     PRODUCT_ID_NOT_FOUND)
+    .jsonPath("$.message").isEqualTo("NOT FOUND: " + 
+     PRODUCT_ID_NOT_FOUND);
+}
+
+@Autowired
+private WebTestClient client;
+
+@Test
+public void getProductById() {
+  client.get()
+    .uri("/product-composite/" + PRODUCT_ID_OK)
+    .accept(APPLICATION_JSON_UTF8)
+    .exchange()
+    .expectStatus().isOk()
+    .expectHeader().contentType(APPLICATION_JSON_UTF8)
+    .expectBody()
+    .jsonPath("$.productId").isEqualTo(PRODUCT_ID_OK)
+    .jsonPath("$.recommendations.length()").isEqualTo(1)
+    .jsonPath("$.reviews.length()").isEqualTo(1);
+}

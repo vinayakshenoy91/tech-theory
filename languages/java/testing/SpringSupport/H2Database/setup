@@ -1,0 +1,12 @@
+com.h2database
+h2 -> Artifact id
+runtime -> scope
+
+spring-boot-starter-jdbc
+
+define -> schema.sql
+
+DBunit and DBUnitExtension:
+- Loads test data into database
+- Delete all data and setup database before each unit test
+yml file stored in source > test > resources > dataset

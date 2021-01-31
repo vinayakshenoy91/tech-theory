@@ -1,0 +1,28 @@
+- Webclient is a functional style api whereas rest client is a imperative api.
+Build both sync and asyn calls
+
+
+privare Webclient webClient;
+
+public classname(Webclient webClient){
+    this.webClient = webClient;
+}
+
+//Get
+- in case of single response it will be bodyToMono and incase of multiple response, it will be body to flux
+return webClient.get().uri(MOviesContants.GET_ALL_MOVIES_V1).retrieve().bodyToFlux(Movie.class).collectList().block();
+- Retrieve by id: 
+return webClient.get().uri(MOviesContants.GET_ALL_MOVIES_V1, id1).retrieve().bodyToMono(Movie.class).collectList().block();
+
+WebClientResponseException ex
+
+
+Best practise: In constants class put the uri
+
+
+//POST
+webClient.post().uri(url).syncBody(bodyObj).retrieve().bodyToMono()
+
+//PUT
+webClient.put().uri(url).syncBody(bodyObj).retrieve().bodyToMono()
+

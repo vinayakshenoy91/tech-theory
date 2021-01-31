@@ -1,0 +1,4 @@
+- 16.8.0 or above
+- State and lifecycle events in functional components
+- With class based component, if yo had to reuse the logic, you had to use HOC.
+But in hooks you can easily reuse the logic across component.

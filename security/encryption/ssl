@@ -1,3 +1,13 @@
+More defn:
+------------
+- Public SSL cert issued by CA
+
+To prevent man in middle attac, use:
+1) Use HTTPS
+2) Use DNS that has DNSSEC
+
+
+
 - A Secure Sockets Layer certificate (SSL certificate) is a small data file installed on a Web server that allows for 
 a secure connection between the server and a web browser.
 

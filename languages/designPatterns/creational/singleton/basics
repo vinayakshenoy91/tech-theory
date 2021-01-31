@@ -1,3 +1,55 @@
+
+- Diff between global variable and singleton is that, object assigned to global variable will get created when app starts.
+Singleton we can create when required when the object creation is resource intensive.
+ Global variables also tend to encourage developers to pollute the namespace with lots of global references to small objects. 
+
+- It has a no public constructor. Always has a get instance method
+
+- For multithreading, you can apply sunchronized over method, but that has performance impact.
+
+Eager initialization:
+---------------------
+We rely on the JVM to create the unique instance of the Singleton when the class is loaded. 
+The JVM guarantees that the instance will be created before any thread accesses the static uniqueInstance variable.
+
+public MyClass {
+   private static MyClass instance = new MyClass();
+
+   private MyClass() {}
+
+   public static MyClass getInstance() {
+      return instance;
+   }
+}
+
+
+Syntax: //Double check locking  
+-------
+
+
+public MyClass {
+   private volatile static MyClass instance;
+
+   private MyClass() {}
+
+   public static MyClass getInstance() {
+      if(instance == null){
+         synchronized(this) {  //Use this or Singleton.class
+            if (instance == null){
+                 instance = new MyClass();
+            }
+      }
+      return instance;
+   }
+}
+
+Usecase:
+--------
+- Registry setting
+- connection or thread pools.
+
+
+
 - enumeration is the right pattern to impl singletons in java
  - The Singleton pattern works by having a special method that is used to instantiate the desired object. Here is what is most interesting about this special method:
 
@@ -89,4 +141,25 @@ public class USTax extends Tax {
    public static Tax getInstance() {
       return Instance.instance;
    }
+}
+
+
+Note:
+-----
+1) Problems with multiple class loaders:
+
+Yes, that is true as each class loader defines a namespace. If you have two or more class loaders, you can load the same class 
+multiple times (once in each class loader). Now, if that class happens to be a Singleton, then since we have more than one version 
+of the class, we also have more than one instance of Singleton. So, if you are 
+using multiple class loaders and Singletons, be careful. One way around this problem is to specify the class loader yourself.
+
+2) reflection and serialization/deserialization can also present problems with Singletons. 
+If you’re an advanced Java user using reflection, serialization, and deserialization, you’ll need to keep that in mind.
+
+Many of the problems we’ve discussed—worrying about synchronization, class loading issues, reflection, 
+and serialization/deserialization issues—can all be solved by using an enum to create your Singleton. 
+
+public enum Singleton {
+    UNIQUE_INSTANCE;
+    // more useful fields here
 }

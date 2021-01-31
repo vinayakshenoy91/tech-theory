@@ -1,0 +1,24 @@
+Setup:
+-----
+npm init
+npm install puppeteer prettier codeceptjs
+
+npx codeceptjs init
+
+//Run tests
+npx codeceptjs run --steps
+
+_test.js
+----------
+Feature('')
+Sceanrio('',({I})=>{
+   I.amOnPage('url');
+   I.wait(3);
+   I.saveScreenshot('test.png',true);
+   I.seeElement("h1");
+   I.dontSeeElement("");
+   assert.strictEqual(text,"example","erorr message");
+})
+
+
+const assert=require('assert');

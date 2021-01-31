@@ -1,0 +1,25 @@
+- Max excution time of 1 yr
+- Build serverless visual workflow to orchestrate lambda function
+- Represent flow as json state machine.
+- Used for orchestrating stuff
+
+
+Tasks:
+------
+1) Lambda tasks:
+----------------
+- Invoke a lambda
+
+2) Activity tasks:
+------------------
+- Activity worker in Ec2 polls Step function for any tasks
+
+3) Service tasks:
+------------------
+- Connect to a supported aws service
+
+4) Wait task:
+--------------
+- Wait for certain duration
+
+=> Step function does not integrate with AWS mechanical turk natively

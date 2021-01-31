@@ -1,0 +1,2 @@
+- Under the hood, it runs Ec2
+- Max is 1000 version of apps. Details of version stored in S3

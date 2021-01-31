@@ -1,0 +1,34 @@
+- instantiation is an activity that shouldn’t always be done in public and can often lead to coupling problems.
+- You separate what frequently change to what is static.
+
+
+The following guidelines can help you avoid OO designs that violate the Dependency Inversion Principle:
+
+1) No variable should hold a reference to a concrete class.
+2) No class should derive from a concrete class.
+3) No method should override an implemented method of any of its base classes.
+
+
+Patterns:
+---------
+
+1) Incase of static class:
+
+public class Test {
+    public static void main(String[] args) {
+
+        System.out.println(Utensil.NAME + Dessert.NAME);
+
+    }
+    private static class Utensil {
+
+        static final String NAME = "pan";
+
+    }
+
+    private static class Dessert {
+
+        static final String NAME = "cake";
+
+    }
+}

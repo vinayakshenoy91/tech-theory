@@ -1,0 +1,2 @@
+- Ensures that multiple threads handle the uniqueInstance variable correctly when it is 
+being initilized to the singleton instance.

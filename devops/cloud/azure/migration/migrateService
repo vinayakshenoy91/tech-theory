@@ -1,0 +1,13 @@
+- Work with hyper-v and vmware workloads
+- Assess the on-premise workloads interms of size, cost etc
+
+With the Azure Migrate Server Assessment tool you can do the following
+
+Azure readiness – You can assess whether the on-premise machines are ready for migration.
+
+Azure sizing – This helps to estimate the size of Azure VMs required for the migration.
+
+Azure cost estimation – Estimate the cost for running the servers in Azure.
+
+You can migrate your On-premises VMware VMs, On-premises Hyper-V VMs and On-premises physical servers
+

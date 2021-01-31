@@ -4,8 +4,15 @@ hackolade.com
 erwin
 
 
+CB server:
+---------
+- Open source , distributed, NoSQL document-oriented database optimised for interactive apps, uses the N1QL query language
 - CB is a key value store
 - Key is made of 250 UTF-8characters per key
+- Data <20MB [Binary or JSON]
+
+
+
 
 - Heterogenous service in separate node is called multi dim scaling
 
@@ -15,11 +22,6 @@ Note: For community edition, you need to have data , query and index on same nod
 - Memory optimised -> Index are stored in memory
 
 
-Bucket type:
--------------
-Couchbase -> Data will be stored and retrieved memeory first. Stored in ram and then flushed into disk
-Ephemeral -> Memory only
-Memecached -> No replication., compression. backup, query, etc
 
 
 
@@ -36,8 +38,14 @@ Eventing :
 - Familiar v8/js impl
 
 
-
+Bucket in DB:
+-------------
 Bucket in couchbase is a keyspace. It is a logical container of uniquely keyed documents
+Couchbase -> Exists both in memory and on disk.Data will be stored and retrieved memeory first. Stored in ram and then flushed into disk
+Ephemeral -> Memory only
+Memecached -> No replication., compression. backup, query, etc. Deprecated and available for backward compatibility
+
+
 
 
 Why more than one bucket per app?
@@ -51,6 +59,12 @@ Why more than one bucket per app?
 
 - Cross document data access can be done through N1Ql JOIN or SDK get() operations.
 
+
+Data types:
+----------
+- Primitives -> Boolean, string, int , double
+- Incomplete info -> Null , Missing
+- Composite -. Object, array
 
 Query:
 ------

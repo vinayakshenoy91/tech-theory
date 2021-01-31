@@ -1,0 +1,45 @@
+it does showcase how unfeasible infinitely loaded applications would be to run if we had to add everything to the DOM right away. So how would we handle this scenario? We would use something called deferred rendering. Essentially, we will have all of our objects in memory (in this case; for other use cases, we would continually make rest requests for more data) and we will add them as they should appear on the screen. We will need some code to do this.
+
+
+=> How do you do deferred rendering or infinte scroll?
+
+A good way to start deferred rendering is to know how many elements we are going to have, or at least want to showcase in our list. For this, we are going to use a height of 460 pixels. On top of this, we are going to set our list elements to have a padding of 5 pixels and to be a height of 12 pixels with a 1-pixel border on the bottom. This means that each element will have a total height of 23 pixels. This would also mean that the number of elements that can be seen at one time is 20 (460 / 23).
+
+Next, we set the height of our list by multiplying the number of items we have by the height of each item. This can be seen in the following code:
+
+list.style.height = `${itemHeight * items.length}px`;
+Now, we need to hold our index that we are currently at (the current 20 items on the screen) and measure when we get a scroll event. If we notice that we are above the threshold, we move to a new index and reset our list to hold that group of 20 elements. Finally, we set the top padding of our unordered list to the total height of the list minus what we have already scrolled by.
+
+All of this can be seen in the following code:
+
+const checkForNewIndex = function(loc) {
+    let tIndex = Math.floor(Math.abs(loc) / ( itemHeight * numItemsOnScreen 
+     ));
+    if( tIndex !== currIndex ) {
+        currIndex = tIndex;
+        const fragment = document.createDocumentFragment();
+        fragment.append(...items.slice(currIndex * numItemsOnScreen, 
+         (currIndex + 2) * numItemsOnScreen));
+        list.style.paddingTop = `${currIndex * containerHeight}px`;
+        list.style.height = `${(itemHeight * items.length) - (currIndex * 
+         containerHeight)}px`;
+        list.innerHTML = '';
+        list.appendChild(fragment);
+    }
+}
+So now that we have all of this, what do we put this function inside of? Well, since we are scrolling, logically, it would make sense to put it in the scroll handler of the list. Let's do that with the following code:
+
+list.onwheel = function(ev) {
+    checkForNewIndex(list.getBoundingClientRect().y);
+}
+Now, let's turn on the Scrolling performance issues option. If we reload the page, we will notice that it is highlighting our list and stating that the mousewheel event could be a potential bottleneck. This makes sense. Chrome notices that we are attaching a non-trivial piece of code to run on each wheel event so it shows us that we are going to potentially have issues.
+
+Now, if we are on a regular desktop, we will most likely not have any issues, but if we add the following code, we can easily see what Chrome is trying to tell us:
+
+const start = Date.now();
+while( Date.now() < start + 1000 ) {; }
+With that piece of code inside the wheel event, we can see the stuttering happen. Since we can now see stuttering and it being a potential bottleneck for scrolling, what's the next best option? Putting it in a setInterval, using requestAnimationFrame, or even using requestIdleCallback, with the last being the least optimal solution.
+
+The Rendering tab can help flesh out quite a few issues that can crop up inside our applications and should become a regular tool for developers to figure out what is causing stuttering or performance problems in their applications.
+
+

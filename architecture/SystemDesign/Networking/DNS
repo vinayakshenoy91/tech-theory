@@ -1,0 +1,11 @@
+Domain Name System (DNS) is the first component that your clients talk to when they want to visit your website. No matter if you are hosting a website or a web service (for example, for your mobile app), your clients need to find your server’s IP address before they can connect to it. In essence, DNS is used to resolve domain names like ejsmont.org to IP addresses like 173.236.152.169.
+
+If you are hosting your system on Amazon, the best choice is to use Amazon Route 53 service, which is a hosted DNS service integrated closely with other Amazon services. The main advantage of using Route 53 is that it is seamlessly integrated with the Amazon ecosystem. You can easily configure it using the same user interface that you use for other Amazon services. It integrates with other key components, such as an Elastic Load Balancer, and you can configure it entirely using a remote web service API.
+
+Put latency based routing in route 53
+
+Any time a client tries to resolve a domain name to an IP address, it connects to a Route 53 DNS server near its location (Amazon has over 50 edge locations all over the worldL22). Then, based on the lowest network latency, the Route 53 server responds with an IP address of one of your load balancers (depending on which region is “closer” to the user). Figure 3-14 shows how such routing is performed. You can see in this diagram that the application has been deployed in two Amazon regions: one in Europe and another in North America. In such a setup, clients connecting from Cuba would get the IP address of either the European region or North American region, depending on the network latency to each of them.
+
+
+If you are not hosting your servers on Amazon, there are plenty of providers from which to choose, including easydns.com, dnsmadeeasy.com, dnsimple.com, and dyn.com. Each offers a similar level of service, latencies, and uptime guarantees,L23–L24 and switching to a different provider is usually an easy task, so selecting a DNS provider should not be a major concern.
+

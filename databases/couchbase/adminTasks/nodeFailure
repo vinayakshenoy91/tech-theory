@@ -3,4 +3,15 @@ Things to do:
 1) Remove and rebalance manually -> Good for planned upgrades, maintanence and scaling in.
 2) Failover -> unplanned outages.
 
+Rebalance:
+----------
+- When node enters or leaves cluster, cluster data and indexes are redistributed across available nodes.
+- Happens when new nodes added or joined to cluster. Also, Nodes taken out of cluster via removal or failover.
+- Ensure that load is equally distributed across available nodes in cluster
+- Mapping from data, indexes to nodes is maintained in a cluster map. This DS is updated and 
+redistributed to clients after rebalancing. 
+- Cluster continues to accept client requests during rebalancing.
+
+
+
 

@@ -1,0 +1,19 @@
+Extensibility
+Reliability
+Performance
+Scalability
+Maintainability
+Availability
+Security
+Backward compatibility
+Usability
+
+- Each component of the architecture should have a single responsibility or an aggregation of cohesive functionality.
+- A specific component should not be aware of the details of other components.
+- Duplication should be avoided, and specific functionality should be implemented in one and only one related module.
+
+
+Mean time to recovery is one of the key components of the availability equation. The faster you can detect, react to, 
+and repair, the higher your availability becomes. Availability is actually measured as mean time to 
+failure / (mean time to failure + mean time to recovery). By reducing the time to recovery, you can increase your availability, even if the failure rate is out of your control. This may be the case when using cloud hosting services like Amazon Web Services (AWS), as cloud providers use cheaper hardware, trading low failure rates for low price. In such an environment, you need to focus on mean time 
+to recovery, as mean time to failure is something you cannot control.

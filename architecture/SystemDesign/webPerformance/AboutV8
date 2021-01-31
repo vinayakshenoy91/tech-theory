@@ -1,0 +1,3 @@
+The V8 system has a bunch of heuristics built into the system and it will try and guess what we are going to do based on what we have done in the past. The heap allocator can help show us what the V8 compiler is going to do and what our coding pattern is most like in terms of memory usage.
+
+

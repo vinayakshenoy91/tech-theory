@@ -49,3 +49,16 @@ order ms -> queue -> wallet ms
 - Compensating request must be idempotent, commutative and cannot abort
 
 - Compensating request must be commutative with requests
+
+Alternative of distributed txn:
+-------------------------------
+The first alternative to distributed transactions is to not support them at all. It may sound silly, but most startups can live with this type of tradeoff in favor of development speed, availability, and scalability benefits. For example, in a social media website, if you liked someone’s update and a part of your action did not propagate to the search index, users would not be able to search for that specific update in your event stream. Since the core of your system functionality is not compromised, your company may be fine with such a minor inconsistency in return for the time saved developing it and the costs incurred while trying to scale and maintain the solution.
+
+
+OR
+
+
+The second alternative to distributed transactions is to provide a mechanism of compensating transaction. A compensating transaction can be used to revert the result of an operation that was issued as part of a larger logical transaction that has failed. Going back to the online store example, your OrderService could issue a request to a PaymentService and then another request to FulfillmentService. Each of these requests would be independent (without underlying transactional support). In case of success, nothing special needs to happen. In case of PaymentService failure, the OrderServcice would simply abort so that FulfillmentService would not receive any requests. Only in the case of PaymentService returning successfully and then FulfillmentService failing would OrderService need to issue an additional PaymentService call to ensure a refund for the previously processed payment. 
+
+The benefit of this approach is that web services do not need to wait for one another; they do not need to maintain any state or resources for the duration of the overarching transaction either. Each of the services responds to a single call in isolation. Only the coordinating web service (here the OrderService) becomes responsible for ensuring data consistency among web services. In addition, the compensating transaction can often be processed asynchronously by adding a message into a queue without blocking the client code.
+

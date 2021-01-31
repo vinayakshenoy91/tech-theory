@@ -1,0 +1,37 @@
+Setup:
+------
+
+npm init
+npm install puppeteer mocha chai 
+
+
+.prettierrc:
+
+{
+  "semi": false,
+  "singleQuote": true,
+  "useTabs": true,
+  "tabWidth": 2,
+  "bracketSpacing": true,
+  "arrowParens": "avoid",
+  "trailingComma": "es5"
+}
+
+
+Advantages:
+------------
+- Developed by Google chrome team
+- Modern javascript syntax
+- zero config
+- Fast & Stable
+- No selenium
+- uses dev tools protocol
+
+
+CI setup:
+---------
+
+java -jar jenkins.war -httpPort=8080 --enable-future-java
+npm run smoke-test
+
+

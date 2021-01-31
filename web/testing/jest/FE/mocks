@@ -1,0 +1,9 @@
+- Mock function is a fake function that runs instead of real function
+- Can assert on how many times mock ran and on which arguments
+Mock purpose:
+1) Prevent real function from running
+2) Spy on function to see when it is called
+3) Provide return values whihc can setup test conditions 
+
+- No destruct on imports in non-test code
+

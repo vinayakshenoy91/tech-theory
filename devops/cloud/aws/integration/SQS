@@ -1,6 +1,7 @@
 Amazon SQS:
 ----------
 - SQS is a highly-durable queue in the cloud
+- Serverless and integrated with IAM
 - duplicate messages can emerge within SQS, so your consumers should be prepared to handle this situation
 
 # If you really need strict ordering and exactly-once delivery (no duplicates):
@@ -10,15 +11,17 @@ so they’re only viable if you’re certain that your message rate will remain 
 
 Standard queue:
 ---------------
+- SQS can serve as write buffer for dynamo DB
 - Unlimited throughput, unlimited message in queue
 - Message will stay in queue for 4 days or 14 days
 - low latency <10ms on publish and receive
-- < 256KBs per message sent
+- < 256KBs per message sent (use a pointer to S3 for larger messages)
 - Atleast once delivery
 - Can have out of order messages
 - Consumer polls SQS for messages.Consumer consumes and deletes it.
 - Metrics for horizonal scaling is Approx queue length -> Approximate NumberOfMessages
 - if message not read in 30s it will go back  into queue.
+- Consumers must be idempotent
 
 Visibility timeout -> based on you consumer processing time.
 - Once message is polled by consumer, it becomes invisible to other customers.

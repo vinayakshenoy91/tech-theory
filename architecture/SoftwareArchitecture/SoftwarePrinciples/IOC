@@ -1,0 +1,26 @@
+Dependency injection is an important principle and a subclass of a broader principle called inversion of control. Dependency injection is limited to object creation and assembly of its dependencies. Inversion of control, on the other hand, is a more generic idea and can be applied to different problems on different levels of abstraction.
+
+
+Inversion of control (IOC) is a method of removing responsibilities from a class to make it simpler and less coupled to the rest of the system. At its core, inversion of control is not having to know who will create and use your objects, how, or when. It is about being as dumb and oblivious as possible, as having to know less is a good thing for software design.
+
+Instead of you being in control of creating instances of your objects and invoking methods, you become the creator of plugins or extensions to the framework. The IOC framework will look at the web request and figure out which classes should be instantiated and which components should be delegated to.
+
+
+
+Framework will take care of allt he things
+
+“Don’t call us, we will call you.” 
+In practice, this means your classes do not have to know when their instances are created, who is using them, or how their dependencies are put together. Your classes are plugins, and some external force will decide how and when they should be used.
+
+Components of a good IOC framework include the following:
+
+Image   You can create plugins for your framework.
+
+Image   Each plugin is independent and can be added or removed at any point in time.
+
+Image   Your framework can auto-detect these plugins, or there is a way of configuring which plugin should be used and how.
+
+Image   Your framework defines the interface for each plugin type and it is not coupled to plugins themselves.
+
+
+

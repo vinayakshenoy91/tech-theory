@@ -1,0 +1,16 @@
+- 16.3 onwards
+- Global settings like language or visual theme
+- Deeply nested component need access but ancestors dont
+
+How do we use context:
+------------------------
+- component that use context need to be wrapped in a provider
+- context value is passed to provider as prop
+- Provider will update children when value changes
+- Value can be local state for parent component
+- Pattern to embed state into context(custom hook)
+
+
+actions/hookActions.js
+
+

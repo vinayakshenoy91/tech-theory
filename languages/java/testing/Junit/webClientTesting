@@ -1,0 +1,8 @@
+
+WebClient webClient;
+
+@BeforeEach
+void setup(){
+    webClient = WebClient.create(baseURl);
+    moviesRestClient = new moviesRestClient(webClient);
+}

@@ -1,0 +1,194 @@
+junit platform launcher -> pulbic api for configuring and launching test plans, used by IDEs and build tools
+junit platform engine -> pulbic api for test engines.Third party apis can also contribute their own test engine 
+by impl interfaces declared in this module and registering the engine.
+junit platform runner -> Runner and annotations for config and executing tests
+junit platform console -> support for discovering and executing tests on the junit platform fromt he console.
+junit platform sure fire provider -> support ofr discovering and executing tests on the junit platform using maven surefire
+
+https://learning.oreilly.com/library/view/mastering-software-testing/9781787285736/078c59b9-4d4f-4990-8487-d3944e54c6db.xhtml
+
+https://app.pluralsight.com/course-player?clipId=2f0236d6-143f-422b-a8ca-3d6452825c47
+
+
+Methods assumeTrue and assumeFalse can be used to skip tests whose preconditions are not met.
+The method assumign that is used to condition the execution of a part in a test.
+
+mvn test -> Test using maven
+
+
+Unit -> Aggregate -> System testing (E2E)
+
+
+Dependencies to include are: mvn test
+-----------------------------
+<dependencies>
+   <dependency>
+     <groupid>org.junit.jupiter</groupId>
+     <artifactId>junit-jupiter-api</artifactId>
+     <version>5.0.1</version>
+     <scope>test</scope>
+   </dependency>
+   <dependency>
+     <groupid>org.junit.jupiter</groupId>
+     <artifactId>junit-jupiter-engine</artifactId>
+     <version>5.0.1</version>
+     <scope>test</scope>
+   </dependency>
+<dependencies>
+<build>
+  <plugins>
+    <plugin>
+       <artifactId>maven-surefire-plugin</artifactId>
+       <version>2.19.1</version>
+       <dependencies>
+       </dependencies> 
+       <configuration> //Only add if you want to explicitly add a pattern
+           <includes>
+              <include>**/Test*.java</include>
+              <include></include>
+           <includes>
+           <excludes>
+              <exlude>**/Test*.java</exlude>
+              <exclude></exclude>
+           <excludes>
+           <properties>
+             <includeTags>integration</includeTags>
+             <excludeTags>slow,test-ci</excludeTags>
+           </properties>
+       </configuration>
+    </plugin>
+  </plugins>
+</build>
+
+Others:
+------
+  <dependency>  //Add only for old IDE that does nit support junit5 and add @RunWith(JUnitPlatform.class)
+     <groupid>org.junit.platform</groupId>
+     <artifactId>junit-platform-runner</artifactId>
+     <version>5.0.1</version>
+     <scope>test</scope>
+   </dependency>
+
+    <dependency>
+     <groupid>org.junit.platform</groupId>
+     <artifactId>junit-platform-console-standalone</artifactId>
+     <version>5.0.1</version>
+     <scope>test</scope>
+   </dependency>
+
+
+    <dependency>
+     <groupid>org.junit.jupiter</groupId>
+     <artifactId>junit-jupiter-params</artifactId>
+     <version>5.0.1</version>
+     <scope>test</scope>
+   </dependency>
+
+
+For standalone:
+  - complie the classes
+  - java -jar junit-platform-console-standalone-1.0.1.jar -cp build\classes\main;build\classes\test --scan-classpath --details none
+  - Note above : in mac
+
+Gradle:
+https://app.pluralsight.com/course-player?clipId=1148d175-3ebd-42a0-8046-ea1b9fdb8434
+https://app.pluralsight.com/course-player?clipId=6f4e0dc6-bbbc-4323-9e12-635341412ae2
+
+Code coverage: //Put this inside build config/tag
+--------------
+<plugin>
+       <groupId>org.jacoco</groupId>
+       <artifactId>jacoco-maven-plugin</artifactId>
+       <version>0.7.9</version>
+       <executions>
+          <execution>
+            <goals>
+               <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+               <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-check</id>
+            <phase>test</phase>
+            <goals>
+               <goal>check</goal>
+            </goals>
+            <configurations>
+               <rules>
+                 <rule>
+                    <element>PACKAGE</element>
+                    <limits>
+                       <limit>
+                          <counter>LINE</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>0.70</minimum>
+                       </limit>
+                    </limits>
+                 </rule>
+               </rules>
+            </configurations>
+          </execution>
+       </executions>
+</plugin>
+
+
+
+<build>
+   <plugins>
+      <plugin>
+         <artifactId>maven-surefire-plugin</artifactId>
+         <version>${maven-surefire-plugin.version}</version>
+         <dependencies>
+             <dependency>
+                <groupId>org.junit.platform</groupId>
+                <artifactId>junit-platform-surefire-provider</artifactId>
+                <version>${junit.platform.version}</version>
+            </dependency>
+            <dependency>
+               <groupId>org.junit.jupiter</groupId>
+               <artifactId>junit-jupiter-engine</artifactId>
+               <version>${junit.jupiter.version}</version>
+            </dependency>
+         </dependencies>
+      </plugin>
+   </plugins>
+ </build>
+
+
+ Old juit4:
+
+ <dependencies>
+   <dependency>
+      <groupId>junit</groupId>
+      <artifactId>junit</artifactId>
+      <version>4.12</version>
+      <scope>test</scope>
+   </dependency>
+</dependencies>
+
+<build>
+   <plugins>
+      <plugin>
+         <artifactId>maven-surefire-plugin</artifactId>
+         <version>${maven-surefire-plugin.version}</version>
+         <dependencies>
+            <dependency>
+               <groupId>org.junit.platform</groupId>
+               <artifactId>junit-platform-surefire-provider</artifactId>
+               <version>${junit.platform.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.junit.vintage</groupId>
+                <artifactId>junit-vintage-engine</artifactId>
+                <version>${junit.vintage.version}</version>
+            </dependency>
+         </dependencies>
+      </plugin>
+   </plugins>
+</build>

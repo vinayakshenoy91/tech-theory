@@ -1,0 +1,8 @@
+Import React from 'react';
+const [count, setCount] = React.useState(0);
+
+
+onClick={()=>setCount(count+1)}
+
+
+Pass the set state as param to function that calls the axios call as a callback

@@ -1,0 +1,11 @@
+Rendering tab:
+--------------
+
+First, when developing an application that is going to have a lot of data or a lot of eventing, it is suggested having the FPS meter turned on. This will not only let us know if our GPU is being utilized, but it will also show us if we are dropping frames due to constant repainting.
+Second, if we are developing an application that has a lot of scrolling (think of the infinite scrolling applications), then we will want to turn on the Scrolling performance issues section. This can notify us if there is an item or items in our application that can make the scrolling experience unresponsive.
+Finally, the Paint flashing option is great to see when there is a lot of dynamic content in our application. It will flash when a paint event has occurred and it will highlight the section that had to be repainted.
+
+
+Best practise tips:
+------------------
+- ments to move, change color, and so on? If it does, we may have to rethink our content hierarchy so we can ensure that we are causing the minimum amount of repainting in our document.

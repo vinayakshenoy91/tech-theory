@@ -1,0 +1,49 @@
+Interface:
+----------
+- implicitly public
+- values in are constant fields-> public static final 
+- Interface can extend anotehr using extends keyword
+
+
+1) Comparable Interface:
+------------------------
+- Negative value: Current is ordered first
+- Postitive value: Received is ordered first.
+- zero: Current and received are equal
+
+class Passenger implements Comparable<Passenger>{
+
+ @Override
+ public int compareTo(Passenger p{
+     int returnValue = p.memberLevel- memberLevel;
+     return value
+ }
+}
+
+Passenger[] p = {};
+User; Arrays.sort(Passengers);
+
+
+
+2) Multiple interfaces: No limits
+----------------------------------
+public class Flight implements Comparable<Flight, Iterable<Passenger>{
+  private List<Passenger> p = new ArrayList<Passenger>():
+  public Iterator<Passenger> iterator(){
+      return p.iterator();
+  }
+}
+
+Flight x = new Flight();
+for(Passenger p:x){  //x here will return iterable obj
+
+}
+
+
+3) Default method impl:
+-----------------------
+public interface MathProcessing{
+  default String getFormattedOutput(){
+    return null;
+  }
+}

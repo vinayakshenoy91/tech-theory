@@ -37,6 +37,13 @@ Select:
 ------
 SELECT items from couchgadget2 WHERE type = "order" and id=123;
 SELECT ENCODED_SIZE(test) FROM bucketname; //Getting thje encode size
+SELECT * from `bucket-name` LIMIT 1;
+SELECT jsonType, COUNT(*) from `bucket-name` GROUP BY jsonType;
+
+
+DELETE:
+-------
+DELETE FROM `bucket-name` WHERE jsonType = "player";
 
 
 Insert:

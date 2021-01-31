@@ -1,0 +1,25 @@
+Federation:
+-----------
+- Users outside AWS get temporary role
+- Fed can have many flavours:
+ > SAML 2.0
+   - Integrate on prem AD with AWS
+   - Need to setup a trust between AWS IAM and SAML
+   - SAML 2.0 enables web-based, cross domain SSO
+   - Uses STS api AssumeRoleWithSAML
+   - Now use amazon SSO
+ > Custom Identity Broker
+   - More work 
+ > Web identity Federation with Amazon Cognito
+   - Create IAM role with Cognito
+   - Build trust between OIDC IDP and AWS 
+   - Support anonymous users
+   - Supprot fo MFA
+   - Data Sync
+
+ > Web identity Fed without cognito
+ > SSO
+ > Non-saml with AWS MS AD
+- Using Fed, user managment is done outside AWS
+
+

@@ -9,7 +9,32 @@ A solution for this issue is to buffer data in a durable queue, such as SQS or K
 - It doesn’t support HTTPS when used as a static website host
 - A common mitigation is to always add your AWS account ID to the bucket name, which makes conflicts much less likely.
 - S3 has an API to check if you own the bucket, and this should always be done before interacting with an existing S3 bucket.
-
+- Max filesize is 5TB
 
 - If you have a highly dynamic content in Us-east-1. There has been a need to make that data available 
 with low latency in singapore-> use S3 CRR
+
+- Trust Advisor to check bucket permission
+
+4 methods to encrypt object in S3:
+-----------------------------------
+1) SSE-S3 -> Kys handled and managed by AWS
+2) SSE-KMS -> KMS ot manage encryption keys
+3) SSE-C -> When you want to manage your own encryption keys
+4) Client side encryption keys
+5) Glacier: All data is AES256 encrypted, key under aws control
+
+Replication:
+-------------
+CRR -> Same content in another region with low latency
+SRR
+
+- S3 bucket versioning must be enabled -> If not, two writes then only 1 notification
+- S3 event notification: By event or  object name filtering *.jpg
+- By defautl cloudTrail records S3bucket level api calls. But we can enable CloudTrail Object level monitoring 
+
+S3 pre-signed url:
+------------------
+- Issue a request as the person who presigned the url
+- Ltd lifetime
+- Uses IAM key of the signing IAM principal

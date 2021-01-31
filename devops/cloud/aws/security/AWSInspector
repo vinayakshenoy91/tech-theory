@@ -1,0 +1,4 @@
+- Scan EC2
+- Analyse running OS against known vulnerabilities
+- Inspector agent installed in EC2
+- Define template and AWS managed rules

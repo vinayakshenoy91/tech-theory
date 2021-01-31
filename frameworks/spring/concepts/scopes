@@ -1,0 +1,27 @@
+- By default, all beans in a Spring application context are singletons. 
+This doesn’t typically present a problem because our services and repositories 
+don’t hold state; they simply execute a certain operation and (optionally) return a value.
+
+- However, a singleton would be problematic if we wanted to keep the state inside our bean. We are developing a web application 
+that we hope attracts thousands of users. If there is a single instance of a bean, 
+and all users operate in the same instance, the users see and modify each other’s data or data from several users combined. 
+
+Prefix|Description
+
+singleton|The default scope. A single instance of a bean is created and shared throughout the application.
+
+prototype|Each time a certain bean is needed, a fresh instance of the bean is returned.
+
+thread|The bean is created when needed and bound to the currently executing thread. If the thread dies, the bean is destroyed.
+
+request|The bean is created when needed and bound to the lifetime of the incoming javax.servlet.ServletRequest. If the request is over, the bean instance is destroyed.
+
+session|The bean is created when needed and stored in javax.servlet.HttpSession. When the session is destroyed, so is the bean instance.
+
+globalSession|The bean is created when needed and stored in the globally available session (which is available in Portlet environments). If no such session is available, the scope reverts to the session scope functionality.
+
+application|This scope is very similar to the singleton scope; however, beans with this scope are also registered in javax.servlet.ServletContext.
+
+
+
+

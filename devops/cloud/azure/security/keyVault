@@ -1,0 +1,8 @@
+- You can give prmisisons to keys , secret and certs
+- Enable disk volume encryption, ARM template deployment and azure VM for deployment keys can be set from vault.
+- Can do networking setup as to whihc endpoint can access kv
+- All Db passwords etc will be stored on secrets
+- All encryption keys are to be stored in vault.
+- You need to create a SP to give access to kv 
+
+- For disk encryption, check the box

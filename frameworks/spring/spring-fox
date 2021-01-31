@@ -1,0 +1,4 @@
+SpringFox is an open-source project, separate from the Spring Framework, 
+that can create Swagger-based API documentation at runtime. It does so by examining the application at startup, 
+for example, inspecting WebFlux and Swagger-based annotations.
+

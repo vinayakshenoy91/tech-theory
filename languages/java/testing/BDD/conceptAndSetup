@@ -1,0 +1,182 @@
+BDD:
+----
+- Common language and shared understanding
+- Concrete examples and business rules
+- Collaboration and conversation
+- Fast feedback through early and effective automation
+
+- Make it a practise to write automated tests before dev after you get a story
+
+Gherkin: A business readable notation for executable spec
+Cucumber: Automation library to run our executable spec
+
+- Scenario can be busines rule or what user does
+
+
+Env setup:
+----------
+- Add cucumber for java plugin in IntelliJ
+
+Depedency:
+----------
+io.cucumber
+cucumber-java8 //cucumber-java 
+4.2.6
+scope-test
+
+io.cucumber
+cucumber-junit
+4.2.6
+scope-test
+
+org.hamcrest
+hamcrest-library
+2.1
+
+org.assertj
+assertj-core
+3.12.1
+
+
+
+Interaction:
+-----------
+Gherkin -> cucumber -> app
+
+
+Structure:
+----------
+- Feature
+   - Sceanrio : Given,When,Then
+
+src > test> java > bdd > AcceptanceTestRunner & OrderStepDefn class
+src > test> resources > features > (files) featurename.feature
+
+ -epics
+   -stories
+      - featurename.feature
+
+
+1) AcceptanceTestRunner:  //Create class for each like this -> glue the step defn and feature => public class ProgTestSuite(){}
+----------------------
+@RunWith(Cucumber.class)
+@CucumberOptions(plugin={"pretty","html:target/cucumber"}, glue="com.bdd.steps","features="classpath:features")
+public class AcceptanceTestRunner {}
+
+Steps:
+-----
+1) Create feature file first
+2) Write glue code as shown above. Run it and it will generate step file
+3) Create a step defn file to write it
+
+
+
+2) CalculatorStepDefinitions:
+---------------------------
+public class CalculatorStepDefinitions{
+
+   Calculator calculator;
+   Integer result;
+  
+   @Given("I have a calculator")
+   public void iHaveCalculator(){
+      calculator= new Calculator();
+
+   }
+
+   @When("I add {int} and {int}")  //For string like names use {string}, {word}, ${float},{}(analymous matches for multiple words)
+   public void iAddAnd(int i, intj){
+      result = call calculator
+   }
+
+   @Then("I should get {int}")
+   public void result(int p){
+      assert result here
+   }
+
+}
+
+
+Simple regex used:
+------------------
+^ -> Start of string
+$  -> end of string
+(.*) -> Matches anything (incl nothing)
+(.+) -> Matches atleast one of anything
+(\\d+) -> words
+(\\w+) -> Seq of letters or digits
+s?he -> Optinal char
+(?:order|have ordered) //Matches only ordered ones
+
+Tables:
+--------
+@Given("his flavorus are:")
+public void his_fav(List<String> favourites){}
+List<Map<String,String>> -> two column table with headers
+Map<String,Integer> cc -> Two column tabel without headers
+Incase of scenario outline, it will be single params in method and not list or map as test will get executed n numbe rof times
+with each value.
+
+3) Feature files:
+--------------
+featurename.feature:
+---------------------
+Feature: Calculator [Epic] -> Feature title
+  In order to maintain a healthy lifestyle  //Feature description
+  As a busy professional
+  I want to be able to order fresh smoothies to my home each morning
+  
+
+  Background:    //Execute before every scenario and avoids duplication of given. you need npt metion given in below scenarios
+     Given I have a calculator
+
+  Scenario: Adding two numbers [Business rule or what does the user want to do]
+    Given I have a calculator
+    And xyz
+    When I add 1 and 2
+    Then I should get 3
+
+ //Using tables [Used for and condition]
+
+ And he is interested in the following areas:
+  | Running |
+  | Gym     |
+  | Dieting |
+
+When he places the following order: //Classic table
+ | Product | Quantity |
+ | Apple   | 1        |
+ | Mango   | 2        |
+
+ Then he should see following calorie counts: //Map
+ | Apple   | 43  kcal       |
+ | Mango   | 180 kcal       |
+ 
+
+
+ //Sceanrio outline: This creates n tests [Used for mutually exclusive conditions]
+ -------------------
+
+ Sceanrio outline: Earning loyalty card points
+ 
+   You can write scnario description here
+    
+    Given Micheal is  a Morning member
+    When Micheal purchases 1 <Sample Drink>
+    Then he should earn <Points Earned> points
+
+    Examples:
+     | Drink category | Sample Drink    | Points Earned |
+     |   smoothies    | banana smoothie | 15            |
+    
+
+
+Serenity BDD:  mvn clean verify
+------------- 
+net.serenity-bdd
+serenity-core
+2.0.48
+test
+
+@RunWith(CucumberWithSerenity.class)
+

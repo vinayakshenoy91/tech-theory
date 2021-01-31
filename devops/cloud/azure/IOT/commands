@@ -1,0 +1,4 @@
+Monitor iot hub:
+-----------------
+//Device to cloud
+az iot hub monitor-events -n hubname --content-type application/json --props all
