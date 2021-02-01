@@ -1,0 +1,15 @@
+- Pull out hooks based logic for reusability.
+- Use in case you are setting, fetching and returning same thing just with change of URL. 
+That is a signal that it should be hooks.
+
+
+Example:
+--------
+ const useFetch = (url, initialValue )=>{
+     const [result, setResult] = useState(initialValue);
+     useEffect(()=>{},[])
+     return result;
+ }
+
+
+const x = useFetch(x,y);

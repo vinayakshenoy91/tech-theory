@@ -7,3 +7,5 @@ Mock purpose:
 
 - No destruct on imports in non-test code
 
+Spy: You still have original impl, but you can spy on if it is being called.
+Mock: You can return certain predefined values.

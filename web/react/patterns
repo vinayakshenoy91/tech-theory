@@ -1,0 +1,10 @@
+1) Children pattern:
+--------------------
+<CustomInput value={} onChange={ handleChange}>Input:</CustomInput>
+
+function CustomInput({children, value, onChange}){
+    return(<div>
+       <label>{children>}</label>
+       <input type="text" value={value} onChange={onChange}/>
+    </div>)
+}

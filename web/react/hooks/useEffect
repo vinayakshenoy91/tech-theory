@@ -1,8 +1,8 @@
+- Apply side effects to components[Fetching data to setting up intervals]
 - Runs function on component reload
 - By default, runs on every reload or specify to run only when certain values change.
-  When empty array given, it will run only on mount
+- When empty array given, it will run only on mount[componentDidMount alternative]
 
-
-
-  React.useEffect(()=>{},[])
+import React, {useEffect} from 'react';
+React.useEffect(()=>{},[])
 

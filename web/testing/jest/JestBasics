@@ -1,0 +1,142 @@
+- filename: App.test.tsx
+- Use jest extension with VS code
+
+Imports:
+--------
+import React from 'react';
+import {render} from '@testing-library/react';
+
+jest.mock("../../model/todo.model")//Mock all methods
+
+//Uisng exports syntax instread of module .exports
+exports.create=()=>{
+
+}
+
+Syntax
+-------------------
+describe("Test suite", ()=>{
+   test('description', ()=>{
+       
+   })
+});
+
+
+let req, res, next;
+beforeEach(()=>{
+  req= httpMocks.createRequest();
+  res = httpMocks.createResponse();
+  next = null;
+})
+
+Mocking function:
+----------------
+TodoModel.create = jest.fn();
+
+Matchers:
+---------
+expect(xyz).toBe(9)
+expect(error).toBeDefined();
+expect(function).toBeCalled();
+expect(function).toBeCalledWith(newTodo); //newTodo is a json here
+expect(res.statusCode).toBe(201);
+expect(res._isEndCalled()).toBeTruthy(); //This is checked to make sure res.send is called.
+expect(res._getJSONData()).toBe(newTodo);// Getting the json data, you need to mock first TodoModel.create.mockReturnValue(newTodo);
+expect(res._getJSONData()).toStrictEqual(newTodo); //Use this
+expect(Array.isArray(response.body)).toBeTruthy();
+ 
+[BE]Unit test: [API testing]
+-----------------
+=================
+tests
+   - mock-data
+      - new-todo.json
+   - unit
+      - todo.controller.test.js
+   - integration
+      - todo.controller.int.test.js
+
+test snippets:
+   it('', ()=>{
+      expect(typeof TodoController.createTodo).toBe("function");
+   }) 
+
+with httpMocks:
+--------------
+const httpMocks = require('node-mocks-http');
+let req, res, next;
+req= httpMocks.createRequest();
+res = httpMocks.createResponse();
+next = null;
+req.body = newToDo;  
+
+
+[BE] Integration test: [using supertest]
+----------------------------------------
+npm install supertest --save-dev
+
+Note: 
+- You may have to put condition around app.listen to see that it does not run when profile is test
+- For the above reqt,  separate out app.js and server.js as server.js will contain only app.listen
+
+const request = require("supertest");
+const app = require('../app');//This is express app
+
+it('', async ()=>{
+      const response = await request(app).post(endpointUrl).send(newTodo);
+      expect(response.statusCode).toBe(201);
+
+}) 
+
+
+Error handling[Can be modified as per out needs]:
+---------------------------------------------------
+
+//Unit test case for all CRUD
+const errorMessage = {message:"Done property missing"};
+const rejectedPromise = Promise.reject(errorMessage);
+TodoModel.create=jest.fn();
+TodoModel.create.mockReturnValue(rejectedPromise);
+await TodoController.createTodo(req,res,next);
+expect(next).toBeCalledWith(errorMessage);
+
+
+In app.js use,
+
+app.use((error, req,res,next)=>{
+   res.status(500).json({message: error.message})
+})
+
+
+exports.getTodos = async (req,res,next)=>{
+    try{
+      const allTodos = await TodoModel.find({});
+      res.status(200).json(allTodos);
+    }catch(err){
+       next(err);
+    }
+}
+
+//For all CRUD: Unit test case , mock and test. In integation test, test with real
+--------
+TodoModel.find=jest.fn();
+it('description', async()=>{
+   TodoModel.find.mockReturnValue(allTodos);
+   await TodoController.getTodos(req,res,next);
+   expect(res.statusCode).toBe(200);
+   expect(res._isEndCalled()).toBeTruthy();
+   expect(res._getJSONData()).toStrictEqual(newTodo);
+})
+
+req.params.todoId = 'xyz';
+
+//Update://Unit test case
+TodoModel.findByIdAndUpdate(todoId,newTodo,{new:true, useFindAndModify:false })
+
+
+- In unit test , mock the request and response. Only concentrate on if the things are called.
+- In integration test, code for E2E. use mock stub server in this case.
+
+
+
+

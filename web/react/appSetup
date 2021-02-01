@@ -3,3 +3,53 @@ Commands to setup application:
 
 yarn add create react-app react-testing --template typescript
 yarn upgrade --latest 
+yarn add @types/node  @types/react @types/react-dom
+yarn add  jest @testing-library/jest-dom @testing-library/react @testing-library/user-event @types/jest typescript ts-jest --dev
+yarn add styled-components
+
+yarn test --coverage --watchAll=false
+
+yarn add node-mocks-http --save-dev
+
+npx create-react-app styled-components-proj
+
+//Look at jest-dom package of RTL
+
+FE:
+---
+
+- src
+   - components
+      - pages
+      - common
+
+BE:
+----
+
+- service
+    - todo.service.js
+- externalService
+    - sapi.service.js
+- routes
+    - todo.routes.js
+- model
+    - todo.model.js
+- controllers
+    - todo.controller.js
+- tests
+   - unit
+      - todo.controller.test.js
+   - integration
+
+
+create jsconfig.json in base directory to exclude nesting of path:
+---------------------
+{
+  "compilerOptions": {
+    "baseUrl": "src"
+  },
+  "include": ["src"]
+}
+
+create jest.config.js in root to handle jest configs:
+-----------------------------------------------------

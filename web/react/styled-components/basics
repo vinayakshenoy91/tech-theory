@@ -1,0 +1,3 @@
+- Back ticks are called tagged template literals. 
+- Any styled components underneath is a function that accepts css and other data.
+

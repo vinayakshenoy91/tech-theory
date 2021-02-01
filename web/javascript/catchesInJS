@@ -1,0 +1,5 @@
+Arrow vs function keyword:
+--------------------------
+- function creates a this keyword
+- Does function depend on this object to be defined as same object that it was 
+created in? -> use function else arrow

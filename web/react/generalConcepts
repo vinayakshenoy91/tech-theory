@@ -1,0 +1,8 @@
+- react and react dom are the main which need to be present
+
+
+
+React virtual dom:
+-------------------
+- This is used to make a conparision of what has changed and only make those changes.
+
