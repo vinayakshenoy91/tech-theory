@@ -22,6 +22,8 @@ https://github.com/donnemartin/system-design-primer
 
 https://github.com/shashank88/system_design
 
+https://drive.google.com/file/d/16wtG6ZsThlu_YkloeyX8pp2OEjVebure/view
+
 
 Coding:
 ------
