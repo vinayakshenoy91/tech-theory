@@ -24,6 +24,8 @@ https://github.com/shashank88/system_design
 
 https://drive.google.com/file/d/16wtG6ZsThlu_YkloeyX8pp2OEjVebure/view
 
+https://learnersbucket.com/tag/systemdesign/
+
 
 Coding:
 ------
