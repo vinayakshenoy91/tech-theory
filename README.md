@@ -57,3 +57,8 @@ https://www.careercup.com/resources
 Tools:
 ------
 https://squoosh.app/ -> Image resizing for browser
+
+
+
+**Follow:**
+https://github.com/GoogleChromeLabs
