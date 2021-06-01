@@ -3,6 +3,15 @@ Contains technical documentations
 
 # Blogs to follow
 
+Blogs:
+-----
+https://developer.okta.com/blog
+
+Microservices
+highscalability.com
+High scalability blog
+highscalability.com
+
 
 Web:
 ---
