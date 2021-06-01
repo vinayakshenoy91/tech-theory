@@ -8,9 +8,15 @@ Blogs:
 https://developer.okta.com/blog
 
 Microservices
+
+
+**Scalability:**
 highscalability.com
 High scalability blog
 highscalability.com
+**References:**
+Filter blog out of this
+
 
 
 Web:
