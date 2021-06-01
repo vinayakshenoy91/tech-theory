@@ -51,3 +51,9 @@ https://www.java67.com/2020/02/40-java-io-and-files-interview-questions-answers.
 https://leetcode.com/discuss/study-guide/1204393/algo-list
 
 https://www.careercup.com/resources
+
+
+
+Tools:
+------
+https://squoosh.app/ ->
