@@ -31,7 +31,7 @@ http://www.centinosystems.com/blog/
 https://blog.axlight.com/posts/4-options-to-prevent-extra-rerenders-with-react-context/
 
 
-System design:
+System design: 
 --------------
 https://github.com/donnemartin/system-design-primer
 
@@ -56,4 +56,4 @@ https://www.careercup.com/resources
 
 Tools:
 ------
-https://squoosh.app/ ->
+https://squoosh.app/ -> Image resizing for browser
