@@ -63,3 +63,12 @@ https://squoosh.app/ -> Image resizing for browser
 
 **Follow:**
 https://github.com/GoogleChromeLabs
+
+VS code extensions:
+--------------------
+- Bookmark
+- Thunder client
+- Zoom bar
+- Polacode
+- ayu
+- git graph
