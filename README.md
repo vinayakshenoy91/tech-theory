@@ -43,6 +43,8 @@ https://learnersbucket.com/tag/systemdesign/
 
 https://www.codekarle.com/
 
+https://pdos.csail.mit.edu/6.824/
+
 Coding:
 ------
 https://github.com/jwasham/coding-interview-university
