@@ -56,6 +56,10 @@ https://leetcode.com/discuss/study-guide/1204393/algo-list
 https://www.careercup.com/resources
 
 
+Code review books:
+------------------
+https://learning.oreilly.com/library/view/refactoring-for-software/9780128013977/XHTML/cover.xhtml
+
 
 Tools:
 ------
