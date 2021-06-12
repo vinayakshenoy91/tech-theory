@@ -30,6 +30,9 @@ http://www.centinosystems.com/blog/
 
 https://blog.axlight.com/posts/4-options-to-prevent-extra-rerenders-with-react-context/
 
+https://www.stevekinney.net/
+https://github.com/stevekinney
+
 
 System design: 
 --------------
