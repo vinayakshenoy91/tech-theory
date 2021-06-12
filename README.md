@@ -32,6 +32,7 @@ https://blog.axlight.com/posts/4-options-to-prevent-extra-rerenders-with-react-c
 
 https://www.stevekinney.net/
 https://github.com/stevekinney
+https://github.com/mike-works/typescript-fundamentals
 
 
 System design: 
