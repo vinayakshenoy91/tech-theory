@@ -34,6 +34,8 @@ https://www.stevekinney.net/
 https://github.com/stevekinney
 https://github.com/mike-works/typescript-fundamentals
 
+toddhgardner -> github
+
 
 System design: 
 --------------
