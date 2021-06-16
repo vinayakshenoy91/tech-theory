@@ -34,6 +34,10 @@ https://www.stevekinney.net/
 https://github.com/stevekinney
 https://github.com/mike-works/typescript-fundamentals
 
+https://github.com/jkup
+
+https://jonkuperman.com/
+
 toddhgardner -> github
 
 
