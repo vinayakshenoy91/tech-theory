@@ -66,6 +66,10 @@ https://leetcode.com/discuss/study-guide/1204393/algo-list
 
 https://www.careercup.com/resources
 
+https://cp-algorithms.com/
+
+https://leetcode.com/list/xi4ci4ig/
+
 
 Code review books:
 ------------------
