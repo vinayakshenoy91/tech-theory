@@ -1,0 +1,27 @@
+- If there is a reference to an object, it is in memory.HTML DOM elements should not be referenced once deleted. 
+
+- Memory leak:
+
+//If it is a reference outside and erased from inside, it is a leak
+var one = document.getElementById("one");
+   var two = document.getElementById("two");
+   one.addEventListener('click', function(){
+       two.remove();
+       console.log(two); // will print the html even after deletion
+});
+
+Ways to avoid above leak: below one and then remove the listener
+
+  var one = document.getElementById("one");
+
+   one.addEventListener('click', function(){
+       var two = document.getElementById("two");
+       two.remove();
+   });
+
+- An object is cleared when all references are cleared. Always remember to limit the amount of scope the function pulls and
+pass the property of an object only into functions instead of the entire object. This is because the object’s memory footprint 
+can be very large (e.g., an array of 100,000 integers for data visualization project); if only one of the object’s properties is needed,
+you should avoid using the entire object as a parameter.  
+
+Ex: printProp1(test.prop1);

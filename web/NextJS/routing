@@ -1,0 +1,42 @@
+- pages 
+   - index.jsx
+   - notes
+    - [id].jsx
+    - index.jsx
+- src
+   - components //For non pages
+
+
+Dynamic routes: [id].jsx:
+--------------------------
+import {useRouter} from 'next/router'; //Use withRouter for class components
+
+
+const Page = ()=>{
+    const router = useRouter()
+    const {id} = router.query;
+}
+
+
+Catch all:
+-----------
+[...params].jsx
+
+const {params} = router.query;
+
+
+Navigation: [For client side routing]
+-----------
+import Link from 'next/link';
+<Link href="/notes"><a>Hello</a></Link>
+
+For dynamic routes:
+<Link href="/notes/[id]" as={`/notes/1`}><a>Hello</a></Link>
+
+Programmatic routing:
+---------------------
+
+const router=useRouter();
+
+onClick={e=>router.push('/')}
+onClick={e=>router.push('/user/[id]',`/user/${id}`)}

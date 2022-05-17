@@ -1,0 +1,218 @@
+Overriding a Method
+What if there is a method defined in both the parent and child classes with the same signature? For example, you may want to define a new version of the method and have it behave differently for that subclass. The solution is to override the method in the child class. In Java, overriding a method occurs when a subclass declares a new implementation for an inherited method with the same signature and compatible return type. Remember that a method signature includes the name of the method and method parameters.
+
+When you override a method, you may reference the parent version of the method using the super keyword. In this manner, the keywords this and super allow you to select between the current and parent versions of a method, respectively. We illustrate this with the following example:
+
+
+public class Canine {
+   public double getAverageWeight() {
+      return 50;
+   }
+}
+public class Wolf extends Canine {
+   public double getAverageWeight() {
+      return super.getAverageWeight()+20;
+   }
+   public static void main(String[] args) {
+      System.out.println(new Canine().getAverageWeight());
+      System.out.println(new Wolf().getAverageWeight());
+   }
+}
+In this example, in which the child class Wolf overrides the parent class Canine, the method getAverageWeight() runs, and the program displays the following:
+
+50.0
+70.0
+
+
+you can override an abstract method with a covariant return type. Likewise, you can declare new unchecked exceptions but not checked exceptions in the overridden method. Furthermore, you can override an abstract method in one class and then override it again in a subclass of that class.
+
+Note: an abstract method can only be defined in an abstract class
+
+METHOD OVERRIDING AND RECURSIVE CALLS
+You might be wondering whether the use of super in the previous example was required. For example, what would the following code output if we removed the super keyword?
+
+public double getAverageWeight() {
+   return getAverageWeight()+20;  // StackOverflowError
+}
+In this example, the compiler would not call the parent Canine method; it would call the current Wolf method since it would think you were executing a recursive method call. A recursive method is one that calls itself as part of execution. It is common in programming but must have a termination condition that triggers the end to recursion at some point or depth. In this example, there is no termination condition; therefore, the application will attempt to call itself infinitely and produce a StackOverflowError at runtime.
+
+To override a method, you must follow a number of rules. The compiler performs the following checks when you override a method:
+
+The method in the child class must have the same signature as the method in the parent class.
+The method in the child class must be at least as accessible as the method in the parent class.
+The method in the child class may not declare a checked exception that is new or broader than the class of any exception declared in the parent class method.
+If the method returns a value, it must be the same or a subtype of the method in the parent class, known as covariant return types.
+DEFINING SUBTYPE AND SUPERTYPE
+When discussing inheritance and polymorphism, we often use the word subtype rather than subclass, since Java includes interfaces. A subtype is the relationship between two types where one type inherits the other. If we define X to be a subtype of Y, then one of the following is true:
+
+X and Y are classes, and X is a subclass of Y.
+X and Y are interfaces, and X is a subinterface of Y.
+X is a class and Y is an interface, and X implements Y (either directly or through an inherited class).
+Likewise, a supertype is the reciprocal relationship between two types where one type is the ancestor of the other. Remember, a subclass is a subtype, but not all subtypes are subclasses.
+
+The first rule of overriding a method is somewhat self-explanatory. If two methods have the same name but different signatures, the methods are overloaded, not overridden. Overloaded methods are considered independent and do not share the same polymorphic properties as overridden methods.
+
+OVERLOADING VS. OVERRIDING
+Overloading and overriding a method are similar in that they both involve redefining a method using the same name. They differ in that an overloaded method will use a different list of method parameters. This distinction allows overloaded methods a great deal more freedom in syntax than an overridden method would have. For example, compare the overloaded fly() with the overridden eat() in the Eagle class.
+
+public class Bird {
+   public void fly() {
+      System.out.println("Bird is flying");
+   }
+   public void eat(int food) {
+      System.out.println("Bird is eating "+food+" units of food");
+   }
+}
+ 
+public class Eagle extends Bird {
+   public int fly(int height) {
+      System.out.println("Bird is flying at "+height+" meters");
+      return height;
+   }
+   public int eat(int food) {  // DOES NOT COMPILE
+      System.out.println("Bird is eating "+food+" units of food");
+      return food;
+   }
+}
+The fly() method is overloaded in the subclass Eagle, since the signature changes from a no-argument method to a method with one int argument. Because the method is being overloaded and not overridden, the return type can be changed from void to int.
+
+The eat() method is overridden in the subclass Eagle, since the signature is the same as it is in the parent class Bird—they both take a single argument int. Because the method is being overridden, the return type of the method in the Eagle class must be compatible with the return type for the method in the Bird class. In this example, the return type int is not a subtype of void; therefore, the compiler will throw an exception on this method definition.
+
+Any time you see a method on the exam with the same name as a method in the parent class, determine whether the method is being overloaded or overridden first; doing so will help you with questions about whether the code will compile.
+
+What’s the purpose of the second rule about access modifiers? Let’s try an illustrative example:
+
+public class Camel {
+   public int getNumberOfHumps() {
+      return 1;
+   }
+}
+ 
+public class BactrianCamel extends Camel {
+   private int getNumberOfHumps() {  // DOES NOT COMPILE
+      return 2;
+   }
+}
+ 
+public class Rider {
+   public static void main(String[] args) {
+      Camel c = new BactrianCamel();
+      System.out.print(c.getNumberOfHumps());
+   }
+}
+In this example, BactrianCamel attempts to override the getNumberOfHumps() method defined in the parent class but fails because the access modifier private is more restrictive than the one defined in the parent version of the method. Let’s say BactrianCamel was allowed to compile, though. Would the call to getNumberOfHumps() in Rider.main() succeed or fail? As you will see when we get into polymorphism later in this chapter, the answer is quite ambiguous. The reference type for the object is Camel, where the method is declared public, but the object is actually an instance of type BactrianCamel, which is declared private. Java avoids these types of ambiguity problems by limiting overriding a method to access modifiers that are as accessible or more accessible than the version in the inherited method.
+
+The third rule says that overriding a method cannot declare new checked exceptions or checked exceptions broader than the inherited method. This is done for similar polymorphic reasons as limiting access modifiers. In other words, you could end up with an object that is more restrictive than the reference type it is assigned to, resulting in a checked exception that is not handled or declared. We will discuss what it means for an exception to be checked in Chapter 10, “Exceptions.” For now, you should just recognize that if a broader checked exception is declared in the overriding method, the code will not compile. Let’s try an example:
+
+public class Reptile {
+   protected void sleepInShell() throws IOException {}
+ 
+   protected void hideInShell() throws NumberFormatException {}
+  
+   protected void exitShell() throws FileNotFoundException {}
+}
+ 
+public class GalapagosTortoise extends Reptile {
+   public void sleepInShell() throws FileNotFoundException {}
+ 
+   public void hideInShell() throws IllegalArgumentException {}
+  
+   public void exitShell() throws IOException {} // DOES NOT COMPILE
+}
+In this example, we have three overridden methods. These overridden methods use the more accessible public modifier, which is allowed per our second rule over overridden methods. The overridden sleepInShell() method declares FileNotFoundException, which is a subclass of the exception declared in the inherited method, IOException. Per our third rule of overridden methods, this is a successful override since the exception is narrower in the overridden method.
+
+The overridden hideInShell() method declares an IllegalArgumentException, which is a superclass of the exception declared in the inherited method, NumberFormatException. While this seems like an invalid override since the overridden method uses a broader exception, both of these exceptions are unchecked, so the third rule does not apply.
+
+The third overridden exitShell() method declares IOException, which is a superclass of the exception declared in the inherited method, FileNotFoundException. Since these are checked exceptions and IOException is broader, the overridden exitShell() method does not compile in the GalapagosTortoise class. We’ll revisit these exception classes, including memorizing which ones are subclasses of each other, in Chapter 10.
+
+The fourth and final rule around overriding a method is probably the most complicated, as it requires knowing the relationships between the return types. The overriding method must use a return type that is covariant with the return type of the inherited method.
+
+Let’s try an example for illustrative purposes:
+
+public class Rhino {
+   protected CharSequence getName() {
+      return "rhino";
+   }
+   protected String getColor() {
+      return "grey, black, or white";
+   }
+}
+ 
+class JavanRhino extends Rhino {
+   public String getName() {
+      return "javan rhino";
+   }
+   public CharSequence getColor() {  // DOES NOT COMPILE
+      return "grey";
+   }
+}
+The subclass JavanRhino attempts to override two methods from Rhino: getName() and getColor(). Both overridden methods have the same name and signature as the inherited methods. The overridden methods also have a broader access modifier, public, than the inherited methods. Per the second rule, a broader access modifier is acceptable.
+
+From Chapter 5, you should already know that String implements the CharSequence interface, making String a subtype of CharSequence. Therefore, the return type of getName() in JavanRhino is covariant with the return type of getName() in Rhino.
+
+On the other hand, the overridden getColor() method does not compile because CharSequence is not a subtype of String. To put it another way, all String values are CharSequence values, but not all CharSequence values are String values. For example, a StringBuilder is a CharSequence but not a String. For the exam, you need to know if the return type of the overriding method is the same or a subtype of the return type of the inherited method.
+
+images
+A simple test for covariance is the following: Given an inherited return type A and an overriding return type B, can you assign an instance of B to a reference variable for A without a cast? If so, then they are covariant. This rule applies to primitive types and object types alike. If one of the return types is void, then they both must be void, as nothing is covariant with void except itself.
+
+The last three rules of overriding a method may seem arbitrary or confusing at first, but as you’ll see later in this chapter when we discuss polymorphism, they are needed for consistency. Without these rules in place, it is possible to create contradictions within the Java language.
+
+
+
+Review of Overloading a Generic Method
+You learned that you cannot overload methods by changing the generic type due to type erasure. To review, only one of the two methods is allowed in a class because type erasure will reduce both sets of arguments to (List input).
+
+public class LongTailAnimal {
+   protected void chew(List<Object> input) {}
+   protected void chew(List<Double> input) {}  // DOES NOT COMPILE
+}
+For the same reason, you also can’t overload a generic method in a parent class.
+
+public class LongTailAnimal {
+   protected void chew(List<Object> input) {}
+}
+ 
+public class Anteater extends LongTailAnimal {
+   protected void chew(List<Double> input) {}  // DOES NOT COMPILE
+}
+Both of these examples fail to compile because of type erasure. In the compiled form, the generic type is dropped, and it appears as an invalid overloaded method.
+
+
+Generic Method Parameters
+On the other hand, you can override a method with generic parameters, but you must match the signature including the generic type exactly. For example, this version of the Anteater class does compile because it uses the same generic type in the overridden method as the one defined in the parent class:
+
+public class LongTailAnimal {
+   protected void chew(List<String> input) {}
+}
+ 
+public class Anteater extends LongTailAnimal {
+   protected void chew(List<String> input) {}
+}
+
+
+
+Generic Return Types:
+---------------------
+When you’re working with overridden methods that return generics, the return values must be covariant. In terms of generics, this means that the return type of the class or interface declared in the overriding method must be a subtype of the class defined in the parent class. The generic parameter type must match its parent’s type exactly.
+
+Given the following declaration for the Mammal class, which of the two subclasses, Monkey and Goat, compile?
+
+public class Mammal {
+   public List<CharSequence> play() { ... }
+   public CharSequence sleep() { ... }
+}
+ 
+public class Monkey extends Mammal {
+   public ArrayList<CharSequence> play() { ... }
+}
+ 
+public class Goat extends Mammal {
+   public List<String> play() { ... }  // DOES NOT COMPILE
+   public String sleep() { ... }
+}
+The Monkey class compiles because ArrayList is a subtype of List. The play() method in the Goat class does not compile, though. For the return types to be covariant, the generic type parameter must match. Even though String is a subtype of CharSequence, it does not exactly match the generic type defined in the Mammal class. Therefore, this is considered an invalid override.
+
+Notice that the sleep() method in the Goat class does compile since String is a subtype of CharSequence. This example shows that covariance applies to the return type, just not the generic parameter type.
+
+
+

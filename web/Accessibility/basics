@@ -1,0 +1,67 @@
+- People with disabilities can use the web
+
+Standards:
+----------
+- WCAG
+- WebAIM -> they have the check list
+
+
+Screenreaders:
+--------------
+- JAWS
+- NVDA
+- ZoomText
+
+
+Coding practises:
+-----------------
+1) Putting alt text in image: <img src="" alt="A cat"/>
+2) Skipping the image incase you dont know or is decorative:  <img src="" alt=""/>
+3) Put captions in audio
+
+
+Make sure you do:
+------------------
+mousedown
+keydown
+tabIndex
+role
+label
+
+
+Refer:
+------
+Aria page of MDN docs
+learn-a11y.netlify.app
+microsoft inclusive design 
+
+
+Tools:
+------
+- eslint-plugin-jsx-a11y
+- Angular codeanalyzer
+
+- Google lighthouse
+- Dequeue axe's dev Tools
+
+Accessibility design ssystems:
+-------------------------------
+- Adobe's react spectrum 
+- Google material design
+- bootstrap
+- foundation
+
+
+SEO #
+Understanding and using semantic markup helps ensure that we hit our target market with relevant content. Search engines assess the value of keywords by placing them in the HTML hierarchy. For example, keywords enclosed in an <h1> tag are given more importance than those enclosed in a <p> tag.
+
+Through putting the most important keywords higher in the list, we are telling search engines what our website is about and why people interested in those particular keywords should be looking at our content.
+
+
+Accessibility #
+Since semantic HTML uses elements for a defined intent, reading and interpreting it becomes better for both humans and computers.
+
+Making applications accessible provides equal access for people with disabilities while also helping people without disabilities 
+by empowering them to customize and tailor their experiences.
+
+Having a consistent hierarchy for the website allows other resources and software to deliver the content correctly.

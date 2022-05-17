@@ -1,0 +1,7 @@
+- Forcing client of method that is of no interest to them.
+- Split into multiple interface and implement those interface which is required.
+
+
+class x implements A,B{
+    
+}

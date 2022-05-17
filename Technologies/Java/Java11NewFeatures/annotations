@@ -1,0 +1,86 @@
+Benefits:
+---------
+- Verbose code reduced
+- Prevent null pointer
+- Remove duplication of java code
+- Add metadata to java declarations
+- Porvide custom details for java objects
+- Find bugs in compile time.
+
+
+TODO: Create annotations and models folder
+
+About annotations:
+------------------
+- Utilize ineterface features liek default values
+- Annotations contain only metadata and no business logic
+
+Annotation types:
+----------------
+1) Normal annotations
+----------------------
+Accept an optional list of parameters with the annotations
+@Version(major=1, minor=2, release=true)
+
+2) Marker annotation:
+--------------------
+- No arguments
+- Used to label types like @Deprecated, @Documented
+- It is possbile to ignore the brackets
+
+3) Single element annotation:
+-----------------------------
+- Only one argument
+- Array values are acccepted
+@Platform(name="x")
+@Languages({"Java","Kotlin"})
+
+
+Built in annotations:
+---------------------
+@Deprecated
+@SuppressWarnings("deprecation") -> This is used when method is deprecated but you won't to see a warning
+@SuppressWarnings("unused")
+
+
+# Create annotations:
+-------------------
+In annotation folder, create a version annotations:
+
+//Interface provides a contract of metadata  to be provided or generated. Metadata attached to type using reflection apis
+
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+@Repeatable(Versions.class)
+@Inherited  //This annotation will go to checild class as well.
+public @interface Version{
+    int value() default 1;
+    String author();
+    String[] environments default {'x','y'};
+}
+
+@Target({ElementType.CONSTRUCTOR, ElementType.METHOD})
+@Retention(RetentionPolicy.RUNTIME)
+public @interface Versions{
+    Version[] value();
+}
+
+On method annotate with:
+@Version(value=1)
+
+Targeting: Specify where an annotation can be used.They can be:
+- Field, method, Constructor, Types
+
+
+Retention:
+- Lifetime and visibility of annotations
+- By default, annotations are not accessible through reflection apis. This retention makes it available during runtime.xyz.getClass().getAnnotations();
+- Can be applied to any annotation
+- Values are : Class, Runtime, Source
+- Only Runtime can be used in runtime.
+
+
+Learn about lombok:
+------------------
+Checker framework
+

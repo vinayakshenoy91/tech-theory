@@ -2,12 +2,44 @@ Basic:
 ------
 <form method="post">
  <div>
-    <label>Email</label>
-    <input name="email"/>
+    <label for="firstName">Email</label>
+    <input id="firstName" type="text" name="email"/> 
  </div>
  <div>
     <label></label>
     <input name="passowrd" type="password"/>
-
+    <input type="submit" value="Submit">
  </div> 
 </form>
+
+Input types:
+------------
+type="email"
+type="tel"
+
+<textarea></textarea>
+
+
+Select:
+------
+<select name="favColor">
+   <option value="Red">xyz</option>
+</select>
+
+
+Radio:
+------
+<fieldset>
+<legend>What is your fav meal?</legend>
+<input type="radio" id="x" name="favMeal" value="meal1"><label for="x">Breakfast</label>
+<input type="radio" name="favMeal" value="meal2">
+<input type="radio" name="favMeal">
+</fieldset>
+
+
+Checkbox:
+----------
+<input type="checkbox">
+<input type="radio" id="x" name="favMeal" value="meal1"><label for="x">Breakfast</label>
+
+

@@ -13,7 +13,8 @@ There might be some cases, though, that require you to execute cross-origin AJAX
 Cross Origin Resource Sharing (CORS), a set of directives that allow you to execute cross-domain requests.
 
 The mechanics behind CORS are quite complex, and it wouldn’t be practical for us to go over the whole specification, so I am 
-going to focus on a stripped down version of CORS. All you need to know for now is that by using the Access-Control-Allow-Origin header, your application tells the browser that it’s ok to receive requests from other origins.
+going to focus on a stripped down version of CORS. All you need to know for now is that by using the Access-Control-Allow-Origin header, 
+your application tells the browser that it’s ok to receive requests from other origins.
 
 The most relaxed form of this header is Access-Control-Allow-Origin: *, which allows any origin to access our application, 
 but we can restrict it by simply adding the URL we want to whitelist with Access-Control-Allow-Origin: https://example.com.

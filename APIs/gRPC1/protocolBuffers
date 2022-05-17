@@ -1,0 +1,23 @@
+- IDL for API
+- language and platform neutral
+- Provides client libraries automatically
+- Optimised for interservice comms
+- Serialize/Deserialize structured data
+
+- Protofiles are converted to java class by plugin
+- Protofile location: src/main/proto
+- Install protocol buffer editor
+- filename.proto
+
+file content:
+-------------
+syntax="proto3";
+
+option java_multiple_files=true;
+option java_package="com.vinsguru.models";
+
+message Person{
+    string name=1;
+    int32 age=2;
+}
+

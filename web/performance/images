@@ -1,0 +1,3 @@
+- Reduce image sizes using tinyjpg or tinypng 
+- if you can get SVG, that's a wow.
+- Have smaller kb images for individual screen size. Fetch it from CDN

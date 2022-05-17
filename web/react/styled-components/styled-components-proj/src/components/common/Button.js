@@ -1,8 +1,8 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 const Button = styled.button`
   color: white;
-  background:#f8049c;
+background:${p => p.secondary ? 'black' : '#f8049c'};
   font-weight: bold;
   padding: 8px;
   border-radius:4px;
@@ -19,4 +19,4 @@ const Button = styled.button`
   }
 `;
 
-export default Button;
+export { Button };

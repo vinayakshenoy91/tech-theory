@@ -1,6 +1,0 @@
- “Program to an interface, not an implementation.”1
-
-•   “Favor object [aggregation] over class inheritance.”2
-
-“Consider what should be variable in your design. This approach is the opposite of focusing on the cause of redesign. Instead of considering what might force a change to a design, consider what you want to be able to change without redesign. The focus here is on encapsulating the concept that varies, a theme of many design patterns.”3
-

@@ -1,0 +1,14 @@
+Good systems should avoid the following:
+----------------------------------------
+Program Crash
+Hang
+Losing data
+Violating privacy
+Losing money
+
+
+pragmatic architect constantly thinks about the dynamics of change.
+--------------------------------------------------------------------
+“How can we do a deployment without rebooting the world?”
+“What metrics do we need to collect, and how will we analyze them?”
+“What part of the system needs improvement the most?”

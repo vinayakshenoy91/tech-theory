@@ -1,0 +1,12 @@
+API-led architecture should address things like:
+
+Securing APIs from unauthorized access and major security threats.
+Ensuring that consuming applications can always find the right API endpoint.
+Throttling and/or limiting the number of calls made to an API to ensure continuous availability.
+Supporting capabilities such as API design, testing, continuous integration, life cycle management, monitoring, and operations, to name a few.
+Error handling and preventing error propagation across the stack.
+Real-time monitoring of APIs with rich analytics and insight.
+An approach for implementing scalable and flexible business capabilities, for example, in support of microservices architectures.
+
+
+

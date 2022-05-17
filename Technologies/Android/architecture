@@ -1,0 +1,5 @@
+Principles:
+------------
+- One concern per component
+- Structured in layers of dependency
+- Implementation layers depends on abstract layers

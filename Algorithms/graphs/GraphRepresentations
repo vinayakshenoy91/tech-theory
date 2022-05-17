@@ -1,0 +1,22 @@
+1) Adjacency list representations:
+----------------------------------
+- Each node is assigned an array that stored the edges
+- Space efficient when dealing with sparse graph and inefficient with dense ones.
+- GOOD: iterating over all edges is efficient
+- BAD: edge weight lookup is slow O(E) because we have to find it in linear time.
+
+
+2) Adjacency matrix:
+---------------------
+- Create a V x V matrix, where the M[i][j] is the edge weight of edge going from i to j.
+- Undirected graph have symmetric adjacency matrix representations
+- Space efficient with dense graphs but requires O(VxV) memory
+- GOOD: edge weight lookup is O(1)
+- BAD: Iterating over all edges takes O(E^2)
+
+
+
+//Code for adjancecy matrix
+
+
+public static int[][] = {{1,0},{2,0}}

@@ -1,0 +1,10 @@
+// Imports
+const { range } = require('rxjs');
+const { count } =require('rxjs/operators'); 
+
+const numbers$ = range(1, 7);
+
+let pipedObservable = numbers$.pipe(count(i => i % 2 === 1));
+
+pipedObservable.subscribe(x => console.log(x));
+

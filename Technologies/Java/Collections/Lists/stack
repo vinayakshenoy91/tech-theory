@@ -1,0 +1,16 @@
+- Stack is an ADT and can be implemented using arrays or linked lists.
+- push, pop and peek
+- LIFO
+
+cons:
+----
+- Stacks implement Vectors an Stack are inherently synchronized.
+Sync is not always required and an use ArrayDeque.
+
+
+
+apps:
+------
+- DFS implemented using stacks
+- finding Eulerian cycles in a G(V,E) graph.
+- find strongly connected components in a graph

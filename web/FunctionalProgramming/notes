@@ -1,0 +1,13 @@
+Functions:
+----------
+- Total -> For every input there is a corresponding output.
+- Deterministic -> Same output for same input
+- No observable side-effect -> ti should only compute value and noother side effect
+
+
+Currying:
+---------
+const curry = f => z=> y=> f(x,y)
+
+const curriedAdd = curry(add)
+

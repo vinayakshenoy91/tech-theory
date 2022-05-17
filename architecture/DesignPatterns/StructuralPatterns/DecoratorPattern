@@ -1,0 +1,70 @@
+- We would like to add one or more behaviour dynamically. 
+- Decorator pattern can attach additional responsibilities to an object dynamically.
+- Decorators provide a flexible alternative to subclassing and for extending functionality.
+
+1) Interface
+
+public interface Beverage{
+     public int getCost();
+     public String getDescription();
+}
+
+2) Decorator class:
+
+public asbstract class BeverageDecorator implements Beverage{
+
+   protected Beverage beverage;
+
+   public BeverageDecorator(Beverage beverage){
+       this.beverage=beverage;
+   }
+ 
+   @Override
+   public int getCost(){
+      return this.beverage.getCost();
+   }
+
+   @Override
+    public String getDescription(){
+      return this.beverage.description();
+    }
+}
+
+3)  classes
+
+public class Milk extends BeverageDecorator{
+
+    public Milk(Beverage beverage){
+        super(beverage);
+    }
+
+     @Override
+   public int getCost(){
+      return this.beverage.getCost()*3;
+   }
+
+   @Override
+    public String getDescription(){
+      return this.beverage.description()+"Milk";
+    }
+
+
+}
+
+public class PlainBeverage extends Beverage{
+
+   @Override
+   public int getCost(){
+      return 3;
+   }
+
+   @Override
+    public String getDescription(){
+      return "Plain";
+    }
+}
+
+
+5) Main class
+
+   Beverage b = new Milk(new PlainBeverage());

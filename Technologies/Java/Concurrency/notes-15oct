@@ -1,0 +1,115 @@
+Why threads?
+- Responsiveness
+- Performance
+
+
+
+Concurrency:
+-------------
+- Two or more task  can run simultaneously. This is achieved using threads.
+- Single or multicore
+- Correctly and effeciently controlling access to shared resources
+
+Parallelism:
+------------
+- Tasks are going to run in parallel
+- Can only run in multicore
+- Using more resources to access the result faster
+- It involves, breaking tasks into subtask, execute subtask in sequence and join the results of the task.
+Whole process is called Fork/Join.
+
+Stopwatch:
+----------
+- stopWatch.start()
+- stpopWatch.stop()
+- stopWatch.getTime()
+- delay(1000)
+
+Threads:
+--------
+- Create a class which impl runnable
+- Thread x = new Thread(new ClassRunnable(id));
+
+x.start();
+x.join();
+
+Thread limitations:
+-------------------
+- Managing thread: Create , Start, join
+- Threads are expensive as they have their own runtime-stack, memory, registers and more.
+
+Thread pool
+- CPU intensive task-> Threadpool size = number of cores
+- IO task -> Threadpool size > number of cores
+- No thread managment 
+- Achieve Concurrency
+
+
+Executor service:
+----------------
+- Java5 onwards
+- Used for Task based Parallelism
+- It is an Async task execution engine.
+- Work queue is a blocking queue -> When task is placed here, you get a future.
+- Completion queue -> Tasks completed will be placed here -> and value is fetched via future reference
+
+private static ExecutorService executor=Executors.newFixedThreadPool(Runtime.getRunTime().availableProcessors());
+
+//It will take runnable or callable.
+Future<ProductInfo>result=executor.submit(()->ProductInfoService.getProduct(id))
+
+ProductInfo info=result.get(1, TimeUnit.SECONDS);
+
+
+Fork/Join framework:
+--------------------
+- Introduced as part of java7
+- This is an execution of ExecutorService.
+- It is designed to achieve Data Parallelism [Is a concept where a given Task is recursively split 
+in to SubTasks until it reaches it least possible size and execute those tasks in parallel]
+- Divide and conquer 
+
+How it works?
+- Has ForkJoin Pool
+- It has shared queue and each worder threads has its Double ended work queue(Deck). 
+- Fork join task is submitted to shared queue.
+- Work Stealing -> Other threads take others tasks.
+- ForkJoin Task represents part of the data and its computation
+  - Recursive task -> Task that returns a value
+  - Recursive action -> Task that does not return a value
+
+public class ForkJoinUsingRecursion extends RecursiveTask<List<String>>{
+
+
+   main(){
+       ForkJoinPool forkJoinPool = new ForkJoinPool();
+       List<String> result=forkJoinPool.invoke(new ForkJoinUsingRecursion(listdata));
+   }
+
+
+
+   @Override
+   protected List<String> compute(){
+
+       if(inputList.size()<=1){
+           List<String> resultList= new ArrayList<>();
+           inputList.forEach(name->resultList.add(transformFun(name)));
+           return resultList;
+       }
+
+       int midpoint = inputlist.size()/2;
+       ForkJoinTask<List<String>> leftInputList=new ForkJoinUsingRecursion(inputList.subList(0,midpoint)).fork();
+       inputList = inputList.subList(midpoint,inputList.size());
+       List<String> rightResult = compute();
+      List<String> leftResult = leftInputList.join();
+      leftResult.addAll(rightResult);
+      return leftResult;
+
+
+   }
+
+
+}
+
+
+---------------------

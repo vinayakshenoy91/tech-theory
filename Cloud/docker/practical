@@ -1,0 +1,53 @@
+
+
+- Linux can run docker engine 
+- Windows and mac use hypervisor
+
+Dockerfile -> all comamnds that the user could call on command line to assemble an image.
+
+Dockerfile:
+------------
+FROM node:alpine
+LABEL author="Dan Wahlin"
+ENV NODE_ENV=production
+ENV PORT=3000
+WORKDIR /var/www
+COPY . .                     -> This is the working dir COPY x y ./ -> If there are multiple files 
+RUN npm install
+EXPOSE $PORT                    //Or hardcode it
+ENTRYPOINT ["node","server.js"]
+
+Note -> IF you copy file by files, then it will update layer by layer and update only changed layer.
+
+
+.dockerignore  //Create this file.
+---------------
+
+node_modules
+
+
+docker build -t <name>  -f <dockerFileCustomName> . //t for tag
+docker build -t registry/imagename:tag .
+docker push username/imagename:tag
+docker pull username/imagename:tag
+
+//Do a docker login first
+
+
+docker run -p 8080:80 --name xyz -d nginx:alpine
+
+docker run -p ports -v /var/www/logs imageToRun
+docker run -p ports -v $(pwd):/var/www/logs imageToRun
+
+Container comms:
+----------------
+- Done by creating a bridge network
+
+docker network create --driver bridge isolated_network
+docket network ls
+docker network rm [network]
+
+
+When you run a container in a networm use:
+
+docker run -d --net=isolated_network --name=xyz_db <image name>

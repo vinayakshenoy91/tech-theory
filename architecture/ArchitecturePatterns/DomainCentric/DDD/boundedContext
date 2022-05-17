@@ -1,0 +1,25 @@
+- Contextual boundary where within the boundary each component of s/w model 
+has specific meaning and does specific things.
+
+- This is in solution space. How will you technically break it down.
+
+- Define a strong boundary around each of the model.
+They may not be same shape and size as subdomain.
+
+- Ensure model's concept do not leak into other models where they do not make sense.
+
+- Even if you hae a same entity called client in both models. Separate them out.
+Give Separate codebase and database schema
+
+- Although there will be technology scattered throughout your architecture, the domain model should be free of technology. 
+For one thing, that’s why transactions are managed by the application services and not by the domain model.
+
+- A service Bounded Context that sports a REST interface should provide an Open Host Service and a Published Language. 
+- Resources deserve to be defined as a Published Language, and combined with your REST URIs they will form a natural 
+Open Host Service.
+
+- The concepts in bounded contexts are aggregates or value objects.
+
+
+
+

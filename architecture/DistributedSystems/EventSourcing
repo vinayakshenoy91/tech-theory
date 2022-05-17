@@ -1,0 +1,8 @@
+- Changes made to entity are stored as sequence of iimmutable events to an event store as opposed 
+to storing just the current state.
+- keep an audit trail
+- State of any object can be recreated by replaying the event store.
+
+- removes the need to map relational tables to objects.
+- Event store used to restore read DB
+- Event store can feed data into multiple read databases

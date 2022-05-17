@@ -1,0 +1,7 @@
+- shortest path algo
+- arbitrage opportunities on FOREX can be detected with the help of Bellman-Ford algo(detecting negative cycles)
+- Shortest path algo used in photoediting
+- Open Shortest Path Fist(OSPF) -> routing protocol for computer networks that helps to navigate packages on web
+- Crawling: BFS -> Google spider crawls the web and keeps indexing the webpages(page rank calculation)
+- Maven or gradle -> Order of compilation is important. This problem can be reduced to the problems of cycles in graph 
+and DAGs

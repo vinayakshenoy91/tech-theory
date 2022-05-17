@@ -1,0 +1,8 @@
+- Low level modules must be injected to high level modules.
+- High level modules should not depend on low-level modules.Both should depend on abstraction.
+- Abstraction should not depend on details. Details should depend on abstractions.
+
+- We should create an abstraction (interface) of Auth service required by HealthService
+and make HealthService dependent on this abstraction.
+
+- Create abstractions of services offered by low level modules.

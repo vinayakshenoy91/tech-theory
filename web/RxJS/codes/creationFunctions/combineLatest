@@ -1,0 +1,13 @@
+- Same as fork join but emits value more often but requires atleast one value from each source to start emitting
+- Keep emitting array values as and when it gets updated.
+- If oe of them errors, the result will be an error and subscription will be closed.
+An Observable created using the `forkJoin` function needs all source Observables to complete before emitting something. 
+Also, combineLatest needs at least one value from each source before it emits something. This does not wait for completion and keeps 
+providing value.
+
+
+
+Syntax:
+-------
+combineLatest([observable1, observable2])
+

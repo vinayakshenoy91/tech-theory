@@ -1,0 +1,12 @@
+Variable categories:
+--------------------
+1) Instance Variable
+2) Class Variable : static int x = 0; Add final to it to mark it constant
+3) Local variables
+4) Parameters: Variables declared in signature
+
+Variables:
+----------
+- Must start with  letter or $ or _
+
+

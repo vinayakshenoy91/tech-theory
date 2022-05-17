@@ -1,0 +1,4 @@
+1) Tree:
+--------
+- Tree is an undirected graph where any two vertics are connected by exactly one path
+- Forest is an undirected grpah all of whose connected components are trees (disjoint union of trees)

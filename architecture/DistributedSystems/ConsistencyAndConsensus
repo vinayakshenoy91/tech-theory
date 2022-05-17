@@ -1,0 +1,43 @@
+Linearlizability -> Is to make a system appear as if there were only one copy of the data and all operations are atomic.
+( Also called, atomic consistency, string consistency, immediate consistency, external consistency)
+
+
+Serializability
+Serializability is an isolation property of transactions, where every transaction may read and write multiple objects (rows, documents, records)—see “Single-Object and Multi-Object Operations”. It guarantees that transactions behave the same as if they had executed in some serial order (each transaction running to completion before the next transaction starts). It is okay for that serial order to be different from the order in which transactions were actually run [12].
+
+Linearizability
+Linearizability is a recency guarantee on reads and writes of a register (an individual object). It doesn’t group operations together into transactions, so it does not prevent problems such as write skew (see “Write Skew and Phantoms”), unless you take additional measures such as materializing conflicts (see “Materializing conflicts”).
+
+
+
+Locking and leader election:
+
+Coordination services like Apache ZooKeeper [15] and etcd [16] are often used to implement distributed locks and leader election
+
+They use consensus algorithms to implement linearizable operations in a fault-tolerant way (we discuss such algorithms later in this 
+chapter, in “Fault-Tolerant Consensus”).iii There are still many subtle details to implementing locks and leader election correctly 
+(see for example the fencing issue in “The leader and the lock”), 
+and libraries like Apache Curator [17] help by providing higher-level recipes on top of ZooKeeper. 
+
+
+replication methods and compare whether they can be made linearizable:
+
+
+Single-leader replication (potentially linearizable)
+In a system with single-leader replication (see “Leaders and Followers”), the leader has the primary copy of the data that is used for writes, and the followers maintain backup copies of the data on other nodes. If you make reads from the leader, or from synchronously updated followers, they have the potential to be linearizable.iv However, not every single-leader database is actually linearizable, either by design (e.g., because it uses snapshot isolation) or due to concurrency bugs [10].
+
+Using the leader for reads relies on the assumption that you know for sure who the leader is. As discussed in “The Truth Is Defined by the Majority”, it is quite possible for a node to think that it is the leader, when in fact it is not—and if the delusional leader continues to serve requests, it is likely to violate linearizability [20]. With asynchronous replication, failover may even lose committed writes (see “Handling Node Outages”), which violates both durability and linearizability.
+
+
+Consensus algorithms (linearizable)
+Some consensus algorithms, which we will discuss later in this chapter, bear a resemblance to single-leader replication. However, consensus protocols contain measures to prevent split brain and stale replicas. Thanks to these details, consensus algorithms can implement linearizable storage safely. This is how ZooKeeper [21] and etcd [22] work, for example.
+
+Multi-leader replication (not linearizable)
+Systems with multi-leader replication are generally not linearizable, because they concurrently process writes on multiple nodes and asynchronously replicate them to other nodes. For this reason, they can produce conflicting writes that require resolution (see “Handling Write Conflicts”). Such conflicts are an artifact of the lack of a single copy of the data.
+
+Leaderless replication (probably not linearizable)
+For systems with leaderless replication (Dynamo-style; see “Leaderless Replication”), people sometimes claim that you can obtain “strong consistency” by requiring quorum reads and writes (w + r > n). Depending on the exact configuration of the quorums, and depending on how you define strong consistency, this is not quite true.
+
+“Last write wins” conflict resolution methods based on time-of-day clocks (e.g., in Cassandra; see “Relying on Synchronized Clocks”) are almost certainly nonlinearizable, because clock timestamps cannot be guaranteed to be consistent with actual event ordering due to clock skew. Sloppy quorums (“Sloppy Quorums and Hinted Handoff”) also ruin any chance of linearizability. Even with strict quorums, nonlinearizable behavior is possible, as demonstrated in the next section.
+
+

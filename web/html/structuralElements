@@ -1,0 +1,20 @@
+<header>
+<footer>
+<article>
+<aside> -> Something that is related to the article but is not part of the article body.
+<section> -> can be nested
+
+
+<nav>
+  <ul>
+     <li><a href="index.html">xyz</a></li>
+  </ul>
+</nav>
+
+
+<div class="x"></div>
+<span></span> -> style and element in certain way
+
+Comments:
+----------
+<!-- -->

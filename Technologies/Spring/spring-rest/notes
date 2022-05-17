@@ -1,0 +1,154 @@
+Using sub-dmonain:
+
+http://api.domain.com
+http://dev.domain.com 
+
+
+http://localhost:8080/computeresult?pollId=1234 -> Compute result for a poll id. Query param to provide additional info to resource.
+
+mvn spring-boot:run -Dserver.port=8181
+
+
+//Options
+package com.apress.domain;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+@Entity
+public class Option {
+    @Id
+    @GeneratedValue
+    @Column(name="OPTION_ID")
+    private Long id;
+    @Column(name="OPTION_VALUE")
+    private String value;
+    // Getters and Setters omitted for brevity
+}
+
+
+//class
+ The @OneToMany annotation, as the name suggests, indicates that a Poll instance can contain zero or more Option instances. The CascadeType.All indicates that any database operations such as persist, remove, or merge on a Poll instance needs to be propagated to all related Option instances. For example, when a Poll instance gets deleted, all of the related Option instances will be deleted from the database.
+package com.apress.domain;
+import java.util.Set;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy ;
+@Entity
+public class Poll {
+        @Id
+        @GeneratedValue
+        @Column(name="POLL_ID")
+        private Long id;
+        @Column(name="QUESTION")
+        private String question;
+        @OneToMany(cascade=CascadeType.ALL)
+        @JoinColumn(name="POLL_ID")
+        @OrderBy
+        private Set<Option> options;
+        // Getters and Setters omitted for brevity
+}
+
+//Votes
+package com.apress.domain;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+@Entity
+public class Vote {
+        @Id
+        @GeneratedValue
+        @Column(name="VOTE_ID")
+        private Long id;
+        @ManyToOne
+        @JoinColumn(name="OPTION_ID")
+        private Option option;
+        // Getters and Setters omitted for brevity
+}
+
+
+Repositories, or data access objects (DAO), provide an abstraction for interacting with datastores. 
+
+public interface PollRepository extends CrudRepository<Poll, Long> {
+}
+
+
+
+HSQL DB:
+
+<dependency>
+    <groupId>org.hsqldb</groupId>
+    <artifactId>hsqldb</artifactId>
+    <scope>runtime</scope>
+</dependency>
+
+
+@GetMapping("/polls")
+public ResponseEntity<Iterable<Poll>> getAllPolls() {
+        Iterable<Poll> allPolls = pollRepository.findAll();
+        return new ResponseEntity<>(pollRepository.findAll(), HttpStatus.OK);
+}
+
+@PostMapping("/polls")
+public ResponseEntity<?> createPoll(@RequestBody Poll poll) {
+        poll = pollRepository.save(poll);
+        return new ResponseEntity<>(null, HttpStatus.CREATED);
+}
+
+
+Creating a new URI:
+
+Although this implementation fulfills the request, the client has no way of knowing the URI of the newly created Poll. For example, if the client wants to share the newly created Poll to a social networking site, the current implementation will not suffice. A best practice is to convey the URI to the newly created resource using the Location HTTP header. Building the URI would require us to inspect the HttpServletRequest object to obtain information such as Root URI and context. Spring makes the URI generation process easy via its ServletUriComponentsBuilder utility class:
+URI newPollUri = ServletUriComponentsBuilder
+                        .fromCurrentRequest()
+                        .path("/{id}")
+                        .buildAndExpand(poll.getId())
+                        .toUri();
+The fromCurrentRequest method prepares the builder by copying information such as host, schema, port, and so on from the HttpServletRequest. The path method appends the passed-in path parameter to the existing path in the builder. In the case of the createPoll method, this would result in http://localhost:8080/polls/{id}. The buildAndExpand method would build a UriComponents instance and replace any path variables ({id} in our case) with passed-in value. Finally, we invoke the toUri method on the UriComponents class to generate the final URI. The complete implementation of the createPoll method is shown in Listing 4-18.
+@PostMapping("/polls")
+public ResponseEntity<?> createPoll(@RequestBody Poll poll) {
+        poll = pollRepository.save(poll);
+        // Set the location header for the newly created resource
+        HttpHeaders responseHeaders = new HttpHeaders();
+        URI newPollUri = ServletUriComponentsBuilder
+                                .fromCurrentRequest()
+                                .path("/{id}")
+                                .buildAndExpand(poll.getId())
+                                .toUri();
+        responseHeaders.setLocation(newPollUri);
+        return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
+
+
+@PutMapping("/polls/{pollId}")
+public ResponseEntity<?> updatePoll(@RequestBody Poll poll, @PathVariable Long pollId) {
+        // Save the entity
+        Poll newPoll = pollRepository.save(poll);
+        return new ResponseEntity<>(HttpStatus.OK);
+}
+@DeleteMapping("/polls/{pollId}")
+public ResponseEntity<?> deletePoll(@PathVariable Long pollId) {
+        pollRepository.deleteById(pollId);
+        return new ResponseEntity<>(HttpStatus.OK);
+}
+
+@RestController
+public class VoteController {
+        @Inject
+        private VoteRepository voteRepository;
+        @PostMapping("/polls/{pollId}/votes")
+public ResponseEntity<?> createVote(@PathVariable Long pollId, @RequestBody Vote vote) {
+                vote = voteRepository.save(vote);
+                // Set the headers for the newly created resource
+                HttpHeaders responseHeaders = new HttpHeaders();
+responseHeaders.setLocation(ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(vote.getId()).toUri());
+                return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
+        }
+}

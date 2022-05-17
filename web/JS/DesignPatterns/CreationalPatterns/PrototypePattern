@@ -1,0 +1,41 @@
+- Prototype is a partially or fully initialized object that you copy(clone) and make use of.
+- We make a copy(clone) the prototype and customize it.
+- https://tesco.udemy.com/course/design-patterns-javascript/learn/quiz/4632000#notes
+
+
+Approach 1:
+------------
+
+class Address {
+   
+   constructor(streetName){
+       this.streetName=streetName;
+   }
+
+   deepCopy(){
+       return new Address(this.streetName);
+   }
+
+   toString(){
+
+   }
+
+}
+
+class Person{
+   constructor(name, address){
+       this.name=name;
+       this.address=address;
+   }
+
+   deepCopy(){
+       return new Person(this.name, this.address.deepCopy())
+   }
+
+}
+
+let john = new Person(x,{streetName:'x'})
+
+let jane = john.deepCopy();
+jane.name=
+jane.address.streetName='x'

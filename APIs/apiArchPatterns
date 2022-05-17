@@ -1,0 +1,106 @@
+Pattern types:
+--------------
+1)Mediation:
+--------------
+a) API resource routing:  Responsibility on api gateway 
+THrottling and rate limitng can be put aside routing policy.
+
+b) API content based routing:  Route calls based on headers/message body
+This pattern can apply to any API architectural style, though it can be very useful in GraphQL and gRPC, given that both make use of a single 
+HTTP endpoint and routing must be done based on the consent of a message (either HTTP headers or the message body).
+
+c) API microgateway:
+
+A better solution would be for the ingress load balancer to also act as an API gateway. This is referred to as an API microgateway. This not only means that the API gateway itself would fit more natively into an independent runtime's architecture, but that it too could directly leverage other runtime capabilities, such as a service mesh (see the previous chapter for an explanation of this capability). Furthermore, it would simplify the solution as there would be one instead of two layers to troubleshoot and maintain.
+
+
+d) Sidecar api gateway:
+Implements an API gateway as a container attached to a service in an independent runtime, such as Kubernetes.
+
+Instead of implementing an API microgateway as a replacement for an ingress load balancer, let the latter act as an API load balancer and resource router, and adopt a sidecar pattern for the API gateway capability.
+
+The sidecar pattern is described by Microsoft in the following article:
+https://docs.microsoft.com/en-us/azure/architecture/patterns/sidecar
+The benefits of adopting this pattern are that each service runtime can configure the API gateway in the best way. Furthermore, if required, the technology and/or vendor used to implement the API gateway can vary from service to service.
+
+e) API georouting:
+
+Routes API calls to the nearest API gateway based on where they originate.
+
+2) Interaction & implementation:
+---------------------------------
+
+a) payload pagination: Limits and offset impl
+
+b) CRUD api service: Service porxied by api gateway that impl crud operations against a single DB
+
+c) CQRS:https://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf
+ https://microservices.io/patterns/data/event-sourcing.html
+ CQRS is combined with event sourcing
+
+ It's also important to highlight that sourcing commands (messages that instruct an action to take place) 
+ and events (messages that reflect a change of state, for example, that an action has taken place) means that 
+ the read storage won't be immediately updated as part of the transaction (for example, as in the CRUD service). 
+ Such a delay in storage reflecting the latest state of a resource is referred to as eventual consistency, 
+ and its implications should be factored into the overall system design.
+
+
+d) Api aggregator:
+he aggregator must accept as input all information required so it can construct and make all subsequent calls.
+The aggregator must understand all data structures from all APIs that it interacts with.
+The aggregator must be able to transform the response payloads so they can be sent back to the caller as a uniform payload tailored for the consumer.
+The aggregator should be stateless and fully decoupled so it is also suitable for addressing high-volume requirements.
+An API gateway acting as a service proxy must implement common policies (for example, authorization, throttling, and rate limiting).
+
+
+e) API orchestratorr:
+Implements a process flow as a series of activities all executed and coordinated by a single process runtime.
+
+
+f) Webhook
+
+
+
+3) Security:
+------------
+
+
+a) API firewall
+
+Security
+
+Implements a web application firewall (WAF) as the first line of defense before calls even reach the API gateway.
+
+b) API basic authentication
+
+Security
+
+Implements HTTP basic authentication as a policy in the API gateway.
+
+https://dzone.com/articles/internal-or-insider-threats-are-far-more-dangerous
+
+If the consuming application runs in a web browser, then the credentials are cached at minimum temporarily during the authentication window, thus exposing the user to Cross-Site Request Forgery (CSRF).
+More on CSRF can be found at the following link:
+https://www.owasp.org/index.php/Cross-Site_Request_Forgery_(CSRF)
+
+
+
+c) API bearer of token
+
+Security
+
+Implements an authorization flow based on OAuth 2.0 and using tokens in JWT format
+
+
+
+d) API bearer of obscure token
+
+Security
+
+Similar to the API bearer of token but with an additional step to obscure and de-obscure tokens.
+
+
+
+This pattern has similar requirements to the bearer of token, with the difference being that in this case, a consuming application can't ever be trusted and thus will never be exposed to the user credentials or any details of the user that may be available in the token.
+
+

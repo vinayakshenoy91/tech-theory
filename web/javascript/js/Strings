@@ -1,0 +1,32 @@
+There are many methods that we can use against strings:
+
+1) indexOf():
+str.indexOf("short")
+
+2) slice():
+str.slice(0, 5)
+
+3)toUpperCase() or toLowerCase()
+str.toUpperCase()
+
+
+ES6 introduced 4 new string methods:
+
+startsWith() //Return boolean
+endsWith()//Return boolean      
+includes()
+repeat()
+
+code.startsWith("DEF",3)//it will begin checking after 3 characters
+code.endsWith("EF", 6)//6 means that we consider only the first 6 values ABCDEF, and yes this string ends with EF therefore we get *true*
+
+hello.repeat(10) //Number of times sto repeat string.
+
+
+String trim function:
+---------------------
+String.prototype.trimStart() / .trimEnd() #
+String.prototype.trimStart() removes white space from the beginning of a string while String.prototype.trimEnd() removes them from the end.
+
+We can also use .trimLeft() as an alias of .trimStart() and .trimRight() as an alias of .trimEnd().s
+

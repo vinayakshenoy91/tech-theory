@@ -16,3 +16,9 @@ binlog coordinates.
 
 3) When the follower has processed the backlog of data changes since the snapshot, we say it has caught up. 
 It can now continue to process data changes from the leader as they happen.
+
+
+Why DB replication?
+- Availaibility
+- Scalability
+- Latency

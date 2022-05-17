@@ -1,0 +1,10 @@
+Remote Procedure Call (RPC)
+Remote Procedure Calls (RPC) are definitely not a new concept. RPC involves executing code or a function of another process. It is an API, but unlike a REST API it generally exposes the underlying system or function internals. With RPC the model tends to convey the exact functionality at a method level that is required from a secondary service.
+
+RPC is different from REST as REST focuses on building a model of the domain and extending an abstraction to the consumer. REST hides the system details from the user, RPC exposes it. RPC involves exposing a method from one process and allows it to be called directly from another.
+
+gRPC is a modern open source high performance Remote Procedure Call (RPC). gRPC is under stewardship of the Linux Foundation and is the defacto standard for RPC across most platforms. Figure 2-2 describes an RPC call in gRPC, which involves the Schedule Service invoking the remote method on the Attendees Service. THe gRPC Attendees Service creates a server, allowing methods to be invoked remotely. On the client side, the Schedule Service, a stub is used to abstract the complexity of making the remote call into the library.
+
+rpc diagram
+Figure 2-2. Example Attendees with RPC using gRPC
+Another key difference between REST and RPC is state, REST is by definition stateless - with RPC state depends on the implementation. The authors have seen huge systems built around SOAP, which was the XML-RPC successor of the noughties! Many systems have been built around content based routing of messages to specific services with the right cached state to handle the request. In state based RPC systems the developer must have a detailed understanding of each exchange and expected behavior. In order to scale, systems start to leak business logic into routing, which if not carefully managed can lead to increased complexity.

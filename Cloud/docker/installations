@@ -1,0 +1,23 @@
+Centos: [Doc avaialble on docker doc]
+------- 
+1) Install docker engine on VM or make it part of VM images using packer.
+Sudo rpm -qa | grep -i docker -> Check docker installation
+Systemctl status docker
+Sudo systemctl start docker
+Sudo systemctl enable docker
+systemctl reload docker
+Systemctl  status docker
+
+
+tail -30 /var/log/messages
+
+
+Ubuntu: [Document present in docker hub]
+------
+sudo cat /etc/lsb-release
+sudo dpkg -l | grep -i docker -> Verify using native commands
+Systemctl  status docker
+
+
+
+- Install docker desktop

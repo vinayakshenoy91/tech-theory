@@ -1,0 +1,73 @@
+- The Spring Framework uses Project Reactor as the base implementation of its reactive support
+- Spring WebFlux, which supports the development of reactive, that is, non-blocking, HTTP clients and services.
+
+- Spring WebFlux also provides a fully reactive HTTP client, WebClient, as a complement to the existing RestTemplate client.
+
+- Spring WebFlux supports running on a servlet container based on the Servlet specification v3.1 or higher, such as Apache Tomcat, 
+but also supports reactive non-Servlet-based embedded web servers such as Netty (https://netty.io/).
+
+- The Servlet specification is a specification in the Java EE platform that standardizes how to develop Java applications that 
+communicate using web protocols such as HTTP.
+
+- Spring WebFlux uses Netty by default,
+
+
+
+Code to be added:
+----------------
+- implementation('org.springframework.boot:spring-boot-starter-webflux')
+
+//Injecting tomcat:
+
+implementation('org.springframework.boot:spring-boot-starter-webflux') 
+{
+ exclude group: 'org.springframework.boot', module: 'spring-boot-
+ starter-reactor-netty'
+}
+implementation('org.springframework.boot:spring-boot-starter-tomcat')
+
+- Change port number in app.yml
+server.port: 7001
+
+
+ReactiveCrudRepository, which enables reactive repositories. The methods in this interface do not return objects 
+or collections of objects; instead, they return Mono and Flux objects.
+
+import org.springframework.data.repository.reactive.ReactiveCrudRepository;
+import reactor.core.publisher.Flux;
+
+public interface RecommendationRepository extends ReactiveCrudRepository<RecommendationEntity, String> {
+    Flux<RecommendationEntity> findByProductId(int productId);
+}
+
+
+------------------
+
+With Spring WebFlux comes a test client, WebTestClient, 
+that provides a fluent API for making a request and then applying assertions on its result.
+
+
+@MockBean
+private ProductCompositeIntegration compositeIntegration;
+
+@Autowired
+private WebTestClient client;
+
+@Test
+void getProductById() {
+  client.get()
+    .uri("/product-composite/" + PRODUCT_ID_OK)
+    .accept(APPLICATION_JSON_UTF8)
+    .exchange()
+    .expectStatus().isOk()
+    .expectHeader().contentType(APPLICATION_JSON_UTF8)
+    .expectBody()
+    .jsonPath("$.productId").isEqualTo(PRODUCT_ID_OK)
+    .jsonPath("$.recommendations.length()").isEqualTo(1)
+    .jsonPath("$.reviews.length()").isEqualTo(1);
+}
+
+
+
+
+

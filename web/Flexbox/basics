@@ -1,0 +1,36 @@
+Responsive design characteristics:
+----------------------------------
+- Media queries
+- Images that resize
+- Flexible grid based layout
+
+Floats:
+-------
+- Features rows and cells
+- Rows clear the floats on cells
+
+Flexbox:
+--------
+- The first layout elements
+- Features flex-containers (row) and flex-items(cells). Both are required to work.
+- Excels in vertical centering and horizontal centering and equal heights
+- Very easy to reorder boxes
+- Browser support and syntax is challenging
+- Works in 1D only
+
+Commands:
+--------
+display:flex //By default this will be stack across rows. By default:  flex-direction:row;flex-wrap:nowrap;
+flex-direction:row|column|row-reverse|column-reverse;
+flex-wrap:wrap|wrap-reverse|nowrap|row wrap; //The content will occupy the full width, extra cells will break down to next line.
+justify-content: flex-end|center|space-between|space-around|space-evenly    //Dont want to see space at end.
+
+//Flex items
+align-items:flex-start|flex-end|center|stretch; //Preserves the height, but shrinks the height space.
+order:2;
+flex-basis:25%; //Dont use width property on flex items. It is sort of width for flex items
+flex: 0 1 25%; //flex: grow shrink flex-basis; Default: 0 1 auto;
+
+
+
+

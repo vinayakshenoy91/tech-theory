@@ -1,0 +1,196 @@
+=> Modifiers:
+-----------
+
+abstract:
+----------
+For class:
+- Incomplete class
+- It is to be extended by subclass and abstract methods to be implemented by subclass.
+- You cannot instantiate abstract class.
+
+For interface:
+- Redundant but not a compiler
+
+For enum:
+- not allowed
+
+static:
+-------
+For class:
+- Not valid for top level class
+
+For interface:
+- Not valid for a top-level interface
+- Redundant for inner interface but not a compiler error
+
+For enum:
+- Not valid for a top-level interface
+- Redundant for nested enums but not a compiler error
+
+final:
+-----
+For class:
+- Opposite of abstract modifier. It is complete.
+- Its definition is complete and subclasses are not only necessary but undesired.
+
+For interface:
+- Not valid for any interface.
+
+For enum:
+- Not valid for any enum
+
+strictfp
+--------
+For class:
+- This modifier makes any expression using float and double variables defined in the class
+or any subtypes of the class FP-strict.
+
+For interface:
+- Applicable for any interface
+
+For enum:
+- Applicable for any enum
+
+
+
+Valid:
+-----
+strictfp final public class Test{}
+final class Test{}
+abstract public class Test{}
+
+Invalid:
+-------
+private final class Test{}
+protected abstract class Test{}
+final abstract class Test{}
+static final class Test{}
+final public final class Test{}
+
+final:
+------
+- final class cannot be extended. This is also equal to making a  constructor private.
+final class x {}
+
+- final method in non-final class cannot be overriden
+public final void something(){}
+
+- Overriden method can be modified with final modifier and still considered a valid override.
+
+Usecases:
+1) Create immutable class to create immutable objects.
+2) Prevent extensibility
+3) Impl singleton design pattern 
+
+
+abstract:
+---------
+- abstract class must be subclassed.It is Incomplete in its current form and cannot be instantiated.
+
+
+Nested  classes:
+---------------
+1) static nested class
+- Used when you want to embed static fields and behaviour in a nested fashion, where using the static members
+via hierarchical structure is logical.
+
+
+2) non-static nested class called inner class
+
+3 types of inner class:
+1) inner member class
+2) local (inner) class is defined with a block of code, usually body of a method, and is not a member of enclosing class.
+3) anonymous class - special type of local inner class that is declared and instantiated in a single statement.
+
+
+static inner class =>===>
+
+public static class NestedStaticClass{
+
+   public static string name="Hello";
+   public Strign name2="Hello";
+
+   public static String x(){}
+   public void y(){}
+
+}
+
+Note: You cannot reference instance memebers of the enclosing class in any members of the static nested class
+Same reason why you cannot use instance members in static initializers and static methods.
+Static nested class only exists as a class member.
+Static nested classes is used in static context.
+Static modifier can be used in a nested class using the class name either with a simple reference or the hierarchical reference.
+Static memeber in nested class can be accessed from static or non-static methods.
+Static nested classes can be instantiated and non-static attributes and methods can be accessed or invoked through 
+an instance of the static nested class.
+
+non-static nested class called inner class=>===>
+
+e.new Innerclas();
+
+- Inner member class cannot exist without an instance of enclosing class existing first.
+Note: We cannot have a static field in innerclass(that is non-static).This is incl enums and interfaces.
+We need to make it static final.
+You can use outer members in iiner class[ Exx: EnclosingClass.this.outerName]
+- Inner class is a class member and you can declare instance variables of its type.
+Use this class when the member is dependent on the enclosing class  and more complex.
+
+
+
+
+Local  class:
+------------
+A local class is not a member of an enclosing class but is declared in a block of code 
+and is typically part of a method body.
+
+Local class does has access to variables of enclosing class incl the private ones.
+
+Local class cannot have static members even enum and interface.
+
+If you want to access a local member which is also present in enclosing class and if you want to refer
+that, then use: LocalClass.this.lastName;
+
+
+Usecase: Its a disposable and convenient mechanism for the storage of multiple variables packged with some desired
+behaviours for the variables.
+- Local class is defined in a method body and is generally a way to maintain both state and behaviour on a set of data
+for a short amount of time and that is specific only for that particular functionality,
+
+
+
+Anonymous class:
+------------------
+- It is dependent on an interface to implement  or class to extend either of which must contain
+the accessible methods which anonymus class will implement and execute.
+
+You cannot declare static fields in anonymous classes, constructors,
+static fields, static initializers, static methods or member interfaces.
+
+- Anonymous class can extend any class,relies on an interface or an abstract class.
+
+Ex:
+
+Object b = new Object(){
+    public String toString(){
+        return "test";
+    }
+}
+
+- The method that the anonymous class will implement or override does not need to be public on the declared type.
+
+
+
+public void testAnonymous(){
+    AnAbstractClass  a = new AnAbstractClass(you can pass an optional constructor args){
+        public void doSomething(){
+            System.out.println("Hello");
+        }
+    }
+
+    a.doSomething();
+}
+
+
+public static void main(String[] args){
+    new AnonymousInnerExample().testAnonymous();
+}

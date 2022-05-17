@@ -1,0 +1,98 @@
+Architecture framework:
+-----------------------
+1. TOGAF
+2. Zachman framework
+3. Gartner
+4. Federal enterprise arch framework
+
+C4 -> It is a solution arch modelling technique to illustrate software arch within one single diagram
+
+Solution arch fundamentals:
+--------------------------
+Duties:
+------
+- Sprint zero arch
+- Detailed doc
+- contribute to best practises
+
+
+Process:
+--------
+1) Understand hihg level business reqt
+    
+2) Create IT arch vision :  The purpose of creating a IT Architecture Vision, 
+is to provide business with enough information and solution options that will meet their high level requirements.
+
+3) Understand detailed business requirement
+4) Develop soln arch
+5) Review soln arch
+6) Govern solution delivery process and monitor
+
+
+Agile arch framework:
+----------------------
+1) SAFe-Scaled Agile Framework
+2) TOGAF The Open Group Agile Arch Framework Standards (O-AAF Standard)
+
+Outcome artifacts:
+------------------
+1) Sprint Zero Document
+2) Soln arch diagram
+The logical solution architecture describe your business stakeholders, which users are impacted, 
+the organization and/or business capability impacted, 
+the applications and its components, and the data and the data flows between the system components.
+
+Sprint zero architecture or IT arch vision:
+-------------------------------------------
+1) Problem statement:
+- Concerns of business
+- Key stakeholders
+- Business capability or value streams impacted.
+
+2) Business Vision statement:
+- Agree to desired outcome of the architecture.
+
+3) Change drivers and opportunities:
+- Vision of the target arch
+- Decision made
+- Potential opportunities
+
+4) Business capability impact
+- capability model
+- show capability impact
+- What cpabilities are impacted? New or is this something changed.
+
+5) Business and tech objectives
+- Migrate, replace, decomission
+
+6) Arch vision
+- Principles, assumptions and constraints.
+- Arch principles applied
+- As is conceptual arch
+- To be conceptual arch
+
+7) High level NFR:
+- constraints and restrictions
+- Perf
+- availaiblity
+- Volumes
+- User interactions
+- Business continuity
+- Security
+- Ops and monitoring
+- Networking
+- User interface requirement
+- Arch requirement
+
+8) Proposed solution options
+- high level options
+- buy vs build
+- tech options
+- arch guidence and Standards
+
+9) Timelines and costing
+- Rough estimate
+- Feasibility
+- Budget
+- Timelines
+- Tech and licence

@@ -1,0 +1,129 @@
+Ensure a class only has one instance, and provide a global point of access to it.
+
+Classes are instantiated only once.
+- registries
+- caches
+- pools
+- logging
+- global preferences or settings
+
+- Enums used to create singleton
+
+
+class Connection
+{   private static URL server;
+    public static pointAt( URL server ){ this.server = server; }
+
+    private Connection()
+    {   //...
+        establishConnectionTo( server );
+        //...
+    }
+
+    private static Connection instance;
+    public synchronized static Connection instance()
+    {   if( instance == null )
+            instance = new Connection();
+        return connection();
+    }
+}
+
+
+
+Listing 2-4. Double-Checked Locking -> Dont use
+
+1  class DoubleChecked
+2  {   private static volatile DoubleChecked instance = null;
+3      private static Object lock = new Object();
+4
+5      public static DoubleChecked instance()
+6      {   if( instance == null )
+7              synchronized( lock )
+8              {   if( instance == null )
+9                      instance = new DoubleChecked();
+10             }
+11         }
+12         return instance;
+13    }
+14  }
+
+
+Killing singleton:
+----------------
+Java provides only one viable way to shut down a Singleton that uses global resources—the Runtime.addShutdownHook(...) 
+method—and that method works only if the program shuts down normally.
+A “shutdown hook” is an initialized, but dormant, thread that’s executed when the program shuts down, after all the user threads have terminated. Memory referenced from the shutdownhook object will not be garbage collected until the hook runs
+
+The shutdown hook isn’t an ideal solution. It’s possible for the program to be terminated abnormally (in Unix, with a kill -9, for example), in which case the hook never executes. If you register several shutdown hooks, all the shutdown hooks can run concurrently, and you have no way to predict the order in which they’ll be started. It’s possible, then, to have deadlock problems in the hooks that hang the VM and prevent it from terminating. Finally, if you use a Singleton in a shutdown hook, you run the risk of creating a zombie Singleton that rises from the dead.
+
+
+
+1  class Singleton
+2  {   private static   final Singleton  instance      = new Singleton();
+3      private volatile boolean    objectClosed = false;
+4
+5      private Singleton()
+6      {   Runtime.getRuntime().addShutdownHook
+7          (   new Thread()
+8              {   public void run()
+9                  {    objectClosed = true;
+10                      // Code that clean’s up global resources
+11                 }
+12             }
+13         );
+14
+15         // Code goes here to initialize global
+16         // resources.
+17     }
+18
+19     public static Singleton instance()
+20     {   return instance;
+21     }
+22
+23     public void method()
+24     {   if( objectClosed )
+25             throw new Exception("Tried to use Singleton after shut down");
+26         //...
+27     }
+28  }
+
+
+
+Singleton can break when you serialize or deserialize:
+
+Serialize and deserialize singleton: If object implements serizlizable interface.
+------------------------------------
+static void saveToFile(EagerSinglton singlton, String name) throws IOException{
+  try(FileOutputStream fout = new FileOutputStream(name);ObjectOutputStream out = new ObjectOutputStream(fout)){
+    out.writeObject(singleton);
+  }
+}
+
+static EagerSinglton readFile(String file){
+  try(FileInputStream in = new FileInputStream(file);ObjectInputStream oin = new ObjectInputStream(in)){
+     reutrn (EagerSinglton) oin.readObject()
+  }
+}
+
+When you write, manipulate object and read -> you can have diff values
+
+So in object write:
+
+protected Object readResolve(){
+    return singleton;
+}
+
+
+Defeating singleton using reflection:
+-------------------------------------
+Constructor cons = obj.getClass().getDeclaredConstructor(new Class[0])
+cons.setAccessible(true);
+
+Singleton obj3=(Singleton)cons.newInstance(); //This obj is different from the 1st one.
+
+- Note: The values inside enum are not serializable.
+
+
+Ex in JDK;
+- java.lang.Runtime.getRuntime()
+- java.lang.System.getSecurityManager()

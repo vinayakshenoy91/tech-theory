@@ -1,0 +1,129 @@
+Openapi:
+--------
+- Descriptuon format for rest api
+- Formerly known as swagger
+- swagger.io
+- Inspector.swagger.io
+- apidocjs.com
+- Use swqagger or api blueprint [Use with aglio
+]
+- darkov , apiary
+
+That’s why it’s so important to focus not on exposing on your company’s 
+internal infrastructure but on the experience that an outside developer should have when interacting with your API.
+
+There are tools that help you to describe the interface of an API in a structured way that can be used to generate documentation and run your tests. 
+Additionally, a subset of these tools also allows you to specify data types and custom data types. Some examples are json:api, JSON Schema, and Apache Avro.
+
+
+First of all, it should be possible for APIs to be published in a variety of channels (also offered as part of this capability), mainly, but not limited to:
+An organization's API developer portal, where all APIs belonging to the organization are listed, and internal or external developers can find, subscribe, and use the APIs.
+Note that vendors tend to offer API developer portal capabilities within their standard API management offers. Some vendors charge for this capability as an add-on, while others just include it in their offering.
+An API directory, where APIs are listed along with key metadata and documentation, but, with a link to the API page in the organization's developer portal.
+programmableweb.com and apilist.fun are both good examples of API directories.
+A public marketplace, where APIs belonging not just to a single organization, but multiple organizations, are also listed. A marketplace differs from a directory as from here it is also possible to subscribe and use APIs, as opposed to API directories, which only offer limited information.
+rapidapi.com is probably the best example of a good API marketplace. However, it has become common for API management vendors to also offer their own API marketplaces, for example market.mashape.com.
+Other channels where it should be possible to publish the APIs to are the so-called API hubs. An API hub is typically a form of self-service integration platform that (in principle) enables techno-functional developers to create integration flows orchestrating one or multiple public APIs published in the hub.
+ifttt.com and elastic.io are both good examples of API hubs.
+Creation of API pages. An API page delivers comprehensive and detailed documentation describing all the features of the API, including, but not limited to:
+A getting started section describing things such as:
+The process of onboarding to start using the API. This may involve a registration process, which may include steps to capture the user details, selecting the monetization scheme and payment options when/if applicable, and obtaining user credentials and an application key.
+A comprehensive overview of the API's functionality and different features available.
+Details on how the API handles authentication and authorization, and other aspects of security.
+As authentication and authorization tends to be a complicated topic, it's extremely important to make the documentation around this topic as simple as possible.
+How the API handles errors and what error codes can be expected.
+Description of any constraints.
+A section dedicated to versioning, describing things such as current, future, and previous versions (basically a change log) and how switching between versions is to be handled, especially from a consumer standpoint.
+A comprehensive description of all available resources (or operations in the case of GraphQL), their parameters, and HTTP verbs supported, including plenty of interactive sample request/response payloads.
+Interactive means that the samples can be tried directly from the API page itself.
+Details of the API mock (for example, the URL) and ideally an embedded online console could be used to try out different API calls directly from the API page.
+Just like in the case of API design, an API page should also offer capabilities to scaffold server and client code in multiple languages, directly from the API specification.
+Any other additional pages, such as information on the payment options, subscriptions, and terms and conditions, to name a few.
+
+
+
+
+Open API spec:
+---------------
+
+ Swagger Specification -> OpenAPI Initiative (openapis.org)  [2016]
+
+
+
+OAS 3.0 aims to simplify the structure and also increase reusability of components, such as parameters, headers, examples, and security schemes.
+
+To view and compare actual examples of OAS 2.0 and 3.0 for a simple API, you can check out the following GitHub resources:
+https://github.com/OAI/OpenAPI-Specification/blob/master/examples/v3.0/petstore.yaml
+https://github.com/OAI/OpenAPI-Specification/blob/master/examples/v2.0/yaml/petstore-simple.yaml
+Lastly, it is worth mentioning that the tooling ecosystem for OAS is quite broad (the broadest of all options) with support from the vast majority (if not all) API vendors and open source tools on the market.
+
+More details on OAS, including the full specification and tutorials, can be 
+found at the following link: https://github.com/OAI/OpenAPI-Specification
+
+
+API blueprint:
+--------------
+What sets API Blueprint apart from OAS and other alternatives is the fact that a 
+single blueprint document can incorporate not just the technical specification of an 
+API (for example, resources, verbs, paths, parameters, and payloads) but also its functional 
+documentation. Furthermore, as the markdown markup language is very easy to learn and read 
+even without an editor, API blueprints are very compelling for more functional audiences that 
+wish to take part in the definition of APIs and their documentation.
+
+More details on API Blueprint can be found at:
+https://apiblueprint.org
+
+For API Blueprint examples, check the following URL:
+https://apiblueprint.org/documentation/examples
+
+
+RAML:
+-----
+The RESTful API modeling language (RAML) is a YAML-based language originally created by MuleSoft in 2013 as an open-source project and as another alternative to the then Swagger and WADL. Unlike OAS and API Blueprint, RAML claims to be unique, as APIs defined with it don't have to obey all of the REST constraints.
+
+A good feature that RAML has over OAS 2.0 and API Blueprint is the ability to reuse external fragments (for example, reference another file that defines a JSON object), although this was introduced in OAS 3.0.
+
+https://raml.org/
+
+
+API specification
+
+This is a document that describes the technical contract of an interface, such as:
+
+All methods/operations supported by the interface
+Data definitions for all inputs and outputs on each method/operation
+Any HTTP headers and metadata used
+Technical constraints
+A technical description of each method/operation, ideally with examples
+A technical description of all data entities and what each field means
+Sample requests and responses (bearing in mind that these can be used later on to test the interface)
+An API specification is defined in accordance with the interface description language (IDL) for the API architectural style chosen and, depending on this, different tools and techniques can be adopted, some more dynamic than others.
+
+Refer to Chapter 6, Modern API Architectural Styles, for more details on IDLs for REST, GraphQL, and gRPC.
+An API specification can be created by API architects and/or senior developers. Regardless of the role, however, the person that works on the creation of API specifications is typically also referred to as an API designer. Refer to Chapter 8, API Products' Target Operating Model, for more information on this.
+
+Note that modern API management tools typically come with rich capabilities to create and edit API specifications as part of the API life cycle. Refer to Chapter 4, API-Led Architectures, for more details on capabilities.
+API page
+
+This is a web page that, in addition to incorporating the specification of an API, also includes a human-readable (meaning less technical) description of the API, including what it offers (in terms of functionality) and plenty of examples on how to use it. This document should be customer-oriented, meaning the objective is to make it as simple and quick as possible for potential API consumers to understand and start using the API.
+
+Note that modern API management tools typically come with rich capabilities to create and edit the API page as part of the API life cycle. Refer to Chapter 4, API-Led Architectures, for more details on capabilities.
+Because of the target audience and nature of content required for the API page, it is recommended that a techno-functional writer (or someone with previous experience in creating customer-facing technical content) is responsible for producing it. Refer to Chapter 8, API Products' Target Operating Model, for more information on this role.
+
+
+In the case of REST, perhaps the most popular tool out there that is used to scaffold servers is the 
+OpenAPI generator (openapi-generator.tech), which can be used to scaffold REST API servers from OpenAPI 
+Specification (OAS) in about 40 different programming languages and technologies.
+
+For GraphQL, tools are rapidly emerging to provide scaffolding capabilities directly from GraphQL schemas. 
+A good example is the graphql-cli project (github.com/graphql-cli/graphql-cli), 
+which can be used to rapidly scaffold a GraphQL server from a GraphQL schema file.
+
+
+
+
+When using REST, API design tools such as Apiary and SwaggerHub also provide 
+capabilities to scaffold client application code in several languages.
+
+
+

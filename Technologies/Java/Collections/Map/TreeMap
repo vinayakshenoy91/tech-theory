@@ -1,0 +1,23 @@
+- Stored in natural order of the keys
+- Defines sort order and adds functionality.
+- Allows null values but not null key
+- Comparator -> Key elements have a sorted order.
+- Uses red-black tree.
+- Navigable and sorted
+
+Red black trees:
+---------------
+- Uses balanced BST
+- has O(logN)
+- run time of binary search depends on height h of BST 
+- AVL trees are faster than red black trees as they are regidly more balanced bu this needs more work.
+
+Map<Integer, String> map = new TreeMap<>(Comparator.reverseOrder());
+
+map.lastKey()
+
+no collision -> Runnign time is O(logN)
+
+- Cannot sotre null keys and no params to tune.
+
+- Need less memory

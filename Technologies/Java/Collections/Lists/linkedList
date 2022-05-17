@@ -1,0 +1,17 @@
+- If you keep adding items, then linked list is good. Adding in middle or front.
+
+
+Pros:
+-----
+- You can manipulate first and last item effeciently
+
+
+
+
+list.addFirst();
+list.add();
+list.remove()
+list.removeFirst;
+list.removeLast();
+
+list.isEmpty()

@@ -1,0 +1,24 @@
+- Introduced in java 8
+- Async operation in functional style
+- Common forkjoinpool is used in completable future.Also have options to use a User-defined ThreadPool
+- CompletableFuture is an Async Reactive Functional Programming api
+- Reactive api has: 
+ 1) Resilient - Exception or error will not crash app or code
+ 2) Responsive
+ 3) Message driven - Async computation interact with each through message in a event-driven style.
+ 4) Elastic - Async computation normally run in a pool of threads. Number of threads can go up or down based on need.
+
+- Extends Future and CompletionStage[Chain async computation]
+
+- CompletableFuture apis can be grouped into two:
+
+1) Factory methods: Intiiate async computation
+2) Completion stage methods: Chain async computation
+3) Exception methods: Handle exceptions in async computation
+
+
+
+
+
+
+

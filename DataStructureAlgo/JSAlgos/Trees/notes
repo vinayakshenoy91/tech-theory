@@ -1,0 +1,4 @@
+BST:
+----
+- Has two children at most
+- Logn for search

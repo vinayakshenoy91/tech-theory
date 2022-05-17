@@ -1,0 +1,20 @@
+- Provide an inteface for creating families of related or dependent objects without specifying 
+their concrete classes.
+- Centralize decision of what objects to create
+
+public interface AbstractFactory{
+    StudentRepository createStudentRepository();
+    CoursesREpository createCoursesRepository();
+}
+
+public class RelationalFactory implements AbstractFactory{
+    @Override
+    public StudentRepository createStudentRepository(){
+        return new StudentRelationalRepo();
+    }
+
+    @Override
+    public CoursesRepository createCoursesRepository(){
+        return new CoursesRelationalRepo();
+    }
+}

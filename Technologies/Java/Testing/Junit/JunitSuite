@@ -1,0 +1,5 @@
+@RunWith(Suite.class)
+@SuiteClasses({QuickBeforeAfterTest.class,StringHelperTest.class})
+public class AllTests{
+    
+}

@@ -1,0 +1,6 @@
+Linter -> Program that runs and analyses code for potential  errors or deviation from accepted coding style guidelines.
+
+npm install tslint
+tslint --init
+
+install tslint plugin for VS code by eric gamma

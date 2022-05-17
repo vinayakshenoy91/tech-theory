@@ -1,0 +1,13 @@
+1) What is dependency injection?
+--------------------------------
+- Object declare dependencies they need and it is responsibility of framework 
+to provide concerete dependencies to object
+
+Types of injection:
+- Setter injection
+- Constructor injection
+- interface injection
+
+-  Coding against the interface is the underlying principle. So that we can smoothly swap
+the implementation.
+

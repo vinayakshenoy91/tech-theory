@@ -1,0 +1,27 @@
+import { interval, fromEvent } from 'rxjs';
+
+let button = document.querySelector('#increase');
+let text = document.querySelector<HTMLElement>('.counter');
+var clicks$ = fromEvent(button, 'click');
+
+clicks$.subscribe(e => {
+  console.log('increase count');
+  // parseInt convert text to integer and increase by 1
+  let num = parseInt(text.innerHTML)+1;
+  let strVar = num.toString();
+  //text.innerHTML is the counter value that is increased by 1
+  text.innerHTML = strVar;
+});
+-----------------------
+
+import {Observable} from 'rxjs';
+
+const helloButton = document.querySelector('button#hello');
+
+const helloClick$=new Observable<MouseEvent>(subscriber=>{
+  helloButton.addEventListener('click', (event)=>{
+    subscriber.next(event);
+  })
+});
+
+helloClick$.subscribe(event=> console.log(event));

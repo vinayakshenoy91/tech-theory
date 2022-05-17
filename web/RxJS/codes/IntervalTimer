@@ -1,0 +1,10 @@
+const { Observable} = require('rxjs');
+let tenthSecond$ = new Observable(observer => { 
+   let counter = 0; 
+   observer.next(counter); 
+   let interv = setInterval(() => { 
+         counter++; 
+         observer.next(counter); 
+   }, 100); 
+   return function unsubscribe() { clearInterval(interv); }; 
+}); 

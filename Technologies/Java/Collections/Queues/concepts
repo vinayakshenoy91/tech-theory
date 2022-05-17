@@ -1,0 +1,94 @@
+- Queue is an ADT and can be implemented with arrays or linked lists.
+- Basic ops are enqueue(), dequeue(), peek()
+
+
+Apps:
+-----
+- Several apps in OS and Thread management.
+
+
+Apps of Queue:
+---------------
+- Resource shared with several consumers
+- Threads are stored in queues.
+- queues are imp in CPU scheduling
+- BFS uses Queue as an underlying ADT
+
+
+
+Queue<String> queue = new LinkedList<>(); Link list extends Dequeue interface.
+
+queue.add("x");
+queue.remove();
+
+
+
+If ops throw exception:
+- add(e)
+- remove()
+- element()
+
+If returns special value:
+
+- offer(e)
+- poll()
+- peek()
+
+
+Priority queue: You need to tell this DS what priority to consider.
+---------------
+- They are based on priority heap.
+- Priority value is assigned to every single element.
+
+add()
+peek()
+poll()
+
+Queue<Person> queue = new PriorityQueue();  
+
+//Person implements comparable interface: 
+class Person implements Comparable<Person>{
+
+    @Override
+    public int compareTo(Person p){
+        return Integer.compare(this.age,p.age);  // check all these things.
+    }
+    //this.name.compareTo(p.getName())
+
+}
+
+queue.add(new Person("name",age));
+
+while(queue.peek()!==null){
+
+}
+
+Apps:
+-----
+- Shortest path minimum spanning tree.
+
+
+Deque:
+-----
+- Doubel ended queue has huge 1D array
+- ArrayDeque -> impl Deque interface -> impl Queue
+- ArrayDeque  used to impl stack and queue.
+
+
+//Queue
+Deque<Integer> queue = new ArrayDeque();
+queue.offer();
+
+
+//stack
+
+Deque<Integer> stack = new ArrayDeque();
+
+stack.push(1);
+stack.push(10);
+
+!stack.isEmpty();
+stack.pop();
+
+Stack is synchronized (because it extends the Vector class) this is why it is going to be slower than the ArrayDeque solution. 
+So it is advisable to use ArrayDeque if we are after a LIFO structure.

@@ -1,0 +1,9 @@
+- Security groups -> ports, protocols, source and destination
+- Network access control list (NACL) specify allow/deny rules for traffic in and out of a subnet.
+- VPC can be peered to allow traffic between VPCs including diff regions and AWS accounts - like being on same network
+- VPC can be access via a virtual private network
+- Route table to control traffic in and out of subnet
+- Provide access to external internet with an internet gateway [Internet gateway associated with VPC]
+- Use NAT gateway to provide external internet access for private subnets
+- VPC flow logs provide information about network connections
+

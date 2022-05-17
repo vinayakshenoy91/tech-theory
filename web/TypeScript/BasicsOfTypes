@@ -1,0 +1,229 @@
+Defn:
+----
+- We are adding a type system
+- use type annotation to analyze code
+- catch errors during dev and only active during dev
+- No perf optimisation
+
+Typescript code -> TS compiler -> JS
+
+Type: Shortcut to refer to diff properties  and function that a value has
+
+
+Type annotations and type inference:
+-------------------------------------
+
+Type annotation -> Code we add to tell TS  what type of value a variable will refer to 
+(We tell TS the type)
+
+
+var x: number = 2; // Colon and type after is called the Type annotation
+var x: number|boolean; //Number or boolean
+
+type Drink = [string, boolean, number]
+
+Type inference -> Typescript tries to figure out what type of value a variable refers to 
+(TS guesses the type)]
+This will happen always
+
+
+
+Basic types supported:[CREATING A STATIC TYPE WITH A TYPE ANNOTATION]
+----------------------
+
+Primitive types:
+-----------------
+string, number, boolean , void, undefined, null, symbol
+
+typeof tupleElem === "string"
+
+Object types:
+--------------
+Date [new Date()], array (ex: number[]), functions, classes, objects
+
+1) number:
+-----------
+const decimal: number = 9;
+const hex: number = 0xf00d;
+const binary: number = 0b1010;
+const octal: number = 0o744;
+
+
+
+
+2) Array:
+---------
+// first way -> type[]
+const firstArray: number[] = [1,2,3]
+
+// second way -> Array<type>
+const secondArray: Array<number> = [4,5,6]
+The problem with this syntax is that it cannot be used in TSX files, which combine HTML elements with TypeScript code,
+
+const x:(string|Date)[] //Can have string or date
+
+3) Tuple:
+---------
+A Tuple allows you to define the type of the known elements of an array.
+You put properties in a particular order. In array, you dont have an order.
+Order inside a tuple has very specific meaning to us
+Tuples are fixed-length arrays, where each element in the array can have a different type.
+
+let myTuple: [string,number,string];
+myTuple = ['hi',5,'hello']
+
+Is array check: elem instanceof Array
+
+4) enum:
+---------
+Enums are implemented entirely by the TypeScript compiler, relying on type checking during compilation and standard JavaScript features at runtime. Each enum value has a corresponding number value that is assigned automatically by the compiler and that starts at zero by default. This means that the numbers used for the Hat, Gloves, and Umbrella names for the Product enum are 0, 1, and 2,
+
+enum Status {deleted, pending, active}
+
+const blogPostStatus: Status = Status.active; //prints 2 for active
+ 
+You could override the starting point of an enum by specifying it like this:
+
+enum Status {deleted = -1, pending, active} //prints 1 for active
+
+[Product.Hat, Product.Gloves, Product.Umbrella].forEach(val => {
+    console.log(`Number value: ${val}`);
+});
+
+CAUTIONThe compiler consults the previous value only when it generates a number value and doesn’t check to see whether the value has already been used, which can lead to duplicate values in an enum.
+
+enum City { London = "London", Paris = "Paris", NY = "New York"}
+
+
+Limitation of enum:
+--------------------
+UNDERSTANDING THE LIMITATIONS OF ENUMS
+Enums can be useful, but there are some limitations because they are a feature that is implemented entirely by the TypeScript compiler and then translated into pure JavaScript.
+
+Understanding the Value-Checking Limitation
+The compiler is excellent at checking types for enums, but it doesn’t do anything to ensure that legal number values are used. In Listing 9-18, I selected specific values for some of the Product enum values, which means this statement is a problem:
+...
+let productValue: Product = 0;
+...
+The compiler doesn’t prevent the assignment of a number to a variable whose type is an enum when the number doesn’t correspond to one of the enum values, which is why the output shown for Listing 9-18 contains undefined, as the lookup fails to find a corresponding Product name for the number value. The same issue arises if a function uses an enum as its result type because the compiler will allow it to return any number value.\
+
+This isn’t a problem with string enums, which are implemented differently behind the scenes and can be assigned values only from the enum.
+
+Understanding the Type Guard Limitation
+A related problem arises when using a type guard. Testing types is done using the JavaScript typeof keyword, and since enums are implemented using JavaScript number values, typeof cannot be used to distinguish between enum and number values, as shown in Listing 9-19
+function calculateTax(amount: number): number {
+    return amount * 1.2;
+}
+function writePrice(product: string, price: number): void {
+    console.log(`Price for ${product}: $${price.toFixed(2)}`);
+}
+enum OtherEnum { First = 10, Two = 20 }
+enum Product { Hat = OtherEnum.First + 1 , Gloves = 20, Umbrella = Hat + Gloves }
+let productValue: Product = Product.Hat;
+if (typeof productValue === "number") {
+    console.log("Value is a number");
+}
+let unionValue: number | Product = Product.Hat;
+if (typeof unionValue === "number") {
+    console.log("Value is a number");
+}
+Listing 9-19.Using a Type Guard in the index.ts File in the src Folder
+The code in Listing 9-19 produces the following output when it is compiled and executed:
+Value is a number
+Value is a number
+
+5) any:
+-------
+any means that the value of a certain variable can be anything. We may use it when dealing with 3rd party libraries 
+that don’t support TypeScript or when upgrading our existing code from plain JavaScript.
+any allows us to access properties and methods that may not exist.
+let firstUser: Object<any> = {
+  name: 'Alberto',
+  age: 27
+}
+
+let secondUser: Object<any> = {
+  name: 'Caroline'
+}
+
+6) void:
+---------
+void, as the name implies, defines the absence of type.
+function storeValueInDatabase(objectToStore): void {
+  // store your value in the database
+}
+
+This function takes an object and stores it in our database but does not return anything. That’s why we gave it a return 
+value of void.When declaring variables of type void you will only be able to assign values of null and undefined to them.
+
+7) null and undefined:
+-----------------------
+Similarly to void, it’s not very useful to create variables of type null or undefined because we would only be 
+able to assign them null and undefined as values.
+
+When talking about union types you will see the use of these two types.
+
+8)never: Never going to execute the function entirely
+---------
+never is a value that never occurs. For example we can use it for a function that never returns or that always throws an error.
+This function only throws an error, it will never return any value.
+function throwError(error:string): never{
+  throw new Error(error)
+}
+
+9) Function annotations:
+-------------------------
+- For functions, basically the annotation is what goes in and what comes out
+- For type annotation, we tell what type of args a function will return
+- For type inference, TS figures our what tyoe of value fn will return
+
+const add = (a:number, b:number):number =>{
+
+}
+
+
+10) object destruct:
+---------------------
+({age, name}:{age:number, name:string})=>{}
+
+const {age}:{age:number}=Profile; //Destruct obj 
+
+
+{age?:number} //Optional types
+
+type Product = {
+  name:string,
+  price?:number,
+  hasFeature?(Feature):boolean
+}
+
+let dataItems:(Product|Person)[]
+
+
+type guard for objects:
+
+Options 1: 
+("city" in item)
+
+Option 2:
+
+function isPerson(testObj:any):testObj is Person{
+  return testObj.city!==undefined
+}
+
+if(isPerson(item))
+
+Type intersection:
+let dataItems: (Person & Employee)[] = [bob];
+
+
+11) Literal types:
+------------------
+Using Literal Value Types
+A literal value type specifies a specific set of values and allows only those values. The effect is to treat a set of values as a distinct type, which is a useful feature but can be difficult to understand because it blurs the separation between types and values. This feature is most easily understood with an example, as shown in Listing 9-23.
+let restrictedValue: 1 | 2 | 3 = 3;
+
+Type alias:
+-----------
+type comboType = [string, number | true, 1 | 2 | 3 | City.London][];
+

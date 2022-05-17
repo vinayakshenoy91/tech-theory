@@ -1,0 +1,46 @@
+Notes:
+------
+- mongodb-memory-server
+- Rest is used for flat datamodels. Cannot be used for graphs with node linkages.
+
+Express:
+-------
+app.use(cors())
+app.use(json())
+app.use(urlencoded({extended:true}))
+app.use(morgan('dev'))
+
+
+req.body
+
+--middleware
+const log = (req,res.next)=>{
+    next();
+}
+
+app.get('/test',[log,log,log], (req,res)=>{
+
+})
+
+---routes
+app.get('^(me)')
+app.get(/user/*)
+app.get(/:id)
+
+--router
+
+const router = express.Router();
+
+app.use('/api',router)
+
+router.route('/cat').get().put()
+router.routes('/:id').get().put()
+
+JWT:
+----
+
+
+Jest:
+-----
+
+

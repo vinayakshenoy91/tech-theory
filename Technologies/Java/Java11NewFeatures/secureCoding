@@ -1,0 +1,106 @@
+
+Principles:
+—————
+- Kiss 
+- No duplication
+- Convert multiple cases through annotation
+- Document security
+- Dependency upto date
+
+Enforce invariants in constructor itself(Anything that must always be true is called invariant) => Ex: age property and condition to be checked in age property
+
+Use final keyword on class , private constructor and final on method , etc to stop extension
+If value does not change, make it final
+
+
+//Add this
+Authorization annotation decorator => for backend
+
+
+
+
+Learn regex using Pattern.compilate and matcher .matches()
+
+- Avoid cloneable: Does only a shallow copy  calling , super.clone() is an incomplete implementation
+It has no method
+Breaks encapsulation by by passing the constructor
+
+Implement cloneable interface and then
+
+-@Override
+Public Person clone() throws CloneNotSupportedException{
+    return  new Person(name, age, shirts);
+}
+
+Override
+
+public Person(Person p){
+    this(p.name, p.age)
+}
+
+- Avoid Serializable
+
+Using implements misleads that there is nothing more to do
+Breaks encapsulation by bypassing the constructor
+
+//If you use this in Serializable, it will reject any byte manipulation
+private Object readResolve() throws ObjectStreamException{
+    return new Person(this);
+}
+
+//If your super class is searilaizable , then write below thing for read and write Object
+
+readObject(){
+    throw new NotSerializableException("Not Serializable");
+}
+
+writeObject(){
+    throw new NotSerializableException("Not Serializable");
+}
+
+- TODO: Read more on object input filter
+
+
+Passwords need to be hashed using bcrypt
+Dont log PII, PHI and PFI, passwords, token sessionids
+Log correlation id
+
+- On successful logging in session -> return a diff object.
+For variable, use password=null
+
+
+- When class implements serializable, any field with transient keyword, will not get serialized.
+
+private transient string xyz;
+
+- Prepared statement only mitigates sql injection when using bind variables.(ie using ?)
+- Reduce input to canonical form like UTF-8 (This will reduce checking various combinations) -> (Check more on this: https://app.pluralsight.com/course-player?clipId=d0b9c87a-b37b-4d3f-b0f0-9d8e15c66b92
+)
+- Favour allow lists over block lists (Validate input)
+- Encode output
+
+To prevent injection:
+- Dont output untrusted data
+- Canonicalize and validate inputs
+- Encode outputs
+- Use an appropriately-configured third party
+
+To prevent inclusion:
+- Dont use untrusted input ot load resources
+- Load resources locally using allow list.
+- Load remote resources over https using an allow list
+- Use an appropriately configured 3rd party
+
+DoS: Exhaust and application resources preventing authorised access to systems.
+----
+
+- Enforce limts
+- Protecct against overflow (arithmetic)
+- Clean resource
+
+Caffine cahe explore
+
+
+
+
+

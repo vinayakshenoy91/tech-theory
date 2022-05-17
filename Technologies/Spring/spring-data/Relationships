@@ -1,0 +1,136 @@
+Types are:
+- OneToOne
+- ManyToMany
+- ManyToOne, OneToMany
+
+Fetchtype : Lazy, Eager:
+- If lazy, then only person will be returned and when you do a get phone number, then phone number will be returned.
+
+
+- Note: @Transactional is required by calling method for lazy loading to work.
+
+Cascade types: Propagating nonselect operation fromparent to child
+-------------
+cascade="persist" -> insert operation in main object should be propagated to child object.
+cascade="merge" -> Insert or update in main object should be propagated to child object.
+cascade="remove" -> If you delete main object, child object should be deleted.
+
+Needs underlying entity manager:
+cascade="refresh" -> If you refresh main object, child object refreshed.
+cascade="detach" -> Child objects will be detached.
+cascade="all" -> All above ops
+
+A) oneToMany or ManyToOne and it can be unidirectional as well:
+-------------------------------------------------------------
+
+Step1:
+
+Client
+   
+    @OneToMany
+    List<PhoneNumber> phoneNumber;
+
+
+
+
+Step2:
+
+PhoneNumber
+   
+     @ManyToOne
+     Client client;
+
+
+Ex:
+
+@Entity
+public class Customer{
+
+   @Id
+   @GeneratedValue(strategy=GenerationType.AUTO)
+   private long id;
+   @OneToMany(mappedBy="customer", cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+   private Set<PhoneNumber> numbers;
+
+   private String name;
+
+}
+
+@Entity
+public class PhoneNumber{
+    @Id
+    @GeneratedValue(strategy=GenerationType.AUTO)
+    private long id;
+
+    @ManyToOne
+    @JoinColumn(name="customer_id")
+    private Customer customer;
+}
+
+
+//To populate foreign key in phoneNumber -Create a method in customer
+public void addPhoneNumber(PhoneNumber number){
+    if(number!=null){
+        if(numbers==null){
+            numbers= new HashSet<>();
+        }
+        number.setCustomer(this);
+        numbers.add(number);
+    }
+}
+
+
+public interface CustomerRepository extends CrudRepository<Customer,Long>{}
+
+B)Many to Many association:
+---------------------------
+
+@Entity
+public class Programmer{
+  @ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+  @JoinTable(name="programmers_projects", joinColumns=@JoinColumn(name="programmer_id", referncedColumnName="id")
+  ,inverseJoinColumns=@JoinColumn(name="project_id", referncedColumnName="id"))
+  private Set<Project> projects;
+}
+
+
+@Entity
+public class Project{
+  @ManyToMany(mappedBy="projects")
+  private Set<Programmer> programmers;
+}
+
+public interface ProgrammerRepository extends CrudRepository<Customer,Long>{}
+
+
+@Test
+@Transactional
+public void testFinaProgrammers(){
+    Programmer programmer = programmerRepository.findOne(1);
+    System.out.println(programmer);
+    System.out.println(programmer.getProjects());
+}
+
+
+C) One to One association:
+---------------------------
+
+@Entity
+public class Person{
+  @OneToOne(mappedBy="person")
+  private License license;
+
+}
+
+@Entity
+public class License{
+
+  @Temporal(TemporalType.DATE)
+  private Date validFrom;
+
+  @OneToOne(cascade=CascadeType.ALL)
+  @JoinColumn(name="person_id")
+  private Person person;
+
+}
+public interface LicenseRepository extends CrudRepository<Customer,Long>{}

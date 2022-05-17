@@ -1,0 +1,63 @@
+- Spring uses resiliency4j is a light weight, easy to use fault tolerant library inspired buy netflix.
+- resiliency4j supports patterns: Circuit breaker, Fallback, Retry,Rate limit, Bulkhead (Limits number of 
+outgoing concurrent requests to a service to avoid overloading)
+
+
+1) Circuit breaker:
+--------------------
+- If calls are too long, it will kill the call.
+- If lot of calls failing, it will break the circuit and send defautl response.
+- Also detect if fault has been resolved. Problem resolved? Application can try to invoke the operation.
+- Finite state machine with CLOSED, OPEN AND HALF OPEN state.
+
+Depdency:
+--------
+resilience4j-Spring-boot2
+resilience4j-circuitbreaker
+resilience4j-timelimiter
+spring-boot-starter-aop
+
+spring-boot-starter-data-jpa
+spring-boot-starter-test
+
+On controller, add this annotation
+
+@CircuitBreaker(name="detailsForCustomerSupportApp", fallbackMethod="myCustomerDetailsFallback")
+
+private Customer myCustomerDetailsFallback(Customer customer, Throwable t) //t is used to decide on fallback based on type of exception
+
+
+
+
+2) Retry pattern:
+------------------
+max attempts -> Maximum number of attempts
+waitDuration ->  Fixed wiat between retry attempts
+retryExceptions -> Configures a list of Throwable classes that are recorded as failure and thus are retried.
+ignoreExceptions -> Configures a list of Throwable classes that are ignored and this not retried.
+
+@Retry(name="detailsForCustomerSupportApp", fallbackMethod="myCustomerDetailsFallback")
+
+- Number of retries will incl original invocation
+
+
+3) Rate limiter pattern:
+-------------------------
+- Stop microservice with more calls.
+- We can configure:
+  timoutDuration: default wait time a thread waits for a permission
+  limitForPeriod: Number of permission available during one limit refresh period
+  limitRefreshPeriod: The period of limit refresh.After each period, the rate limiter sets its permissions count back to the limitForPeriod
+  value.
+
+@RateLimiter(name="detailsForCustomerSupportApp", fallbackMethod="myCustomerDetailsFallback")
+
+
+4) Bulkhead pattern:
+--------------------
+- Used to limit resources used by specific services.
+- We can configure following values:
+  maxConcurrentCalls - Max amoutn of aprallel executions allowed.
+  maxWaitDuration - Max amount of time a thread should be blockedfor when attempting to enter a saturated Bulkhead
+  
+  @Bulkhead(name="detailsForCustomerSupportApp", fallbackMethod="myCustomerDetailsFallback")

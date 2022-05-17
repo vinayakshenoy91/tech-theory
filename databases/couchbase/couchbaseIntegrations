@@ -1,0 +1,6 @@
+Connectors:
+-----------
+Spark
+Kafka -> Couchbase as producer and consumer of message queues
+Elstic search: Geospatial and FTS using simple plugin
+Using ODBC/JDBC drivers, can connec to CB from Tableau, MS excel

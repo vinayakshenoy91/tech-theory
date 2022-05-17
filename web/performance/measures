@@ -1,0 +1,196 @@
+Old measures:
+------------
+1) Page load -> start to till page loads
+2) Lazy loading -> Few things loaded later   
+
+Compare your data here: [Use this for comparision]
+https://crux-compare.netlify.app/ -> YOu get field data from this
+-> YOu basically work on field data whihc might be realistic
+-> Field data vs lab data 
+
+
+Light house report -> Beow are core webvitals
+https://github.com/GoogleChromeLabs/first-input-delay
+Check on web.dev 
+
+
+1) Time To Interactive (TTI) -  TTI, 5 seconds or close
+-  it measures the potential time it takes your app to be interactive.
+This metric allows you to understand how long it takes your users to be able to interact with your application. 
+One thing is to have it rendered and a very different one is to have it be interactive. 
+This metric depends on a couple of things:
+
+That the layout is stable. Everything visible has already been loaded.
+That the CPI main thread is free. If you’re still loading scripts or processing something then your application 
+ill not be interactive. User clicks and other actions will be ignored (or queued) until the thread is freed.
+
+Improving your TTI
+One key way to improve your TTI is to reduce the load time for your scripts. Script processing and loading 
+time will be the main culprit of a high TTI, so consider the following:
+
+Remove unused scripts, anything that the browser needs to interpret and is not used, then it’s just stealing seconds 
+from your loading time.
+
+Split your scripts up into multiple, smaller files. This also helps the browser optimize the way those scripts are loaded 
+and interpreted.
+
+Dynamically load scripts, especially those that come from external resources and you can’t really split or change in any way.
+
+
+2) First Input Delay (FID)
+
+- it tracks the actual time it takes to respond once an interaction’s been performed.
+- You did you LCP, but now when user click you are loading so much content async that it takes a while for
+the event listener to detect it.
+- Browser time delay between the users first click and execution of app code.
+* Dont load so much
+    
+
+
+Improving your FID times
+Improving your First Input Delay time is not trivial since it’s highly coupled with your code’s structure and logic. 
+However, Philip Walton from Google came up with a technique called “Idle until Urgent” which tries to maximize the 
+processing time from the main thread without actually locking it. Essentially it relies on deciding when to load the 
+required resources: either when the browser is idle and has the available processing power or when the resource is indeed, 
+required. It tries to bridge the gap between eager and lazy loading of resources. Philip’s article covers a very \
+detailed implementation on how to implement this concept if you find you need to improve your First Input Delay times.
+https://philipwalton.com/articles/idle-until-urgent/
+
+
+
+
+
+
+3) Total Blocking Time (TBT): of 300ms or lower is considered good enough
+
+The Total Blocking Time is the length of time during which the page is non-responsive while it loads resources, interprets JavaScript files and does who knows what other tasks in the background. Essentially, the main thread is so busy handling everything you threw at it that it’s unable to be responsive to the user’s input. It covers the period from the First Contentful Paint (FCP) up to the TTI.
+
+
+
+
+
+https://www.holisticseo.digital/pagespeed/tbt/
+
+4) Cumulative Layout Shift (CLS):
+==================================
+- total shift of top image + total shift on 2nd image below it. Users and google are not going to like it.
+- the movement distance and impact of page elements durign the entire lifetime of the document the user sees.
+* Dont move stuff
+
+how much is your layout moving around while everything loads. If your layout isn’t structured correctly, slow-loading images or fonts (just to name two examples) can cause elements to move (or shift) around before the user even gets a chance to interact with them.
+
+A high CLS essentially yields a terrible UX, so you want to try and lower this number as much as possible.
+
+you want to incorporate this value into a custom report or you want more control over how it gets calculated, you can take advantage of the Layout Instability API which gives you everything you need to measure how elements shift around on your webpage. This alternative gives you full control over the calculation and what to do with it, however, notice that it’s not a straightforward formula and that it requires lots of consideration (such as what happens with iFrames and pages on the background). So instead, if you’re looking for a custom alternative you can check out Google’s WebVitals API which provides a very handy getCLS method.
+
+- The movement distance and impact of page elements durign the entire lifetime of the document the user sees.
+
+
+https://github.com/GoogleChrome/web-vitals
+
+https://github.com/WICG/layout-instability
+
+- Do not insert elements on top of others causing layout shifts. This normally happens when inserting sudden notification or alert boxes. Try to use other alternatives that don’t affect the position of other elements on the page.
+- Always add size attributes to your images and video elements. That way the browser knows how to reserve the proper place for them before they even load.
+- Avoid animations that cause layout changes. Some transitions look great and don’t require anything to move, so consider using them instead of shifting elements, or changing sizes affecting the layout, even if it’s just for a few frames.
+
+-> Put width and height of images.
+-> Make banner fixed
+
+
+
+
+5) First Contentful Paint (FCP): between 1 and 3 seconds  [Respond quick]
+==========================================================
+- The First Contentful Paint references the time it takes for your page to paint its first non-white element. 
+- First click link to first meaningful content enters page.
+- Time until the user sees an indication that page is loading
+
+How to improve?
+
+Reduce the Response Times from the Server. This will cause the browser to start processing and interpreting the response much faster. This could be improving your server-side code, or improving how you serve static resources, like moving images to a good quality CDN.
+
+Consider making the non-critical resources (i.e scripts and css stylesheets) load with defer :
+<script defer src="http://yourcdn.com/your/script/path.js"></script>
+
+Or use this little snippet to load your stylesheets asynchronously:
+
+<link rel="stylesheet" href="style.css" media="print" onload="this.media='all'">
+<!-- Fallback for when JavaScript is disabled, but in this case CSS can’t be loaded asynchronously. -->
+<noscript><link rel="stylesheet" href="style.css"></noscript>
+
+The snippet loads the Stylesheet with media as “print” which causes the browser to load it asynchronously, 
+however once the page is loaded, it’ll change its media type to “all” (notice the onload attribute). 
+The noscript tag is there in case JS is disabled, because in that case the onload event won’t be triggered.
+
+Inline critical styles. This is a questionable one, but if you’re eager to improve your FCP as 
+much as you can inlining some of your CSS will reduce the amount of time required to parse the external resources, 
+instead your browser will parse it much faster.
+
+Small docs:
+------------
+- Content size
+- Compression [GZIP, brotli]
+
+Quick servers:
+---------------
+- Sized correctly - html <80-100K
+- Minimal processign bandwidth
+- Network bandwidth
+
+
+Package json: [For simulation]
+------------
+Under config, set: 1) server-delay 2) Server-compress[gzip]
+
+CDN: - Reduce the earth travel time. Where the HTML are in the edge network
+
+
+6) LCP: Largest contentful paint [Get to the point]
+- Time at which largest area was rendered
+- Proxy where user thinks sight is almost ready
+- Time until the user sees most of the page and believes it is (almost) ready
+
+
+Improving LCP:
+1) Defer resource until later
+<script async src="main.js"></script> //Download it when ou want. Unexpected congestion is caused. Finsh fast -> still block
+<script defer src="main.js"></script> //Should be used. execution is delayed till the end.
+Put unwanted script in last part of the body
+<img src="picture.jpg" loading="lazy"/>
+Defered:
+- Defer it using intersection observer to delay the loading of images
+src="" data-src="/xyz"  data-srcset=""
+
+2) Optimise images
+
+Responsive images : 
+src="pic-1200.jpg" //This third
+srcset="pic-600.jpg 600w,pic-900.jpg 900w" //This second
+sizes="(max-width: 600px) 600px, 1200px" //This first
+
+//Using tinypng or google tools to crunch the images
+imageOptimiser.js
+
+//Load low quality iamnge first and then go for high quality image
+
+3) Reduce request overhead
+
+a) How does the request go?
+
+DNS -> TCP -> SSL -> Request -> Response -> Processing
+[HTTP2] -> Eliminates TCP and SSL redundacy everytime //Can be used using nginx or apache
+HTTP2 is faster and you can reuse connection
+Cons is that there is server setup + compatibility issue
+SSL is required
+
+b) Decorate the headers
+
+cache-control: max-age:600 //Hold on to this file for seconds
+expires: Wed, 20 Jan 2021 //Exactly tells you
+etag: "value" //Use cached version
+
+c) Pull the absolutely required asset like font right Always
+<link rel="preconnect" href="https://fonts.gstatic.com">
+<link rel="preload" href="/icons.css" //Preload another css
+

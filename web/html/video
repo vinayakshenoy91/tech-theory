@@ -1,0 +1,61 @@
+<video controls> 
+ <source src="video/xyz.mp4" type="video/mp4">
+  <source src="video/xyz.webm" type="video/webm">
+    <source src="video/xyz.ogv" type="video/ogg">
+    Your browser is outdated and does not support message.
+</video>
+
+You need more inputs;
+- video resolution
+- Custom UI/Branding concerns
+
+Use video hosting svc.
+
+<video width="510" height="174" controls>
+  <source src="hello_world.mp4" type="video/mp4">
+  <source src="hello_world.ogg" type="video/ogg">
+  <track src="subtitles_en.vtt" kind="subtitles" srclang="en" label="English">
+</video>
+
+If the height and width of a video are not set, the browser does not know the size of the video. 
+This will cause the page to flicker while the video loads.
+
+which of the following sets or returns whether the audio/video should be loaded when the page loads?
+-----------------------------------------------------------------------------------------------------
+autoplay, preload, buffered, controller etc are the different kinds of attributes of the video/audio element.
+The preload property allows the author to provide a hint to the browser about what he/she thinks will lead to the best user experience. 
+This attribute may be ignored in some instances.
+
+Source:
+------
+
+The <source> element allows you to specify alternative video files that the browser may choose from. 
+The browser will use the first recognized format.
+
+<source src="movie.mp4" type="video/mp4">
+<source src="movie.ogg" type="video/ogg">
+
+
+The <video> tag is used to display video clips in HTML5. Multiple media resources for media elements are specified by the <source> tag. The <track> tag specifies text tracks for <audio> or <video> elements. This element is used to specify subtitles, caption files, or other files containing text, that should be visible when the media is playing. There is no such thing as a slider tag in HTML5.
+
+which of the following sets or returns the default speed of the audio/video playback?
+
+currentTime sets or returns the current playback position while playing audio/video. 
+The length of the current audio/video is set or returned by duration. 
+The default speed of playback is given by defaultPlaybackRate while playback returns the speed of the audio/video.
+
+The Ogg container format with the Theora video codec and the Vorbis audio codec is supported in desktop/mobile Gecko (Firefox), Chrome, and Opera, and support for the format can be added to Safari (but not on iOS) by installing an add-on. The format is not supported in Internet Explorer in any way. The most widely used format for HTML videos i.e MP4 format is supported in IE.
+
+
+The controls attribute adds video controls, like play, pause, and volume.
+
+
+which of the following returns a TimeRanges object representing the buffered parts of the audio/video?
+A buffered range is a time-range of buffered audio/video. The user gets several buffered ranges if he/she skips in the audio/video.
+
+which of the following sets or returns the CORS settings of the audio/video?
+currentTime sets or returns the current playback position while playing audio/video. 
+The length of the current audio/video is set or returned by duration. The default speed of playback is given by defaultPlaybackRate. 
+The purpose of the crossorigin attribute is to allow you to configure the CORS requests for the element’s fetched data.
+
+

@@ -1,0 +1,51 @@
+Primitive types:
+---------------
+- Undefined, Null, Boolean, String, Symbol, Number and Object.
+
+var v =42n; //new BigInt(42) //"bigint"
+
+NaN is only value in JS that is not equal to itself. It is the only property that does not have a identity property. [IEEE 754]
+
+Number.isNaN(x) //No coercion. Staightaway gives true or false. Check if exactly NaN w/o coercion.Number.isNaN('x') is false.
+isNaN(x) //This does coercion before comapring.
+
+Object.is(x,-0) //true. This is used to test for negative 0
+
+Two cases where === lies are when they are NaN or -0
+
+1/0 => Infinity
+1/-0 => -Infinity
+
+v==0 && (1/v)== -Infinity => Check for isNegZero
+
+v!==v //Since nan is the only number that is not equal to itself
+
+How to identify types?:
+----------------------
+typeof v  //What is the value in v?
+typeof null //Object
+typeof [1,2,3] //Object
+typeof function(){} //"function"
+typeof NaN //is number
+
+Array.isArray()
+
+
+
+Fundamental Object (use new keyword):
+--------------------------------------
+- Object()
+- Array()
+- Function()
+- Date()
+- RegExp()
+- Error()
+
+
+Dont use new for:
+- String()
+- Number()
+- Boolean()
+
+Abstract operation:
+------------------

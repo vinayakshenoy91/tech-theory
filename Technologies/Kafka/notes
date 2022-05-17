@@ -1,0 +1,34 @@
+- Scalable and distributed platform for creating and processing realtime stream of data
+
+
+Kafka connect:  Install respective connector dependencies (JDBC jars) in kafka cluster.
+--------------
+Single message transofmrations:
+1) Add a new field in our record uisng static data or metadata
+2) Filter or rename fields
+3) Mask some fields with a null value.
+4) Change the record key
+5) Route the record to a diff kafka topic.
+
+Group id is used to forma a kafka connect cluster.
+
+1) Workers have connectors and task. Workers are fault tolerant  and self managed (Re assign connector and task on that worker to another 
+machine). When new one joins, the load is balanced.
+
+Connector process is brought up in each machine and  it determines task list and config and task split.
+Config details are:
+1) DB connections
+2) Source Table list
+3) Polling freq
+4) Max parallelism
+
+Task distributed across workers. Task responsible for polling data, collecting records and handing over it to workers.
+Worker will then send it to kafka cluster.
+
+In sink side, worker gets kakfa message and task is responsible for inserting the record.
+
+Flavours:
+----------
+1) Open source -> apache kafka
+2) Commerical distribution -> confluent.io [A vailalbe in community edition]
+3) Managed services -> confluent, amazon. aiven.io

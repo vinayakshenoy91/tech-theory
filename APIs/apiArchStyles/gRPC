@@ -1,0 +1,7 @@
+gRPC, on the other hand, offers a robust transport protocol that leverages HTTP/2 and thus supports features such as streaming and is very efficient for service-to-service communications (which is why Google created it in the first place).
+
+
+gRPC, the protocol maintained many of its original characteristics, with the difference that it now embraced emerging and complementary open standards such as HTTP/2.
+
+
+

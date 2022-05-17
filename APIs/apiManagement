@@ -1,0 +1,105 @@
+
+API management, therefore, is born as a discipline to manage APIs (both internal and external), meaning establishing the processes, roles, and responsibilities, and the tools required to govern APIs throughout their full life cycle.
+
+API management differs from related disciplines, most notably SOA governance, in that it is much more lightweight and a lot more focused on making the lives of the API consumers (developers) easier, by providing the right tools for the design and run aspects of APIs, and making processes simple to follow. SOA governance, on the other hand, is fine-grained, with detailed processes and complex tools.
+
+Any API management initiative should focus on at least the following aspects of the life cycle:
+
+Planning: Provides the required facilities (tools) to plan in advance for the creation and/or modification of APIs. Regardless of the methodology used to deliver the APIs or whether there is one or multiple teams implementing it, there should be a common approach, and ideally tooling to capture which APIs are the priority, and who is responsible for delivering them. This is important as it will provide visibility to any relevant party of the capabilities being delivered, and therefore encourage coordination/collaboration over the duplication of work. The tools used to ensure tracking/status of the teams implementing APIs should also be addressed.
+Design: Design-first thinking is fundamental in any API management initiative. Tools and processes that enable API-first design (covered in detail in subsequent chapters), and that encourage API designers and API consumers to interact during the design of an API, will shorten the development life cycle and therefore reduce costs, as the actual product produced will most likely meet the requirements from the get-go, without having to iterate several times through the entire implementation process to get it right.
+An important consideration during the design phase is around what level of security controls are to be adopted in the API. Authentication and authorization, for example, should not be an afterthought, as they will have considerable impact on API usability. Therefore, rather than doing this later in the life cycle, security should also be part of the API design.
+Implementation: The actual implementation of the APIs requires adequate processes and tools to be in place, such that developers can focus their efforts on producing actual code and not on sorting out life cycle concerns, such as code coverage, continuous integration, regression testing, and deployment. For this reason, automating and streamlining the implementation cycle of the API, by creating development pipelines that make it very easy for developers to move code from development all the way to production, will deliver considerable results for the business.
+It's worth highlighting that development pipelines do not mean bypassing quality gates. It is still possible, in fact recommended, to also introduce quality gates. However, if the same can be automated (that is, verifying that the results of code coverage and regression testing are adequate), quality assurance can still be introduced, but without the burden and costs of manually testing the API.
+Publication: Making APIs discoverable is fundamental in API management. Providing the facilities to easily deploy and version APIs, but most importantly to publish them along their relevant (consumer-oriented) documentation in a developer portal, ensures that developers can reuse APIs, rather than reinventing wheels, and ultimately reduces development and operations costs.
+Operation: Runtime operations is as much about "keeping the lights on" as it is about providing meaningful analytical insight to both the business and IT, so they, too, can make the most out of the operational data being generated. From simple capabilities, such as central operations, API statistics, gateway stats, user management, and system management, to more sophisticated ones, such as application performance monitoring (APM), SLA management, rule-based alerting, predictive analytics, self-healing, and API metering, operations is, without a doubt, a first-class citizen in API management.
+Consumption: API management is not just about designing and building APIs, but also about consuming them. With the number of public APIs growing exponentially, the expectation is that some organizations will be consuming more public APIs than they will end up building them. The problem is that without proper controls and visibility over who by/why/which/when public APIs are being used and the associated costs, organizations can easily end up in the hyperconnectivity mess described previously. To prevent this pitfall, API management must equally focus on providing the means and facilities for public APIs to be consumed in a controlled and governed manner. In other words, developer portals should not only allow for internally developed APIs to be published, but also external ones.
+Maintenance: In API management, the life cycle doesn't end when an API goes live. In fact, it only gets started. As it will be better described in the next section, APIs should be treated as products and, as such, the product must be continuously evolved by taking into account evolving consumer needs and expectations. For an API to become a good product, it must undertake a series of iterations and changes. API management should therefore make it easier to do so.
+Retirement: When an API has served its purpose and there is a need to decommission it, it should not be the case that doing so is complex and cumbersome. API management should also take care of the process and capabilities needed to retire an API and handle (minimize) the impact that this may cause to any existing consumers.
+Community management: As previously described, APIs also open the door to new digital ecosystems. In such ecosystems, the main actor is the developer. With thousands of developers worldwide, managing communities of internal (known) developers, partner developers, and external (unknown) developers is another fundamental aspect of API management. Self-service facilities for development onboarding and developer portals, whereby developers can search for APIs, subscribe to them, read their documentation and even comment and rate them, are some of the capabilities that API management should offer.
+
+
+API group
+
+Description
+
+API maturity
+
+Business value
+
+APIs for system connectivity
+
+The most basic group of APIs, as their aim is to provide access to core enterprise information assets, such as systems of record. Could be an on-premise system or SaaS applications.
+
+Level 1 – tactical
+
+Access to core information assets is the main business value. The benefit that can be realized from such access pretty much depends on the solutions built on top.
+
+APIs for enterprise mobility
+
+APIs created in support of mobility solutions, meaning that they are not just about access to information, but rather they provide access to business processes and other business capabilities.
+
+Level 1 – tactical
+
+This group of APIs has a more direct and measurable impact on the business, which can result in optimization of business processes and effectiveness gained by allowing employees to interact with systems in different ways and digital channels.
+
+APIs for enterprise mobility and productivity
+
+APIs that enable a business to offer goods and services to customers via multiple digital channels. In other words, B2C. APIs in support of Internet of Things (IoT) solutions also fall within this group.
+
+Level 2 – strategic
+
+This group of APIs is fundamental for any B2C digital initiative as it enables omnichannel strategies by making information and functionality accessible through multiple channels, for example, web, mobile apps, bots, kiosks, and social media, to name a few. Now, because of this, their business value is evident and easier to quantify or measure.
+
+APIs that enable the IoT also fall within this group. These APIs provide IoT devices with access to enterprise information assets and functionality, though it is worth nothing that IoT is a much broader topic and these APIs only represent one element of it.
+
+APIs for partner collaboration
+
+APIs that enable partner collaboration and Business to Business (B2B) by optimizing and simplifying business transactions. In other words, an API (and much cheaper) alternative to traditional EDI-style integrations.
+
+Level 2 – strategic
+
+B2B transactions is a complex topic for many reasons, with integrations and the infrastructures required to do so being a major one. APIs for B2B and partner collaboration can hugely simplify the cost of integration but will also open the door for new ways to engage businesses of all sizes. The business value is considerable, especially for organizations that don't deal with direct sales, but rather indirect ones, and therefore rely on third parties to sell their products and/or services.
+
+APIs for monetization
+
+APIs offered as commercial products in their own right. As such, their usage also entails a form of fee.
+
+The fee does not necessarily have to be a monetary one. As Mark O'Neill, a key integration and API consultant from Gartner, said:
+
+"API monetization doesn't just mean charging for API calls."
+Level 3 – differentiation
+
+By APIs becoming a saleable product, they also become a new source of direct revenue for the business, where the actual product offered in the form of an API is access to either information and/or business functionality.
+
+Therefore, the business value delivered by these products will be directly proportional to the success of the product itself, which also means that other business functions, such as marketing, sales, and finance, should play a role in making a success of the product.
+
+According to Mark, organizations seeking to monetize APIs should first identify their monetization strategy and, from that, derive a charging or pricing model.
+
+Further details on how to monetize APIs are provided in Chapter 3, Business-Led API Strategy.
+
+For this reason, although this group of APIs has the highest potential business value, realizing its full potential also requires more maturity, discipline, and alignment with the rest of the business.
+
+It must be a business-driven initiative.
+
+Businesses that want to realize the full business benefits that APIs have to offer, for example, as part of their digital transformation initiatives, should first consider what would be their entry point and, based on that, determine a roadmap to get to the next levels. Details on how to define such a roadmap are described in Chapter 3, Business-Led API Strategy.
+
+There is another well-known and publicly available API maturity model, known as the Richardson Maturity Model. However, this model focuses more on the technical aspects of APIs, rather than the business and organizational aspects of an API management initiative. Therefore, both models can be complementary and can be used in conjunction to evaluate business, organizational, and technical aspects of APIs and their management.
+Further information on the Richardson Maturity Model is available at https://martinfowler.com/articles/richardsonMaturityModel.html
+
+
+
+
+
+Modern container runtimes, such as Kubernetes (kubernetes.io), provide robust support for dealing with this, especially if additional capabilities are introduced into the runtime, such as the Helm (helm.sh) package manager, which can be used to heavily simplify the process of releasing inter-related containers and defining environment-specific metadata, and Istio (istio.io), a service mesh that, among other things, introduces support for canary releases, which, in turn, enable techniques such as A/B testing.
+
+Refer to the following link for more information on canary releases:
+https://martinfowler.com/bliki/CanaryRelease.html
+For more details on A/B testing, refer to the following link:
+https://en.wikipedia.org/wiki/A/B_testing
+Lastly, this task is typically carried out by platform engineers with input from API architects and developers as required.
+
+
+
+
+
+

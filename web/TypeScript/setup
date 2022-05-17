@@ -1,0 +1,91 @@
+For express:
+//ts-express-decorators -> No
+
+npm instsll express body-parser cookie-session @types/express @types/cookie-session
+
+Install: sudo npm install -g typescript ts-node
+tsc --help
+
+tsc --init -> Creates a tsconfig.json
+npm init -y //generate package json
+
+{
+    "outDir":"./build",
+    "rootDir":"./src",
+}
+
+tsc -w //Watch file for changes
+
+nodemon build/index.js
+
+//Install nodemon and concurrently
+
+"scripts":{
+    "start:build":"tsc -w",
+    "start:run":"nodemon build/index.js",
+    "start":"concurrently npm:start:*"
+}
+
+Always create and src and build folder
+
+
+
+
+VS code:
+--------
+- Add code to path
+- Install prettier extn
+- Run prettier on save (settings -> format on save)
+- Use single quotes with prettier
+- Use 2 space of intentdation
+- set theme to solarized light
+
+
+
+In main path create, 
+
+index.ts
+- Use import statement
+
+Compile command: tsc index.ts -> Only compile
+node index.js
+
+- ts-node index.ts -> Compile and execute
+
+Note: All files will be named with extn.ts
+
+Run TS in browser use:
+
+
+Parcel bundling:
+-----------------
+npm install -g parcel-bundler
+parcel index.html
+
+faker package to randomly generate info
+
+
+Folder strcuture:
+-----------------
+- If you are exporting something from a fail, use it as caps for filename. User.ts
+
+Import statement: [For every import you need to add a typedef]
+-----------------
+import faker from 'faker';
+Typescript -> type defn -> JS Library. Here type defn is an adapter.
+npm install @types/faker
+
+Export statement:
+------------------
+export class User{}
+
+import {User} from './User';
+
+const user = new User();
+
+- Convention inside TS is not use default at all
+
+
+Node js:
+--------
+- Anything to be used inside node standard library use @types/node

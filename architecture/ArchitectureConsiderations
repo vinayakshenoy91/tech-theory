@@ -1,0 +1,151 @@
+- The real job of an architect lies in their ability to objectively determine and assess the set of trade-offs 
+on either side of a consequential decision to resolve it as well as possible.
+- least worst combination of trade-offs.
+
+Data distinction:
+-----------------
+- Analytical - for predictions, trending, and other business intelligence.
+- Operational
+
+ADR: A short noun phrase containing the architecture decision
+
+Context
+In this section of the ADR we will add a short one- or two-sentence description of the problem, and list the 
+alternative solutions.
+
+Decision
+In this section we will state the architecture decision and provide a detailed justification of the decision.
+
+Consequences
+In this section of the ADR we will describe any consequences after the decision is applied, and also discuss the trade-offs 
+that were considered.
+
+
+How to make sure architecture impl as discussed?
+- Code review.
+- architectural fitness function: any mechanism that performs an objective integrity 
+assessment of some architecture characteristic or combination of architecture characteristics.
+- Fitness functions validate architecture characteristics, not domain criteria; unit tests are the opposite.
+- Fitness functions represent a checklist of important principles defined by architects and run as part of 
+the build to make sure developers don’t accidentally 
+
+Tools
+------
+JDepend -> Check cyclic dependency -> Add this to CICD
+SonarQube
+Archunit -> https://www.archunit.org/
+layeredArchitecture()
+    .layer("Controller").definedBy("..controller..")
+    .layer("Service").definedBy("..service..")
+    .layer("Persistence").definedBy("..persistence..")
+
+    .whereLayer("Controller").mayNotBeAccessedByAnyLayer()
+    .whereLayer("Service").mayOnlyBeAccessedByLayers("Controller")
+    .whereLayer("Persistence").mayOnlyBeAccessedByLayers("Service")
+
+
+Considerations:
+---------------
+Sync async comms
+
+Orchestrated coordination
+A workflow is orchestrated if it includes a service whose primary responsibility is to coordinate the workflow.
+
+Choreographed coordination
+A workflow is choreographed when it lacks an orchestrator; rather, the services in the workflow 
+share the coordination responsibilities of the workflow.
+
+Atomicty
+A workflow is atomic if all parts of the workflow maintain a consistent state at all times;
+
+Static and dynamic coupling:
+----------------------------
+
+Static coupling refers to the way architectural parts (classes, components, services, and so on) are wired together: dependencies, coupling degree, connection points, and so on. An architect can often measure static coupling at compile time as it represents the static dependencies within the architecture.
+
+Dynamic coupling refers to how architecture parts call one another: what kind of communication, what information is passed, strictness of contracts, and so on.
+
+ static coupling describes how services are wired together, whereas dynamic coupling describes how services call one another at runtime.
+Static coupling analyzes operational dependencies, and dynamic coupling analyzes communication dependencies.
+
+Microservices: Software advice
+--------------
+- Bounded Context
+
+
+High cohesion:
+--------------
+- High functional cohesion refers structurally to the proximity of related elements: classes, components, services, and so on
+
+- high functional cohesion overlaps with the goals of the bounded context in domain-driven design: behavior and data that 
+implements a particular domain workflow.
+
+
+
+Performance:
+------------
+Response time = prpcessing time + waiting time
+Distributed logging system -> you check the throughout
+
+Throughput -> tasks/s or amount of data processed by our system per unit of time.
+Mbps or bytes/s
+We are receiving a lot of files and need to keep up with the load, so the number of 
+tasks we accomplish per unit of time is the most important metric.
+
+- Check the response time distribution
+
+- The xth percentile is the value below which x% of the  values can be found.
+
+Tail latency -> The small percentage of response times from a system, that take the longest in comparision to the rest of values.
+
+- Performance degradation -> do a test of this -> CPU, memory -> 10k requests/section
+This is measured based on number of requests per sec
+
+
+
+
+
+
+Scalability: Horizontal vs Vertical
+
+Horizontal scalability - Coordination and complexity
+
+Availability -> 
+----------------
+the fraction of time/probability that our service is operationally functional and accessible to the users.
+
+Availaiblity = uptime /(uptime + downtime)
+MTBF - mean time between failures.Average time our system is operational.
+MTTR - Mean time to recovery - Average time it takes us to detect and recover from a failure.
+Availaiblity = MTBF/(MTBF+MTTR)
+
+
+
+Fault tolerance:
+---------------
+1) Failure prevention: Eliminate single point of failure.
+Replication and redundancy(Spatial -> multiple server, time redundancy-> Retry)
+
+SLA -> service level agreement -> Availability, performance, data durability, time taken to resolve
+SLIs -> service level indicatora
+SLOs -> service level objectives -> Goals of system
+
+
+
+
+Arch considerations:
+-------------------
+- Problem to solve?
+- FR
+- NFR
+- legal requirements
+- Software documentation
+- Document decisions
+- Describe system from user point of view. HLD, wireframe
+- Identify entities and concentrate on loosely coupled entities
+
+Usecase:
+--------
+Title 
+Actor
+Scenario

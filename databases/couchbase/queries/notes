@@ -1,0 +1,261 @@
+- It can join  documents by document in server before they get into client.
+- Multi-get is also effecient.
+- use back ticks in anme if there are special characters or any reserved word.
+
+
+
+
+SELECT Query:
+--------------
+select * from `academic-data`;
+
+
+Index Query:
+---------------
+create primary index on `academic-data`;
+
+INSERT Query:
+------------
+insert into `academic-data` (key, value)
+values ("key", {json}),("key", {json})
+
+INSERT INTO bucketname VALUES  ("key",{"key":"value"});
+
+
+
+Things to note: 
+----------------
+- SELECT DISTINCT field1, field2
+- If bucket name or any fields have special characters, you must enclose it in back ticks.
+SELECT `playlist#1` where field2=`Sun&Fri` from `My-Bucket`
+- SELECT * from `My-Bucket`
+
+SELECT 
+FROM 
+WHERE
+GROUP BY
+HAVING
+ORDER BY
+LIMIT
+OFFSET
+
+
+Search for missing values:
+----------------------------
+WHERE region IS VALUED
+WHERE region IS NOT VALUED
+WHERE region IS MISSING
+WHERE region IS NULL
+
+
+Creating an index:
+------------------
+CREATE INDEX idx_type ON couchgadget2(type,id);
+
+
+Select:
+------
+SELECT items from couchgadget2 WHERE type = "order" and id=123;
+SELECT ENCODED_SIZE(test) FROM bucketname; //Getting thje encode size
+SELECT * from `bucket-name` LIMIT 1  OFFSET 5 ORDER BY fieldname1, fieldname2 DESC; 
+//OFFSET tells that other than top 5 rest all docs are shown
+
+SELECT jsonType, COUNT(*) from `bucket-name` GROUP BY jsonType;
+SELECT id, count(*),sum(amount) FROM Orders GROUP BY id;
+
+SELECT name.firstname, marks[0] AS math_scores FROM `student-sample`;
+SELECT name, points AS old_hitpoints from `bucketname` where jsonType="player" AND points BETWEEN 10 AND 50
+ORDER BY points DESC;
+
+SELECT COUNT(*) AS total_count FROM `bucketname`; 
+SELECT COUNT(jsonType) AS type FROM `bucketname`; 
+SELECT COUNT(DISTINCT jsonType) AS type FROM `bucketname`; 
+SELECT jsonType, COUNT(*) FROM `bucketname` GROUP BY jsonType;
+SELECT * FROM `bucketname` WHERE META().id="id";
+ 
+SELECT * from `travel-sample` WHERE type ="hotel" and reviews[*].author IS NOT NULL;
+
+DELETE:
+-------
+DELETE FROM `bucket-name` WHERE jsonType = "player";
+
+Insert:
+-------
+INSERT/UPSERT into bucketname values ("country::2",{"region":1000,"type":"country"});
+
+Update:
+--------
+Update couchmusic2 set visibility="PRIVATE" where type = "playlist"
+AND updated >="2020-01-01";
+
+
+Get document's meta data:
+------------------------- 
+select meta() from couchmusic2 limit 1;
+
+Get document's meta id:
+-------------------------
+select meta().id from couchmusic2 limit 1;
+
+To query a document using specified document keys:
+--------------------------------------------------
+select * from couchmusic2 USE KEYS ["KEY1","KEY2"];
+
+Check if value is missing or null:
+-----------------------------------
+SELECT * from couchmusic2 where created IS MISSING | IS NULL |IS NOT NULL
+
+Selecting json sub elements:
+----------------------------
+select owner.username, owner.lastname from couchmusic2 where type="playlist";
+
+Select array elements:
+----------------------
+select tracks[0],tracks[1] from couchmusic2 where type="playlist";
+
+SELECT * FROM  `travel-sample` WHERE type="route" AND ANY departure IN schedule SATISFIES departure.utc < "01:00" END
+AND stops=1;
+
+
+
+N1QL functions in queries:
+-------------------------
+1) Aggregation:
+SUM()
+COUNT()
+AVG()
+MAX()
+
+2) Date and Time:
+NOW_STR()
+CLOCK_STR()
+DATE_ADD_STR()
+DATE_DIFF_STR()
+
+3) Number:
+ABS()
+POWER()
+RANDOM()
+ROUND()
+
+4) String:
+UPPER()
+LOWER()
+TRIM()
+SUBSTR()
+
+Joining documents via fields:
+-----------------------------
+1) config index: ANSI joins require an index is created on the field you are joining on the right side.
+
+
+CREATE INDEX IND_username ON couchmusic2(username) WHERE type ="userprofile"
+
+SELECT * FROM couchmusic2 as playlists JOIN couchmusic2as users
+  ON playlists.owner.username = users.username
+WHERE playlists.type="playlist"
+AND users.type="userprofile"
+AND playlists.owner.username="stock123"
+
+
+2) JOINING via doc keys
+
+SELECT * FROM couchmusic2 as playlists 
+       JOIN couchmusic2 as users
+           ON KEYS "userprofile::"||playlists.owner.username
+
+ WHERE playlists.type="playlist"
+ AND users.type="userprofile"
+ AND playlists.owner.username = "xyz"
+
+
+ N1Ql with java: [Query exception e ]
+ ---------------
+final QueryResult result = cluster.query("select * frpom xyz limit 10");
+
+for(JsonObject row:result.rowsAsObject()){
+    system.out.println("Found row:"+row);
+}
+
+
+Couchbase needs to parse every N1QL statement it gets and prepare an execution plan for it.
+Developers can optimise query by spplying query param and preventl sql injection.
+
+SELECT * from yz where name=$name;
+
+N1QL with java code and params:
+SELECT * from yz where name=$name;
+
+JsonObject params = JsonObject.create().put("name","Cool ps")
+
+final QueryResult result = cluster.query(query, queryOptions().parameters(params));
+
+
+List retrival:
+--------------
+List<playlits> playlists = result.rowAs(Playlist.class);
+
+Subdocument ops:
+---------------
+//Building array
+List<MutateInSpec> myList2 = new ArrayList<>();
+myList2.add(MutateInSpec.replace("my-element","new value"));
+collection.mutateIn(id,myList2);
+
+//Obtaining a subelement
+import static com.couchbase.client.java.kv.LookUpInSpec.*;
+LookUpInResult r = collection.lookupIn(id,Arrays.asList(get("myElement")));
+
+//Mutating a subelement
+import static com.couchbase.client.java.kv.MutateInSpec.*;
+collection.mutateIn(id,Arrays.asList(replace("element","new value")));
+
+//Adding a new array item into array json element
+import static com.couchbase.client.java.kv.MutateInSpec.*;
+collection.mutateIn(id,Arrays.asList(arrayInsert("tracks",Arrays.asList(newTrackId))));
+
+
+//Submitting multiple requests to lookupIn
+import static com.couchbase.client.java.kv.LookUpInSpec.*;
+LookUpInResult r = collection.lookupIn(id,Arrays.asList(exists("element2"),get("myElement"));
+
+//Processing multiple results
+Obj myObject = r.contentAs(1,Obj.class);
+Boolean itExists = r.contentAs(0,Boolean.class);
+
+
+SELECTING and FILTERING:
+------------------------
+SELECT fieldname FROM bucketname WHERE quantity > 1;
+
+SELECT "HEllo" as Greeting; //Greeting is the key
+
+SELECT * FROM `bucketname` LIMIT 5; //limit result
+
+SELECT DISTINCT fieldname FROM `bucketname`;
+
+SELECT ALL fieldname FROM `bucketname`;
+
+SELECT RAW fieldname FROM `bucketname`; //Array of strings of values.
+
+SELECT DISTINCT RAW bname.fieldname as FIELDNAME FROM `bucketname` as bname;
+
+META().id
+META().cas
+META().expiration
+
+
+Intersect:
+----------
+SELECT * FROM (SELECT DISTINCT city FROM `travel-sample` WHERE type="hotel" UNION SELECT DISTINCT city FROM `travel-sample` WHERE type="landmark" ) 
+AS info WHERE info.city LIKE "%A%";
+
+
+Access methods:
+--------------
+N1Ql REST API to access query service available on port 8093/18093
+cbqshell for cli
+
+Advise suggestions:
+-------------------
+- Provides index recommendation for single query

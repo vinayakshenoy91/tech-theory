@@ -1,0 +1,17 @@
+Strong or Eventual consistency
+
+- Reliability of the service
+- Functional correctness of the service
+- User experience
+
+
+Going with evetual consistency because :
+- high cost
+- performance overhead
+- Not possbile using string consistency
+
+
+- Distributed stores provide txn as longs as they are affecting single partition
+- Data can be optimistically replicated to become eventually consistent. This means that instead of incurring write-time costs 
+to ensure data correctness throughout the system (i.e., strong consistency), inconsistencies 
+can be resolved at some other time (e.g., during reads). Eventual consistency is used to achieve high availability.

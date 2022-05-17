@@ -1,0 +1,115 @@
+- UI components know nothing about the underlying business logic or pattern
+- We can change sender behaviour at runtime
+- Encapsulate method invocations
+- Decouple classes that invoke the operations and the classes that will execute these operation.
+- We can impl undo and redo ops
+
+4 components are:
+- command
+- receiver
+- invoker
+- client
+
+Command: It knows the receiver and invokes a method of receiver.The values for parameters
+of the receiver method are stored in the command.
+
+Receiver: Execute operation. It does the work itself.
+
+Invoker: Knows how to execute a command and optionally does bookkeepingabot the command execution.
+The invoker does not know anything about a concrete command it knows only about command interface.
+
+Client: It decides which command to execute.To execute a command it passes the command object to the invoker
+object.
+
+
+//Command interface
+public interface Command{
+     public void execute();
+}
+
+
+public class TurnOffCommand implements Command{
+    private Light light;
+    public void execute(){
+       this.light.turnOff();
+    }
+}
+
+public class TurnOnCommand implements Command{
+    private Light light;
+    public void execute(){
+       this.light.turnOn();
+    }
+}
+
+//Receiver
+public class Light{
+   public void turnOff(){
+
+   }
+
+   public void turnOn(){
+
+   }
+}
+
+//invoker
+public class Switcher{
+    public List<Command> commands;
+
+    public Switcher(){
+        this.commands=new ArrayList<>();
+    }
+ 
+    public void addCommand(Command command){
+        this.commands.add(command);
+    }
+
+    public void executeCommands(){
+        for(Command command:commands){
+            command.execute();
+        }
+    }
+}
+
+
+------------Queueing model with command pattern ----------
+
+public class Algorithm{
+    private BlockingQueue<Command> commandList;
+
+    public Algorithm(){
+        this.commandList= new ArrayBlockingQueue<>(10);
+    }
+
+    public void produce(){
+
+        try{
+             
+             for(int i=0;i<10;i++){
+                 commandList.put(new TaskSolver(new Task(i+1)));
+             }
+
+        }catch(){
+
+        }
+
+    }
+
+    public void consume(){
+         try{
+             
+             for(int i=0;i<10;i++){
+                 commandList.take().execute();
+             }
+
+        }catch(){
+
+        }
+
+    }
+} 
+
+
+
+

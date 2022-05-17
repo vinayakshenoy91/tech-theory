@@ -1,0 +1,54 @@
+- It allows the script in one page to access data in another page only if they have the same origin
+- Security protocol to prevent cross site scripting
+- Checks for hostname, port number and protocol.
+- It allows the script in one page to access data in another page only if they have the same origin
+- It is a security protocol to prevent attacks like cross site scripting
+
+url1 = http://company.com/dir/page.html
+
+url2 = http://company.com/dir/inner/another.html
+
+url3 = https://company.com/dir/page.html
+
+url4 = http://sub.company.com/dir/page.html
+
+url5 = http://xyz.company.com/dir/page.html
+// in the code on xyz.company.com the following change is made
+document.domain = "company.com"
+// in the code on company.com the following change is made
+document.domain = "company.com"
+
+We set document.domain to company.comcompany.com for url5; this means we are allowing the subdomain 
+xyz.company.comxyz.company.com to access its parent’s company.comcompany.com's resources. However, that means 
+we need to do the same for url1; this step will indicate that url1 wishes to allow url5 to access its resources. 
+This is being done on line 13 of the example above:
+
+// in the code on company.com the following change is made
+document.domain = "company.com"
+Now, url5 can pass the same-origin check with url1. Implementing the above-mentioned steps allows url5 to pass the 
+port number check as well. How is that?
+
+The port number is checked separately; any call to document.domain overwrites the port number to null. Calling this 
+statement for url5 sets its port number to null. Since both url1 and url5 need to have the same port number, we need to 
+execute this statement for url1 as well. In the example above, we do exactly that; now, url5 will be of the same origin as url1. 
+Hence, Option D is also correct.
+
+It is a critical security measure to isolate any malicious documents and to prevent any malicious script from injecting itself 
+into another website/webpage. This is also known as the cross-site scripting attack.
+
+For a URL to pass the origin comparison with another URL, the same-origin policy checks for the following:
+
+Both the URLs should have the same hostname; hence, Option A is correct.
+
+Both the URLs should have the same port number (if specified); hence, Option B is correct.
+
+Both the URLs should have the same protocol (Http or Https); hence, Option C is correct.
+
+--
+
+// in the code on company.com the following change is made
+document.domain = "company.com"
+Now, url5 can pass the same-origin check with url1. Implementing the above-mentioned steps allows url5 to pass the port number check as well. How is that?
+
+The port number is checked separately; any call to document.domain overwrites the port number to null. Calling this statement for url5 sets its port number to null. Since both url1 and url5 need to have the same port number, we need to execute this statement for url1 as well. In the example above, we do exactly that; now, url5 will be of the same origin as url1. Hence, Option D is also correct.
+

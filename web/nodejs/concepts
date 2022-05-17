@@ -1,0 +1,87 @@
+- Runtime built on chrome's v8
+
+nvm install --lts
+npm install 
+npm test
+npm uninstall
+
+
+
+Globals:
+--------
+console.log(global);
+
+__dirname -> Point sto directory name of the file its used in.
+__filename
+process
+exports
+modules
+require
+
+
+server:
+-------
+
+const server=http.createServer((req,res)=>{
+let body='';
+req.on('data', chunk =>{
+    body += chunk.toString();
+});
+
+req.on('end', ()=>{
+     body=JSON.parse(body);
+});
+
+console.log(body);
+res.writeHead(201);
+res.end('ok');
+
+})
+
+server.listen(port,host,()=>{
+    started
+})
+
+
+
+
+Modules:
+--------
+- There are no global space issues.
+
+
+process.exit(1) - process exit
+process.exit(0) - success
+
+process.on('uncaughtException', (e)=>{
+
+})
+
+
+
+Pushing to npm: Learn how to publish to npm. Folder structure etc.
+---------------
+Create an npm account 
+npm login
+npm publish
+
+semantic-release-cli
+
+Inspect:
+--------
+node --inspect-brk index.mjs
+
+
+
+Test an exception in jest:
+-------------------------
+
+test('no user found', async ()=>{
+    expect.assertions(1);
+
+    try{
+
+    }catch(e){
+      expect(e).toBeTruthy();
+    }
+})

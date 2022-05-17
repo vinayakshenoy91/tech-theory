@@ -1,0 +1,104 @@
+OSS reqt:
+----------
+1) CONTRIBUTING.md file
+2) Commit message guideline
+3) Formatting
+4) Linting
+
+
+What are required for contributing in a OSS project:
+----------------------------------------------------
+1) Read: CONTRIBUTING.md file -> Guidelines on how to contribute
+2) Check labels in issue and ask: I would like to help out with the issue. is there any sepcific impl you have in mind
+3) Fork the repo
+4) Clone it
+5) git remote add upstream ssh_url_of_original_repo
+6) git fetch upstream
+7) git branch --set-upstream-to=upstream/master master
+8) Create a branch pr/name
+9) Follow all contributing command in CONTRIBUTING.md file
+
+10) Once you are done-> raise a pr
+git push -u origin pr/name //This is required only if you don't want to witing origin branchname everytime you push and just mention "git push"
+
+11) Git rebase incase there is a conflict. Makes easy for git maintainer with clean commit history
+
+git fetch upstream
+git rebase upstream/master
+git add .
+git rebase --continue //If trouble with merge conflict use git rebase --abort
+git push -f //Validate git histroy before this
+
+git rebase -i parent_commit_of_master
+git push -f
+
+
+//TODO standardise commit messages and branching names.
+Create issues in jira and get it closed from git
+//Reflect that commit in git
+
+Creating OSS library:  [https://egghead.io/lessons/javascript-how-to-write-a-javascript-library-adding-badges-to-your-readme]
+--------------------
+1) Create a repo
+2) Create npm account
+3)Create .npmrc file:
+npm set init-author-name 'Kent C Dodds'
+npm set init-author-email 'emailid'
+npm set init-author-url ''
+npm set init-license 'MIT'
+npm set save-exact true
+4) npm adduser
+5) create package.json
+entry point: src/index.js
+6) In index.js: Any thing you want to install use --save
+//Import or require things here
+module.exports={
+    all,
+    random
+};
+7) Publish node module:
+npm publish
+
+8) Any update, do the update -> bump up version in package json -> create tag and push  -> npm publish
+9) If beta, then "1.4.0-beta.0"
+tag in github
+npm publish --tag beta
+9) Use mocha and chai for testing
+npm i  -D mocha chai
+10) npm install -g semantic-release-cli
+semantic-release-cli setup
+11) in travis.yml add script as : - npm run test
+12) Read angular CONTRIBUTING.md  for commit guidelines
+npm install -D commitizen cz-conventional-changelog
+verson:"0.0.0-semantically-released"
+scripts:{
+    "commit":"git-cz"
+}
+"czConfig":{
+    "path":"node_modules/cz-conventional-changelog"
+}
+
+12) git status
+npm run commit
+13) optional : install -D ghooks
+
+config:{
+    "ghooks":{
+        "pre-commit":""
+    }
+}
+
+14)Codecov.io for badges: https://about.codecov.io/resources/
+Code coverage as part of commits
+
+15)Addign badges from shields.io
+16) ES6 support: Add babel and its presets
+build:"babel --copy-files --out-dir dist --ignore *.test.js src"
+npm install babel-cli and preset 2015 and stage 2
+17)npm pacK -> To cehck what will be added in registry
+"prebuild":"rimraf dist"
+"files":["dist","README.md"]
+main: dist/index.js
+18) Use nyc instead of istandbul
+When running for mocha use : --compilers js:babel-register
+19)npmcdn for umd build

@@ -1,0 +1,13 @@
+hendrixer.github.io
+next export -> Staic files to cdn
+
+To deploy to vercel:
+---------------------
+npm i -g vercel
+yarn global add vercel
+Run command: vercel
+
+Replace url with env variables.
+
+.env file has all env configs and then user process.env.XYZ in your code.
+

@@ -1,0 +1,110 @@
+Hashing: Process of mapping keys to locations. Simple fn is key%tableSize
+--------
+Optimal searches and symbol tables
+Tree gives all ops in O(logn)
+All these ops use hashing O(1), worst case is still O(n) but avg O(1)
+
+
+HashTable ADT:
+
+- Create hash Table
+- Delete Hash Table
+- hash Search
+- Hash Insert
+- Hash Delete: Delete a key from has table
+
+ 
+
+ Hashing has 4 components:
+ -------------------------
+ Hash Table
+ Hash Functions
+ Collisions
+ Collision Resolution Techniques 
+ 
+ Arrays have direct addressing: Kth key, kth position . This is applicable when we can afford to allocate an array with one position
+ for every possible key or less location -> more keys
+ 
+ Hash function -> used to transform key to index
+ Perfect hash function-> Maps each item into unique slot
+ 
+ Goal of has function :
+ ----------------------
+ Minimize number of collision
+ easy to compute  and calculate quickly and returns values within the range of locations in our table.
+ distributed evenly in hash table
+ Use all info provided in the key
+ Have a high load factor for a given set of keys
+ 
+ Load factor:
+ ------------
+ Number of items stored/size of table
+ Used for decide whether to rehash or expand existing hash table entries
+ Helps determine effeciency of the hashing function.
+ 
+ 
+ Collision:
+ ----------
+ Two records in same location 
+ 
+ 
+ Collision resolution techniques:
+ --------------------------------
+ 
+ 1) Direct chaining: An array of linked list
+ 
+ a) Separate chaining
+ 
+ 2) Open addressing: (Closed Hashing)
+ ---------------------
+ All keys are stored in has table itself. This is based on probing.
+ 
+ a) Linear Probing:
+ ------------------
+ Interval between probe is fixed at 1. Search table sequentially. Problem is clustering where table contains groups of consecutively 
+ occupied locations. This cause long probe search and reduce overall effeciency.
+ 
+ rehash(key)=(n+1)%tablesize
+ 
+ b) Quadratic probing:
+ ---------------------
+ Clustering eliminated to large extent.Indices are described by a quadratic function. Interval increases linearly.
+ 
+ rehash(key)=(n+k^2)%tablesize
+Interval increases proportional to hash value.
+ 
+ c) Double hashing:
+ -----------------
+ 
+ Increments computed by another has function
+ 
+ h2 should be h2(key) !=0 and h2 != h1
+ 
+ h1(key), h1(key)+h2(key), h1(key)+2*h2(key)
+ 
+ More time but few probes, more complicated to implement.
+ 
+ Note: Open addressed has table cannot be used if data does not have unique key
+ 
+ Note: Load factor is constant in practise. Using this we make sure that each block on an avg stores the max elements less than load factor.
+ 
+ We use hash table where searches are more than insertion and deletion ops.
+ 
+ Access time depends on load factor which inturn depends on hash function 
+ 
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+  
+ 
+ 
+ 
+ 
+ 
+ 
+ 

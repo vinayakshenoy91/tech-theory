@@ -1,0 +1,31 @@
+Startign with small monolith:
+------------------------------
+
+Compartmentalize the code in root packages defining the domain contexts
+
+Take advantage of dependency injection
+
+Once you have identified the contexts (e.g., Challenges and Users), give them a consistent name across your application
+
+Take advantage of dependency injection: Base your code on interfaces, and let Spring do its job injecting the implementations. Refactoring using this pattern is much easier
+
+Once you have identified the contexts (e.g., Challenges and Users), give them a consistent name across your application: Naming concepts properly is critical at the beginning of the design phase to make sure everybody understands the different domain boundaries.
+
+Don’t be afraid of moving classes around (easier with a small monolith) during the design phase until boundaries are clear: After that, respect the boundaries. Never take shortcuts tangling business logic across contexts just because you can. Always keep in mind that the monolith should be prepared to evolve.
+
+Find common patterns and identify what can be later extracted as common libraries, for example: Move them to a different root package.
+
+Use peer reviews to make sure the architecture designs are sound and to facilitate knowledge transfer: It’s better to do this as a small group instead of following a top-bottom approach where all designs come from a single person.
+
+Clearly communicate to the project manager and/or business representatives to plan time later to split the monolith: Explain the strategy and create the culture. Refactoring is going to be necessary, and there is nothing wrong with it.
+
+Try to keep a small monolith at least until your first release. Don’t be afraid of it; a small monolith will bring you some advantages.
+Faster development in early phases is better to get quick feedback on your product.
+
+You can easily change the domain boundaries.
+
+People get used to the same technical guidelines. That helps achieve future consistency.
+
+Common cross-domain functionality can be identified and shared as libraries (or guidelines).
+
+The team will get a complete view of the system instead of only parts of it. Then, these people can move to other teams and bring that useful knowledge with them.

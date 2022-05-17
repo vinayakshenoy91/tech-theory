@@ -1,0 +1,11 @@
+const fs = require('fs');
+
+const input = //**array from the csv conversion output is the input here.**
+
+console.log("Input data length is "+ input.length);
+
+const output = { "type": "MASTER_VEHICLES", "vehicles":{} };
+
+for(let x=0;x<input.length;x++){ output.vehicles[input[x].VanRegistration]={ "manufacturer": input[x].Manufacturer, "model": input[x].Model, "supplier": input[x].Supplier, "vanRegistration": input[x].VanRegistration } }
+
+fs.writeFileSync("vehicle_output.json",JSON.stringify(output));

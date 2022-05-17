@@ -1,0 +1,32 @@
+- Introduced in ES2017
+- Code will look sync but will have async functionality
+- await only used inside async fn. It waits for a promise.It causes async to pause.
+
+
+Usage:
+------
+
+//Function declartion - hoisted to top
+async function xyz(){
+
+
+}
+
+OR
+
+//Function expression - not hoisted( JS knows that it exists but ot doesn;t know that it is a function.)
+var x = async function (){
+
+
+}
+
+
+For promise, you use "for of" or forEach over array
+
+Iterate through promises: with async await
+------------------------
+let promises = movieObj.planets.map(url=> $.getJSON(url));
+
+for await(let pl of promises){
+    console.log(pl.name);
+}

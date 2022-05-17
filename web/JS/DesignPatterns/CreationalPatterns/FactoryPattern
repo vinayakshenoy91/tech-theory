@@ -1,0 +1,98 @@
+- Object creation is complicated and is too convoluted.
+- You can outsource this creation logic to a separate class called Factory or separate method called Factory Method.
+- Factory is responsible for wholesale creation of objects.
+- Factory method is any entity that can take care of object cretion.
+
+
+//Factory Method [tea factory -> tea]
+class Point {
+   constructor(x,y){
+       this.x=x;
+       this.y=y;
+   }
+
+   static newRectPoints(x,y){
+       return new Point(x,y);
+   }
+
+   static newCartPoints(x,y){
+       let p = x*x;
+       let q=q*y;
+       return new Point(p,q)
+   }
+}
+
+const j = Point.newRectPoints(4,5);
+
+//Factory: Separate entity from the factory functionality. [tea factory -> tea]
+class Point {
+   constructor(x,y){
+       this.x=x;
+       this.y=y;
+   }
+}
+
+class PointFactory{
+   static newRectPoints(x,y){
+       return new Point(x,y);
+   }
+
+   static newCartPoints(x,y){
+       let p = x*x;
+       let q=q*y;
+       return new Point(p,q)
+   }
+}
+
+const j = PointFactory.newRectPoints(4,5);
+
+
+//Abstract factory: Hot drink -> tea factory -> tea
+class HotDrink{
+    consume(){}
+}
+
+class Tea extends HotDrink{
+    consume(){
+        console.log("")
+    }
+}
+
+class HotDrinkFactory{
+    prepare(amount){};
+}
+
+class TeaFactory extends HotDrinkFactory{
+    prepare(amount){
+            return new Tea();
+    };
+}
+
+let AvailalbeDrink= Object.freeze({
+    coffee:CoffeeFactory,
+    tea: TeaFactory
+});
+
+class HotDrinkMachine{
+    constructor({
+        this.factories={};
+        for(let drink in AvailableDrink){
+            this.factories[drink]=new AvailableDrink[drink]();
+        }
+    })
+    interact(consumer){
+
+    }
+    makeDrink(type){
+        switch(type){
+            case 'tea': 
+               return new TeaFactory().prepare(200);
+        }
+    }
+}
+
+let machine = new HotDrinkMachine();
+machine.interact(()=>{ drink.consume()})
+
+
+

@@ -1,0 +1,40 @@
+Azure Portal – https://portal.azure.com
+Ergast API Documentation - http://ergast.com/mrd/
+PySpark Documentation - https://spark.apache.org/docs/latest/api/python/index.html
+PySpark API Reference - https://spark.apache.org/docs/latest/api/python/reference/index.html
+Spark SQL Reference - https://spark.apache.org/docs/latest/sql-ref.html
+GPT-2 by Open AI -> Became contreversial and that was stopped
+
+
+Intro of data science:
+----------------------
+
+MIS: Complexity(Y-axis) vs Value added to org(x-axis)
+----
+- Something that happened in past.
+- After MIS, perform a detective analysis -> Why has something happened
+- After detective analysis, BI(dashboard) for every apect of action in business in real time
+- After dashboard, Predictive modelling -> trends and past data and then take action.
+- After Predictive modelling, it is big data.
+
+Installations:
+--------------
+- anaconda installation
+- conda list
+- 
+- conda env list
+- source activate av
+- jupyter notebook
+- source deactivate av
+
+Jupyter notebook shortcut:
+---------------------------
+- shift + enter -> to execute
+- a and b by clicking outside to get a new cell above and below
+- !ls -> Terminal command
+
+
+
+
+
+

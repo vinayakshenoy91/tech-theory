@@ -1,0 +1,448 @@
+- By design, Java doesn’t support multiple inheritance in the language because multiple inheritance can lead to complex, 
+often difficult-to-maintain data models. 
+
+- It is possible in Java to prevent a class from being extended by marking the class with the final modifier. If you try 
+to define a class that inherits from a final class, then the class will fail to compile. 
+
+- compiler has been automatically inserting code into any class you write that doesn’t extend a specific class.
+The key is that when Java sees you define a class that doesn’t extend another class, it automatically adds 
+the syntax extends java.lang.Object to the class definition.
+
+- Inheritance structure: Object -> Mammel -> Ox
+
+public abstract class ElephantSeal extends Seal{
+
+}
+
+
+Super keyword:
+--------------
+class Mammal {
+   String type = "mammal";
+}
+ 
+public class Bat extends Mammal {
+   String type = "bat";
+   public String getType() {
+      return super.type + ":" + this.type;
+   }
+   public static void main(String... zoo) {
+      System.out.print(new Bat().getType());
+   }
+}
+
+Java uses the narrowest scope it can—in this case, the type variable defined in the Bat class
+
+Test code:
+----------
+1:  class Insect {
+2:     protected int numberOfLegs = 4;
+3:     String label = "buggy";
+4:  }
+5:  
+6:  public class Beetle extends Insect {
+7:     protected int numberOfLegs = 6;
+8:     short age = 3;
+9:     public void printData() {
+10:       System.out.print(this.label);
+11:       System.out.print(super.label);
+12:       System.out.print(this.age);
+13:       System.out.print(super.age);
+14:       System.out.print(numberOfLegs);
+15:    }
+16:    public static void main(String []n) {
+17:       new Beetle().printData();
+18:    }
+19: }
+That was a trick question—this program code would not compile! Let’s review each line of the printData() method. Since label is defined in the parent class, it is accessible via both this and super references. For this reason, lines 10 and 11 compile and would both print buggy if the class compiled. On the other hand, the variable age is defined only in the current class, making it accessible via this but not super. For this reason, line 12 compiles, but line 13 does not. Remember, while this includes current and inherited members, super only includes inherited members. In this example, line 12 would print 3 if the code compiled.
+
+Constructors:
+-------------
+- a constructor is a special method that matches the name of the class and has no return type. It is called when a new instance of the class is created. 
+
+- Like method parameters, constructor parameters can be any valid class, array, or primitive type, including generics, but may not include var
+
+
+
+
+
+DEFAULT CONSTRUCTOR
+Every class in Java has a constructor whether you code one or not. If you don’t include any constructors in the class, Java will create one for you without any parameters. This Java-created constructor is called the default constructor and is added anytime a class is declared without any constructors. We often refer to it as the default no-argument constructor for clarity. 
+
+
+Why private constructors?
+
+Having only private constructors in a class tells the compiler not to provide a default no-argument constructor. It also prevents other classes from instantiating the class. This is useful when a class has only static methods or the developer wants to have full control of all calls to create new instances of the class. Remember, static methods in the class, including a main() method, may access private members, including private constructors.
+
+
+Calling one constructor from another? use this keyword:
+
+Java provides a solution: this()—yes, the same keyword we used to refer to instance members. When this() is used with parentheses, Java calls another constructor on the same instance of the class.
+
+   public Hamster(int weight) {
+      this(weight, "brown");
+   }
+
+
+Rule of this:
+
+Calling this() has one special rule you need to know. If you choose to call it, the this() call must be the first statement in the constructor. The side effect of this is that there can be only one call to this() in any constructor.
+
+3:    public Hamster(int weight) {
+4:       System.out.println("in constructor");
+5:       // Set weight and default color
+6:       this(weight, "brown");     // DOES NOT COMPILE
+7:    }
+
+
+THIS VS. THIS()
+Despite using the same keyword, this and this() are very different. The first, this, refers to an instance of the class, while the second, this(), refers to a constructor call within the class.
+
+SUPER VS. SUPER()
+Like this and this(), super and super() are unrelated in Java. The first, super, is used to reference members of the parent class, while the second, super(), calls a parent constructor. Anytime you see the super keyword on the exam, make sure it is being used properly.
+
+
+
+//Super:
+-------
+public class Animal {
+   private int age;
+   public Animal(int age) {
+      super();     // Refers to constructor in java.lang.Object
+      this.age = age;
+   }
+}
+ 
+public class Zebra extends Animal {
+   public Zebra(int age) {
+      super(age);  // Refers to constructor in Animal
+   }
+   public Zebra() {
+      this(4);     // Refers to constructor in Zebra with int argument
+   }
+}
+
+
+If the parent class has more than one constructor, the child class may use any valid parent constructor in its definition, 
+as shown in the following example:
+
+public class Animal {
+   private int age;
+   private String name;
+   public Animal(int age, String name) {
+      super();
+      this.age = age;
+      this.name = name;
+   }
+   public Animal(int age) {
+      super();
+      this.age = age;
+      this.name = null;
+   }
+}
+ 
+public class Gorilla extends Animal {
+   public Gorilla(int age) {
+      super(age,"Gorilla");
+   }
+   public Gorilla() {
+      super(5);
+   }
+}
+
+
+In this example, the first child constructor takes one argument, age, and calls the parent constructor, 
+which takes two arguments, age and name. The second child constructor takes no arguments, and it calls the parent constructor, 
+which takes one argument, age. In this example, notice that the child constructors are not required to call matching parent 
+constructors. Any valid parent constructor is acceptable as long as the appropriate input parameters to the parent constructor are provided.
+
+
+The answer is that the Java compiler automatically inserts a call to the no-argument constructor super() 
+if you do not explicitly call this() or super() as the first line of a constructor. 
+
+
+
+Missing a Default No-Argument Constructor:
+-------------------------------------------
+
+What happens if the parent class doesn’t have a no-argument constructor? Recall that the default no-argument constructor is not required and is inserted by the compiler only if there is no constructor defined in the class. For example, do you see why the following Elephant class declaration does not compile?
+
+public class Mammal {
+   public Mammal(int age) {}
+}
+ 
+public class Elephant extends Mammal {  // DOES NOT COMPILE
+}
+Since Elephant does not define any constructors, the Java compiler will attempt to insert a default no-argument constructor. As a second compile-time enhancement, it will also auto-insert a call to super() as the first line of the default no-argument constructor. Our previous Elephant declaration is then converted by the compiler to the following declaration:
+
+public class Elephant extends Mammal {
+   public Elephant() {
+      super();  // DOES NOT COMPILE
+   }
+}
+Since the Mammal class has at least one constructor declared, the compiler does not insert a default no-argument constructor. Therefore, the super() call in the Elephant class declaration does not compile. In this case, the Java compiler will not help, and you must create at least one constructor in your child class that explicitly calls a parent constructor via the super() command. We can fix this by adding a call to a parent constructor that takes a fixed argument.
+
+public class Elephant extends Mammal {
+   public Elephant() {
+      super(10);
+   }
+}
+This code will compile because we have added a constructor with an explicit call to a parent constructor. Notice that the class Elephant now has a no-argument constructor even though its parent class Mammal doesn’t. Subclasses may define explicit no-argument constructors even if their parent classes do not, provided the constructor of the child maps to a parent constructor via an explicit call of the super() command. This means that subclasses of the Elephant can rely on compiler enhancements. For example, the following class compiles because Elephant now has a no-argument constructor, albeit one defined explicitly:
+
+public class AfricanElephant extends Elephant {}
+You should be wary of any exam question in which a class defines a constructor that takes arguments and doesn’t define a no-argument constructor. Be sure to check that the code compiles before answering a question about it, especially if any classes inherit it. For the exam, you should be able to spot right away why classes such as our first Elephant implementation did not compile.
+
+SUPER() ALWAYS REFERS TO THE MOST DIRECT PARENT
+A class may have multiple ancestors via inheritance. In our previous example, AfricanElephant is a subclass of Elephant, which in turn is a subclass of Mammal. For constructors, though, super() always refers to the most direct parent. In this example, calling super() inside the AfricanElephant class always refers to the Elephant class, and never the Mammal class.
+
+
+
+
+
+ORDER OF INITIALIZATION:
+-------------------------
+Initialize Class X
+
+- If there is a superclass Y of X, then initialize class Y first.
+- Process all static variable declarations in the order they appear in the class.
+- Process all static initializers in the order they appear in the class.
+
+public class Animal {
+   static { System.out.print("A"); }
+}
+ 
+public class Hippo extends Animal {
+   static { System.out.print("B"); }
+   public static void main(String[] grass) {
+      System.out.print("C");
+      new Hippo();
+      new Hippo();
+      new Hippo();
+   }
+}
+
+Taking a look at an example, what does the following program print?:
+
+
+public class Animal {
+   static { System.out.print("A"); }
+}
+ 
+public class Hippo extends Animal {
+   static { System.out.print("B"); }
+   public static void main(String[] grass) {
+      System.out.print("C");
+      new Hippo();
+      new Hippo();
+      new Hippo();
+   }
+}
+It prints ABC exactly once. Since the main() method is inside the Hippo class, the class will be initialized first, starting with the superclass and printing AB. Afterward, the main() method is executed, printing C. Even though the main() method creates three instances, the class is loaded only once.
+
+WHY THE HIPPO PROGRAM PRINTED C AFTER AB
+In the previous example, the Hippo class was initialized before the main() method was executed. This happened because our main() method was inside the class being executed, so it had to be loaded on startup. What if you instead called Hippo inside another program?
+
+public class HippoFriend {
+   public static void main(String[] grass) {
+      System.out.print("C");
+      new Hippo();
+   }
+}
+Assuming the class isn’t referenced anywhere else, this program will likely print CAB, with the
+ Hippo class not being loaded until it is needed inside the main() method. We say likely, because the rules for when classes are loaded are determined by the JVM at runtime. For the exam, you just need to know that a class must be initialized before it is referenced or used. Also, the class containing the program entry point, aka the main() method, is loaded before the main() method is executed.
+
+
+
+Instance initialization:
+------------------------
+Initialize Instance of X
+
+If there is a superclass Y of X, then initialize the instance of Y first.
+Process all instance variable declarations in the order they appear in the class.
+Process all instance initializers in the order they appear in the class.
+Initialize the constructor including any overloaded constructors referenced with this().
+Let’s try a simple example with no inheritance. See if you can figure out what the following application outputs:
+
+1:  public class ZooTickets {
+2:     private String name = "BestZoo";
+3:     { System.out.print(name+"-"); }
+4:     private static int COUNT = 0;
+5:     static { System.out.print(COUNT+"-"); }
+6:     static { COUNT += 10; System.out.print(COUNT+"-"); }
+7:  
+8:     public ZooTickets() {
+9:        System.out.print("z-");
+10:    }
+11:
+12:    public static void main(String... patrons) {
+13:       new ZooTickets();
+14:    }
+15: }
+The output is as follows:
+
+0-10-BestZoo-z-
+First, we have to initialize the class. Since there is no superclass declared, which means the superclass is Object, we can start with the static components of ZooTickets. In this case, lines 4, 5, and 6 are executed, printing 0- and 10-. Next, we initialize the instance. Again, since there is no superclass declared, we start with the instance components. Lines 2 and 3 are executed, which prints BestZoo-. Finally, we run the constructor on lines 8–10, which outputs z-.
+
+Next, let’s try a simple example with inheritance.
+
+class Primate {
+   public Primate() {
+      System.out.print("Primate-");
+   }
+}
+ 
+class Ape extends Primate {
+   public Ape(int fur) {
+      System.out.print("Ape1-");
+   }
+   public Ape() {
+      System.out.print("Ape2-");
+   }
+}
+ 
+public class Chimpanzee extends Ape {
+   public Chimpanzee() {
+      super(2);
+      System.out.print("Chimpanzee-");
+   }
+   public static void main(String[] args) {
+      new Chimpanzee();
+   }
+}
+The compiler inserts the super() command as the first statement of both the Primate and Ape constructors. The code will execute with the parent constructors called first and yields the following output:
+
+Primate-Ape1-Chimpanzee-
+Notice that only one of the two Ape() constructors is called. You need to start with the call to new Chimpanzee() to determine which constructors will be executed. Remember, constructors are executed from the bottom up, but since the first line of every constructor is a call to another constructor, the flow actually ends up with the parent constructor executed before the child constructor.
+
+The next example is a little harder. What do you think happens here?
+
+1:  public class Cuttlefish {
+2:     private String name = "swimmy";
+3:     { System.out.println(name); }
+4:     private static int COUNT = 0;
+5:     static { System.out.println(COUNT); }
+6:     { COUNT++; System.out.println(COUNT); }
+7:  
+8:     public Cuttlefish() {
+9:        System.out.println("Constructor");
+10:    }
+11:
+12:    public static void main(String[] args) {
+13:       System.out.println("Ready");
+14:       new Cuttlefish();
+15:    }
+16: }
+The output looks like this:
+
+0
+Ready
+swimmy
+1
+Constructor
+There is no superclass declared, so we can skip any steps that relate to inheritance. We first process the static variables and static initializers—lines 4 and 5, with line 5 printing 0. Now that the static initializers are out of the way, the main() method can run, which prints Ready. Lines 2, 3, and 6 are processed, with line 3 printing swimmy and line 6 printing 1. Finally, the constructor is run on lines 8–10, which print Constructor.
+
+Ready for a more difficult example? What does the following output?
+
+
+1:  class GiraffeFamily {
+2:     static { System.out.print("A"); }
+3:     { System.out.print("B"); }
+4:    
+5:     public GiraffeFamily(String name) {
+6:        this(1);
+7:        System.out.print("C");  
+8:     }
+9:    
+10:    public GiraffeFamily() {
+11:       System.out.print("D");  
+12:    }
+13:    
+14:    public GiraffeFamily(int stripes) {
+15:       System.out.print("E");  
+16:    }
+17: }
+18: public class Okapi extends GiraffeFamily {
+19:    static { System.out.print("F"); }
+20:    
+21:    public Okapi(int stripes) {
+22:       super("sugar");
+23:       System.out.print("G");  
+24:    }
+25:    { System.out.print("H"); }
+26:    
+27:    public static void main(String[] grass) {
+28:       new Okapi(1);
+29:       System.out.println();
+30:       new Okapi(2);
+31:    }
+32: }
+The program prints the following:
+
+AFBECHG
+BECHG
+Let’s walk through it. Start with initializing the Okapi class. Since it has a superclass GiraffeFamily, initialize it first, printing A on line 2. Next, initialize the Okapi class, printing F on line 19.
+
+After the classes are initialized, execute the main() method on line 27. The first line of the main() method creates a new Okapi object, triggering the instance initialization process. Per the first rule, the superclass instance of GiraffeFamily is initialized first. Per our third rule, the instance initializer in the superclass GiraffeFamily is called, and B is printed on line 3. Per the fourth rule, we initialize the constructors. In this case, this involves calling the constructor on line 5, which in turn calls the overloaded constructor on line 14. The result is that EC is printed, as the constructor bodies are unwound in the reverse order that they were called.
+
+The process then continues with the initialization of the Okapi instance itself. Per the third and fourth rules, H is printed on line 25, and G is printed on line 23, respectively. The process is a lot simpler when you don’t have to call any overloaded constructors. Line 29 then inserts a line break in the output. Finally, line 30 initializes a new Okapi object. The order and initialization are the same as line 28, sans the class initialization, so BECHG is printed again. Notice that D is never printed, as only two of the three constructors in the superclass GiraffeFamily are called.
+
+This example is tricky for a few reasons. There are multiple overloaded constructors, lots of initializers, and a complex constructor pathway to keep track of. Luckily, questions like this are rare on the exam. If you see one, just write down what is going on as you read the code.
+
+
+
+
+REVIEWING CONSTRUCTOR RULES:
+-----------------------------
+Let’s review some of the most important constructor rules that we covered in this part of the chapter.
+
+The first statement of every constructor is a call to an overloaded constructor via this(), or a direct parent constructor via super().
+If the first statement of a constructor is not a call to this() or super(), then the compiler will insert a no-argument super() as the first statement of the constructor.
+Calling this() and super() after the first statement of a constructor results in a compiler error.
+If the parent class doesn’t have a no-argument constructor, then every constructor in the child class must start with an explicit this() or super() constructor call.
+If the parent class doesn’t have a no-argument constructor and the child doesn’t define any constructors, then the child class will not compile.
+If a class only defines private constructors, then it cannot be extended by a top-level class.
+All final instance variables must be assigned a value exactly once by the end of the constructor. Any final instance variables not assigned a value will be reported as a compiler error on the line the constructor is declared.
+
+
+Override rule check
+--------------------
+To override a method, you must follow a number of rules. The compiler performs the following checks when you override a method:
+
+The method in the child class must have the same signature as the method in the parent class.
+The method in the child class must be at least as accessible as the method in the parent class.
+The method in the child class may not declare a checked exception that is new or broader than the class of any exception declared in the parent class method.
+If the method returns a value, it must be the same or a subtype of the method in the parent class, known as covariant return types.
+
+
+OVERLOADING VS. OVERRIDING:
+----------------------------
+Overloading and overriding a method are similar in that they both involve redefining a method using the same name. They differ in that an overloaded method will use a different list of method parameters. This distinction allows overloaded methods a great deal more freedom in syntax than an overridden method would have. For example, compare the overloaded fly() with the overridden eat() in the Eagle class.
+
+public class Bird {
+   public void fly() {
+      System.out.println("Bird is flying");
+   }
+   public void eat(int food) {
+      System.out.println("Bird is eating "+food+" units of food");
+   }
+}
+ 
+public class Eagle extends Bird {
+   public int fly(int height) {
+      System.out.println("Bird is flying at "+height+" meters");
+      return height;
+   }
+   public int eat(int food) {  // DOES NOT COMPILE
+      System.out.println("Bird is eating "+food+" units of food");
+      return food;
+   }
+}
+The fly() method is overloaded in the subclass Eagle, since the signature changes from a no-argument method to a method with one int argument. Because the method is being overloaded and not overridden, the return type can be changed from void to int.
+
+The eat() method is overridden in the subclass Eagle, since the signature is the same as it is in the parent class Bird—they both take a single argument int. Because the method is being overridden, the return type of the method in the Eagle class must be compatible with the return type for the method in the Bird class. In this example, the return type int is not a subtype of void; therefore, the compiler will throw an exception on this method definition.
+
+Any time you see a method on the exam with the same name as a method in the parent class, determine whether the method is being overloaded or overridden first; doing so will help you with questions about whether the code will compile.
+
+
+
+

@@ -1,0 +1,30 @@
+// Before
+try {
+   ...
+} catch(error) {
+   ...
+}
+
+// ES2019
+try {
+   ...
+} catch {
+   ...
+}
+
+
+
+Object.fromEntries():
+----------------------
+Object.fromEntries() transforms a list of key-value pairs into an object.
+const keyValueArray = [
+  ['key1', 'value1'],
+  ['key2', 'value2']
+]
+
+const obj = Object.fromEntries(keyValueArray);
+console.log(obj);
+// {key1: "value1", key2: "value2"}
+
+We can pass any iterable as argument of Object.fromEntries(), whether it’s an Array, a Map or other objects implementing the iterable protocol.
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Iteration_protocols#The_iterable_protocol

@@ -1,0 +1,13 @@
+Private cloud:
+--------------
+AWS outpost
+Azure stack 
+Anthos
+
+- Hybrid cloud -> Same tooling, same interface to interact with public or private cloud.
+Generally from same vendor as one unified platform
+
+- Hybrid cloud is not public cloud + legacy onpremise. This is hybrid env.
+
+
+

@@ -1,0 +1,86 @@
+Number.POSITIVE_INFINITY
+Number.NEGATIVE_INFINITY
+
+- Any value which cannot fit in 64 bit format will return infinity
+
+- 9e4 -> Exponent presentation
+
+- Number.MAX_VALUE
+- -Number.MAX_VALUE
+
+JS inbuilt functions:
+-------------------
+
+isNaN(0) -> Check if value is Not a Number or Not.
+
+isFinite() -> Checks whether value is regular number or not
+Checks for NaN and infinity values
+
+Arrow function:
+---------------
+- "this" does not work with arrow function. Point to window object. If normal function, then it would refer the current context.
+- "arguments" object does not work with arrow function
+- You cannot use new to call arrow function
+
+Closures:
+---------
+- Function comes under another function
+- Pattern remembers outer variable and also helps to access outer scope members.
+- Useful when you want to make few private members available globally when needed.
+- Advantage of closure is that any member which is private for certain scope , can be accessed keeping it private so that 
+the variable is away from any accidental change of value.
+
+
+Currying:
+---------
+- Its a way to call inner functions where you can pass arguments
+partially or pass multiple argumentsin a function but 1 argument at a time.
+
+
+Iterables and Iterators:
+------------------------
+
+for(let i of x) //String, map ,set arrays, generators are iterable.
+
+https://tesco.udemy.com/course/javascript-marathon-interview-questions-series/learn/lecture/21238670#overview
+
+
+Error handling:
+---------------
+err.name
+err.message
+err.stack
+
+throw new Error("Invalid age"); //TypeError
+
+try{
+
+}catch(){
+
+}finally{
+
+}
+
+
+Generators:
+-----------
+- Helps to pause and resume the code.
+- When yield found stop the executor.
+const genFunction = function* (){
+
+}
+
+- const gObj=genFunction();
+gObj.next();
+
+[...genFunction()] -> getting all value from generator function
+
+https://tesco.udemy.com/course/javascript-marathon-interview-questions-series/learn/lecture/21390570#overview
+
+Memory and GC:
+---------------
+
+1) Mark and sweep:
+------------------
+Algo starts from root object and checks for the refernce linked.
+Find unreachable locations? -> remove it

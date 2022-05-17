@@ -1,0 +1,63 @@
+- Language and JVM feature that gives us Runtime access to information about our application's classed and objects.
+- They are available to use via reflection api.
+- Inspect and modify the runtime behaviour
+- Annotations uses reflections
+- Starts with java.lang.Class
+This class has all the methods to access Constructor, Method, Field and Annotations.
+These then return:
+- java.lang.reflect.Constructor
+- java.lang.reflect.Method
+- java.lang.reflect.Field
+- java.lang.reflect.Annotation
+
+
+Code:
+----
+//Creating a class
+Class<?> myClass = Class.forName(NameOfClass.class.getName()) //Load class into memory & it throws a checked exception
+myClass.getName();
+
+
+Constructor<?>[] constructors=myclass.getConstructors();
+
+//Creating instance
+1) Method 1
+Constructor<?> constructor = myClass.getConstructor(null); //Get the single param constructor
+constructor.newInstance(null) //Getting a new Object using the constructor
+
+2) method 2:
+Student.class.getConstructor(null).newInstance();
+s1.clone();
+
+
+//Creating an object
+Invoke parameterised constructor => 
+Constructor<?> constructor = myClass.getConstructor(double.class, double.class);
+obj1=constructor.newInstance(5,10)
+
+//Getting methods
+myClass.getMethods();
+
+Method method=myClass.getMethod("getNum1",null);
+method.invoke(obj1,null);
+
+//Set item and verify using setter    
+Method method=myClass.getMethod("setNum1",double.class);
+method.invoke(obj1,6);
+
+Method method=myClass.getMethod("getNum1",null);
+method.invoke(obj1,null);
+
+//Accessing private fields by changing the access type
+
+Field num1=myClass.getDeclaredField("num1");
+num1.setAccessible(true);
+num1.set(obj1,8)
+
+//Accessing Annotation
+Annotations[] annotations = myClass.getAnnotations(); //This is annotation on class. Similarly you can get on fields
+
+MyAnnotation annotation = (MyAnnotation) annotations[0];
+
+annotation.value1();
+annotation.value2();

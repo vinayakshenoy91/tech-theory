@@ -1,0 +1,193 @@
+New features of java 11:
+--------------------------
+- With open jdk -> Java flight recorder [low overhead data collection framework and is a bounded circular buffer] and 
+Java mission control has been open sourced
+- - Launch single file source code -> No javac x.java and then java x => Just type java x.java
+- If a java file does not have .java extension ,ie source file,  use the above shebang line
+#! /usr/bin/java  --source 11
+chmod -x filename
+
+- In Java 11, the JRE is no longer available as a stand-alone download or a subdirectory of the JDK. People can use the full 
+JDK when running a Java program. Alternatively, developers can 
+supply an executable that contains the required pieces that would have been in the JRE. The jlink command creates this executable.
+
+- With java 11 you can run java without compiling:
+
+java SingleFileZoo.java Cleveland
+
+When we compiled earlier, we wrote java Zoo. When running it as a one-liner, we write java SingleFileZoo.java. 
+This is a key difference. After you first compiled with javac, you then passed the java command the name of the class. 
+When running it directly, you pass the java command the name of the file. This feature is called launching single-file 
+source-code programs. The name cleverly tells you 
+that it can be used only if your program is one file. This means if your program has two .java files, you still need to use javac.
+
+
+
+
+Full command	         Single-file source-code command
+javac HelloWorld.java    java HelloWorld
+
+java HelloWorld.java
+Produces a class file	Fully in memory
+For any program	        For programs with one file
+Can import code in any available 
+Java library	        Can only import code that came with the JDK
+
+Rules in java:
+--------------
+- Each file can contain only one public class.
+- All are valid:
+String[] args
+String args[]
+String... args;
+
+- you cannot import methods only classes 
+- a wildcard only matches class names
+
+- Waht works?
+import java.util.Date;
+import java.sql.*;
+Ah, now it works. If you explicitly import a class name, it takes precedence over 
+any wildcards present. Java thinks, “The programmer really wants me to assume use of the java.util.Date class.”
+
+- By default, the javac command places the compiled classes in the same directory as the source code. It also provides an option to place the class files into a different directory. The -d option specifies this target directory.
+
+- To run the program, you specify the classpath so Java knows where to find the classes. There are three options you can use. All three of these do the same thing:
+
+java -cp classes packageb.ClassB
+java -classpath classes packageb.ClassB
+java --class-path classes packageb.ClassB
+
+
+Creating a jar:
+---------------
+jar -cvf myNewFile.jar .
+jar --create --verbose --file myNewFile.jar .
+Alternatively, you can specify a directory instead of using the current directory.
+jar -cvf myNewFile.jar -C dir .
+
+Option	Description
+-c
+
+--create
+
+Creates a new JAR file
+-v
+
+--verbose
+
+Prints details when working with JAR files
+-f <fileName>
+
+--file <fileName>
+
+JAR filename
+-C <directory>	Directory containing files to be used to create the JAR
+
+
+
+Passing args to java program:
+------------------------------
+java Zoo Bronx Zoo
+public class Zoo {
+   public static void main(String[] args) {
+      System.out.println(args[0]);
+      System.out.println(args[1]);
+   }
+}
+
+
+
+1) New http api client:
+------------------------
+- Replacement of java.net.HttpURLConnection
+- Supports HTTP/2, websocket
+- Reactive streams integration
+- You have HttpClient.Builder and HttpRequest.Builder and HTTP response
+
+Code:
+----
+HttpClient httpClient = new HttpClient.newHttpClient();
+HttpRequest req = new HttpRequest.newBuilder(URI.create('url')).GET().build();
+HttpResponse<String> response = httpClient.send(req, BodyHandlers.ofString());
+response.headers().map()
+
+//For http 2 use,
+HttpClient httpClient = HttpClient.newBuilder().version(Version.HTTP_2).build();
+
+//For async use:
+CompletableFuture<HttpResponse<String>> resFuture = httpClient.sendAsync(req,BodyHandlers.ofString());
+resFuture.thenAccept(res => Systen.ouyt.println(res.version());
+resFuture.join(); 
+
+
+2) Library additions:
+---------------------
+"na".repeat(16) -> Print string 16 times
+" ".isBlank()
+"".strip() -> Remove all whitespace including unicode
+"".trim() -> Remove all whitespace. Does not know about unicode. [Character.isWhitespace('\u2005')]
+
+var multiline = "1\n2\n3\n4"
+multiline.lines().forEach(System.out::println)
+
+Optional::isEmpty
+var opt = Optional.ofNullable(null);
+
+strings.filter(Predicate.not(String::isBlank))
+
+Upgrade to unicode 10 with 16k+ new characters, 10 new scripts
+
+
+3) Local variable type inference:
+---------------------------------
+- using var  such that the type will automatically be infered
+
+
+4) Nest based access control:
+-----------------------------
+- For a inner class to use private properties fo parent class, JVM internally had to use a bridge method to provide this functionality.
+Compiler used to insert this bridge method. This would have been possible by reflection used by inner class to call outer class.
+But reflection does not know about bridge methods and when it access private method, it fails.
+- Using this access control, parent and child will be in same nest where parent is nest host and child is nest member
+
+5) JVM change -> Dynamic class file constants:JEP309
+
+
+6) garbage collection: G1GC is the default. Two new GC: 
+a) Epsilon GC: Apps with predicatble and bound memeory usage. Short lived program.
+Perf testing.
+-XX:+UnlockExperimentalVMOptions
+-XX:+UseEpsilonGC
+
+b) Z garbage collector: Pause time <10ms. No pause time increase with heap size increase.
+Scale to multi-terabyte heaps.(Current impl handles upto 4TB)
+Every object is referenced by 64 bit pointer. 4bits are allcoated in this to keep GC status info.
+-XX:+UnlockExperimentalVMOptions
+-XX:+UseZGC
+
+7) TLS 1.3 is impl in JDK: All handshake message except first encrypted.
+Elliptic curve algo in base spec has been added (JEP332) 
+
+TLS 1.3 compatibility risk:
+    - Cipher suite mismatches
+    - DSA cert cannot be used 
+    - DTLS 1.3 not impl 
+
+
+Java 9:
+------
+- Modularity in java 9
+
+Java 10:
+--------
+- var keyword in java 10
+
+
+Instance initilizers:
+---------------------
+- They are code blocks that appear outside the method.
+
+Fields and instance initializer blocks are run in the order in which they appear in the file.
+The constructor runs after all fields and instance initializer blocks have run.
+

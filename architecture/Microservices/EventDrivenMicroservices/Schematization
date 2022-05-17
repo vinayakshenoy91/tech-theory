@@ -1,0 +1,5 @@
+Schematization selections such as Apache Avro and Google’s Protobuf provide two features that are leveraged heavily in 
+event-driven microservices. First, they provide an evolution framework, where certain sets of changes can be safely made 
+to the schemas without requiring downstream consumers to make a code change. Second, they also provide the means to generate 
+typed classes (where applicable) to convert the schematized data into plain old objects in the language of your choice. 
+

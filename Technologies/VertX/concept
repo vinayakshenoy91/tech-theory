@@ -1,0 +1,24 @@
+- Eclipse Vert.x is an event-driven toolkit for building reactive applications on the Java Virtual Machine (JVM). 
+Vert.x does not impose a specific framework or packaging model; it can be used within your existing applications and 
+frameworks in order to add reactive functionality by just adding the Vert.x jar files to the application classpath.
+
+https://oreil.ly/jCg8t
+
+Eclipse Vert.x enables building reactive systems as defined by The Reactive Manifesto and builds services that are:
+
+Responsive: to handle requests in a reasonable time
+
+Resilient: to stay responsive in the face of failures
+
+Elastic: to stay responsive under various loads and be able to scale up and down
+
+Message-driven: components interact using asynchronous message passing
+
+The unit of deployment in Vert.x is called a verticle. A verticle processes incoming events over an event loop, 
+where events can be anything such as 
+receiving network buffers, timing events, or messages sent by other verticles.
+
+Commands:
+---------
+mvn compile vertx:run -> start gateway
+

@@ -1,0 +1,114 @@
+How elastic search works?
+- Data is stored as documents like a row in RDBMS
+- Query using rest-apis
+- Wirtten on java and built on top of apache lucene
+- Easy to use and highly scalable.
+Elastic search. solr -> Both bbuilt on top of apache lucene
+Fuzzyness factor
+
+Elastic stack:-
+--------------
+- Elasticsearch, Beats (Agent/shipper collection to send data to ES or logstash), Kibana(Analytics and visualisation, Web interface to data on ES), Logstash(Data processing pipeline), 
+X-pack (Security, Monitoring of elastic stack, Alerting, report, enables ML[Abnormality detection,Forecasting], graph, Query SQL)
+
+
+Info:
+------
+- Query context -> relevance scores are taken into account
+- Filter context -> Relevant scores are not taken into account
+- Term queries -> Do look for exact match
+- Full text queries are analysed using analyser defined for the search field (or "standard" if none is defined)
+
+
+Search works: 
+-------------
+Query DSL : Spcify json object instead of request URI
+GET /product/default/_search?explain
+GET /product/default/_search
+
+{
+    "query":{
+        "match":{
+            "description":{
+                "value":"red wine"
+            }
+        }
+    }
+}
+
+OR
+
+{
+    "query":{
+        "match":{
+            "description":"red wine"
+        }
+    }
+}
+
+GET /product/default/_search?q=name:pasta
+
+OR
+
+
+{
+    "query":{
+        "query_string":{
+            "query":"name:pasta"
+        }
+    }
+}
+
+GET /product/default/_search?q=name:pasta AND tags:Tuna
+
+
+GET /product/default/1/_explain [Query context]
+
+{
+    "query":{
+        "term":{
+            "name":"lobster"
+        }
+    }
+}
+
+Sharding:
+---------
+- Divides indices into smaller pieces
+- Each piece is called as shard
+- Sharding is done at index level
+- Shard is an independent index .. kind of 
+- Each shard is a lucene index
+- An Elasticsearch index consists of one or more Lucene indices.
+- Shard has no predefined size;it grows as documents are added to it.
+- shard may store upto 2B documents.
+- Improved perf with parallelization of queries increases the throughput of an index.
+- An index creates a single shard by default.
+- Increase number of shards using split API and reduce the number of shards using shrink API
+- An index is divided into one or more shards, where each shard stores a part of the index' data.
+
+
+Replication:
+-------------
+- Replication is configured at index level
+- Create copies of shard called replica shard
+- Shard that has been replicated is primary shard.
+- Primary shard + replica shard = replicaton group
+- Replica shard serve search request.
+- Number of replicas can be configured at index creation
+- Increase replica shard if you see a bottleneck
+- Replica shards of a replication group can serve diff search requests simultaneously
+- This increases the number of requests that can be handled at the same time.
+- Elastic search intelligently routes requests to best shard.
+- CPU parallelization improves perf if multipel replica shards are stored on the same node.
+- Default replicas per shard is 1
+
+Note: Totally two shards are added for an index by default.
+2( 1primary shard + 1 replica shard)
+
+Snapshots:
+----------
+- Elastic search supports taking snapshots as backups
+- Snapshots can be used to restore to a given point in time.
+- Snapshots can be taken at index level or for entire cluster 
+- Snapshots for backup and replication for HA and perf

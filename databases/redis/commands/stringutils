@@ -1,0 +1,18 @@
+- keys *
+
+- INCR key -> if we need to increment the value of a given key by 1. I
+
+- INCRBY key count
+
+- INCRBYFLOAT key floatValue
+
+- DECR key
+
+- DECRBY key count
+
+- DEL key
+
+- FLUSHALL ->  flush all the keys present in Redis 
+
+- APPEND key stringToBeAppended -> If we need to append some string to a value, we can use the APPEND command
+

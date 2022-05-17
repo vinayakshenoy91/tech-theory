@@ -1,0 +1,84 @@
+List: [Mutable and ordered]
+-----
+- List allows for ordered data
+
+listname.append(x)
+listname + listname2 or listname.extend(listname2)
+listname.index('element')
+listname.pop(position)
+sorted(listname)
+
+
+Tuple: [Immutable and ordered]
+------
+- Hold data in order
+- Immutable
+- pairing
+
+list(zip(us_cookies, in_cookies))  or zip(us_cookies, in_cookies) //Creating tuples
+x, y = top_pairs[0] //Unpacking tuples
+for x,y in pairs:
+for idx item in enumerate(tuplename): //Return position and the data in that position while looping.
+   x,y=item
+
+
+Note | Warn: Tuple creating beware: ('trailing comma',)
+# Create the mistaken variable: error
+error = 'trailing comma',
+
+# Print the types of the variables
+print(error)
+
+Named Tuple:
+------------
+- Tuple where each position(column) has a name.
+- Ensure each one has same properties
+- Alternative to pandas DataFrame row
+- Each field available as an attribute of the named tuple.
+
+form collections import namedtuple
+x = namedtuple('x',[value1,value2])
+
+j=[]
+for p in n:
+   details = x(p[value1],p[value2])
+   j.append(details)
+
+print(eateries[0])
+
+retrieveing:
+for eatery in eateries[:3]:
+   print(eatery.name)
+   print(eatery.location)
+
+
+
+Sets: [Unordered unique elements but mutable]
+-----
+- Created from list
+- set(listname)
+
+setname.add(element)
+setname.update(set or list)
+setname.discard('value')
+setname.pop('value') //Removes and returns an arbitrary element from the set (KeyError when empty)
+set1.union(set2) //returns all unique elements
+set1.intersection(set2)//overlapping data
+set1.difference(set2)
+
+set Example:
+# Create the empty set: baby_names_2011
+baby_names_2011 = set()
+
+# Loop over records and add the names from 2011 to the baby_names_2011 set
+for  row in records:
+    # Check if the first column is '2011'
+    if row[0] == '2011':
+        # Add the fourth column to the set
+        baby_names_2011.add(row[3])
+
+# Find the difference between 2011 and 2014: differences
+differences = baby_names_2011.difference(baby_names_2014)
+
+# Print the differences
+print(differences)

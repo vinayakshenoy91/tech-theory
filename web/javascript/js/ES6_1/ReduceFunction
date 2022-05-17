@@ -1,0 +1,10 @@
+let sum = [1,2].reduce((total, currentValue)=>{
+    return total +currentValue;
+  }, total);
+
+
+  function sumPrices(...numbers) {
+    return numbers.reduce(function(total, val) {
+        return total + val
+    }, 0);
+}

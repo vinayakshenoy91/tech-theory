@@ -1,0 +1,45 @@
+Why reactive programming?
+- Thread per request model
+- Thread pool size embedded in tomcat is 200
+- Thread is an expensive resource and can easily take 1MB of heap space.
+So less heap space for actually processing request.
+- Concurrency is limited in spring mvc
+
+
+Ways to handle async?
+- Callback
+- Completable future - Can handle multiple future.Future that returns many elements.
+CompletableFuture<List<Result>> will need to wait for the whole collection to built and readily available.
+
+
+Use reactive programming?
+- When high load. 400TPS.
+- Netty is a non-blocking server using event loop model
+- Project reactor library is used to write non-blocking code.
+
+Reactive stream spec:
+- 4 interfaces: Publisher, subscriber, subscription,processor.
+
+Project reactor: 
+-----------------
+- implementation of reactive stream spec.
+- Reactive library
+- Flux and mono is a reactive type that implements the Reactive streams spec.
+- Flux and mono is a part of reactor core module.
+- Flux is a reactive type to represent 0 to N elements.
+- Mono is a reactivr type to represent 0 to 1 element.
+
+Dependencies:
+-------------
+- reactor-core
+- logback
+- Reactor-test
+- junit-jupiter
+- mockito-junit-jupiter
+- mockito-core
+
+
+
+
+
+

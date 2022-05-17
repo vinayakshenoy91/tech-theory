@@ -1,0 +1,59 @@
+Spring Profiles provides a powerful and easy way to control code and configuration based on the environment. Using Spring Profiles it’s possible to segregate parts of our application and make it only available in certain environments. We can use @Profile annotation to limit the availability of any @Component  or @Configuration.
+
+1. Use @Profile Annotation
+Main entry point for the Spring Profile is @Profile annotation which can be used to group things together. 
+Let’s take a simple example for a Database connection bean where we want to make sure that certain DB connection 
+should be active only in DEV mode but not in production or QA / Staging. We can use @Profile annotation to achieve this.
+
+@Service
+@Profile("development")
+public class DevDBConnection implements  DatabaseService {
+    
+    @Override
+    public void getDBConnection() {
+        System.out.println("DEV DB connection established");
+    }
+}
+
+
+Default profile used by Spring profile is the default. All the beans with no profile annotation are specified belongs to the default profile. We can also set default profile in Spring Boot by  @Profile("default") or @Profile({"default","development"}).
+
+
+Properties: [Put a separate app.properties app. yaml file]
+-----------
+spring.profiles.active=development,staging
+
+We can programmatically set active profile by calling setAdditionalProfiles(...) method provided by 
+SpringApplication class
+
+SpringApplication app = new SpringApplication(Application.class);
+app.setAdditionalProfiles("development","production");
+
+
+
+Profile Specific Configurations: Using it:   @Value("${user.firstName}") private String firstName;
+---------------------------------
+One of the most interesting and powerful features provided by Spring Boot is the ability to define profile specific application.properties file and active these by main application.properties file.
+
+To use profile specific configuration files, we need to the naming convention of application-{profile}.properties where profile defines the name of the intended profile. Profile specific files will be loaded from the same location as application.properties file, also be aware that profile specific properties will override properties defined in the default application.properties irrespective of whether the profile-specific files are inside or outside your packaged jar.
+
+
+EX:
+
+application-production.properties 
+
+db.url=jdbc:oracle:thin:@<host>:1521:<sid>
+db.driver=oracle.jdbc.driver.OracleDriver
+db.username=<username>
+db.password=<password>
+db.tableprefix= 
+application-development.properties
+
+db.url=jdbc:hsqldb:file:configurations
+db.driver=org.hsqldb.jdbcDriver
+db.username=sa
+db.password=
+db.tableprefix=
+
+
+

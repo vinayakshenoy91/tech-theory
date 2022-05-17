@@ -1,0 +1,27 @@
+Coding best practise:
+----------------------
+1) Caps for constants: WORK_DAYS_PER_WEEK
+2) Name factory as : ShapeFactory
+3) Class name should not be a verb and should always be noun.Avoid words like Manager, 
+Processor, Data, or Info in the name of a class.
+4) Methods should have verb or verb phrase names like postPayment, deletePage, or save. Accessors, mutators, 
+and predicates should be named for their value and prefixed with get, set, and is according to the javabean standard.
+5) When constructors are overloaded, use static factory methods with names that describe the arguments.
+Complex fulcrumPoint = Complex.FromRealNumber(23.0);
+6) A consistent lexicon is a great boon to the programmers who must use your code.
+7) Use tech names or pboelm names appropriately
+8) If multiple variables are related, make them as part of a single class and use the class for ops.
+
+Functions:
+---------
+9) Keep functions small
+10) blocks within if statements, else statements, while statements, and so on should be one line long. 
+11)functions should not be large enough to hold nested structures. Therefore, the indent level of a function should not be greater than one or two. 
+12) Do one thing
+
+
+
+
+
+
+

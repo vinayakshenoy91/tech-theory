@@ -1,0 +1,75 @@
+- four basic types of functional interfaces declared in java.util.function
+
+Interface   | Args | Returns   | Sample Use Case                           | Example
+Consumer<T>    T      void       using objects                               s -> system.out.print(s)
+Predicate<T>   T     boolean     filtering values                            s -> s.isEmpty()
+Supplier<T>   none     T         factory method                              () -> new String()
+Function<T,U>  T       U         transforming or selecting from objects      s -> new Integer(s)
+
+- It is also good practice to annotate custom functional interface declarations with @FunctionalInterface so that the compiler 
+can check that your interface declares exactly one abstract method, 
+and so that the Javadoc for it will automatically have an explanatory section added.
+
+
+What are functional interfaces and lambdas?
+
+- Functional interface is a single abstract method interface. It is an interface that contains one and only one abstract method.
+- Annotation declaring your intention is recommended
+- Its behaviour is known by its name
+- They are often suffixed with 'able'
+- It is a framework on which lambda expression is constructed.
+- A lambda expressions execution is deferred until it is passed to an executing method that executes the function.
+- Lambda expression consists of parameters, arrow token and body
+
+
+Note: Defining and writing functional interfaces:
+-------------------------------------------
+- You can override an abstract method on an interface with a default method.
+- you cannot override an abstract method on an interface with a static method.
+- You cannot override an abstract method with a private method because you are assigning weaker privileges
+   [- all abstract methods on an interface are public]
+
+
+
+
+Sample:
+------
+
+interface Doable{
+    void doIt();
+}
+
+public class FI{
+    private interface Shapeable{
+        void shapeIt();
+    }
+}
+
+Two types:
+---------
+
+Doable do = new Doable(){
+    public void doIt(){
+        System.out.println("Anonymous class invoking do it");
+    }
+}
+
+or
+
+Doable d2 = () -> System.out.println("Hello");
+
+
+interface ExtendedDoable extends Doable{
+
+   //If you have only default method, it will throw compiler error, so you should have an abstract method.
+   //This will be invoked even if there is a separate lambda method
+   default void doIt(){
+       System.out.println("Default method");
+   }
+
+    void extendedDoIt();
+}
+
+if(d instanceof Interfacename){
+    (Interfacename d).methodname();
+}

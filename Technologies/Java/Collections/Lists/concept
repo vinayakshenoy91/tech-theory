@@ -1,0 +1,13 @@
+List:
+-----
+- Ordered collection -> store and access items in a sequential manner
+- Can have duplicate elements
+- Visibility and control over the ordering of elements.
+
+
+Linkedlist:
+----------
+- Remove/Add first item
+cons are:
+- More refernce and hence more memory
+

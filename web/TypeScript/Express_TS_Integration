@@ -1,0 +1,49 @@
+import express,{Request, Response, NextFunction} from 'express';
+import bodyParser from 'body-parser';
+import cookieSession from 'cookie-session';
+
+
+cosnt app: express.Express = express();
+
+app.use(bodyParser.urlencoded({extended:true}));
+app.use(cookieSession({keys: ['lask']}));
+app.use(router);
+
+app.get("/", (req:Request, res:Response, next: NextFunction )=>{
+
+    req.session={loggedIn:true};
+
+    res.redirect('/');
+
+    if(req.session && req.session.loggedIn){
+       next();
+       return;
+    }
+
+    res.status(403);
+    res.send('Not permitted');
+
+    //For logout
+    res.redirect("/");
+
+})
+
+
+const router = Router();
+
+//Write all routes
+
+export {router}
+import {router} from  './routes/loginRoutes';
+
+
+const {email, password}= req.body;
+
+
+
+interface RequestWithBody extends Request{
+
+body: {[key:string]:string|undefined}
+
+}
+

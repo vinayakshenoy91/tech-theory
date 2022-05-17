@@ -1,0 +1,9 @@
+- SUBSCRIBE channel
+
+- PUBLISH channel message
+
+- UNSUBSCRIBE channel
+
+- PSUBSCRIBE string* //If a client wants to subscribe to all the channels starting with a particular character or string,
+
+- PUNSUBSCRIBE string* 

@@ -1,0 +1,14 @@
+Ways of creating types:
+-----------------------
+1) using interfaces:
+--------------------
+interface TODO{
+    id: number;
+    title: string;
+}
+
+const todo = response.data as TODO
+
+2) Use type:
+--------------
+type Drink = [string, number, string];

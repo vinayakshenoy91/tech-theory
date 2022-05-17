@@ -1,0 +1,14 @@
+- it is about memoizing values
+- This is similar to useCallback but can be used for any kind of data
+- Basically if there are filtering and soring and you dont want to to run  it again and again
+
+
+If you want to cache an array, because array is created every time if you pass it as props.
+
+useMemo(()=>[1,2,3],[]);
+
+useMemo(()=>{
+    return props.items.sort((a,b)=>a-b)
+},[item1,item2]) //Item item1 and 2 are changed, the function is run again
+
+- Compnent inside .map can be memoised as it will return same output for a given input.

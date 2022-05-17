@@ -1,0 +1,103 @@
+- A data stream is a system where data continuously flows from multiple sources
+
+
+The most important metric for all messaging systems is Transactions Per Second (TPS). This metric is not as simple as it may seem initially, as the maximum TPS is constrained by either a discrete number of transactions or the maximum size of data that can be processed. This max TPS is called capacity. In general, messaging systems have different capacity for the inbound side and the outbound side, with the outbound side normally having a greater capacity to support multiple consumers and prevent large message backlogs.
+
+Backpressure refers to a system state in which the producer TPS is higher than the consumer TPS. The input is coming in faster than it can be processed. There are multiple strategies for handling backpressure. 
+If the flow of messages is intermittent or bursty, a buffer can temporarily hold the messages and allow the consumers to catch up. Buffers are often used in conjunction with scaling to store messages while compute is scaled up. The last method is to drop messages. Depending on the message type, this can be unacceptable – you don't want to drop customer orders – but, in the case of sensor data, sampling, can be used to process a fixed percentage of data, for example, 5% of data.'
+
+The two primary measures of latency in a messaging system are propagation delay and age of message.
+
+The propagation delay is the amount of time from when a message is written to the message broker to when it is read by the consumer application. In most cases, propagation delay is a reflection of how often producers or consumers are polling the message broker. Network effects on the producer's connection to the message system and the acknowledgment of putting a message are known as producer latency, and correspondingly, the time it takes for a request to complete on the consumer side is consumer latency.
+
+The last measure of latency that is extremely important is understanding how long a message has been in the system before it is retrieved, that is, the age of the message. If the average age of messages is increasing, that indicates a backlog and means that messages are being added faster than they are being retrieved.
+
+STREAMS
+The stream is the system that stores the messages or records sent by the producers and retrieved by the consumers. They can be ordered in a First In First Out (FIFO) model. Messages in the stream that have been received, but not yet retrieved, are referred to as a backlog.
+
+The retention period is the length of time that the records are accessible after they are added to the stream. This is the maximum size the backlog can be, and it is also the maximum time a new, slow, or intermittent consumer can access the records.
+
+MESSAGES (RECORDS)
+A message consists of a payload and header information. The header information consists of information set by the producer, and it includes a unique identifier assigned by the message broker when it is inserted into the stream. In general, messages are relatively small, in the order of kilobytes, and messaging systems generally have a maximum payload size.
+
+PRODUCERS
+The producer is an application that is the source of data that will go into the message or record. It connects to the message broker and puts the data into the stream. There can often be multiple producers sending data to the same message broker.
+
+CONSUMERS
+The consumer is an application that receives the messages that are sent by the producer. It connects to the message broker and retrieves the data from the stream. The responsibility for keeping track of the last read message, so that the consumer can retrieve the next message, can be handled either by the message broker (RabbitMQ or SQS) or by the consumer (Kinesis or Kafka). There can be multiple consumers for a message broker.
+
+REAL-TIME ANALYTICS
+When thinking about real-time analytics, it can be useful to expand it from the producer, stream, consumer model to a five-stage model (Figure 1.3): 1) source of data; 2) data ingestion mechanisms; 3) stream storage; 4) real-time stream processing; and 5) destination, data sink, or action. This model helps us elevate our thinking from the structural communication level to the data processing level. For instance, filtering can be applied at every stage to reduce compute downstream.
+
+The source of data refers to where the data is coming from. For example, it could be mobile devices, web clickstreams, log analytics, IoT devices, or smart devices. Once you have the source, the data needs to be ingested into the stream. This requires a solution that can capture data coming from hundreds of thousands of devices, in a scalable and reliable manner, into a stream for analysis. You then need a platform that can reliably and durably store the data while simultaneously reading from any point in the stream. This refers to the stream storage platform. The stored data is then processed by real-time applications to generate actionable insights, perform actions, and execute real-time extract-transform-load (ETL) operations that deliver the stream of data to an end destination, such as a data lake.'''
+
+Assumption list:
+-----------------
+gets into trouble by making the assumptions listed here:
+
+The network is reliable.
+Latency is zero.
+Bandwidth is infinite.
+The network is secure.
+The topology doesn't change.
+There is one administrator.
+The cost of transport is zero.
+The network is homogeneous (added by James Gosling in 1997).
+
+
+RETRIES
+Many errors are ephemeral, and merely retrying the exact same request again will succeed. In order for retries to be safe, the system handling them must be idempotent, meaning that it is designed in such a way that the same input will cause the same side effects. At a more systemic level, to prevent a server from being inundated with retry requests, each client should implement back-off and jitter.
+
+Back-off is the process of increasing the time between subsequent retries. Jitter is the process of adding a bit of random delay to retries. Together, these two mechanisms spread out message requests over time so that the server is able to handle the number of requests.
+
+
+When a producer has to retry due to a timeout, it will send the request again. There is the possibility that a duplicate record could be created. If a record should only be processed once, it is important that the payload of the record has a unique ID that the final system can use to remove duplicates. When a consumer fails, it can fetch the same records again. Consumer retries tend to happen more often than producer retries. It is up to the final application to handle the message payload data properly and in an idempotent manner.
+
+
+BACKLOGS:
+----------
+BACKLOGS
+A backlog is the number of messages that the stream contains that have yet to be received by a consumer. Backlogs occur when the number of messages a producer sends into a stream is higher than the number of messages received by a consumer. This often happens when the system consuming the messages has an error and the messages keep being added to the stream. This can quickly go from a small backlog to a large backlog. Large backlogs increase the overall system latency by a large amount as the backlog must be processed before the recently arriving messages are processed. This typically results in a bimodal distribution of message latencies, where the latency is low when the system is working correctly and high when the system is having errors.
+
+Large backlogs are a hidden risk that need to be considered when designing asynchronous applications because they can increase the recovery time following an outage – that is, instead of merely restarting the system and it being down for a brief period of time, the system has to work through the large backlog before it can function properly again.
+
+
+DEAD LETTER QUEUES
+Dead letter queues store messages that cannot be processed correctly by the message broker for some reason or another. It could be that it is an invalid message, it is too big, or, for some reason, it fails a certain number of retry attempts. It is important to periodically review dead letter queues because they represent errors in the system.
+
+REPLAY
+Replay is the ability to read, or replay, the same records in the same order multiple times. This means that a new consumer can be added and re-read messages that have already been consumed. Replay is limited to data in the stream. Data is aged out of the stream after it has existed for a specified period of time, for example, 1 hour, 1 day, or 7 days. This retention period affects the amount of storage required to support the stream.
+
+RECORD PROCESSING
+When processing records, there are multiple approaches depending on the type of data in the payload and the type of analysis required. In the simplest of systems, each record is processed one at a time, that is, record by record. A more complicated approach is to aggregate records by a sliding time window, where records are accessed by the consumer over a period of time, for instance, calculating the highest, lowest, and the average message value over the last 10 seconds.
+
+
+Use cases of stream processing:
+------------------------------
+
+Application log processing:
+--------------------------
+Near real-time monitoring of applications and systems can be used to identify usage patterns, troubleshoot operation events, detect and monitor security incidents, and ensure compliance. 
+
+In general, for log analysis, there are two different systems consuming the messages: one for near real-time analysis and one for larger historical batch analysis. The near real-time analysis system, often Elasticsearch, contains only fresh data as specified by a data retention policy, and might only hold an hour, a day, or a week's worth of information. The historical system is often an Apache Spark cluster processing data in a data lake (data stored in S3).
+
+
+ The message broker simplifies the system by providing a clear boundary between the log collection and log analysis systems. Since it's designed in a highly available manner, it can cache events if the log analysis system goes down.
+
+
+There are many sources of log events; two common ones are CloudWatch Logs and agents that can be installed on a machine, for example, Kinesis Agent. CloudWatch is an AWS service that collects logs, metrics, and events from AWS resources and user applications. The logs are sent to streams based on subscriptions and subscription filters that define patterns to determine which log events should be sent. The events are Base64-encoded and compressed with gzip. Agents monitor sets of files and stream events normally delineated by a new line (\n) character.
+
+Real-time recommendations
+Clickstream events are generated at extremely high volume and velocity as users navigate and use web applications and mobile applications. Clickstream analysis can be used for A/B testing, understanding user engagement, detecting system issues, and in this example, recommendations.
+Simple recommendations can be pre-computed based on historic usage patterns, for instance, people who watched this movie also liked these movies. However, this fails to capture the user's intent – that is, personalized recommendations depending on the user's behavior in the given session. This requires clickstream data to be captured in real time, analyzed, and recommendations made, all in the time it takes for a page to load. In other words, the system needs to work in milliseconds. These performance constraints require highly scalable messaging systems to achieve extremely low latency so that page load performance is not degraded.
+
+
+
+
+IoT
+
+
+Video streams
+Video streams can be used for both real-time workloads (chat, peer to peer) or batch (surveillance, machine learning). In the batch case, multiple cameras can be streaming the video to the messaging system and machine learning can be applied to detect faces. These faces can then be identified and checked against a set of known individuals. Any face that doesn't match a known individual can trigger an alert and send the relevant portion of the video to the appropriate person. Messaging frameworks simplify the architecture by providing a highly scalable system to handle large volumes of data from multiple devices. Much like in the IoT case, they also provide a buffer to provide time for downstream resources to be provisioned in response to demand as new devices connect.
+
+

@@ -6,4 +6,8 @@ const [count, setCount] = React.useState(0);
 const [error, setError] = React.useState(null);
 onClick={()=>setCount(count+1)}
 
+const [showParagraph, setShowParagraph] = useState(false);
 
+const toggleParagraphHandler = ()=>{
+    setShowParagraph((prevShowParagraph)=> !prevShowParagraph);
+}

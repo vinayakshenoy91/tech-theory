@@ -1,0 +1,16 @@
+Istio Gateway:
+-------------
+- LB that sits in edge of mesh instead fo k8s ingress
+- Istio ingress gateway managed inbound traffic and 
+- Istio egress gateway managed inbound traffic and 
+- Ingress gateway deployed usong envoy proxy
+
+Virtual services:
+------------------
+- They define a set of routing rules from ingress gateway into the service mesh
+
+- Traffic for one or more hostname
+- Diff version of service
+- Support standard and regex path
+
+

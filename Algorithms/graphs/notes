@@ -1,0 +1,103 @@
+- Graph consists of finite sets of nodes(vertices) and edges.
+- Weighted graph -> A graph which has weight associated with edge.
+- Undirected graph -> Graph which does not have any direction
+- Acyclic graph -> graph with no loop
+
+Graph types ->? Directed & Undirected [Weighted [Postive and negative] and Unweighted]
+
+- Weighted and unweighted graph
+- Directed and undirected graph
+
+
+
+Adjacency list -> O(V+E)
+Adjacency matrix -> O(V^2)
+
+
+
+Graph representation:
+----------------------
+1) Adjacency matrix:
+Use when graph is almost complete or complete.
+Disadvtg:
+- Too much memory
+- O(v) iterating
+
+
+2) Adjacency list -> It is a collection of unordered list used to represent a graph.
+Each list describes the set of neighbours of a vertex in the graph.
+If number of edges are few then use Adjacency list.
+
+
+
+BFS:
+----
+- It starts at some arbitrary node of a graph and explores the neighbour nodes first before moving to next level of neighbours.
+Complexity : O(V+E)
+- Dijkstra's algo does a BFS if all edge weights are equal to 1.
+
+Usecase:
+-------
+- Robots use BFS
+- Edmonds Karp algo
+- Cheyen's algo
+- Serialisation and deserialization when order matters
+
+
+Memory mgmt BFS vs DFS:
+-----------------------
+- In BFS, if N items ,N/2 leaves nodes.O(N) items if we want to traverse a tree that contains N items.
+So memory complexity is O(N)
+
+- In DFS, since we need to backtrack(pop), we just need to store as many items on stack as height of tree -> logN
+So memory complexity O(logN)
+
+- BFS uses Queue and DFS uses stack.
+
+
+Application:
+------------
+- Shortest path
+- Social network
+- Shortest cyclic route
+- Routing network
+- Deep learning
+- Computer vision
+- Crawlers
+- Neo4j
+
+
+
+Adjacency list:
+--------------
+
+
+
+Bellman-Ford algo: Shortest path
+----------------------------------
+- Slower than dijkstra but is more robust and can handle negative edge weights.
+- Dijkstra chooses the edges greedily in every iteration iwth the lowest cost.
+- Bellman-Ford relaxes all edges in G(V,E) graph at the same time for V-1 iterations
+- Running time complexity is O(V*E)
+- There is a minor problem. because of negative edge weights there may be negative cycles.
+- So it does V-1 iterations and then an extra one to detect cycles. If cost decreases in the Vth iteration than
+there is a negative cycle because all the paths are considered in V-1 iteration
+
+- It does v-1 cycles because the max length of a shortest path between vi and vj arbitrary nodes in a G(V,E) graph is |v|-1 (without cycles)
+- Yen optimisation will work fine.
+- We first find the shortest path that are of edge length 1. Then shortest path that are of two edge length and so on.
+
+- You have a relaxed operation as given below:
+
+   if( d[v]>d[u]+weight(u,v)){
+    d[v]=d[u]+weight(u,v)
+   }
+
+  d[v]={INFINITY, INFINITY,....}
+  d[u]=0
+
+- We cannot have simple path more than v-1 times.
+
+
+
+

@@ -1,0 +1,203 @@
+Kafka:
+-------
+- It is a distributed commit log[txn log or write ahead log].
+- It is a append only DS
+- Reading from a commit log happens from old to new.
+- Kafka stores all messages on disk.
+- Since all reads and write happen in sequence, kafka takes advantage of sequential disk reads.
+
+Use cases:
+----------
+1. Metrics
+2. Log aggregation
+3. Stream processing
+4. Commit log
+5. Webgsite activiy tracking
+6. Product suggestions.
+
+Record:
+------
+- MEssage stored in kafka
+- A record contains a key, a value, a timestamp and optional metadata header.
+- 
+
+
+
+Event streaming:
+----------------
+
+Event streaming is the practice of capturing data in real-time from event sources like databases, sensors, mobile devices, 
+cloud services, and software applications in the form of streams of events; storing these event streams durably for later 
+retrieval; manipulating, processing, and reacting to the event streams in real-time as well as retrospectively; and routing 
+the event streams to different destination technologies as needed. Event streaming 
+thus ensures a continuous flow and interpretation of data so that the right information is at the right place, at the right time.
+
+
+What kafka offers:
+------------------
+To publish (write) and subscribe to (read) streams of events, including continuous import/export of your data from other systems.
+To store streams of events durably and reliably for as long as you want.
+To process streams of events as they occur or retrospectively.
+
+Kafka clients: https://cwiki.apache.org/confluence/display/KAFKA/Clients
+
+
+Kafka APIs:
+-----------
+The Admin API to manage and inspect topics, brokers, and other Kafka objects.
+The Producer API to publish (write) a stream of events to one or more Kafka topics.
+The Consumer API to subscribe to (read) one or more topics and to process the stream of events produced to them.
+The Kafka Streams API to implement stream processing applications and microservices. 
+The Kafka Connect API to build and run reusable data import/export connectors that consume (read) or 
+produce (write) streams of events from and to external systems and applications so they can integrate with Kafka.
+
+
+Topic:
+------
+- stream of data
+- Similar to table in a DB without constraints.Messages are rows in table.
+- Topic has a name
+- Topics are split into partitions
+Each partition is ordered
+Each message within a partition gets an incremental id called offset.
+So each parition will have incremental offset.Offset only have a meaning for specific partition.
+- Order is guaranteed only within a partition.
+When replication factor of N, producers and consumers can tolerate upto N-1 brokers being down.
+So replication factor of 3 is good as it allows one broker to be taken down for maintenance,
+another one to be taken down unexpectedly.
+As long as number of partition remains constant for a topic, the same key will go to same partition.
+- Data is only kept only for a limited time (default is one week)
+- Once data is written to partition, it cannot be changed (immutability)
+- Data is randomly assigned to partition, unless a key is provided.
+- Kafka retains a message for a config amount of time or until a storage size is exceeded.
+
+
+
+Broker:
+--------
+- Kafka cluster is composed of multiple brokers.
+- Each broker is identified with its id
+- Each broker contains certain topic partitions.
+- If you are connected to one broker, you are connected to entire cluster.
+- Replication factor is 3 usually. 3 means there are 3 copies in toptal of the partition.
+
+- At any time only one broker can be a leader for a given partition.Only that leader can serve and receive data for that partition.
+Other brokers will sync the data.
+
+- Each partition has one leader and multiple ISR( In sync replicas)
+
+
+Producers:
+---------
+- Write data to topics (partitions)
+- Producers kno whihc broker and partition to write to
+- Incase of broker failure, producers will auto recover.
+- Load is balanced to multiple brokers.
+
+- The ack types:
+acks = 0
+acks=1 (Wiat for leader to ack) [Min data loss and is default]
+acks=all (leader + replicas)
+
+- Producers can choose to send a key with the message (string, number, etc)
+- If key is null, data is sent round robin.
+- If key is sent, all messages to that key will go tot same partition.
+- Key is basically sent if you need message ordering for a specific field. (ex: truck_id).
+We get this gurantee due to key hashing.
+
+- you only need to connect to one broker (any broker) and just provide the topic name you want 
+to write to. Kafka Clients will route your data to the appropriate brokers and partitions for you!
+
+
+Consumers:
+-----------
+- Consumers know whihc broker to read from and they know how to recover incase of broker failure.
+- Consumers read data in consumer groups.
+- Each consumer within a group reads from exclusive partitions.
+- If you have more consumers than partitions, some consumers will be inactive.
+- Consumers will use a Group Coordinator and Consumer Coordinator to assign a conumer to a partition.
+
+Consumer groups:
+----------------
+- One or more consumers working in parallel to consume messages from topic partitions.
+- No two consumers will receive same message.
+- Kafka makes sure that only a single consumer reads messages from any partition within a consumer group.
+- Every time consumer is added or removed, consumption is rebalanced.
+- Kafka stores the current offset per consumer group per topic per partition.
+- The number of partitions impacts consumers’ maximum parallelism.
+
+Consumer offsets:
+------------------
+- Kafka stores the offsets at which a consumer group hsa been reading.
+- the offsets commited live in a kafka topic named __consumer_offsets
+- When consumer group has processed data received from kafka, it should be commiting the offsets.
+If consumer dies, it will be able to read back from where it left off.
+- Consumers choose when to commit offsets.
+3 delivery semantics:
+1) Atmost Once
+- offsets commited as soon as message recevied.
+- If processong goes wrong, the message will be lost(wont be read again)
+
+2) atleast Once
+- Commit message after message processed.
+- if processing goes wrong, message read again.
+Processing system must be idempotent.
+
+3) exactly once
+- Can be achived for kafka to kafka workflows using kafka streams api.
+- for kafka to external system, use idempotent consumers.
+
+Broker discovery:
+-----------------
+- Every kafka broker is called bootstrap server -> connect to one broker == connecting to entire cluster.
+- Each broker know about all brokers, topics and partitions (metadata)
+
+Seq of evnets:
+---------------
+Kafka client-> broker [Connection + metadat request]
+broker -> kafka client [list of all brokers]
+Kafka client-> broker [Connects to appropriate broker]
+
+Zookeeper:
+---------
+- Manages brokers
+- help in leader election of parition
+- Zookeeper sends notification to kafka incase of any changes like topic creation, broker dies, delete topic.
+- Zookeeper by design operates with odd number of servers.
+- Zookeeper has leader and followers where leader handles writes and rest reads.
+- Distributed kv store and used for coordination and storing configs.
+- Highly optimised for reads.
+- Zookeeper is used for broker coordination.
+- Zookeeper maintain metadata information about kafka cluster.
+
+
+
+- Who will remember that this key should go to particular partition?
+
+
+
+Kafka Workflow inbetween steps:
+--------------------------------
+- Once the consumer subscribes to a topic, Kafka will provide the current offset of the topic to the consumer and 
+also saves that offset in the ZooKeeper.
+- Consumer will request Kafka at regular intervals for new messages.
+- Once the messages are processed, the consumer will send an acknowledgment to the Kafka broker.
+- Upon receiving the acknowledgment, Kafka increments the offset and updates it in the ZooKeeper. 
+Since offsets are maintained in the ZooKeeper, the consumer can read the next message correctly, 
+even during broker outages.
+- Consumers can rewind/skip to the desired offset of a topic at any time and read all the subsequent messages.
+- Each consumer in Kafka will be assigned a minimum of one partition. Once all the partitions are assigned to the existing 
+consumers, the new consumers will have to wait.
+
+
+
+
+
+
+
+
+
+
+
+
+

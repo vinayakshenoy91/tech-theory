@@ -1,0 +1,43 @@
+List methods:
+------------
+List.of(1,2,3,4);
+Arrays.asList(1,2,3,4)
+
+for (int x : numbers){  //Numbers is a list of integers here
+
+}
+
+listname.contains("string");
+listname.length()
+You can print a list straight and it will print a list and not class hashcode
+
+Sum of numbers => Arrays.asList(1,2,3,4).stream().reduce(0,(a,b)->a+b)
+Arrays.asList(1,2,3,4).stream().reduce(0,Integer::sum);
+
+Find max:
+Arrays.asList(1,2,3,4).stream().reduce(Integer.MIN_VALUE,(x,y)-> x>y?x:y);
+
+Find min:
+Arrays.asList(1,2,3,4).stream().reduce(Integer.MAX_VALUE,(x,y)-> x>y?y:x);
+
+Find square of a number:
+numbers.stream().map(x-> x*x).reduce(0.Integer::sum);
+
+Find distinct:
+numnbers.stream().distinct().forEach(System.out::println);
+    
+Find sorted:
+numbers.stream().sorted().forEach(System.out::println);
+numbers.stream().sorted(Comparator.naturalOrder()).forEach(System.out::println);
+numbers.stream().sorted(Comparator.reverseOrder()).forEach(System.out::println);
+numbers.stream().sorted(Comparator.comparing(str->str.length()).forEach(System.out::println);
+
+Methods:
+---------
+.forEach(classname::staticMethod)
+.filter(i->i%2==0) //Reqires a predicate
+.map(i-> i*2) //Requires a function
+.reduce(aggregate, function)
+.sorted()
+.distinct()
+.collect(Collectors.toList())

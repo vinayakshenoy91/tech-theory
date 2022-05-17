@@ -1,0 +1,95 @@
+About ELB [Elastic Load balancer]:
+------------------------------------
+- Can be interet facing incase of web servers and can be internal incase of api LBs
+- Elasticity is available -> warm up if required
+- Hybrid load balancing ->AWS and onpremise
+- This is a regional service
+- Domain anme -> CNAME alias -> LB path provided by AWS
+- Monitor and audit with cloud watch metrics
+
+
+
+AWS offers three different types of load balancers:
+
+Application Load Balancer (ALB)
+================================
+Best suited for load balancing of HTTP and HTTPS traffic. Operates at the application layer (Layer 7) of the OSI model.
+- Server Name Indication(SNI) -> Single secure listener Hold diff SSL cert based on domain
+- Set ip address as target
+- Lambda functions as targets 
+- Host or path based routing
+- Containerised app support
+- Sticky sessions
+- Security (auth + WAF)
+- User auth can be offloaded at ALB level by direct connection to identity provider
+- Supports redirects
+
+
+- Host based routing enables support for multiple domains using a single LB
+- Path based routing hleps for Microservices
+- Integraton with Amazon Elastic container Service (ECS) supports registering tasks with target group 
+
+SSL cert creation:-
+1) Create hosted zone -> domain name in route 53
+2) ACM for cert creation and use them in LB
+3) Create a LB and configure security group and select cert. Select the VPC and subnet
+4) Route 53 -> domain -> Create record set -> www domain -> CNAME -> Value will be the alb DNS name.
+You can also attach target groups here
+5) Separarte SG for backend targets -> TCP 80 -> add ALB security group instead of port
+
+
+
+Network Load Balancer (NLB)
+===========================
+Best suited for load balancing of TCP, UDP, and TLS traffic. Can scale up and down in response to load faster than the 
+ALB (the NLB is designed to scale to tens of millions of requests per second). Operates at the transport layer (Layer 4) 
+of the OSI model.
+
+- High throughput and low latency
+- Preserve source ip address
+- Static/Elastic ip support
+_ suited for long lived TCp connections
+
+
+- elastic ips -> amazon pool -> 
+Create two elastic ip -> Put two ips in Route 53  with two records and CNAME alias -> traffic as 50% 
+whihc is 128 with setId as api0
+
+Classic Load Balancer (CLB)
+===========================
+This is the “legacy” load balancer that predates both the ALB and NLB. It can handle HTTP, HTTPS, TCP, and TLS traffic, 
+but with far fewer features than either the ALB or NLB. Operates at both the application layer (L7) and transport layer 
+(L4) of the OSI model.
+
+Most applications these days should use either the ALB or the NLB. Because the simple web server example you’re working 
+on is an HTTP app without any extreme performance requirements, the ALB is going to be the best fit.
+
+- Legacy
+- Simple routing
+- Supports SSL and sticky sessions
+
+
+
+
+As shown in Figure 2-11, the ALB consists of several parts:
+
+Listener
+Listens on a specific port (e.g., 80) and protocol (e.g., HTTP).
+
+Listener rule
+Takes requests that come into a listener and sends those that match specific paths (e.g., /foo and /bar) or 
+hostnames (e.g., foo.example.com and bar.example.com) to specific target groups.
+
+Target groups
+One or more servers that receive requests from the load balancer. The target group also performs health checks on 
+these servers and only sends requests to healthy nodes.
+
+Load balancers are software products you can install on your server, and they will (if properly configured) distribute 
+incoming traffic into your array of servers. Some common load balancers are ELB from Amazon, F5 Networks, and Nginx 
+(yes, the web server can also be configured as a load balancer). These load balancers work by distributing incoming 
+traffic based on a pre-defined set of rules, such as:
+Round robin: With every new request the balancer would hit a new server, and it’ll keep going by cycling to the first one.
+
+Least connected: Next incoming request will go to the server with the least number of active connections
+
+IP hash function: Hashing function of the client’s IP address, assigning one hash code to each server

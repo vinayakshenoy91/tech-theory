@@ -1,0 +1,679 @@
+- https://developer.mozilla.org/en-US/docs/Web/JavaScript/Data_structures
+
+Datatypes:
+----------
+There are 7 data types in JavaScript : 6 primitives and the Object.
+
+A primitive is simply data that is not an Object and doesn’t have methods.
+
+They are:
+
+string
+number
+boolean
+null
+undefined
+symbol (the latest addition)
+const count = BigInt(452947234234);
+
+A comma operator (,) is used when you want to evaluate an expression from left to right.
+
+String -Strings are immutable which means that their value cannot be changed. When concatenating two strings, the result is saved in a third string.
+
+Number 
+Each bit represents a binary value (e.g. 0 or 1). With 64 bits, the maximal integer you can represent is 2^53 - 1, or 9007199254740991.
+3.1e-3 is the normal form of 0.0031.
+The ** operator is called the exponential operator. 5 ** 2 is five raised to the second power
+
+
+
+Boolean
+Undefined
+Null -represent values that are intentionally empty
+Symbol - A Symbol() is a unique value without an associated literal value.They are useful as unique keys, because Symbol() == Symbol() is false. 
+At this stage, just accept that symbols exist. You don’t have to use them for anything yet.
+BigInt
+Object - Mutable ,The delete operator deletes a field from an object.If a field in an object is deleted or not even declared, the value of this field is undefined.
+NaN
+The division 0 / 0 or using mismatching types creates a special number called not a number or NaN.
+
+The typeof operator accepts one operand and returns a string. This string describes the type of an object.
+typeof ''         // "string"
+typeof 0          // "number"
+typeof true       // "boolean"
+typeof {}         // "object"
+typeof []         // "object"
+typeof null       // "object"
+typeof undefined  // "undefined"
+typeof Symbol()   // "symbol"
+
+number
+string
+function
+
+At first thought, the answer that comes to mind is an array; however, that is an incorrect option because it is not a built-in data type in JavaScript. The following are the only built-in data types in JavaScript:
+
+primitives (boolean, string, function, number, null, undefined)
+
+Object
+
+In JavaScript, an array is an object that can hold values of different types (as seen in the code). Hence, the type of arr is object.
+typeof null is also an object
+
+
+
+Run the code below to see the answer.
+ 
+Note:
+All variables in javascript are of object type.
+
+This question is asked as follows in an entry level interview: What is the data type of variables in JavaScript?
+
+Primitive and Reference types are the two basic groups of datatypes in JavaScript.
+
+Only the declarations get hoisted to the top, not the initializations.    
+
+Operators:
+-----------
+&&
+|| 
+!
+
+The ternary operator is the only JavaScript operator that takes three operands
+
+function getLocation(city,country,continent){
+  if(typeof country === 'undefined'){
+Infintity as a datatype.
+ten to the power of 309 is represented as infinity. Division by zero also yields infinity.console.log(Infinity * Infinity);
+
+Automatic Type Casting:
+------------------------
+If any of the operands of plus is an integer, the result becomes a string. JavaScript automatically converts the operands of an operator to the same type. This is called automatic type casting:
+
+String to Number conversion use:
+---------------------------------
+
+Number.parseInt with a radix. parseInt converts a string into a number. 
+The second argument of parseInt is optional: it describes the base in which we represent the number.
+console.log(Number.parseInt( "10", 2 ));
+Arbitrary strings are often NaN. “2” in base 2 is 10. 
+
+Number.parseInt( "1234.567 89" ) => 1234
+
+Number.parseFloat
+
+
+Variables are only stored as undefined if they have been declared but not instantiated with a value.
+
+Null values intentionally are stored as null to indicate that the variable is empty. 
+You should set a variable equal to null if and only if the variable is expected to have no value.
+
+
+Differentiating between arrays, objects and null
+There is just one problem: arrays, objects, and the null value have the same type. It would be great if we could differentiate between them. Fortunately, ES6 solves the array problem:
+console.log(Array.isArray( [1, 2] ))
+console.log(Array.isArray( {a: 1} ))
+
+let name = null;
+console.log( name === null) //true
+
+typeof Function
+Functions have the type “function”
+
+Sites:
+-----
+javascripting.com
+allthingsjavascript.com
+
+Datatypes are:
+--------------
+string, boolean, numeric, undefined, null 
+- Math.max(...array)
+
+for(let x of arr){
+  
+}
+Type of operator:
+------------------
+
+Exponential operator: console.log(2**2**2);
+
+typeof str !== "string"
+
+true && true , The || operator  
+
+function numberOrString( x ) {
+    return typeof x === 'number' || typeof x === 'string'
+}
+ 
+console.log(numberOrString( NaN )) //true
+console.log(numberOrString( '' )) //true
+console.log(numberOrString( null )) //false
+
+//How to check NaN value: console.log(Number.isNaN( NaN ))  
+
+//DoubleStringPeoblem
+str.split(item).map(char => char.repeat(2) ).join('');
+array.indexOf(2);   
+//Conver object to arrays
+
+Array.from(dataMap, d=> ({genre:d[0],revenue:d[1]}))
+
+For values a and b, a == b is true if and only if both a and b can be converted to the same value via type casting rules. This includes:
+
+null == undefined is true
+If an operand is a string and the other operand is a number, the string is converted to a number
+If an operand is a number and the other operand is a boolean, the boolean is converted to a number as follows: true becomes 1, and false becomes 0.
+
+5 == '5' true
+5 === '5' false
+0 == '' true
+0 === '' false
+NaN == NaN false
+
+Module pattern: //Majorly used a singleton so used as IIFE as shown below.
+---------------
+- Avoid namespace collision.
+- Reusability
+- Maintainability
+
+var x= (function (){
+    return {
+        greeting, greet;
+    }
+})()
+
+
+Scope:
+-------
+- Set of rules that determine where within a program you can access referenced items.
+Where you able to access set of variables that you have declared.
+- Scope is lexical -> which is determined by how your code is written and where have you placed your varibales and not on fucntion call etc.
+- JS uses function scope.
+- Nested function creates a scope chain.
+
+Global scope -> function scope -> block scope.
+
+var: Function in which the variable is declared
+
+A block can be a function, a loop or anything delimited by curly brackets.
+let:
+----
+- let is hoisted but is not initialised
+
+
+Hoisting:
+---------
+- happens in compile phase.
+- Var is hoisted and initialised with undefined.But let, const , class are not initiliased and hence throw error when invoked before initialisation.
+
+Function declaration vs expression:
+------------------------------------
+//Function declartion - hoisted to top
+function xyz(){
+
+
+}
+
+OR
+
+//Function expression - not hoisted( JS knows that it exists but ot doesn;t know that it is a function.)
+var x = function (){
+
+
+}
+
+Inheritance:
+-------------
+- Objects inherit properties and methods from it's prototype  ancestry
+- _proto_ is a link from one object to another.Default object assigned to any object created.
+- Three methods for setting prototype:
+1) Objectname.prototype
+2) Object.create(objProto, {name valuee pairs})
+3) Object.setProtoypeOf(obj3, objproto);
+
+Higher order functions:
+------------------------
+- functions that operate on functions by either takign them as arguments or returning them.Javascript supports 1st class fn.
+- things.sort((a,b)=>a-b)
+
+IIFE:
+-----
+- Help to avoid create global variable.
+(function(){}()); OR (function(){})();
+
+
+Closures:
+----------
+- It is a function having access to parent scope event after parent function has closed.
+
+this:
+-----
+- By default if you log this, you will get a window object. But if you use, "use strict", if will link to the function it is in.
+- How it is invoked determines the binding and not wher eit is declared. So even if you cal obj1.function() from obj2, it will still refer to 
+obj2.Arrow function use lexical binding.Apply and bind is used.
+
+bind()
+When called on a function, .bind() sets a this context and returns a new function with a bound this context. Consider the code below.
+
+    class Developer {
+      constructor(firstname, lastname) {
+        this.firstname = firstname;
+        this.lastname = lastname;
+      }
+    }
+
+    var printName = function() {
+      console.log(`My name is ${this.firstname} ${this.lastname}`);
+    };
+
+    var me = new Developer('Robin', 'Wieruch');
+
+    // Here we bind the me object to the printName() function and get a new function called newPrintName()
+    const newPrintName = printName.bind(me);
+
+    // bound newPrintName() prints appropriately
+    newPrintName();
+
+    // unbound printName() prints undefined
+    printName();s
+
+
+
+
+BEST PRACTISE:
+--------------
+- Declare varibale at top of respective scope.
+- Initialise variables when you declare them.
+- use function expression instead of function declaration as function is declared be e they are used.
+
+
+Other js things:
+-----------------
+
+The for…in loop:
+-----------------
+Our next simplification is the for…in loop. Why bother iterating an i variable if a loop can take care of it for us?
+for ( let i in values ) {
+    sum += values[i];
+}
+ 
+The for…of loop //ES6 additions
+I have another simplification for you. What if I said, “why bother using a variable for iteration at all, if we could enumerate the values of the array?”. In ES6, there is a loop called the for…of loop, which does exactly that.
+
+for ( let value of values ) {
+    sum += value;
+}
+
+//Iterate over objects:
+Objects are non iterable, so how do we iterate over them? We have to first grab 
+all the values of the object using something like Object.keys() or the new ES6 function:Object.entries().
+const car = {
+  maker: "BMW",
+  color: "red",
+  year : "2010",
+}
+
+
+for (const prop of Object.keys(car)){
+  const value = car[prop];
+  console.log(prop,value);
+}
+
+Differernce between for in and for of:
+--------------------------------------
+Even though it’s not a new ES6 loop, let’s look at the for in loop to understand what differentiates it to the for of loop.
+
+The for in loop is a bit different because it will iterate over all the enumerable properties of an object in no particular order.
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Enumerability_and_ownership_of_properties
+
+It is therefore suggested not to add, modify or delete properties of the object during the iteration. There’s no guarantee that they will be visited, or if they will be visited before or after being modified.
+
+
+Diff #2:
+
+let list = [4, 5, 6];
+
+// for...in returns a list of keys
+for (let i in list) {
+   console.log(i); // "0", "1", "2",
+}
+
+
+// for ...of returns the values 
+for (let i of list) {
+   console.log(i); // "4", "5", "6"
+}
+for in will return a list of keys whereas the for of will return a list of values of the numeric properties of the object being iterated.
+
+All about objects:
+-------------------
+
+
+Create empty object:
+---------------------
+
+const car = new Object()
+const car = {} //object literal
+
+Clone:
+-----
+
+A quick way of making a clone of an Object in JavaScript is to use Object.assign.
+
+Object.assign({}, car)
+
+why null is of type object is a bug: http://2ality.com/2013/10/typeof-null.html
+
+
+//Freeze object
+Object.freeze(person)
+
+Why use, use strict?:
+-----------------------
+To see the expected output of the code above, please run it in the Console of your Browser.
+
+We called this function in the global context, therefore the value of this referred to the Window Object.
+
+We can avoid accidentally referring to the Window Object by turning on strict mode.
+
+You can do that by writing 'use strict'; at the beginning of your JavaScript file.
+
+//this keyword:
+If we want to manually set the value of this to something we can use .bind.
+
+unboundGetColor.bind(myCar) //unboundGetColor is a function.
+
+
+There are two other methods we can use to set the value of the this keyword: .call() and .apply().
+
+They are both similar in that both methods call a function with a given this value. The arguments they accept are a bit different.
+
+.call() accepts a list of arguments while .apply() accepts a single array of arguments.
+
+
+function Car(make,color){
+  this.carMake = make;
+  this.carColor = color;
+}
+
+function MyCar(make,color){
+  Car.call(this,make,color);
+  this.age = 5;
+  console.log(this);
+  // MyCar { carMake: 'bmw', carColor: 'red', age: 5 }
+}
+const myNewCar = new MyCar('bmw','red')
+console.log(myNewCar.carMake)
+// bmw
+console.log(myNewCar.carColor)
+// red
+
+
+//Using apply:
+
+function Car(make,color){
+  this.carMake = make;
+  this.carColor = color;
+}
+
+function MyCar(make,color){
+  Car.apply(this,[make,color]);
+  this.age = 5;
+   console.log(this);
+  // MyCar { carMake: 'bmw', carColor: 'red', age: 5 }
+}
+const myNewCar = new MyCar('bmw','red')
+console.log(myNewCar.carMake)
+// bmw
+console.log(myNewCar.carColor)
+// red
+
+
+The major difference between the two comes into play when you are writing a function that does not need to know, or doesn’t 
+know the number of arguments required. In that case, since .call() requires you to pass the arguments individually, it becomes problematic 
+to do. The solution is to use .apply(), 
+because you can just pass the array and it will get unpacked inside of the function, no matter how many arguments it contains.
+
+const ourFunction = function(item, method, args){
+  method.apply(args);
+}
+ourFunction(item,method, ['argument1', 'argument2'])
+ourFunction(item,method, ['argument1', 'argument2', 'argument3'])
+
+
+Misc few js validations:
+
+Case 1: First argument is not defined
+
+Case 2: Second argument is not defined
+
+Case 3: Both arguments are not defined
+
+Case 4: not string
+
+throw new TypeError();
+
+	if (typeof string1 === 'undefined' && typeof string2 === 'undefined') {
+    throw new TypeError('Both arguments are not defined')
+	}
+  
+  else if(typeof string1 === 'undefined'){
+			throw new TypeError('First argument is not defined');
+	}	
+	
+  else if(typeof string2 === 'undefined') {
+		throw new TypeError('Second argument is not defined');
+	}
+
+  if(typeof string1  != "string" || typeof string2 != "string"){
+        throw new TypeError('not string')
+  }
+
+
+null >=0; since null times any number is zero, null*2 should return 0.
+
+Instance of:
+---------------
+The instanceof operator checks if an operand is an instance of the object passed on the right or of any of its ancestors in its prototype chain.
+
+. However, names is not an instance of the string or number. Since it is an array, it is an instance of Array.
+ And since Array is an object in JavaScript (derived from Object), names is also an instance of Object. 
+
+str="Hello"
+
+Hence, even though its type is string it is not an instance of String.
+
+
+//Native and host objects:
+---------------------------
+In JavaScript, native objects are built-in objects. These are pre-defined objects that are always available regardless of the environment as long as JavaScript is running. Some common ones include:
+
+String()
+
+Boolean()
+
+Number()
+
+Array()
+
+Object()
+
+Function()
+
+Date()
+
+RegExp()
+
+Error()
+
+Image()
+
+From this list, you can see that the correct options are: A, B, & D. Options C & E are incorrect because .table() and .error() are host objects. Host objects are provided to JavaScript by the execution environment, for instance, the web browser in the form of a document and window.
+
+
+console is a host object provided to JavaScript. It has the method .log that developers use very often. Hence, console is not an instance of Function; instead, it is an instance of Object.
+
+-- Array or not: Array.isArray(obj)  OR Object.prototype.toString.call(obj) === "[object Array]"
+
+//Check if date object:
+
+const isValidDate = dateString => {
+  const date = new Date(dateString);
+  if (
+    Object.prototype.toString.call(date) === "[object Date]" &&
+    !isNaN(date.getTime())
+  ) {
+    return true;
+  } else {  
+    return false;
+  }
+};
+console.log(isValidDate("foo"));
+console.log(isValidDate("October 30, 2019"));
+console.log(isValidDate("May 8, 2016 10:12:00"));
+console.log(isValidDate("April 15, 2012 11:xyz"));
+
+
+
+Interview question:
+------------------
+
+var tempFunc1 = function () {
+    return {} // remove this and it will be false;
+}
+
+
+function check(){
+    var object1 = new tempFunc1();
+    var object2 = tempFunc1();
+    return (object1 instanceof tempFunc1 === object2 instanceof tempFunc1);     //true  
+} 
+console.log(check())
+
+What happens when we create object1 using new now? Usually, this is what new does:
+
+- Creates a new object.
+- Points this to the newly created object.
+- Sets the prototype of the new object to the constructor function’s prototype.
+- Makes the constructor function return this object if it is not returning anything else.
+
+As point four states, the new object is only returned if nothing else is being returned. What happens when we return {}? 
+The empty object literal gets returned instead of this, which was set to the new object. Basically, return overrides this. 
+Hence, object1 instanceof tempFunc1 returns false.
+
+Note: return with an object returns the object. return with a primitive type is ignored, and this is returned instead.
+
+object2 instanceof tempFunc1 still returns false. The same logic as before applies; the only difference is in 
+the definition of the function. Now, instead of undefined, object2 stores the object literal {}. However, since 
+x`x`the new operator is not being used, the value of this is not returned. 
+Hence, even though it is an object now, object2 is still not an instance of tempFunc1.
+
+
+Interview qn:
+--------------------
+console.log(Object.prototype.toString.call(new (function Custom(){})));
+[object Object]
+You can see that the function Custom is defined with an empty body. Since we call it with the keyword new, 
+it acts as a constructor function. Hence, it creates and returns an object instance. 
+So when Object.prototype.toString is called on this object instance, we get [object Object] as the answer.
+
+Interview qn:
+--------------
+
+(function tempFunc() {
+    function func() {
+        return
+        {
+            val: "deb"
+        }
+    }
+ 
+    console.log(
+        typeof func()
+    );
+})();
+
+
+
+Interview question: //Func1 ans
+-------------------
+function func1(){
+  return new Promise(function(resolve,reject){
+    setTimeout(function(){
+      resolve("Func1")
+    },1000)
+  })
+}
+
+function func2(){
+  return new Promise(function(resolve,reject){
+    setTimeout(function(){
+      resolve("Func2")
+    },2000)
+  })
+}
+
+
+func1()
+  .then(func2())
+  .then(function(result) {
+    console.log(result);
+  });
+
+Interview: Multiply tales less time coz both awaits are conurrent.
+----------
+function func1(num) {
+  return new Promise(function(resolve){
+    setTimeout(function(){
+      resolve(num);
+    }, 2000);
+  });
+}
+
+async function multiply1(num) {
+  const x = await func1(10);
+  const y = await func1(3);
+  return num * x * y;
+} 
+
+multiply1(5).then(function(result){
+  console.log(result);
+});
+
+async function multiply2(num) {
+  const x =  func1(10);
+  const y =  func1(3);
+  return num * await x * await y;
+}
+
+multiply2(5).then(function(result){
+  console.log(result);
+});
+
+Interview:  //Resolve number at any time but they need to be in sequence. 
+----------
+
+const sleep = (i,ms) => new Promise(resolve => setTimeout(() => resolve(i), ms));
+
+async function print() {
+  let promises = [0,1,2,3,4,5,6,7,8,9].map(i=> sleep(i,Math.floor(Math.random()*20)));
+
+   for await(let pl of promises){
+    console.log(pl);
+   }
+} 
+
+
+OR
+
+const sleep = (i,ms) => new Promise(resolve => setTimeout(() => resolve(i), ms));
+
+async function print() {
+  for (let i = 0; i < 10; i++) {
+    await sleep(i,Math.random()*1000).then(function(result){
+      console.log(result)
+    })
+  }
+}
+print()

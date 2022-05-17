@@ -1,0 +1,58 @@
+Coercion => VVIP
+
+Philosophy: 
+-----------
+
+
+
+
+-----------------------
+1) ToPrimitive(hint):
+--------------------
+- hint: "number"
+valueOf()
+toString()
+
+- hint:"string"
+toString()
+valueOf()
+
+2) toString():
+-------------
+ - null will give "null"
+ - -0 will give "0"
+ - true will give "true"
+
+When toString is called on object it will call toPrimitive(string).
+
+- [] will give ""
+- [1,2,3] give "1,2,3"
+- [[[],[],[]],[]]  gives ",,,"
+- {} gives "[object, Object]"
+- {a:2} give "[object Object]"
+- {toString(){return "X"};} gives "X"
+
+3) toNumber():
+---------------
+- "" gives 0
+- "-0" gives 0
+- "." gives NaN
+- "0xaf" gives 175
+- " 009 " give 9
+- false is 0
+- true is 1
+- null is 0
+- undefined NaN
+
+- To number on an object invokes toPrimitive(number)
+- [""] to 0
+- [null]  to 0
+- [undefined] to 0
+- [1,2,3] to NaN
+- [[[[]]]] to 0
+- {}  is NaN
+- {valueOf(){return 3;}} to 3
+
+4) toBoolean()
+----------------
+

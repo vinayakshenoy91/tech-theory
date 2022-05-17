@@ -1,0 +1,117 @@
+Sql server:
+----------
+- Single database 
+- Elastic pool
+- Managed instances
+
+IAAS, (Single database ):
+-------------------------
+- Use private IP addressing via Virtual Network
+- HA, Backup, VM and SQL instance maintenance, Disaster recovery has to be managed.
+
+1) PAAS: (Azure Sql datbase svc)
+-----
+- 99.99% availability
+- All things built in
+- Advanced intelligence and security
+- Migration from on premise will be difficult
+- Some SQL features may nit be available.
+- Need to manage access via firewall, no private ip addressing
+- SQL agent not available here
+- This is a public resource
+
+Purchasing models:
+-----------------
+a) DTU (Database txn unit) 
+- Blend of CPU, Memory, read-write rates.
+Basic, standard, premium. Each has its own pricing.
+
+b) vCore based 
+- You can independently scale the compute and storage.
+- You can choose diff service tiers.
+- Replica for HA
+- make use of Azure hybrid benefit.
+- Can save on cost if you have exisitng sql server license.
+
+
+Portal works:   (When you create database, data + server will be created)
+-------------- 
+- Give DB name
+- Give servername -> admin login and pwd
+- Whitelist the client ip address to access from work station.
+- Two resources will be created -> Sql database and sql server
+- Download SQL server management studio (SSMS)
+- Take the DB server name from overview.
+
+For elastic pool, once DB created,click on elastic pool created and then configure to add more DBs.
+
+Azure sql database service - Active geo replication:
+-----------------------------------
+- Writes will always go to primary
+- Create a readable secondary DB
+- secondary Db can be on same or diff server.
+- This is not supportedd for azure sql managed instance
+- Can be used for failover. Failover needs to be initiated manually by user or application.
+
+
+Azure sql database service - Autofailover groups:
+--------------------------------------------------
+- Built on top of active geo replication
+- Available at database server level.
+- You can replicate and failover a group of databases on a server.
+- Failover can be done manutally or automatically via a policy
+
+
+Portal works:
+-------------
+- Azure db -> georeplication -> choose region
+
+Elastic pool: (Min number of eDTU is 50)
+-------------
+- When you scale out DTU, there are certain interruption in DB.
+This is because when new compute service are added, current DB connections are dropped
+and new connections are created against the new compute resources.
+
+- For elastic pool, you specify DTUs at elastic pool level like 50DTU
+Compute resources are effeciently distributed between databases.
+
+- Used to manage multiple DB
+
+- Scaling of DB is done automatically
+
+- When database is dropped in and out of elastic pool, there can be brief outage in order of seconds.
+Here again, at the end of ops,the existing DB connections are dropped.
+
+- Since the databases are on the same sever and the elastic pools are also on the same server, 
+the databases can be removed from on pool and then added to another pool.
+
+2) Azure SQL managed instance: Security and isolated DB
+----------------------------
+- Has all features of sql server
+- 100% compatibility with the latest sql server enterprise edition
+- Provides native vnet impl. Isolation of DB in a vnet.
+- High HA backups.
+- make use of Azure hybrid benefit.
+- Can save on cost if you have exisitng sql server license.
+- Autofailover groups also present here
+
+Portal works:
+-----------
+- Goto managed instance. Use username and password.
+- Takes long to complete
+
+Elastic txn or server side txn:
+--------------------------------
+- Database can be multiple azure sql databases on the same server
+- The databases can be multiple azure sql databases on diff servers
+- The databases can also be hosted on azure sql managed instance.
+- multiple table can be in any of the above scenario.
+
+
+
+
+
+
+
+
+

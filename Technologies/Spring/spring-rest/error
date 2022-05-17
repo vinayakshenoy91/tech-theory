@@ -1,0 +1,330 @@
+@GetMapping("/polls/{pollId}")
+public ResponseEntity<?> getPoll(@PathVariable Long pollId) {
+        Optional<Poll> poll = pollRepository.findById(pollId);
+        if(!poll.isPresent()) {
+                throw new ResourceNotFoundException("Poll with id " + pollId + " not found");
+        }
+        return new ResponseEntity<>(poll.get(), HttpStatus.OK);
+}
+
+//Implementation of response not found exception
+package com.apress.exception;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.ResponseStatus;
+@ResponseStatus(HttpStatus.NOT_FOUND)
+public class ResourceNotFoundException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+        public ResourceNotFoundException() {}
+        public ResourceNotFoundException(String message) {
+                super(message);
+        }
+        public ResourceNotFoundException(String message, Throwable cause) {
+                super(message, cause);
+        }
+}
+
+//Custom exception for validation error:
+-----------------------------------------
+@ControllerAdvice
+public class RestExceptionHandler {
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+public ResponseEntity<?> handleValidationError(MethodArgumentNotValidException manve, HttpServletRequest request) {
+                ErrorDetail errorDetail = new ErrorDetail();
+                // Populate errorDetail instance
+                errorDetail.setTimeStamp(new Date().getTime());
+                errorDetail.setStatus(HttpStatus.BAD_REQUEST.value());
+String requestPath = (String) request.getAttribute("javax.servlet.error.request_uri");
+                if(requestPath == null) {
+                        requestPath = request.getRequestURI();
+                }
+                errorDetail.setTitle("Validation Failed");
+                errorDetail.setDetail("Input validation failed");
+                errorDetail.setDeveloperMessage(manve.getClass().getName());
+                // Create ValidationError instances
+                List<FieldError> fieldErrors =  manve.getBindingResult().getFieldErrors();
+                for(FieldError fe : fieldErrors) {
+List<ValidationError> validationErrorList = errorDetail.getErrors().get(fe.getField());
+                        if(validationErrorList == null) {
+                                validationErrorList = new ArrayList<ValidationError>();
+errorDetail.getErrors().put(fe.getField(), validationErrorList);
+                        }
+                        ValidationError validationError = new ValidationError();
+                        validationError.setCode(fe.getCode());
+                        validationError.setMessage(fe.getDefaultMessage());
+                        validationErrorList.add(validationError);
+                }
+                return new ResponseEntity<>(errorDetail, null, HttpStatus. BAD_REQUEST);
+                   }
+        /** handleResourceNotFoundException method removed **/
+}
+
+
+
+
+Following details in response:
+
+Timestamp—The time in milliseconds when the error happened.
+
+Status—HTTP status code associated with the error; this is partly redundant as it is same as the response status code.
+
+Error—The description associated with the status code.
+
+Exception—The fully qualified path to the exception class resulting in this error.
+
+Message—The message providing more details about the error.
+
+Path—The URI that resulted in the exception.
+
+
+Standardising error response:
+ (http://tools.ietf.org/html/draft-nottingham-http-problem-06) is gainin
+
+{
+        "title" : "",
+        "status" : "",
+        "detail" : ",
+        "timestamp" : "",
+        "developerMessage: "",
+        "errors": {} //The error field is used to report field validation errors.
+}
+
+
+Ex:
+
+{
+    status: 400
+    message:
+    code:
+    more_info:
+
+}
+
+
+Central class:
+-------------
+package com.apress.handler;
+import java.util.Date;
+import javax.servlet.http.HttpServletRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.ControllerAdvice;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import com.apress.dto.error.ErrorDetail;
+import com.apress.exception.ResourceNotFoundException;
+@ControllerAdvice
+public class RestExceptionHandler {
+        @ExceptionHandler(ResourceNotFoundException.class)
+public ResponseEntity<?> handleResourceNotFoundException(ResourceNotFoundException rnfe, HttpServletRequest request) {
+                ErrorDetail errorDetail = new ErrorDetail();
+                errorDetail.setTimeStamp(new Date().getTime());
+                errorDetail.setStatus(HttpStatus.NOT_FOUND.value());
+                errorDetail.setTitle("Resource Not Found");
+                errorDetail.setDetail(rnfe.getMessage());
+                errorDetail.setDeveloperMessage(rnfe.getClass().getName());
+                return new ResponseEntity<>(errorDetail, null, HttpStatus.NOT_FOUND);
+        }
+}
+
+
+Validation:
+----------
+You can read more about JSR 303 at https://beanvalidation.org/1.0/spec.
+
+{
+        "title" : "",
+        "status" : "",
+        "detail" : ",
+        "timestamp" : "",
+        "path" : "",
+        "developerMessage: "",
+        "errors": {
+                "field1" : [ {
+                                "code" : "NotNull",
+                                message" : "Field1 may not be null"
+                        } ],
+                "field2" : [ {
+                                "code" : "NotNull",
+                                "message" : "Field2 may not be null"
+                        },
+                        {
+                                "code" : "Email",
+                                "message" : "Field2 is not a well formed email"
+                        }]
+                }
+}
+
+package com.apress.dto.error;
+public class ValidationError {
+        private String code;
+        private String message;
+        // Getters and Setters removed for brevity
+}
+public class ErrorDetail {
+        private String title;
+        private int status;
+        private String detail;
+        private long timeStamp;
+        private String path;
+        private String developerMessage;
+private Map<String, List<ValidationError>> errors = new HashMap<String, List<ValidationError>>();
+        // Getters and setters removed for brevity
+}
+
+Bean validation api:
+--------------------
+Table 5-1Bean Validation API Constraints
+Constraint
+
+Description
+
+NotNull
+
+Annotated field must not have null value.
+
+Null
+
+Annotated field must be null.
+
+Max
+
+Annotated field value must be an integer value lower than or equal to the number specified in the annotation.
+
+Min
+
+Annotated field value must be an integer value greater than or equal to the number specified in the annotation.
+
+Past
+
+Annotated field must be a date in the past.
+
+Future
+
+Annotated field must be a date in the future.
+
+Size
+
+Annotated field must match the min and max boundaries specified in the annotation.
+
+For a field that is a Collection, the size of the Collection is matched against boundaries.
+
+For a String field, the length of the string is verified against boundaries.
+
+Pattern
+
+Annotated field must match the regular expression specified in the annotation.
+
+Ex: Use both of the below together
+
+
+@Entity
+public class Poll {
+        @Id
+        @GeneratedValue
+        @Column(name="POLL_ID")
+        private Long id;
+        @Column(name="QUESTION")
+        @NotEmpty
+        private String question;
+        @OneToMany(cascade=CascadeType.ALL)
+        @JoinColumn(name="POLL_ID")
+        @OrderBy
+        @Size(min=2, max = 6)
+        private Set<Option> options;
+        // Getters and Setters removed for brevity
+}
+
+@GetMapping(value="/polls")
+public ResponseEntity<?> createPoll(@Valid @RequestBody Poll poll) {
+        poll = pollRepository.save(poll);
+        // Set the location header for the newly created resource
+        HttpHeaders responseHeaders = new HttpHeaders();
+        URI newPollUri = ServletUriComponentsBuilder
+                             .fromCurrentRequest()
+                             .path("/{id}")
+                             .buildAndExpand(poll.getId())
+                             .toUri();
+        responseHeaders.setLocation(newPollUri);
+        return new ResponseEntity<>(null, responseHeaders, HttpStatus.CREATED);
+}
+
+Externalize error messages:
+---------------------------
+/*
+
+To achieve this, create a messages.properties file under the src\main\resources folder, and add the following two messages:
+NotEmpty.poll.question=Question is a required field
+Size.poll.options=Options must be greater than {2} and less than {1}
+As you can see, we are following the convention <<Constraint_Name>>.model_name.field_Name for each key of the message. 
+The model_name represents name of the Spring MVC’s model object to which user-submitted data is being bound. 
+The name is typically provided using the @ModelAttribute annotation. In the scenarios in which this annotation is missing, 
+the model name is derived using the parameter’s nonqualified class name. The PollController’s createPoll method takes a 
+com.apress.domain.Poll instance as its model object. Hence, in this case, the model name will be derived as poll. If a controller were to take an instance of com.apress.domain.SomeObject as its parameter, the derived model name will be someObject. It is important to remember that Spring will not use the name of the method parameter as the model name.
+
+*/
+
+
+
+@ControllerAdvice
+public class RestExceptionHandler {
+        @Inject
+        private MessageSource messageSource;
+        @ExceptionHandler(MethodArgumentNotValidException.class)
+        @ResponseStatus(HttpStatus.BAD_REQUEST)
+public @ResponseBody ErrorDetail handleValidationError(MethodArgumentNotValidException manve, HttpServletRequest request) {
+                ErrorDetail errorDetail = new ErrorDetail();
+                // Populate errorDetail instance
+                errorDetail.setTimeStamp(new Date().getTime());
+                errorDetail.setStatus(HttpStatus.BAD_REQUEST.value());
+String requestPath = (String) request.getAttribute("javax.servlet.error.request_uri");
+                if(requestPath == null) {
+                        requestPath = request.getRequestURI();
+                }
+                errorDetail.setTitle("Validation Failed");
+                errorDetail.setDetail("Input validation failed");
+                errorDetail.setDeveloperMessage(manve.getClass().getName());
+                // Create ValidationError instances
+                List<FieldError> fieldErrors =  manve.getBindingResult().getFieldErrors();
+                for(FieldError fe : fieldErrors) {
+List<ValidationError> validationErrorList = errorDetail.getErrors().get(fe.getField());
+                        if(validationErrorList == null) {
+                                validationErrorList = new ArrayList<ValidationError>();
+errorDetail.getErrors().put(fe.getField(), validationErrorList);
+                        }
+                        ValidationError validationError = new ValidationError();
+                        validationError.setCode(fe.getCode());
+                        validationError.setMessage(messageSource.getMessage(fe, null));
+                        validationErrorList.add(validationError);
+                }
+                return errorDetail;
+        }
+}
+
+
+Improving rest exception handler:
+----------------------------------
+Improving RestExceptionHandler
+By default, Spring MVC handles error scenarios such as not being able to read a malformed request or not finding a required request parameter by throwing a set of standard exceptions. However, Spring MVC doesn’t write these standard exception details to the response body. To keep things consistent for our QuickPoll clients, it is important that Spring MVC standard exceptions are also handled in the same way and that we return the same error response format. A straightforward approach is to create a handler method for each exception in our RestExceptionHandler. A simpler approach is to have RestExceptionHandler class extend Spring’s ResponseEntityExceptionHandler. The ResponseEntityExceptionHandler class contains a set of protected methods that handle standard exception and return a ResponseEntity instance containing error details.
+
+Extending the ResponseEntityExceptionHandler class allows us to override the protected method associated with the exception and return an ErrorDetail instance. Listing 5-13 shows a modified RestExceptionHandler that overrides handleHttpMessageNotReadable method. The method implementation follows the same pattern that we used before—create and populate an instance of ErrorDetail. Because the ResponseEntityExceptionHandler already comes with a handler method for MethodArgumentNotValidException, we have moved the handleValidationError method code to an overridden handleMethodArgumentNotValid method.
+@ControllerAdvice
+public class RestExceptionHandler extends ResponseEntityExceptionHandler  {
+        @Override
+        protected ResponseEntity<Object> handleHttpMessageNotReadable(
+                        HttpMessageNotReadableException ex, HttpHeaders headers,
+                        HttpStatus status, WebRequest request) {
+                ErrorDetail errorDetail = new ErrorDetail();
+                errorDetail.setTimeStamp(new Date().getTime());
+                errorDetail.setStatus(status.value());
+                errorDetail.setTitle("Message Not Readable");
+                errorDetail.setDetail(ex.getMessage());
+                errorDetail.setDeveloperMessage(ex.getClass().getName());
+                return handleExceptionInternal(ex, errorDetail, headers, status, request);
+        }
+        @Override
+public ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNot
+ValidException manve, HttpHeaders headers, HttpStatus status, WebRequest request) {
+                     // implementation removed for brevity
+              return handleExceptionInternal(manve, errorDetail, headers, status, request);
+        }
+}
+

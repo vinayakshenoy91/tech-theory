@@ -1,0 +1,22 @@
+KeyVault:
+----------
+- You can give permissions to encryption keys, secret and certificates
+- Enable disk volume encryption, ARM template deployment and azure 
+VM for deployment keys can be set from vault.
+- Can do networking setup as to which endpoint can access kv
+- You need to create a ServicePrincipal to give access to kv 
+
+Programatically:
+----------------
+- You need to know the url of the vault [Get it from that particular vault overview]
+- Go to Azure AD -> App registration -> name of app -> register
+- From overview screen,  get the client id and tenant id (AD tenant id)
+- For client secret -> goto cert and secret -> new client secret -> value of secret
+- Now use these in your app
+- Authorize the app -> goto kv -> access policy -> select principal
+
+
+For making it private: (only element inside vnet to have access)
+----------------------
+- Goto vnet -> svc endpoint -> add -> choose kv -> choose subnet
+- Goto KV -> Networking -> private endpoint/ selected networks -> save

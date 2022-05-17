@@ -1,0 +1,59 @@
+.menu {
+  background: #F7F6F5;
+  border-top: 1px solid #CFCFCF;
+}
+
+.menu__item {
+  display: inline-block;
+  padding: 0.5rem 2rem;
+  border-bottom: 1px solid #CFCFCF;
+}
+
+.menu__item:hover {
+  background: white;
+  border-bottom: none;
+  border-right: 1px solid #CFCFCF;
+  border-left: 1px solid #CFCFCF;
+  margin: 0 -1px;
+}
+
+.menu__item--current .menu__item__link {
+  color: #333333;
+  border-bottom: 2px solid #333;
+  padding-bottom: 0.3rem;
+}
+
+.menu__item__link {
+  text-decoration: none;
+  color: #555;
+  font-family: Roboto;
+  font-size: 0.9rem;
+  font-weight: 800;
+}
+
+.menu__item__link:hover {
+  text-decoration: underline;
+  color: #1C60BB;
+}
+
+
+<html>
+ <head>
+   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+ </head>
+ <body>
+  <div class="menu">
+    <div class="menu__item menu__item--current menu__item--home">
+      <a class="menu__item__link" href="#">Home</a>
+    </div><div class="menu__item menu__item--motors">
+      <a class="menu__item__link" href="#">Motors</a>
+    </div><div class="menu__item menu__item--fashion">
+      <a class="menu__item__link" href="#">Fashion</a>
+    </div><div class="menu__item menu__item--electronics">
+      <a class="menu__item__link" href="#">Electronics</a>
+    </div><div class="menu__item menu__item--toys">
+      <a class="menu__item__link" href="#">Toys</a>
+    </div>
+  </div>
+ </body>
+</html>

@@ -1,0 +1,52 @@
+1) Link api:  If we just provide an anchor tag with 
+------------
+import Link from 'next/link'
+ 
+     <Link  replace //Replace is used so that we cannot go back
+            href="/search/[pid]"
+            as={`/search/${searchTerm}`}>
+              <a> 
+                {`http://localhost:3000/search/${searchTerm}`}
+              </a>
+      </Link>
+
+      <Link href={{pathname:'/clients/[id]',query:{id:client.id}}}></Link>
+
+2) File based routing:
+----------------------
+/pages
+  - index.js  -> Empty path domain.com/
+  - about.js
+
+  /products
+   - index.js
+   - [id].js -> Dunamic path
+
+  /portfolio
+   - index.js
+   - [id].js -> Dunamic path
+
+
+using useRouter or withRouter(For class based components):
+-----------------------------------------------------------
+import {useRouter, withRouter} from 'next/router';
+
+const router= useRouter(); => Call this inside function;
+router.query
+
+//One  id
+[projectid].js => This is the file in which the above component will lie
+
+//Multiple ids
+use folder first with name [id] and then file [testid].js
+
+//Catch all routes:
+[...slug].js
+
+//Programatically push:
+router.push('/client/max/projects');
+router.replace('/client/max/projects');
+
+Using 404 pages:
+----------------
+Add 404.js in pages

@@ -1,0 +1,33 @@
+function flatten(nestedArray) {
+    const newArray = [];
+  
+    for(let i = 0; i < nestedArray.length; i++) {
+        const thisItem = nestedArray[i];
+      
+         if(Array.isArray(thisItem)) {
+             const flatItem = flatten(thisItem);
+           
+             for(let j = 0; j < flatItem.length; j++) {
+                 newArray.push(flatItem[j]);
+             }
+         } else {
+             newArray.push(thisItem);
+         }
+    }
+    
+    return newArray;
+}
+
+OR
+
+//Untested
+function flatten(arr){
+    arr.reduce((acc,item)=>{
+          if(Array.isArray(item)){
+            acc=acc.concat(flatten(item));
+          }else{
+              acc.push(item);
+          }
+        return acc;
+    },[])
+}

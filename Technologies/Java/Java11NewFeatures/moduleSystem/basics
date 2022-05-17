@@ -1,0 +1,173 @@
+- Modules group related packages.
+
+Jar file is not a module:
+
+- It has a name, which disappears at runtime
+- it groups code, but without access control
+- It does not describe its dependencies
+
+
+Features:
+----------
+- Each module should have name, input or outputs.
+- Java 9 platform is divided into a set of modules that are known as platform modules.
+This provides a scalable java runtime.Standard modules have names prefixed with java.
+java.base, java.sql
+- Import modules and export packages.
+- Two kinds of modules are: The kind of modules determines access to the modules types, and the members
+of those types , for code outside the module.
+
+1) normal modules: With open modifier, grant access at compile time and run time to types in only 
+those packages which are explicitly exported.
+It is declared using keyword module and does not export any of its packages by default.
+
+2)Open modules: With open modifier, grants access at compile time to types in only those
+packages which are explicitly exported, but grants access at runtime to types in all its packages,
+as if all packages had been exported.
+Many 3P library liek spring and hibernate use reflection to access the internals of JDK at runtime.
+These libraries wont work unless we have an open module. Makes all packages inside the modules accessible for deep reflection.
+Keyword open can be used to declare an open module or to declare specific package as open.
+
+
+3) Automatic module -> Created after adding a jar file to the module path.
+It is automatically created when a jar file is placed into the module path.
+Exports all its packages by default.
+Useful for 3rd party code and migrate existing apps to java 9
+
+4) Unnamed modules: export all packages.It reads all modules in the JDK and on the module path.
+It is a module made up of all jar files from the classpath. All these jar files form the unnamed module.
+Named module cant require an unnamed module.
+
+5) Agggregator modules: When few modules depend on three modules, we can create an aggregator module 
+for those three module and that way our modules can depend on a single module.
+Exist for convenience  and they dont have code of their own, they just have moduel descriptor.
+ex: java.se module.
+
+Module path:
+------------
+- A path to module jar file
+- A path to JMOD file
+- A path to sequence of folders that contain modules.
+- Used by compiler to find and resolve modules.
+- Every module from module path needs to have a module declaration.(module-info.java)
+
+Class path:
+------------
+- Seq of jar files.
+
+
+Modules descriptor:
+---------------------
+- Every module comes with a module descriptor file that describes the module
+and contains metadata about the module.
+- Modules declaration introduces a module name that can be used in other module
+declarations to express relationships between modules.
+Inside a module , zero or more module statements can be:
+- exports statement -  packages exported by current module.
+- opens statement - cannot be used in open modules coz all packages are open in an open module
+- requires statement - If any module is required by current module.
+- uses statement- services that the current module consumes.
+- provides statement - service impl that current modules provides.
+
+-> All platform modules are named modules.
+
+src/   
+module-info.java    //Located at the module root folder.
+
+
+syntax:
+-------
+
+module academy.xyz.common{
+
+}
+
+
+
+Benefit of modules:
+-------------------
+- Explicit boundaries and dependencies
+- Maintainability : Hide impl details
+- Decouping of parts of system
+
+Three tenets of modularity:
+--------------------------
+- Strong encapsulation: Hide your internals, be strict about what is public api
+- Well defined interfaces
+- Explicit dependencies : A module lists what it needs from other modules
+
+
+Working with modules:
+--------------------
+
+How should module names be?
+- separate namespace
+- One or more java identifiers separated by a .
+- Avoid terminal digits
+- Common practise: root package  as module name
+
+
+
+src/
+module-info.java
+META_INF/MANIFEST.MF
+
+
+
+//Below two exports  dont have any relation
+
+module mytestmodule{
+    exports com.pluralsight.util;
+}
+
+module myfirstmodule{
+  requires util;
+  exports com.pluralsight;
+  opens com.pluralsight.util; //Used for reflective access, bypass access restriction
+  uses package.type_name;
+  provides package.type_name with package.type_name;
+}
+
+or
+
+open module com.pluralsight{ //Opens all packages inside modules
+
+}
+
+Qualified exports:
+-------------------
+module myfirstmodule{
+  requires util;
+  exports com.pluralsight to myModule; //Only my modiule can use com.pluralsight others cannot
+  opens com.pluralsight.util to myModule; //Only my module can reflective acccess use com.pluralsight others cannot
+}
+
+
+module java.sql{
+    requires transitive java.logging;
+}
+
+
+Services:
+---------
+- Addresses strong coupling
+- Service loader will load all the instances
+
+Note: requires is followed by a module name and exports is followed by a package name
+- java.base module will always be there.
+
+Commands:
+---------
+javac -d out src/com/javamodularity/greeter/Main.java src/module-info.java
+java -p out -m greeter/com.xyz.Main
+
+
+
+Creating modules:
+------------------
+1) at src level create a modulewith name: academy.leanprogramming.common
+2) Create src folder inside above module.
+3) Create three package inside this like common, db and ui
+4) Delete the toot src folder
+5) Right click on source folder and create a module-info.java file.
+

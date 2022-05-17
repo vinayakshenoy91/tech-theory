@@ -1,0 +1,22 @@
+1) Character in a string is unique or not:
+------------------------------------------
+function isUnique(str) {
+    const chars = new Set();
+  
+    for(let i = 0; i < str.length; i++) {
+        const thisChar = str[i];
+    
+        if(chars.has(thisChar)) {
+            return false;
+        }
+
+        chars.add(thisChar);
+    }
+
+    return true;
+}
+
+or
+function isUnique(str) {
+    return new Set(str).size === str.length;
+}

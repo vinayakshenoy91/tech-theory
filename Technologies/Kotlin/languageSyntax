@@ -1,0 +1,19 @@
+Number and variable types:
+--------------------------
+var x = 2+3;
+val x=23
+val x: Byte=5 //Explicit
+val life:Long=42
+val life=4L
+val z = 6.9F
+val z:Float = 6.9F
+
+println("total price is $totalPrice")
+
+Byte, Short , Int , Long, Float, Double
+
+- By default all decimals are double, All small nos are int and all big nos are Long.
+
+Getting the type of a variable:
+--------------------------------
+println(pi::class.java)

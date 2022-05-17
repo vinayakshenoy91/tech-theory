@@ -1,0 +1,32 @@
+//ssettimeout, closure, iife
+
+
+Qn: //This will always print undefined : 4
+----        
+const array = [5, 11, 18, 25];
+for (var i = 0; i < array.length; i++) {
+  setTimeout(function() {
+    console.log('Element: ' + array[i] + ', at index: ' + i);
+  }, 3000);
+}
+
+
+Solution:
+---------
+const array = [5, 11, 18, 25];
+for (var i = 0; i < array.length; i++) {
+  setTimeout(function(local_i) {
+  return function(){
+  console.log('Element: ' + array[local_i] + ', at index: ' + local_i);
+  }
+ }(i), 3000);
+}
+
+OR
+
+const array = [5, 11, 18, 25];
+for (let i = 0; i < array.length; i++) {
+  setTimeout(function() {
+  console.log('Element: ' + array[i] + ', at index: ' + i);
+  }, 3000);
+}

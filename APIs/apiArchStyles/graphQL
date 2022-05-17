@@ -1,0 +1,128 @@
+GraphQL is perfectly suited for API composition, almost as if it was created with this objective in mind. This is because in GraphQL, each field within a query can in fact be fetched (in parallel) from multiple sources. Most importantly, this is part of the standard behavior of GraphQL and not a customization or adaptation.
+
+
+https://code.facebook.com/posts/1691455094417024
+
+Sample: https://tinyurl.com/graphql-sample
+
+- a GraphQL API consists of a service that runs a GraphQL server.
+
+- Service scheme required. Resolvers required.
+
+GraphQL servers can expose the GraphiQL (pronounced graphical) web client, which is an interactive 
+in-browser interface development environment (IDE) for constructing GraphQL operations.
+
+- GraphQL supports two HTTP verbs: GET (in which case the payload is passed as GET parameters) and 
+POST (in which case the payload is passed as part of the HTTP payload).
+
+- all operations share only a single endpoint (typically <server>/graphql)
+
+- a language for defining GraphQL operations, such as queries, mutations, or 
+subscriptions against a GraphQL server.
+
+- Interfaces are defined using the GraphQL schema definition language (SDL), which is part of the specification itself. 
+
+Architectural principles:
+
+Hierarchical
+Queries are hierarchies of data definitions, shaped just how data is expected to be returned.
+
+View-centric
+GraphQL is unapologetically driven by the requirements of views and the frontend engineers that write them. 
+GraphQL started with their way of 
+thinking and their requirements, before building the language and runtime necessary to enable that.
+
+Strongly-typed
+A GraphQL server defines a specific type system. GraphQL operations (for example, queries)
+are executed within this context.
+
+Client-driven
+Through the type systems, a server publishes an interface for clients to construct operations against. 
+Then it is the responsibility of the clients to define how exactly to implement an operation, including 
+defining exactly what payload to fetch in the case of queries.
+
+Introspective
+The type system itself is queryable. Tools are built around this capability, such as the GraphiQL client.
+
+Version-free
+From its inception, the GraphQL specification has taken a strong stand against implementing versioning at 
+service level; instead, it provides tools and mechanisms for continuous evolution of the service and thus 
+provides the means to support backwards and future compatibility.
+
+Miscellaneous
+GraphQL is intentionally silent on important architectural considerations, most notably caching, authorization, 
+and pagination. This is the case because they are considered to be outside of the scope of the specification itself, 
+even though a variety of solutions may already exist.
+
+More information on the GraphQL specification can be found at the following link: https://graphql.github.io/graphql-spec
+
+Types that define operations:
+------------------------------
+Operations are types that enable a GraphQL service to expose any given functionality that is to be 
+offered by a GraphQL service.
+
+Think of them as public functions within a class.
+There are three operation types supported in GraphQL:
+
+Query
+
+This type is used to define operations that fetch data and thus are read only.
+
+Mutation
+
+This type is used to define operations that create and/or manipulate data, such as create, update, and delete. 
+A mutation may also respond with a data fetch.
+
+Subscription
+
+GraphQL's implementation of web events (for example, Webhooks) allows clients that subscribe to a given 
+event to then asynchronously receive updates.
+
+For more information, refer to the section on operations on GitHub:
+https://graphql.github.io/graphql-spec/June2018/#sec-Validation.Operations
+
+Types that define data:
+-------------------------
+
+Data in GraphQL can be defined using the following types:
+
+Object
+
+This type represents any kind of object that can be fetched from a GraphQL service through a query operation, including the fields within the object and/or relationships to other objects. Furthermore, fields within an object can have zero or many arguments.
+
+Input
+
+Similar to the object type, this type is used to define objects to be used as inputs in a mutation operation.
+
+Scalar
+
+This type defines the type of data within the fields of an object or input type. There are five default scalar types:
+
+Int: A 32-bit integer.
+Float: A double precision floating-point value.
+String: A UTF-8 character sequence.
+Boolean: True or false.
+ID: Represents a unique identifier and is serialized as a string.
+In addition, GraphQL allows for custom types to be defined within a given schema; for example, a scalar of type date could be defined that would serialize as an integer timestamp.
+
+Enumeration
+
+Referred to as enums, they represent a special type of scalar that is restricted to a particular list of values.
+
+Interface
+
+This is an abstract type that predefines a set of fields that an object type must include when it implements the interface.
+
+Union
+
+The unions type allows different object types to be combined as an abstract object.
+
+Refer to the following link for more information and examples of GraphQL types:
+https://graphql.org/learn/schema/
+
+For GraphQL, there are several client libraries available, each providing different features, 
+such as response-caching and call handlers.
+
+The following articles provide a good overview of GraphQL client options:
+https://medium.com/open-graphql/exploring-different-graphql-clients-d1bc69de305f
+

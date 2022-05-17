@@ -1,0 +1,7 @@
+public Mono<String> nameMono(){
+     return Mono.just("Hello");
+}
+
+fs.nameMono().subscribe(name->{
+    
+})

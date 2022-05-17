@@ -1,3 +1,6 @@
 const x = (...nums)=>{
     
 }
+
+- It collects values in form of an array
+- Works in function arguments

@@ -1,0 +1,2 @@
+- Using strangler facade to hide which api is being called during migration , is it legacy or new apis.
+(like delivery adapter)

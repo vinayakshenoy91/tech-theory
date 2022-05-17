@@ -1,0 +1,22 @@
+    Rest api for query service:
+    ---------------------------
+    - Available on port 8093/18093
+    - https://node:8093/query/service
+    - Query runs sync
+
+    curl -v  http://node:8093/query/service -d  'statement=select ... from `xyz` where  x > $1 &args=[800]' -u admin:pwd
+
+    For CBQ:
+    --------
+    - Find where couchbase bin folder is located in repective OS
+    ./cbq -h 
+    ./cbq -u admin -p loonycorn -engine=http://127.0.0.1:8091/  -> connect to CB
+
+    RUN THE N1QL QUERY
+
+    \DISCONNECT -> disconnect from shell
+
+    \CONNECT http://127.0.0.1:8091/; -> reconnect
+
+ ./cbq -u admin -p loonycorn -engine=http://127.0.0.1:8091/ --file ~/query.nosql -> Execute multiple query from file.
+      

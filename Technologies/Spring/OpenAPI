@@ -1,0 +1,61 @@
+springfox.github.io
+
+Dependencies are:
+-----------------
+- springfox-swagger2
+- springfox-data-rest
+- springfox-swagger-ui
+- springfox-bean-validators //Translate JSR-303 annotation in doc 
+
+@Configuration
+@EnableSwagger2WebMvc
+@Import(BeanValidatorPluginsConfiguration.class)
+@Import(SpringDataRestConfiguration.class)
+public class ApplicationSwaggerConfig{
+   @Bean
+   public Docket employeeApi(){
+       return 
+          new Docket(DocumentationType.SWAGGER_2)
+          .select()
+          .apis(RequestHandlerSelectors.any()) RequestHandlerSelectors.basePackage("com.globalmatics.employee")
+          .paths(PathSelectors.any())//PathSelectors.ant("/v2/**")
+          .build() 
+          .apiInfo(getApiInfo())
+   }
+
+   private ApiInfo getApiInfo(){
+       return new ApiInfoBuilder().title('Employee API').version("1.0").description("hello")
+   }
+}
+
+localhost:8080/swagger-ui.html#/
+
+
+@ApiModelProperty(value="Employee Department", required=true) //Only add that is not obvious from the naming
+public String department;
+
+Above request mapping add this:
+@ApiOperation(value="Get default schedule of employees",notes="All employees share same schedule")
+
+Swagger groups : [Multiple versions from single swagger UI]  //Note: make 3 diff beans
+------------------------------------------------------------- 
+
+  new Docket(DocumentationType.SWAGGER_2)
+          .groupName("employee-api-v1")
+          .select()
+          .apis(RequestHandlerSelectors.any()) 
+          .paths(PathSelectors.any())//PathSelectors.ant("/v1/**")
+          .build() 
+          .apiInfo(getApiInfo())
+
+
+  new Docket(DocumentationType.SWAGGER_2)
+          .groupName("employee-api-v2")
+          .select()
+          .apis(RequestHandlerSelectors.any()) 
+          .paths(PathSelectors.any())//PathSelectors.ant("/v2/**")
+          .build() 
+          .apiInfo(getApiInfo())
+
+ - Path selectors can filter each version into diff Docket Objects and groups
+ - Selector on Swagger UI for group

@@ -1,0 +1,35 @@
+Equality:
+---------
+
+typeof name =="string"
+name.trim().length
+atrended.trim()!=""
+Number(x)
+typeof attended == "number"
+Number.isInteger(a)
+
+== -> allows coercion(types are diff). When type are same, then it does ===
+=== -> Value and type (does not allow coercion when types are same)
+
+use : x == null  [Instead of x===null ||x===undefined]
+
+If your inputs are only string and number => ==
+
+Double equal:
+-------------
+If types are diff: allow coercion
+If types are same: ===
+If null or undefined : equal
+If non-primitive : toPrimitive
+Prefer: ToNumber
+
+Avoid == When:
+--------------
+== with 0 or "" or " "
+== with non-primitive
+==true or ==false: allow toBoolean or use ===
+
+When you know types == makes more sense
+
+
+Object.is(..,..) => For exact matches

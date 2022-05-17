@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "target": "es5",
+    "noUnusedLocals": true,
+    "outFile": "output.js",
+    "watch": true
+  },
+  "files": ["app.ts"]
+}
+
+//If you specify anohter tsconfig.json in another file inside directory and you are extending hte base file
+// then use
+
+{
+    "extends":"../tsconfig.base",
+    "compilerOptions": {
+        "removeComments": true
+      },
+    "include":[
+        "./**/*.ts"
+    ]
+}

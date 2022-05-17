@@ -1,0 +1,44 @@
+1)  Understand system requirements:
+------------------------------------
+- ASR (architectuarally significant requirement)  is a requirement that will have a profound effect on the architecture.
+- ASRs often, but not always, take the form of quality attribute (QA) requirements—the performance, security, modifiability, 
+availability, usability, and so forth, that the architecture must provide to the system
+
+
+- NFR-> Tech and service level attributes
+[Users, load, perforamnce, volumes]
+- map  the components -> understand tasks of the system
+- Select tech stack
+- Design the architecture
+- Write architecture document
+- Support team
+
+Things to ask for:
+
+Some specific things to look for are the following categories of information:
+
+Usage. User roles versus system modes, internationalization, language distinctions.
+
+Time. Timeliness and element coordination.
+
+External elements. External systems, protocols, sensors or actuators (devices), middleware.
+
+Networking. Network properties and configurations (including their security properties).
+
+Orchestration. Processing steps, information flows.
+
+Security properties. User roles, permissions, authentication.
+
+Data. Persistence and currency.
+
+Resources. Time, concurrency, memory footprint, scheduling, multiple users, multiple activities, devices, energy usage, soft resources (e.g., buffers, queues), and scalability requirements.
+
+Project management. Plans for teaming, skill sets, training, team coordination.
+
+Hardware choices. Processors, families of processors, evolution of processors.
+
+Flexibility of functionality, portability, calibrations, configurations.
+
+Named technologies, commercial packages.
+
+

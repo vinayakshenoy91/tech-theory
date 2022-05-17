@@ -1,0 +1,23 @@
+<table>
+ <thead>
+  <tr>
+     <th>Food Item</th>
+  </tr>
+ </thead>
+ <tbody>
+  <tr>
+     <td>Bread</td>
+  </tr>
+ </tbody>
+ <tfoot>
+ <tr>
+     <td>Bread</td>
+  </tr>
+ </tfoot>
+</table>
+
+
+- Thead and tbody gives semantic richness
+- Also they help in css
+- Do not use table for layout
+

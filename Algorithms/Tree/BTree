@@ -1,0 +1,21 @@
+- Trees are stored in RAM
+- Stack and heap are in RAM
+- Accessing block (512bytes which is part of track) is slow. We should minimize amount of read operations.
+- Recursion woks well in RAM not in external memory(HDD)
+- So BTree which are shallow structures are used.
+- BTree are self balancing tree like DS . All ops in O(logN)
+- Nodes may have more than 2 children + multiple keys
+- Optimized for system that read and write large block of data.
+- Use in BD and FS
+
+
+
+Properties:
+-----------
+- All the nodes of the tree structure can contain m keys - so it may have m+1 children (branching factor)
+- every node is atleast half full - So atleast m/2 items
+- if the N number of items in a node is less than m/2 then we merge it with another node and if N>m, then we split the node.
+- All leaf nodes are at the same level (balanced)
+
+
+

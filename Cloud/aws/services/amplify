@@ -1,0 +1,19 @@
+- Framework for creatign serverless apps in aws
+- docs.amplify.aws
+
+Steps: Create backend app or host webapp
+------
+1) npm install -g @aws-amplify/cli
+2) amplify configure
+3) Select region and user to work with amplify
+4) Create a skeleton app
+5) amplify init  //A project will be created cloud
+6) amplify add auth
+7) amplify push
+8) npm add aws-amplify @aws-amplify/ui-vue
+9) Amplify publish
+
+
+
+amplify add api
+amplify push

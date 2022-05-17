@@ -1,0 +1,20 @@
+- Redis internally uses a hash table to store the elements as a Set. 
+
+- SADD key value //sadd fruits apple banana
+
+- SMEMBERS key
+
+- SISMEMBER key value
+
+- SCARD key
+
+- sdiff fruits fruits1
+
+- SUNION key1 key2 key3 …
+
+- SREM key value1 value2 …
+
+- SPOP key count //This command is used to remove a random value from the set
+
+- SMOVE source dest member
+

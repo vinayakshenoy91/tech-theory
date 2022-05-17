@@ -1,0 +1,42 @@
+Font squirrel , Web fornt genrator page.
+
+
+
+body{
+font-family: Arial, sans-serif
+font-size:10px;
+}
+
+.main-area h2{
+    font-size:200%;
+    font-style:italic;
+    font-weight:normal;
+    letter-spacing:4px;
+    word-spacing:10px;
+    text-shadow:2px 10px 0 #color;
+    text-transform:uppercase; //lowercase
+    text-decoration:underline;
+    text-align:justify;
+    text-indent:25px;
+    line-height:1.5;
+}
+
+
+html{
+    line-height:1.5;
+}
+
+
+/* Custom fonts */
+
+@font-face{
+    font-familty:'PTSans';
+    src: url('fonts/PT-Sans.wwoff') format('woff'); //Comma separated if various formats like ttf, svg,etc
+    font-weight:normal;  //Bold. Copy paste more font face same like above but change weight and style.
+    font-style:normal;   //italic
+}
+
+body{
+font-family: 'PTSans',Arial, sans-serif
+font-size:10px;
+}

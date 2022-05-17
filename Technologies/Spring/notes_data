@@ -1,0 +1,468 @@
+having DTOs, domain classes, and data classes completely isolated
+
+
+
+
+
+CAP theorm:
+
+SQL :
+- Compelx queries
+- Fixed structure
+- Relational data
+relational databases (SQL) follow the ACID guarantees: atomicity (transactions either succeed or fail as a whole unit), 
+consistency (data always transitions between valid states), isolation (ensures that concurrency doesn’t cause side effects), 
+and durability (after a transaction the state is persisted even in the event of a system failure). 
+
+
+NOSQL:
+- Huge volumen of data
+- Flexible structure
+
+Things to consider:
+-------------------
+
+How are you planning to query the data? Do you need high availability? Are you writing millions of records? Do you need very fast readings? Also, keep in mind the nonfunctional requirements of your system. For example, in our particular case, we could accept that the system is not available for a few hours per year (or even days). However, we would be in a different situation if we’re developing a web application for the healthcare sector where lives might be at risk.
+
+
+How we used it?
+From our Java code, we’ll use the Spring Boot JPA annotations and integrations, so we keep our code decoupled from 
+Hibernate specifics.
+
+On the implementation side, Hibernate takes care of all the logic to map our objects to database entities.
+
+Hibernate supports multiple SQL dialects for different databases, and the H2 dialect is one of them.
+
+Spring Boot autoconfiguration sets up H2 and Hibernate for us, but we can also customize behaviors.
+
+
+
+Using H2 DB:
+------------
+Nevertheless, we’d also like to access the database from outside for our educational purposes, so let’s add a property 
+in the application.properties file to enable the H2 database console.
+# Gives us access to the H2 database web console
+spring.h2.console.enabled=true
+The H2 console is a simple web interface that we can use to manage and query data.
+
+
+How spring connects to DB:
+
+Spring Boot detects Hibernate in the classpath and configures a data source. Since H2 is also available, Hibernate connects to H2 and selects the H2Dialect. It also initialized an EntityManagerFactory for us; we’ll see soon what that means. There is also a log line claiming that the H2 console is available at /h2-console and that there is a database, available at jdbc:h2:mem:testdb. If there is no other configuration specified, Spring Boot autoconfiguration creates a ready-to-use, in-memory database named testdb.
+
+http://localhost:8080/h2-console
+
+
+JPA impl
+---------
+here are some core Java APIs to handle SQL databases in the packages java.sql and javax.sql. There, we can find the interfaces DataSource, Connection, and some others for pooled resources such as PooledConnection or ConnectionPoolDataSource. We can find multiple implementations of these APIs by different vendors. Spring Boot comes with HikariCP (http://tpd.io/hikari), which is one of the most popular implementations of DataSource connection pools because it’s lightweight and has a good performance.
+
+Hibernate uses these APIs (and therefore the HikariCP implementation in our application) to connect to the H2 database. The JPA flavor in Hibernate for managing the database is the SessionImpl class (http://tpd.io/h-session), which includes a lot of code to perform statements, execute queries, handle the session’s connections, etc. This class, via its hierarchy tree, implements the JPA interface EntityManager (http://tpd.io/jpa-em). This interface is part of the JPA specification. Its implementation, in Hibernate, is what does the complete ORM.
+
+
+On top of JPA’s EntityManager, Spring Data JPA defines a JpaRepository interface (http://tpd.io/jpa-repo) with the most common methods we need to use normally: find, get, delete, update, etc. The SimpleJpaRepository class (tpd.io/simple-jpa-repo) is the default implementation in Spring and uses the EntityManager under the hood. This means we don’t need to use the pure JPA standard nor Hibernate to perform database operations in our code since we can use these Spring abstractions.
+
+autoconfiguration:
+-------------------
+Normally, we configure the data source using some values in our application.properties. These properties are 
+defined by the DataSourceProperties class (http://tpd.io/dsprops) within the Spring Boot autoconfiguration dependency, 
+which contains the database’s URL, username, and password, for example. As usual, there is also a DataSourceAutoConfiguration 
+class (http://tpd.io/ds-autoconfig) that uses these properties to create the necessary beans in the context. In this case, 
+it creates the DataSource bean to connect to the database.
+
+
+The sa username comes actually from a piece of code within Spring’s DataSourceProperties class . See Listing 5-4.
+/**
+ * Determine the username to use based on this configuration and the environment.
+ * @return the username to use
+ * @since 1.4.0
+ */
+public String determineUsername() {
+    if (StringUtils.hasText(this.username)) {
+        return this.username;
+    }
+    if (EmbeddedDatabaseConnection.isEmbedded(determineDriverClassName())) {
+        return "sa";
+    }
+    return null;
+}
+Listing 5-4A Fragment of Spring Boot’s DataSourceProperties Class
+
+ so we disable automatic shutdown and let Spring Boot decide when to close the database. See Listing 5-5 for the resulting URL, and the rest of the changes we’re including in our application.properties file. There is some extra explanation afterward.
+# Gives us access to the H2 database web console
+spring.h2.console.enabled=true
+# Creates the database in a file
+spring.datasource.url=jdbc:h2:file:~/multiplication;DB_CLOSE_ON_EXIT=FALSE
+# Creates or updates the schema if needed
+spring.jpa.hibernate.ddl-auto=update
+# For educational purposes we will show the SQL in console
+spring.jpa.show-sql=true
+Listing 5-5application.properties File with New Parameters for Database Configuration
+As described earlier, we change the data source to use a file named multiplication in the user’s home directory, ~. We do that by specifying :file: within the URL. To learn all about the configuration possibilities you have in H2’s URLs, check http://tpd.io/h2url.
+
+For simplicity, we’re going to let Hibernate create our database schema for us. That feature is called an automatic data definition language (DDL). We’re setting it to update because we want the schema to be both created and updated when we create or modify the entities (as we’ll do in the next section).
+
+Last, we’re enabling the property spring.jpa.show-sql so we see the queries in the logs. This is useful for learning purposes.
+------------------
+package microservices.book.multiplication.user;
+import lombok.*;
+import javax.persistence.*;
+/**
+ * Stores information to identify the user.
+ */
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class User {
+    @Id
+    @GeneratedValue
+    private Long id;
+    private String alias;
+    public User(final String userAlias) {
+        this(null, userAlias);
+    }
+}
+
+
+We added the @Entity annotation to mark this class as an object to be mapped to a database record. We could add a value to the annotation if we want to name our table differently from the default, user. Also by default, all fields exposed via getters in the class will be persisted in the mapped table with default column names. We could exclude fields by tagging them with the JPA’s @Transient annotation.
+
+Hibernate’s User Guide (http://tpd.io/hib-pojos) states that we should provide setters or make our fields modifiable by Hibernate. Luckily, Lombok has a shortcut annotation, @Data, which is perfect for classes that are used as data entities. This annotation groups equals and hashCode methods, toString, getters, and also setters. Another section in Hibernate’s User Guide instructs us not to use final classes. This way we allow Hibernate to create runtime proxies, which improve performance. We’ll see an example of how a runtime proxy works later in this chapter.
+
+JPA and Hibernate also require our entities to have a default, empty constructor (see http://tpd.io/hib-constructor). We can quickly add it with Lombok’s @NoArgsConstructor annotation.
+
+Our id field is annotated with @Id and @GeneratedValue. This will be the column that uniquely identifies each row. 
+We use a generated value so Hibernate will fill in that field for us, getting the next value of the sequence from 
+the database.
+
+
+
+package microservices.book.multiplication.challenge;
+import lombok.*;
+import microservices.book.multiplication.user.User;
+import javax.persistence.*;
+@Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+public class ChallengeAttempt {
+    @Id
+    @GeneratedValue
+    private Long id;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "USER_ID")
+    private User user;
+    private int factorA;
+    private int factorB;
+    private int resultAttempt;
+    private boolean correct
+    
+    ;
+}
+
+We define here a many-to-one relationship since we already had a preference to avoid coupling users to attempts but to link attempts to users instead. To make these decisions in our data layer, we should also consider how we plan to query our data. In our case, we don’t need the link from users to attempts. If you want to know more about entity relationships in Hibernate, check the Associations section in Hibernate User’s Guide (http://tpd.io/hib-associations).
+
+
+When collecting our attempts from the data store, we have to tell Hibernate when to collect the values for the nested user 
+too, which are stored in a different table. If we would set it to EAGER, the user data gets collected with the attempt. With 
+LAZY, the query to retrieve those fields will be executed only when we try to access them.
+
+This works because Hibernate configures proxy classes for our entity classes. See Figure 5-7. These proxy classes extend ours; that’s why we shouldn’t declare them final if we want this mechanism to work. For our case, Hibernate will pass a proxy object that triggers the query to fetch the user only when the accessor (getter) is used for the first time. That’s where the laziness term comes from—it doesn’t do that until the very last moment.
+
+
+Repo:
+
+
+In the previous section about the technology stack, we introduced the Spring’s SimpleJpaRepository class (see https://tpd.io/sjparepo-doc), which uses JPA’s EntityManager (see https://tpd.io/em-javadoc) to manage our database objects. The Spring abstraction adds some features such as pagination and sorting, and some methods that make it more convenient to use than the plain JPA interface (e.g., saveAll, existsById, count, etc.).
+
+Spring Data JPA also comes with a superpower not offered by plain JPA: the query methods (see http://tpd.io/jpa-query-methods).
+
+
+
+package microservices.book.multiplication.challenge;
+import org.springframework.data.repository.CrudRepository;
+import java.util.List;
+public interface ChallengeAttemptRepository extends CrudRepository<ChallengeAttempt, Long> {
+    /**
+     * @return the last 10 attempts for a given user, identified by their alias.
+     */
+    List<ChallengeAttempt> findTop10ByUserAliasOrderByIdDesc(String userAlias);
+}
+Listing 5-8The ChallengeAttemptRepository Interface
+We create the interface extending the CrudRepository interface (http://tpd.io/crud-repo) in Spring Data Commons. CrudRepository defines a list of basic methods to create, read, update, and delete (CRUD) objects. The SimpleJpaRepository class in Spring Data JPA implements this interface too (http://tpd.io/simple-jpa-repo). Apart from CrudRepository, there are two other alternatives we could use.
+If we choose to extend the plain Repository, we don’t get CRUD functionality. However, that interface works as a marker when we want to fine-tune the methods we want to expose from CrudRepository, instead of getting them all by default. See http://tpd.io/repo-tuning to learn more about this technique.
+
+If we need also pagination and sorting, we could extend PagingAndSortingRepository. This is helpful if we have to deal with big collections that are better queried in chunks, or pages.
+
+When we extend any of these three interfaces, we have to use Java generics, as we did in this line:
+... extends CrudRepository<ChallengeAttempt, Long> {
+The first type specifies what is the class of the returned entity, ChallengeAttempt in our case. The second class must match the type of the index, which is a Long in our repository (the id field).
+
+The most striking part of our code is the method name we added to the interface. In Spring Data, we can create methods that define queries by using naming conventions in the method name. In this particular case, we want to query attempts by user alias, order them by id descending (the newest first), and pick the top 10 of the list. Following the method structure, we could describe the query as follows: find Top 10 (any matching ChallengeAttempt) by (field userAlias equals to passed argument) order by (field id) descending.
+
+
+
+JPQL:
+-----
+Spring Data will process the methods you define in your interface looking for those that don’t have an explicit query defined and match the naming convention for creating query methods. That’s exactly our case. Then, it parses the method name, decomposes it in chunks, and builds a JPA query that corresponds with that definition (keep reading for an example query).
+
+We can build many other queries using the JPA query method definition; see http://tpd.io/jpa-qm-create for details.
+
+Sometimes we may want to perform some queries that can’t be achieved with a query method. Or maybe we just don’t feel comfortable using this feature because the method names start getting a bit weird. No worries, it’s also possible to define our own queries. In this case, we can still keep our implementation abstracted from the database engine by writing the queries in Java Persistence Query Language (JPQL), a SQL language that is also part of the JPA standard. See Listing 5-9.
+/**
+ * @return the last attempts for a given user, identified by their alias.
+ */
+@Query("SELECT a FROM ChallengeAttempt a WHERE a.user.alias = ?1 ORDER BY a.id DESC")
+List<ChallengeAttempt> lastAttempts(String userAlias);
+
+
+With these two repositories, we have everything we need to manage our database entities. We don’t need to implement these interfaces. We don’t even need to add the Spring’s @Repository annotation. Spring, using the Data module, will find interfaces extending the base ones and will inject beans that implement the desired behavior. That also involves processing the method names and creating the corresponding JPA queries.
+
+
+
+Repo test:
+----------
+
+@ExtendWith(MockitoExtension.class)
+public class ChallengeServiceTest {
+    private ChallengeService challengeService;
+    @Mock
+    private UserRepository userRepository;
+    @Mock
+    private ChallengeAttemptRepository attemptRepository;
+    @BeforeEach
+    public void setUp() {
+        challengeService = new ChallengeServiceImpl(
+                userRepository,
+                attemptRepository
+        );
+        given(attemptRepository.save(any()))
+                .will(returnsFirstArg());
+    }
+    //...
+}
+
+
+Besides, we can use the method annotated with JUnit’s @BeforeEach to add some common behavior to all our tests. 
+In this case, we use the service’s constructor to include the repositories (note that this constructor doesn’t exist yet). 
+We added this line too:
+given(attemptRepository.save(any()))
+        .will(returnsFirstArg());
+
+
+
+
+@Test
+public void checkCorrectAttemptTest() {
+    // given
+    ChallengeAttemptDTO attemptDTO =
+            new ChallengeAttemptDTO(50, 60, "john_doe", 3000);
+    // when
+    ChallengeAttempt resultAttempt =
+            challengeService.verifyAttempt(attemptDTO);
+    // then
+    then(resultAttempt.isCorrect()).isTrue();
+    // newly added lines
+    verify(userRepository).save(new User("john_doe"));
+    verify(attemptRepository).save(resultAttempt);
+}
+
+We use Mockito’s verify to check that we store a new user with a null ID and the expected alias. The identifier will be set at the database level. We also verify that the attempt should be saved. The test case that verifies a wrong attempt should contain those two new lines as well.
+
+To make our tests more complete, we add a new case that verifies that extra attempts from the same user won’t create new user entities but reuse the existing one. See Listing 5-13.
+@Test
+public void checkExistingUserTest() {
+    // given
+    User existingUser = new User(1L, "john_doe");
+    given(userRepository.findByAlias("john_doe"))
+            .willReturn(Optional.of(existingUser));
+    ChallengeAttemptDTO attemptDTO =
+            new ChallengeAttemptDTO(50, 60, "john_doe", 5000);
+    // when
+    ChallengeAttempt resultAttempt =
+            challengeService.verifyAttempt(attemptDTO);
+    // then
+    then(resultAttempt.isCorrect()).isFalse();
+    then(resultAttempt.getUser()).isEqualTo(existingUser);
+    verify(userRepository, never()).save(any());
+    verify(attemptRepository).save(resultAttempt);
+}
+
+
+In this case, we define the behavior of the userRepository mock to return an existing user. Since the challenge DTO contains 
+the same alias, the logic should find our predefined user, and the returned attempt must include it, with the same alias and
+ ID. To make the test more exhaustive, 
+we check that the method save() in UserRepository is never called.
+
+Class after injecting repo layer:
+
+package microservices.book.multiplication.challenge;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import microservices.book.multiplication.user.User;
+import microservices.book.multiplication.user.UserRepository;
+import org.springframework.stereotype.Service;
+@Slf4j
+@RequiredArgsConstructor
+@Service
+public class ChallengeServiceImpl implements ChallengeService {
+    private final UserRepository userRepository;
+    private final ChallengeAttemptRepository attemptRepository;
+    @Override
+    public ChallengeAttempt verifyAttempt(ChallengeAttemptDTO attemptDTO) {
+        // Check if the user already exists for that alias, otherwise create it
+        User user = userRepository.findByAlias(attemptDTO.getUserAlias())
+                .orElseGet(() -> {
+                    log.info("Creating new user with alias {}",
+                            attemptDTO.getUserAlias());
+                    return userRepository.save(
+                            new User(attemptDTO.getUserAlias())
+                    );
+                });
+        // Check if the attempt is correct
+        boolean isCorrect = attemptDTO.getGuess() ==
+                attemptDTO.getFactorA() * attemptDTO.getFactorB();
+        // Builds the domain object. Null id since it'll be generated by the DB.
+        ChallengeAttempt checkedAttempt = new ChallengeAttempt(null,
+                user,
+                attemptDTO.getFactorA(),
+                attemptDTO.getFactorB(),
+                attemptDTO.getGuess(),
+                isCorrect
+        );
+        // Stores the attempt
+        ChallengeAttempt storedAttempt = attemptRepository.save(checkedAttempt);
+        return storedAttempt;
+    }
+}
+
+
+Repository Tests
+
+We’re not creating tests for the application’s data layer. These tests don’t make much sense since we’re not writing any 
+implementation anyway. 
+We would end up verifying the Spring Data implementation itself.
+
+SERVICE LAYER
+Let’s add a method to the ChallengeService interface called getStatsForUser . See Listing 5-15.
+package microservices.book.multiplication.challenge;
+import java.util.List;
+public interface ChallengeService {
+    /**
+     * Verifies if an attempt coming from the presentation layer is correct or not.
+     *
+     * @return the resulting ChallengeAttempt object
+     */
+    ChallengeAttempt verifyAttempt(ChallengeAttemptDTO attemptDTO);
+    /**
+     * Gets the statistics for a given user.
+     *
+     * @param userAlias the user's alias
+     * @return a list of the last 10 {@link ChallengeAttempt}
+     * objects created by the user.
+     */
+    List<ChallengeAttempt> getStatsForUser(String userAlias);
+}
+
+
+@Slf4j
+@RequiredArgsConstructor
+@Service
+public class ChallengeServiceImpl implements ChallengeService {
+    // ...
+    @Override
+    public List<ChallengeAttempt> getStatsForUser(final String userAlias) {
+        return attemptRepository.findTop10ByUserAliasOrderByIdDesc(userAlias);
+    }
+}
+
+@Slf4j
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/attempts")
+class ChallengeAttemptController {
+    private final ChallengeService challengeService;
+    @PostMapping
+    ResponseEntity<ChallengeAttempt> postResult(
+            @RequestBody @Valid ChallengeAttemptDTO challengeAttemptDTO) {
+        return ResponseEntity.ok(challengeService.verifyAttempt(challengeAttemptDTO));
+    }
+    @GetMapping
+    ResponseEntity<List<ChallengeAttempt>> getStatistics(@RequestParam("alias") String alias) {
+        return ResponseEntity.ok(
+                challengeService.getStatsForUser(alias)
+        );
+    }
+}
+
+Eliminate lazy load errror:
+----------------------------
+Let’s keep the lazy fetch mode and fix this accordingly. The first option we have is to customize our JSON serialization so it can handle Hibernate objects. Luckily, FasterXML, the provider of Jackson libraries, has a specific module for Hibernate that we can use in our ObjectMapper objects: jackson-datatype-hibernate (http://tpd.io/json-hib). To use it, we have to add this dependency to our project since it’s not included by Spring Boot starters. See Listing 5-19.
+<dependencies>
+<!-- ... -->
+    <dependency>
+        <groupId>com.fasterxml.jackson.datatype</groupId>
+        <artifactId>jackson-datatype-hibernate5</artifactId>
+    </dependency>
+<!-- ... -->
+</dependencies>
+Listing 5-19Adding the Jackson Module for Hibernate to Our Dependencies
+Then we follow the documented way in Spring Boot (see http://tpd.io/om-custom) to customize ObjectMappers:
+
+“Any beans of type com.fasterxml.jackson.databind.Module are automatically registered with the auto-configured Jackson2ObjectMapperBuilder and are applied to any ObjectMapper instances that it creates. This provides a global mechanism for contributing custom modules when you add new features to your application.”
+
+We create a bean for our new Hibernate module for Jackson. Spring Boot’s Jackson2ObjectMapperBuilder will use it via autoconfiguration, and all our ObjectMapper instances will use the Spring Boot defaults plus our own customization. See Listing 5-20 showing this new JsonConfiguration class .
+package microservices.book.multiplication.configuration;
+import com.fasterxml.jackson.databind.Module;
+import com.fasterxml.jackson.datatype.hibernate5.Hibernate5Module;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+@Configuration
+public class JsonConfiguration {
+    @Bean
+    public Module hibernateModule() {
+        return new Hibernate5Module();
+    }
+}
+
+
+Just info: Do not use:
+----------------------
+An alternative to adding this new dependency and the new configuration is to follow the recommendation that was printed in the message of the exception that we got:
+...(to avoid exception, disable SerializationFeature.FAIL_ON_EMPTY_BEANS)[...]
+Let’s try it. We can add features to Jackson serializers directly in the application.properties file (see http://tpd.io/om-custom). This is achieved with some naming convention, prefixing the Jackson properties with spring.jackson.serialization. See Listing 5-22.
+[...]
+spring.jpa.show-sql=true
+spring.jackson.serialization.fail_on_empty_beans=false
+Listing 5-22Adding a Property to Avoid Serialization Errors on Empty Beans
+If you try this (after removing the code from the previous solution) and then collect the attempts, you’ll find a funny result. See Listing 5-23.
+$ http ":8080/attempts?alias=moises"
+HTTP/1.1 200
+...
+[
+    {
+        "correct": false,
+        "factorA": 58,
+        "factorB": 92,
+        "id": 11,
+        "resultAttempt": 5303,
+        "user": {
+            "alias": "moises",
+            "hibernateLazyInitializer": {},
+            "id": 1
+        }
+    },
+...
+]
+Listing 5-23Retrieving Attempts with fail_on_empty_beans=false
+There are two unexpected outcomes. First, the property hibernateLazyInitializer from the proxy object is being serialized to JSON, and it’s empty. That’s the empty bean, and it’s actually the source of the error we got earlier. We could avoid that with some Jackson configuration to ignore that field. But the real issue is that the user’s data is there too. The serializer traversed the proxy to get the user’s data, and that triggered the extra query from Hibernate to fetch it, which makes our lazy parameter configuration useless. We can also verify that in the logs, where we got an extra query compared to the previous solution. See Listing 5-24.
+Hibernate: select challengea0_.id as id1_0_, challengea0_.correct as correct2_0_, challengea0_.factora as factora3_0_, challengea0_.factorb as factorb4_0_, challengea0_.result_attempt as result_a5_0_, challengea0_.user_id as user_id6_0_ from challenge_attempt challengea0_ left outer join user user1_ on challengea0_.user_id=user1_.id where user1_.alias=? order by challengea0_.id desc limit ?
+Hibernate: select user0_.id as id1_1_0_, user0_.alias as alias2_1_0_ from user user0_ where user0_.id=?
+Listing 5-24Unwanted Query When Fetching Attempts with Suboptimal Configuration
+We’ll hold to the first option with the Hibernate module for Jackson since it’s the proper way to handle lazy fetching with JSON serialization.
+
+
+
+
+
+

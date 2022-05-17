@@ -1,0 +1,11 @@
+- It is a form of recursion
+- General algo to find all soln to some computational problems
+- These are called constraint satisfaction problems
+- Important while solving combinatorial optimisation problems like TSP,etc
+- Ex used in N-queens/sudoku
+- We can discard several bad states with one iteration. ---> VVIP
+- Most of these problems can be represented with a tree structure. It is called game tree or potential search tree.
+- If partial candidate A cannot be completed to a valid solution then we abandon A as a solution.
+- It is same as DFS
+- The algo backtracks to previous state if the actual one is not feasible.
+

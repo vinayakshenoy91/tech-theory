@@ -1,0 +1,36 @@
+- Pure functions are functions that take inputs and return the output value by meeting below 4 criteria:
+
+a) without affecting any variable outside of their scope. 
+
+b) These functions must return a value.
+
+c) The return value must depend on the input arguments passed 
+
+d) Should not have any side effect.
+It seems as if the function does not have any side effects on an external state when it is executed. However, 
+the console.log statement does have a side effect which violates the rule that the result should not cause any 
+semantically observable side effect or output, such as mutation of mutable objects or output to I/O devices.
+
+ex: Below one is not a pure function:
+const addAndPrint = (a, b) => { 
+  const sum = a+b;
+  console.log(`The sum is ${sum}`)
+  return sum;
+};
+
+
+Below one is not a pure function: //Here you are modifying an objet outside your scope.
+-----------------------------------
+const func = (key, value, object) => {
+  object[key] = value
+};
+
+function test(){
+    const car = {
+    name: 'Toyota'
+  };
+
+  const answer = func('model', 88, car);
+  console.log({car,answer});
+}
+test()

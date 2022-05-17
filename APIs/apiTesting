@@ -1,0 +1,13 @@
+ Good examples are Apiary (apiary.io), SwaggerHub (swagger.io), Mocky, (mocky.io), and WireMock (wiremock.org).
+In the case of GraphQL and gRPC, not so many commercial tools are available (at the time of writing); however, open libraries such as Graphql-Faker (github.com/APIs-guru/graphql-faker) for the former, and GripMock (github.com/jekiapp/gripmock) for the latter, are rapidly emerging.
+
+
+Test clients are created that can be used later on to test the actual implementation of the API. Likewise, for test clients, there are plenty of examples for REST APIs, such as API Fortress (apifortress.com), Dredd (dredd.org), and PostMan (getpostman.com).
+
+
+In the case of GraphQL and gRPC, not so many commercial tools are available (at the time of writing); however, open libraries and tools, such as EasyGraphQL (github.com/EasyGraphQL/easygraphql-tester) and Altair (altair.sirmuel.design) for GraphQL, are rapidly emerging.
+For gRPC, several open libraries for testing and other purposes can be found at github.com/grpc-ecosystem/awesome-grpc.
+
+
+Adopting patterns such as the Tolerant Reader (find more information at https://martinfowler.com/bliki/TolerantReader.html) really helps in making the consumer code less exposed to server-side changes. Implementing a tester client for external APIs and running tests regularly within the application CICD process (or some form of scheduler) can be very useful for quickly detecting whether, by any chance, a non-backward compatible change has been introduced, or to simply check the health and status of APIs that the application depends on.
+

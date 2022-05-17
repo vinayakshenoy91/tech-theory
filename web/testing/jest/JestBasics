@@ -1,5 +1,126 @@
+TODO: read jest docs
+
 - filename: App.test.tsx
 - Use jest extension with VS code
+- By default, Jest looks for tests in files with names that end with .test.js or .spec.js or any named .js file in a __tests__ folder.
+- Convention followed: Should return true when valid email
+"getName should return correct name when 0 passed in"
+- test title:"{thing being tested} should {expected output / behaviour} when {input / state}"
+- description:"Thing we are testing"
+
+Installation:
+-----------
+npm install --save-dev jest
+
+By default, Jest works with code written with CommonJS modules. However, we are used to working with ECMAScript modules 
+(ESM) when building React apps. We can install and configure Babel to use ESM in our Jest tests.
+
+Let’s install Babel and a couple of other plugins by running the following command in a terminal:
+
+npm install --save-dev babel-jest @babel/core @babel/preset-env
+Here’s an explanation of the packages we have just installed:
+
+babel-jest: This allows Jest to transpile our code using Babel.
+
+@babel/core: This is the core Babel library.
+
+@babel/preset-env: This is a collection of plugins that allow us to use the latest JavaScript 
+features while still targeting browsers that don’t support them.
+
+We can configure Babel in a file called babel.config.js in the root directory. Add the following content to this file:
+
+module.exports = {
+  presets: ["@babel/preset-env", "@babel/preset-typescript"],
+};
+This sets Babel up to use the preset configuration we installed.
+
+In package json add:
+
+{
+  ...,
+  "scripts": {
+    "test": "jest",
+      "test": "jest",
+    "test:watch": "jest --watch",
+    "test:single": "jest -t",
+    "test:verbose": "jest --verbose",
+    "test:coverage": "jest --coverage"
+  }
+}
+Watch mode: 
+
+npm run test -- --watch
+npm run test -- --watchall
+npm test -- --verbose
+npm test -- --coverage
+
+Particular file: npm test isEmail
+
+Running single test -> npm test -- -t "invalid url"
+
+
+“*F11”: step into
+“F10”: step over
+“F5”: continue
+
+Typescript:
+----------
+npm install --save-dev typescript
+
+tsconfig.json
+{
+  "compilerOptions": {
+    "lib": ["dom", "dom.iterable", "esnext"],
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "moduleResolution": "node",
+    "resolveJsonModule": true,
+    "isolatedModules": true,
+    "noEmit": true,
+    "jsx": "react"
+  },
+  "include": ["src"]
+}
+
+Here’s an explanation of the settings we have used in tsconfig.config:
+
+lib: The standard typing included in the type checking process. For our purposes, we’re using types for the browser’s DOM and the latest version of ECMAScript.
+
+allowJs: Allows JavaScript files to be compiled.
+
+allowSyntheticDefaultImports: Allows default imports from modules with no default export in the type checking process.
+
+skipLibCheck: Determines whether to skip the type checking of the type declaration files (*.d.ts).
+
+esModuleInterop: Enables compatibility with Babel.
+
+strict: Sets the type checking to a high level. When the level is true, the project runs in strict mode.
+
+forceConsistentCasingInFileNames: Ensures that the casing of referenced file names is consistent during the type checking process.
+
+moduleResolution: Controls how module dependencies get resolved. Our project uses “node.”
+
+resolveJsonModule: Allows modules to be contained in .json files, which are useful for configuration files.
+
+noEmit: Determines whether to suppress TypeScript generating code during the compilation process. This is true in our project because Babel will be generating the JavaScript code.
+
+jsx: Determines whether to support JSX in .tsx files.
+
+include: The files and folders checked by TypeScript. In our project, we have specified all the files in the src folder.
+
+npm install --save-dev @babel/preset-typescript
+
+npm install --save-dev @types/jest
+
+Test.ts:
+-------
+validEmailDomain.test.ts
+
+
 
 Imports:
 --------
@@ -35,8 +156,12 @@ TodoModel.create = jest.fn();
 
 Matchers:
 ---------
-expect(xyz).toBe(9)
+expect(xyz).toBe(9);
+expect(result).toBe(true);
+expect(person).toBeNull();
+expect(person).not.toBeNull();
 expect(error).toBeDefined();
+expect(company).toBeUndefined();
 expect(function).toBeCalled();
 expect(function).toBeCalledWith(newTodo); //newTodo is a json here
 expect(res.statusCode).toBe(201);
@@ -44,7 +169,37 @@ expect(res._isEndCalled()).toBeTruthy(); //This is checked to make sure res.send
 expect(res._getJSONData()).toBe(newTodo);// Getting the json data, you need to mock first TodoModel.create.mockReturnValue(newTodo);
 expect(res._getJSONData()).toStrictEqual(newTodo); //Use this
 expect(Array.isArray(response.body)).toBeTruthy();
- 
+expect(person).toContain("Not Found");
+expect(person).toMatch(/not found/i); //Regex match
+
+//The problem is that the toBe function compares the referential identity of values
+expect(company).toStrictEqual({
+    id: 1,
+    name: "Dibbert Group",
+  });
+
+Note:  toEqual ignores undefined properties.
+So, toStrictEqual requires the structure of the object to be equivalent 
+to the property values within it. The toEqual matcher only needs defined properties to be equal.
+
+//Partial object matching
+expect(person).toMatchObject({
+    firstName: "Bill",
+    lastName: "Peters",
+});
+
+
+We can use the toStrictEqual and toEqual matchers to check an array’s contents. With toStrictEqual, sparseness is checked, so [, "Fred"] 
+does not match [undefined, "Fred"]. With toEqual, sparseness is not checked, so [, "Fred"] does match [undefined, "Fred"].
+
+ expect(people).toContainEqual({
+    id: 1,
+    firstName: "Bill",
+    lastName: "Peters",
+  });
+
+  toContain  -> an array primitives
+
 [BE]Unit test: [API testing]
 -----------------
 =================
@@ -89,7 +244,7 @@ it('', async ()=>{
 }) 
 
 
-Error handling[Can be modified as per out needs]:
+Mock Error handling[Can be modified as per out needs]:
 ---------------------------------------------------
 
 //Unit test case for all CRUD
@@ -100,6 +255,30 @@ TodoModel.create.mockReturnValue(rejectedPromise);
 await TodoController.createTodo(req,res,next);
 expect(next).toBeCalledWith(errorMessage);
 
+
+Jest exception handling:
+-----------------------
+expect(() => {
+    searchPeople("tom");
+}).toThrow();
+
+ expect(() => {
+    searchPeople("tom");
+  }).toThrow(Error);
+
+ expect(() => {
+    searchPeople("tom");
+  }).toThrow("No people found");
+
+  expect(() => {
+    searchPeople("tom");
+  }).toThrow(/no people found/i);
+
+test("Should raise exception when person not found", async () => {
+  expect(async () => {
+    await searchPeopleAsync("tom");
+  }).rejects.toThrow(/no people found/i);
+});
 
 In app.js use,
 
@@ -138,5 +317,42 @@ TodoModel.findByIdAndUpdate(todoId,newTodo,{new:true, useFindAndModify:false })
 - In integration test, code for E2E. use mock stub server in this case.
 
 
+
+Async function:----
+--------------
+export async function getName(id) {
+  await wait(200);
+  return names.length <= id ? null : names[id];
+}
+
+test.skip:
+----------
+The test.skip function is a useful Jest function when we want to ignore a failing test and carry on working on some other code.
+
+test.skip("Should return true when known domain", () => {
+  ...
+});
+
+test.only: The test.only function is a useful Jest function when we want to focus on a failing test.
+----------
+test.only("Should return true when known domain", () => {
+  ...
+});
+
+
+More on matchers:
+-----------------
+https://jestjs.io/docs/expect
+
+The core Jest library provides a useful set of matchers, but the community maintains many more matchers. 
+More matchers can be found in jest-extended. There is also a useful set of DOM related matchers in testing-library/jest-dom.
+
+Snapshot testing:
+----------------
+Snapshots can be useful when checking result objects or arrays. They can also be used to check portions of the DOM.
+
+expect(result).toMatchSnapshot();
+
+npm test -- -u //Update Snapshot
 
 

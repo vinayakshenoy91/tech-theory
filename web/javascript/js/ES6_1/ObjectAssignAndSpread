@@ -1,0 +1,283 @@
+- Read about traceur
+- var x = x.concat([4,5])
+
+let:
+----
+- Var only has global and function scope. Variables are hoisted to the top of the function.
+- Let has block scope.
+
+const -> constant value. Blcok scope.
+
+
+- Object.assign(obj1,obj2);
+- config = {...x,...y}
+
+
+Destruct:
+---------
+[,x,y]=[y,x] //Just , will skip the value
+let [x,y]=[2,3]
+
+let { firstname: first, handles: {twitter:twitter}}
+
+(url, {data, test})=>{} //Destruct at method entry level
+
+Default parameters:
+-------------------
+(url="/api")=>{} //give a default value for method params
+name = name || "scott" 
+
+When null is passed it is treated as a value
+When undefined is passed, it takes the default value.
+
+Rest parameters:
+-----------------
+...numbers //we used arguments before that arguments.length. Don;t know number of param passed
+
+Spread operator:
+-----------------
+...[1,2,3]
+
+
+Tempalte literals;
+-------------------
+`${}`
+
+Classes:
+------------
+var Employee = function(){
+}
+
+Emoployee.prototype = {
+    doWork:function(){
+        return "complete!";
+    }
+}
+
+
+class Employee extends Person{
+   constructor(name){ //invoke constructor
+      super(x);
+     this.name = name;
+
+   }
+
+   doWork(){
+       super.getTest();
+       return this._name;
+   }
+
+   get name(){
+       return this._name;
+   }
+
+   set name(value){ //method name is the fixled property and not what is value inside it
+      this._name = value;
+   }
+}
+e1.name
+e1.name="CHRIS"
+
+
+let e = new Employee();
+Employee.prototype.doWork.call(e);  call on the function and e is the this keyword inside it
+
+
+Objects in ES6:
+---------------
+
+Object.is(a,b) is iskmilar to ===
+JS represent number as signed number system
+Two cases where === behaves weird
++0===-1 returns true unlike object.is()
+NaN === NaN returns false unlike object.is()
+
+
+Object.assing(a,b); //NEw bwhaviour to existing objects
+
+var server ={
+    getPort(){ //No need of key and then value as function.
+        return 8080;
+    }
+}
+
+
+//This is used instead of var Obj={};Obj[key]=value
+{
+    [key]:value
+}
+
+
+Proxy: [Wrapper aroudn exisitng object]
+------
+var unicorn = {
+    legs:4,
+     color:'brown'
+}
+
+var proxyUnicorn = new Proxy(unicorn,{
+    get:function(target, property){
+        if(property==='color'){
+            return "x"+ target[property]
+        }
+    }
+
+     set:function(target, property, value){
+     
+            target[property]=value;
+     
+    }
+})
+
+proxyUnicorn.color
+
+
+Proxy functions:
+----------------
+
+var unicorn = {
+    legs:4,
+    color:'brown',
+    hornAttack: function(target){
+        return target.name+' was obliterated!';
+    }
+}
+
+unicorn.hornAttack = new Proxy(unicorn.hornAttack ,{
+    apply: function(target, context, args){
+        if(context !== unicorn){
+
+        }else{
+            target.apply(context, args)
+        }
+    }
+})
+
+
+Modules: organise code + control visbility
+---------
+
+1) IIFE 
+--------
+(function(c){
+
+}(window));
+
+
+2) CommonJS: Exports and require
+
+3) AMD
+
+4) export/import
+
+
+Arrows:
+------
+//Uses strategy pattern
+numbers.forEach()
+numbers.map(n=>n*2) //Returns an array
+
+arrow and this keyword dilemma:
+-------------------------------
+e1.doWork();//this under doWork will refer to e1
+
+ajaxCall("url", function (){      
+    this.name = response.data; //This is not pointed to the e1 , it will be undefined
+})
+
+Two ways to solve this is: 
+
+var self = that; //This will form a closure inside function scope.
+
+OR
+
+Use arrow function - Will capture the this value of the context they are in. | lexical binding
+
+
+Iterators: //This is a sort of abstraction and iterator has no length method
+----------- {value:undefined, done:true} //Last iterm
+let iterator = numbers.value() //Numbers is an array OR numbers[Symbol.iterator].value() 
+let next = iterator.next()
+
+while(!next.done){
+    sum+=next.value;
+    next = iterator.next();
+}
+
+for of:  loop over values. for in loops over indexes/keys in case of map
+------
+
+
+
+
+Generator: High level syntex to get an iterator. Behaves like iterator , keeps track of state from where it left of.
+----------
+
+let sum =0;
+for(let n of numbers(1,5)){
+    sum+=n;
+}
+
+//Creating our own iterators => 
+let numbers= function*(start, end){
+    for(let i=start;i<=end;i++){
+        console.log(i);
+        yield i;
+    }
+}
+
+
+OR
+
+class RangeIterator{
+
+  constructor(start, end){
+      this.current=start;
+      this.end=end;
+  }
+
+  next(){
+      let result = { value; undefined, done:true }
+      if(this.current <= this.end){
+          result.value=this.current;
+          result.done=false;
+          this.current+=1;
+      }
+      return result;
+  }
+}
+
+
+Making company class as iterator:
+
+class Company {
+    constructor(){
+        this.employees=[];
+    }
+    addEmployees(...names){
+        this.employees=this.employees.concat(names);
+    }
+    [Symbol.iterator](){
+        return new RangeIterator(this.employees);
+    }
+
+    //With Generator
+
+    *[Symbol.iterator](){ //This is the magic function
+        for(let e of this.employees){
+            yield e;
+        }
+    }
+}
+
+Generators can also be used to create generic functions:
+
+let filter =function*(items, predicate){   //When you return at any flag, the done flag is set to true
+    for(let item of items){
+        if(predicate(item)){
+            yield item;
+        }
+    }
+}
+
+- Iterators anf generators can be as lazy as possible and do east amount of work.

@@ -1,0 +1,148 @@
+Use:
+----
+docker desktop
+play with docker
+
+docker --version
+docker version //Cehck version of docker engine installed
+docker system info //Check all about docker like logging driver support etc
+docker system events --since 60m //All docker, network changes
+
+
+
+docker daemon:/etc/docker/daemon.json
+--------------
+- By default available on Unix socket
+- Specify below config in /etc/docker/daemon.json
+- Default network driver used when container is created is bridge
+- //Live restore in daemonjs - option is used to reduce container downtime due to daemon crashes, planned outages, or upgrades?
+
+echo '{"live-restore":true}' >> /etc/docker/daemon.json
+echo '{"log-driver":"awslogs"}' >> /etc/docker/daemon.json //set log driver
+
+dockerd --debug --host=tcp://192.168.1.10:2375 -> Used this if docker daemon is not starting.2375 is for unencrypted traffic
+--tls=true
+--tlscert=/var/docker/server.pem
+--tlskey=/var/docker/serverKey.pem  -> Port now becomes 2376 (for encrypted traffic)
+
+export DOCKER_HOST="tcp://192.168.1.10:2375" -> This way others can listen to docker. YOu can run commands to that host. Used to access remote docker.
+
+docker ps  -> throws error if daemon not running
+docker run -it --rm ubuntu
+
+//Check logs of docker daemon
+journalctl -u docker.service -> Check logs
+less /var/log/messages
+less /var/log/daemon.log
+less /var/log/docker
+
+//Default Logging driver: json-file 
+
+
+//Killing daemon and restarting instead of system ctl for any daemon.json config changes
+ps -ef|grep  -i dockerd
+kill -SIGHUP 3664 
+
+
+With the preceding command, we ask Docker to create a container that runs Ubuntu, based on the latest version that's 
+available of the official Docker image for Ubuntu. The -it option is used so that we can interact with the container 
+using Terminal, and the --rm option tells Docker to remove the container once we exit 
+the Terminal session; otherwise, the container will remain in the Docker engine with an Exited state.
+
+docker ps -a //Check process
+
+docker rm -f $(docker ps -aq)// Remove all containers
+The docker rm -f command stops and removes the containers whose container IDs are specified to the command. The docker ps -aq command lists the container IDs of all the running and stopped containers in the Docker engine. The -q option reduces the output from the docker ps command so that it only lists the container IDs.
+
+All image and container related files are stord in /var/lib/docker/
+
+
+Container operations:  /va/lib/docker/containers -> cat containerid.json (logs stored here)
+----------------------
+ctrl + p + q //Used to keep cotnainer running and exit from shell
+
+docker container ls
+docker container ls -a  //Display all state
+docker container ls -l  //Display last created
+docker container ls -q  //Display short id of running ones
+docker container ls -aq //Display short id
+docker container inspect containername  //or id
+docker container inspect -f '{{.HostConfig.LogConfig.Type}}' nginx //Get a particular field of output
+docker container stats //Hit cpu network etc
+docker container top webapp //Process running inside container
+docker container logs logtest
+docker container logs -f logtest //Stream logs
+docker system events --filter 'container=webapp'
+
+
+docker container create --name httpcontainer httpd
+docker container start <containerid>
+docker container run -it ubuntu command//start + create  and interactive terminal
+docker container run -d  httpd  //Run container in detached mode
+docker container run -d  --name httpcontainer httpd //Run container with a name in detached mode
+docker container run --detach  --name=httpcontainer httpd 
+docker container run -p ipaddress:80:5000 -itd --name=webapp --hostname=webapp <image>  //Naming a container //Hostport:containerPort
+(ip address to restrict to certain ip). Default hostname would be container id
+docker container run -p 127.0.0.1:80:5000 -itd --name=webapp --hostname=webapp <image> //Only accessible inside host 
+docker container run -p 5000 -itd --name=webapp --hostname=webapp <image> //Random host port chosen 32768 - 60999
+docker container run -P --expose=8000 -itd --name=webapp --hostname=webapp <image> //-P -> Takes port from EXPOSE command in docker file
+dokcer container rename <oldname> <new name> //Renaming a container
+docker container attach <name/id of container> //Reattached after running in detached mode
+docker container attach image
+docker container exec -it containername command(/bin/bash) //This will log you inside container 
+ 
+docker container pause web   //Uses freezer cgroup to pause an unpause
+docker container unpause web
+docker container stop web
+docker container kill --signal=9 ubuntu
+docker container rm webapp //delete stopped container 
+docker container stop $(docker container ls -q)//Stop all containers
+docker container rm $(docker container ls -aq) //Remove all
+docker container rm -f $(docker container ls -aq) //Remove all , -f is used to force remove
+docker container prune //Removes all stopped containers
+
+docker container run --rn ubuntu  expr 4+5 //Remove container as soon as it is done
+
+//Restart a container - Restart policies
+docker container run --restart=on  //Options: NO, ON-FAILURE, ALWAYS (starts when docker daemon restarts if stopped purposefully),UNLESS STOPPED
+unless-stopped -> Restart container unless it is explicitly stopped or Docker is restarted.
+               -> to restart a container unless it is explicitly stopped or Docker is restarted
+docker container update --restart always http -> Updarte restart policy
+
+
+//Copying files from host to container
+docker container cp  /tmp/web.conf webapp:/etc/web.conf
+
+//Overriding log driver
+docker run -d --log-driver json-file nginx
+docker run -d --log-driver none nginx
+
+Image management:
+----------------
+docker image ls
+docker image build .
+
+
+docker network ls
+
+docker volume ls
+
+
+
+
+Spcific to know core and memory:
+---------------------------------
+echo 'Runtime.getRuntime().availableProcessors()' | jshell -q
+java -XX:+PrintFlagsFinal -version | grep MaxHeapSize 
+
+8589934592 bytes happens to be exactly 8 GB, that is, 8 * 1,024^3. Given that we don't specify any max heap size for the 
+JVM using the -Xmx parameter, the JVM will set the max value to one quarter of the available memory. 
+Since my laptop has 32 GB of memory and 32/4=8, this is also as expected!
+
+java -Xmx200m -XX:+PrintFlagsFinal -version | grep MaxHeapSize
+
+
+docker-compose up -d: Starts all containers. -d means that the containers run in the background, not locking the terminal from where the command was executed.
+docker-compose down: Stops and removes all containers.
+docker-compose logs -f --tail=0: Prints out log messages from all containers. -f means that the command will not complete, and instead waits for new log messages. --tail=0 means that we don't want to see any previous log messages, only new ones.
+

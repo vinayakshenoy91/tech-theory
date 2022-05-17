@@ -1,0 +1,21 @@
+The logical steps to breaking down your monolith according to Frye are:
+
+Identify logical components.
+
+Flatten and refactor components.
+
+Identify component dependencies.
+
+Identify component groups.
+
+Create an API for a remote user interface.
+
+Migrate component groups to macroservices:
+
+Move component groups to separate projects.
+
+Make separate deployments.
+
+Migrate macroservices to microservices.
+
+Repeat steps 6–7 until complete.

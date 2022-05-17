@@ -1,0 +1,151 @@
+- Initilized once on start of execution
+- static comes first,then instance variable.
+
+
+Example:
+--------
+public class Koala {
+   public static int count = 0;               // static variable
+   public static void main(String[] args) {   // static method
+      System.out.println(count);
+   }
+}
+
+
+
+static methods have two main purposes:
+
+1) For utility or helper methods that don’t require any object state. Since there is no need to access instance variables, having static methods eliminates the need for the caller to instantiate an object just to call the method.
+2) For state that is shared by all instances of a class, like a counter. All instances must share the same state. Methods that merely use that state should be static as well.
+
+
+Exception case:
+---------------
+Both of these are nice and easy. There is one rule that is trickier. You can use an instance of the object to call a static method. 
+The compiler checks for the type of the reference and uses that instead of the object—which is sneaky of Java. 
+This code is perfectly legal:
+
+5: Koala k = new Koala();
+6: System.out.println(k.count);          // k is a Koala
+7: k = null;
+8: System.out.println(k.count);          // k is still a Koala
+
+
+Remember:
+Remember to look at the reference type for a variable when you see a static method or variable. 
+The exam creators will try to trick you into thinking a NullPointerException is thrown because the variable happens to be null.
+
+
+Note:
+A static method or instance method can call a static method because static methods don’t require an object to use. 
+Only an instance method can call another instance method on the same class without using 
+a reference variable, because instance methods do require an object. Similar logic applies for the instance and static variables.
+
+
+Trick example:
+--------------
+Let’s try one more example so you have more practice at recognizing this scenario. Do you understand why the following lines fail to compile?
+
+1:  public class Gorilla {
+2:     public static int count;
+3:     public static void addGorilla() { count++; }
+4:     public void babyGorilla() { count++; }
+5:     public void announceBabies() {
+6:        addGorilla();
+7:        babyGorilla();
+8:     }
+9:     public static void announceBabiesToEveryone() {
+10:       addGorilla();
+11:       babyGorilla();     // DOES NOT COMPILE
+12:    }
+13:    public int total;
+14:    public static double average
+15:       = total / count;  // DOES NOT COMPILE
+16: }
+Lines 3 and 4 are fine because both static and instance methods can refer to a static variable. 
+Lines 5–8 are fine because an instance method can call a static method. Line 11 doesn’t compile because a static 
+method cannot call an instance method. Similarly, line 15 doesn’t compile because a static variable is trying to use an instance variable.
+
+
+STATIC INITIALIZATION:
+----------------------
+- They add the static keyword to specify they should be run when the class is first loaded. 
+
+private static final int NUM_SECONDS_PER_MINUTE;
+private static final int NUM_MINUTES_PER_HOUR;
+private static final int NUM_SECONDS_PER_HOUR;
+static {
+   NUM_SECONDS_PER_MINUTE = 60;
+   NUM_MINUTES_PER_HOUR = 60;
+}
+static {
+   NUM_SECONDS_PER_HOUR
+      = NUM_SECONDS_PER_MINUTE * NUM_MINUTES_PER_HOUR;
+}
+
+
+
+Note:
+-----
+TRY TO AVOID STATIC AND INSTANCE INITIALIZERS
+Using static and instance initializers can make your code much harder to read. Everything that could be done in an instance initializer 
+could be done in a constructor instead. Many people find the constructor approach is easier to read.
+
+There is a common case to use a static initializer: when you need to initialize a static field and the code to do so requires more 
+than one line. This often occurs when you want to initialize a collection like an ArrayList. 
+When you do need to use a static initializer, put all the static initialization in the same block. That way, the order is obvious.
+
+
+Static imports:
+----------------
+Regular imports are for importing classes. Static imports are for importing static members of classes. 
+The idea is that you shouldn’t have to specify where each static method or variable comes from each time you use it. 
+An example of when static imports shine is when you are referring to a lot of constants in another class.
+
+
+1: import static java.util.Arrays;       // DOES NOT COMPILE
+2: import static java.util.Arrays.asList;
+3: static import java.util.Arrays.*;     // DOES NOT COMPILE
+4: public class BadStaticImports {
+5:    public static void main(String[] args) {
+6:       Arrays.asList("one");           // DOES NOT COMPILE
+7:    } }
+
+
+
+VVIP:
+-----
+The compiler will complain if you try to explicitly do a static import of two methods 
+with the same name or two static variables with the same name. 
+
+import static statics.A.TYPE;
+import static statics.B.TYPE;     // DOES NOT COMPILE
+
+we can just refer to the static members via their class name in the code instead of trying to use a static import.
+
+
+
+
+Trick question:
+--------------
+Let’s try an example. Pay attention to the return types.
+
+1:  public class ReturningValues {
+2:     public static void main(String[] args) {
+3:        int number = 1;                           // number=1
+4:        String letters = "abc";                   // letters=abc
+5:        number(number);                           // number=1
+6:        letters = letters(letters);               // letters=abcd
+7:        System.out.println(number + letters);     // 1abcd
+8:     }
+9:     public static int number(int number) {
+10:       number++;
+11:       return number;
+12:    }
+13:    public static String letters(String letters) {
+14:       letters += "d";
+15:       return letters;
+16:    }
+17: }
+This is a tricky one because there is a lot to keep track of. When you see such questions on the exam, write down the values of each variable. Lines 3 and 4 are straightforward assignments. Line 5 calls a method. Line 10 increments the method parameter to 2 but leaves the number variable in the main() method as 1. While line 11 returns the value, the caller ignores it. The method call on line 6 doesn’t ignore the result, so letters becomes "abcd". Remember that this is happening because of the returned value and not the method parameter.
+

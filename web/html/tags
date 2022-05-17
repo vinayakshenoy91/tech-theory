@@ -1,0 +1,264 @@
+<mark></mark> -> Yellow hgihtlight
+<em>Emphasized text</em><br>
+<strong>Strong text</strong><br>
+<code>A piece of computer code</code><br>
+<samp>Sample output from a computer program</samp><br>
+<kbd>Keyboard input</kbd><br>
+<var>Variable</var>
+<span>
+<select>
+<option>
+<meter>
+<samp>
+<small>
+<s> -> Strike
+<details>
+<hgroup> -> For grouping together, one or more <h1> to <h6> elements which tag is used
+<article>->self-contained composition in a document
+<p style="font-family:verdana">Educative -- learning interactively.</p>
+Defining an instance of a term in HTML is represented by the <dfn> element. <em> is used to emphasize text.
+
+The additional details on a web page that a user can view or hide on demand are specified by <details> tag. The content of <details> element should not be visible unless the open attribute is set. This tag is used for creating an interactive widget that the user can open and close.
+
+<nobr> is non-standard obsolete HTML element. This element prevents the text it contains from automatically wrapping across multiple lines. Resulting in the user having to scroll horizontally to see the entire width of the text.
+
+tt,time
+The <time> element specifies time. <tt> element is known as HTML Teletype Text element. It creates an inline text which is presented using the agent’s default monospace font face. This element is obsolete. It was created for the purpose of rendering text as it would be displayed on a fixed-width display like text-only screen, teletype, or line printer. <sup> element is for superscripts. <wbr> element describes a word break opportunity.
+
+wbr:
+
+The <wbr> element represents a word break opportunity. A position within text where the browser may optionally break a line. This element only includes global attributes. It is supported by most of the browsers.
+
+When a word is too long, the browser might break it at the wrong place. You can use the <wbr> element to add word-break opportunities.
+
+dialog and summary:
+--------------------
+<dialog> element in HTML represents a dialog box or other interactive components like a window or an inspector. <summary> element is known as the Disclosure Summary element. It specifies caption, summary, or legend for <details> element’s disclosure box. This element only includes global attributes. This element may only be used as the first child of <details> element. The <menuitem> tag is deprecated in HTML5. It defines a command/menu item that the user can invoke from a popup menu. <menu> is a group of commands which is used to perform something
+
+<var> is known as HTML Variable element. It represents the name of a variable in a mathematical expression or in a programming context. It is presented using an italicized version of the current typeface.
+
+The <dialog> element in HTML represents a dialog box or other interactive components like a window or an inspector. This element includes global attributes. The tableindex attribute must not be used on the <dialog> element. The <menuitem> tag is deprecated in HTML5. It defines a command/menu item that the user can invoke from a popup menu. <menu> is a group of commands which is used to perform an action. The <summary> element provides a summary of the element.
+
+bdi and bdo:
+------------
+<bdi> element is known as bidirectional isolation. It isolates a span of text that might be formatted in a different direction from other text outside it. This element is useful at the time of embedding text with an unknown directionality from a database like inside text with a fixed directionality.
+
+Example:
+
+<ul>
+   <li>User <bdi>George</bdi>: 60 points</li>
+   <li>User <bdi>Allen</bdi>: 80 points</li>
+   <li>User <bdi>إيان</bdi>: 90 points</li>
+</ul>
+Output:
+
+User George: 60 points
+User Allen: 80 points
+User إيان: 90 points
+<br> is used for giving a break-line in text. <b> is used for making the text bold. To override the current text direction <bdo> element is used.
+
+
+Example:
+
+<h1>The details element</h1>
+<details>
+    <summary>Burj Khalifa</summary>
+    <p>The Burj Khalifa is a skyscraper in Dubai, United Arab Emirates, with a total height of 829.8 m. </p>
+</details>
+[Which element creates a disclosure widget in which information is visible only when the widget is toggled into an “open” state]
+
+
+track-> element can be used to add subtitle and caption tracks specified for audio and video elements
+
+<b>
+<i>
+<u>
+<br>
+<hr>
+
+<sub>
+<sup>
+The <sub> element is used to contain characters that should be subscript. It is commonly used with footnotes or chemical formulas. E.g. H2O:
+
+H<sub>2</sub>O
+<sup> is used for superscript, <br> is for a horizontal break, and <ul> is for unordered list.
+
+The <main> tag defines the main content of a document. The content inside the <main> element should be unique to the document and shouldn’t have any content that is repeated across documents such as sidebars etc. The <dir> element is not supported in HTML5. It contains all directory titles. The <pre> element in HTML represents preformatted text. The text is written inside the <pre> element is presented as written in an HTML file. Text is normally rendered using the non-proportional font. Whitespace inside the element is displayed as written. <dd> is used to describe a name in a description list.
+
+<span>
+The <span> element in HTML is a generic inline container used to mark up a part of a text or document. It is only used to group elements for appearance/styling purposes with the help of class or id attributes.
+
+
+Semantics:
+-----------
+<aside>
+<section>
+<header>
+<footer>
+<article>
+<table>
+<form>
+
+
+Web component element:
+-----------------------
+Web components are a set of web platform APIs that allow you to create new custom, reusable, 
+encapsulated HTML tags to use in web pages and web apps. You can also create custom versions 
+of standard HTML elements. Some of the elements are <shadow>, <content>, <element>, <template>, <slot>.
+
+
+Scripting elements:
+-------------------
+For creating dynamic content and web applications HTML uses scripting languages. <canvas>, <script>, <noscript> 
+are certain elements that support this capability. The <picture> element is for embedding content.
+
+<canvas>
+--------
+The <canvas> element is used with either canvas scripting API or WebGL API to draw graphics and animations. 
+It includes all the global attributes like height, moz-opaque, and width. The Opera browser does not offer support 
+for this. <script> is used for embedding javascript code in the document. 
+An element <picture> contains <source> element and <image>. <noscript> defines section of HTML.
+
+<progress>:
+------------
+<progress> element in HTML shows an indicator representing the completion or progress of a task, usually shown as a progress bar to the user. 
+The <progress> element includes all the global attributes, including max, value, etc. The <select> element indicates control over a menu of options. The <option> element 
+represents items contained in the <select> element. <meter> defines a scalar measurement within a known range or a fractional value.
+
+
+Inline elements:
+-----------------
+Inline elements are used to define the meaning or style of a text. <samp> is HTML Sample Element. It is used to enclose inline text which represents sample output from a computer program. Its content is typically rendered using the browser’s default monospaced font.
+
+Example:
+
+<samp> Hello world </samp> Welcome to e-learning!
+Output:
+
+Hello world Welcome to e-learning!
+
+<small> makes text size small in appearance. The <s> element specifies things that are no longer right.
+
+Example:
+
+<small> I am a teeny tiny text</small> and I’m <s>text that is no longer needed</s>
+Output:
+
+I am a teeny tiny text and I’m text that is no longer needed
+
+Notes:-
+------
+The <area> element defines the region on an image. The <img> element is used to insert images in the document. 
+<track> element is used as a child of media elements <video> and <audio>. It lets you specify the text to automatically handle 
+subtitles. The tracks are formatted in WebVTT format like .vtt.vtt files. <map> with <area> element is used to define an image.
+
+
+<noembed> is fallback content for browsers. <object> element describes an external resource. <embed> element embeds external content in the document. <param> element defines parameters for <object> element and includes global attributes. This element is supported by all browsers. <source> element specifies multimedia resources for pictures, audio, etc.
+
+
+
+An external resource is represented by the <object> element that can be treated as an image, nested browsing context or a resource to be handled by the plugin. It includes various attributes like archive, border, classid, codebase, codetype, etc. <source> element specifies multimedia resources for pictures, audio, etc. <param> element defines parameters for <object> element.
+
+The <picture> element contains two tags: one or more <source> tags and one <img> tag.
+
+The browser will look for the first <source> element where the media query matches the current viewport width, and then it will display the proper image (specified in the srcset attribute). The <img> element is required as the last child of the <picture> element, as a fallback option if none of the source tags matches.
+
+<param> element defines parameters for <object> element. An element <picture> contains <source> element and <image>. <source> element in HTML specifies multiple media resource for <audio>, <video> and <picture> element. It is an empty element and is commonly used to serve the same media content in multiple formats supported by different browsers. An external resource is represented by the<object> element that can be treated as image, nested browsing context or a resource to be handled by plugin.
+
+<option> represents items contained in the <select> element. The <meter> element in HTML represents either a scalar value within a known range or a factorial value. It includes global attributes like min, max, value, optimum, low, high, form, etc. <label> specifies a caption for an item in the user interface. The <input> element is used to take user input from the user
+
+Menu and menu items:
+--------------------
+<menuitem> represents a command that a user is able to invoke through a popup menu. The <menu> element in HTML represents a group of commands that the user can perform or activate. This includes the list menu as well as context menus. List menus appear across the top of a screen and context menus might appear underneath a button after it has been clicked.
+
+Presently, the <menu> tag is only supported in Firefox, and only works for context menus.
+
+The <summary> element is known as the Disclosure Summary element. <details> element provides information that users can view or hide as per their own wish
+
+Some principles to follow:
+--------------------------
+if there are multiple heading elements associated with a single heading, use <hgroup>
+the unordered list with anchor elements is for navigational purposes
+the site’s main heading and navigational elements should be stored in a <header> element
+there should be an <article> and a <footer>
+the <article> contains several sections describing the different semantic elements
+
+<article> This element defines an independent, self-contained content like a blog entry, a newspaper article, a forum post, a CV, an author biography, a story, etc. – anything that you think of as an article.
+
+<aside> This element defines content that is separate from the other (surrounding) content of the page, aside from the content it is placed in. It is frequently used to create sidebars related to an article.
+
+<figure> This element represents a figure that is a self-contained content, such as an illustration, diagram, photo, etc. The <figure> element is a wrapper for this content, including the <img> for the figure, as well as the caption nested into a <figcaption> element. The aim is to indicate the relation between the image and its associated caption.
+
+<figcaption> This element defines a caption for the <figure> element.
+
+<footer> This element defines a footer for a document or section, so this element should contain information about its container element. It can be a set of important links, a copyright notice, terms of use, contact information, etc.
+
+<header> This element represents an enhanced heading for a document or a section. It should be a container for introductory content, and it may contain logo, byline, set of navigational links, etc.
+
+<hgroup> This element defines an enhanced heading that groups two or more heading elements without any additional content. Its purpose is to make a title and a subtitle (or subtitles) stand together.
+
+<nav> This element defines a major block of links on a page. These links may point to topics on the current page, or to other pages on the website. Not all links of a document must be in a <nav> element. A page may have multiple <nav> sections.
+
+<section> This element defines logical sections in a document. These sections can be headers, footers, chapters, sections of chapters, etc. Use <section> only if other semantic elements do not apply. As a rule of thumb, the content <section> holds always should begin with a heading (<h1>, ..., <h6>).
+
+
+Image sprites:
+--------------
+Sprites are two-dimensional images that consist of a combination of small images at given X and Y coordinates into one larger image.
+
+Using Sprite Images will boost the dashboard’s overall efficiency by reducing the number of HTTP requests.
+
+HTTP requests are typically made in sequence on a server, meaning that one request does not start before the preceding one is done. In addition, opening a connection is costly for making a request. By restricting the number of requests made on the server, you increase the loading speed of the components.
+
+If you have images that are only a few bytes in size, each one is giving your web server unnecessary work to do by sending an HTTP request. Each request contains a portion of overhead information that uses valuable site bandwidth.
+
+Using CSS sprites can reduce the number of HTTP requests and make the web page seem more responsive because all interface elements are already downloaded before the user handles them.
+
+This technique can be very effective in improving site performance, especially in situations where many small images are being used, such as menu icons.
+
+However, things have changed a little in HTML/2 which introduces multiplexing where multiple requests can be sent without having to wait for any response. Therefore, using multiple small requests in HTML/2 would prove to be more bandwidth-friendly than using image sprites.
+
+Sprites are 2-D images. A sprite is a big image that consists of a mixture of several smaller images into a larger one. It is defined by X and Y coordinates. CSS background-position property is used to determine the exact position that is to be displayed.
+
+For using image sprite we should try to round up to nearly 10 pixels10pixels, especially when working with Photoshop. We should also use simpler figures so that it will be easy to use ‘snap-to’ grids in photoshop, in addition to keeping things organized.
+
+The .content property is a read-only property i.e a DocumentFragment that contains guts of the template.
+
+function support_temp() {
+  return 'content' in document.createElement('template');
+} if (supportsTemplate()) {
+  //go !
+} 
+else {
+  //use another templating technique.
+}
+
+<template> only includes global attributes. id, hidden, lang, onsubmit, ontoggle, onwaiting, onplay, onmousemove, onmousedown, onblur, oncancel, oncanplay, onabort, title, etc. are some of the global attributes.
+
+The render() process creates the end result by putting actual data in the template. This means that the placeholders are replaced with the actual data; compile() is used for translating and compiling a template into a JavaScript function.
+
+
+Templates can be placed inside <body>, <head>, <frameset>. A template can contain any type of element. A template can be used as a child of <select> and <table> elements.
+
+Aside:
+------
+The <aside> element can be used inside <article> as well as outside of it. When the <aside> element is used within the <article>, it contains information that is related to the article. When the <aside> element is used outside <article>, it serves as a container for content material that is related to the entire page. The contact information of the author of a document can be provided by the <address> tag. The footer normally contains information about the author of the section, links to related documents, or copyright data.
+
+
+
+<textarea>:
+-----------
+wrap is an attribute of the <textarea> element and it indicates whether the text should be wrapped.
+
+Syntax:
+
+ <textarea wrap="text"> 
+if we use wrap="hard" it will contain newlines in the submission of a form.
+
+This attribute is newly introduced by HTML5 and is supported by all the browsers.
+
+
+minlength and min:
+-------------------
+minlength attribute is used with <input> and <textarea> elements and it defines the minimum number of characters allowed. min is used with <input> and <meter> elements and indicates the minimum value allowed in an element.
+

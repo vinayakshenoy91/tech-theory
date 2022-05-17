@@ -1,0 +1,45 @@
+- GQL -> Graph Query Language
+- It is fast, flexible
+- GQL is not an implementation
+
+use-cases:
+----------
+- Multiple devices with diff contract of same data
+
+
+Installations:
+-------------
+npm init -y
+npm install babel-cli babel-preset-env
+.babelrc -> 
+{
+    "presets":["env"]
+}
+
+"start":babel-node index.js
+
+
+Create a graphql api server use: graphql-yoga@1.16.7 //For dev purpose
+
+es6 syntax:
+-----------
+export {x, y, z as default }
+
+Query:
+------
+- Syntax:
+---------
+query {
+  hello
+  field2 {
+      id
+      name
+  }
+}
+
+Mutations:
+----------
+
+
+Subscriptions:
+-------------

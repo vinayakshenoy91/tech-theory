@@ -1,0 +1,55 @@
+Dict:
+-----
+- created using Dict() or {}
+- dictname.get('keyname','default message to be returned') //By default returns None(  <class 'NoneType'>). Ex: names.get(100,None)
+- dictname.keys()
+//Using for loop with dict
+- for key, item in female_baby_names_2012.items():
+- for year in boy_names: //Loop over keys
+- for rank in sorted(names_by_rank, reverse=True)[:10]: 
+//names_by_rank[rank]
+//When sorted is applied on dict, it returns an array of keys ordered in a particular order
+- boy_names.keys(), boy_names.items()
+
+//Get dictionaries from tuples:
+art_galleries['11234'].update([('AJ','718'),('Doug','718')])
+
+- del art_galleries['1234'] //Unsafe
+- dict.pop('key','alternate') //Remove key. This is safe
+
+//Check if key in dictionary
+if(key in dictname)
+
+Counter: (Basically: Group values by count)
+--------
+- Special dict used for counting data, measuring frequency
+
+from collections import Counter
+count_num = Counter(listname) => Group values by count
+count_num.most_common(3) -> Return counter value in desc order
+
+
+DefaultDict:
+-------------
+- Pass it a default type that every key will have even if it doesn't currently exist.
+- Works exactly like a dictionary
+
+from collections iimport defaultdict
+
+names= defaultdict(list) //OR defaultdict(int) int is the type of the value like the initial value wiill be 0 for int.
+list(dictname.items())[:10]
+
+OrderedDict:
+------------
+- With python >3.6 dicts are ordered by default.
+from collections import OrderedDict
+permits = OrderedDict()
+list(permits.items())[:10]
+permits.popitem() //returns items in reverse insertion order
+permits.popitem(last=False) //Returns items in insertion order
+print(list(ridership_date.items())[:31])
+list(ridership_date.keys()) -> Get only keys as list
+
+- OrderedDict has a .popitem() method that will return items in reverse of which they were inserted. 
+You can also pass .popitem() the last=False keyword argument and go through the items in the order of how they were added.
+

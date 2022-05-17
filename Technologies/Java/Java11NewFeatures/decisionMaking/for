@@ -1,0 +1,66 @@
+for( ; ; )
+   System.out.println("Hello World");
+
+
+4. Using Incompatible Data Types in the Initialization Block
+
+int x = 0;
+for(long y = 0, int z = 4; x < 5; x++) {  // DOES NOT COMPILE
+   System.out.print(y + " ");
+}
+Like the third example, this code will not compile, although this time for a different reason. 
+The variables in the initialization block must all be of the same type. In the multiple terms example, 
+y and z were both long, so the code compiled without issue, but in this example they have differing types, 
+so the code will not compile.
+
+
+
+
+Java does allow modification of loop variables, but you should be wary if you see questions on the exam that do this. 
+While it is normally straightforward to look at a for loop and get an idea of how many times the loop will execute, once 
+we start modifying loop variables, the behavior can be extremely erratic. This is especially true when nested loops are involved, 
+which we cover later in this chapter.
+
+There are also some special considerations when modifying a Collection object within a loop. For example, if you delete an element 
+from a List while iterating over it, you could run into a ConcurrentModificationException.
+
+
+ForEach loop:
+-------------
+for(datstype instance: collection){
+
+}
+
+The for-each loop declaration is composed of an initialization section and an object to be iterated over. 
+The right side of the for-each loop must be one of the following:
+
+A built-in Java array
+An object whose type implements java.lang.Iterable
+
+
+When you see a for-each loop on the exam, make sure the right side is an array or Iterable object and the left side has a matching type.
+Why does this fail to compile?
+String names = "Lisa";
+for(String name : names) {   // DOES NOT COMPILE
+   System.out.print(name + " ");
+}
+In this example, the String names is not an array, nor does it define a list of items, so the compiler will throw an exception since it does not know how to iterate over the String. As a developer, you could iterate over each character of a String, but this would require using the charAt() method, which is not compatible with a for-each loop.
+
+
+Why does this fail to compile?
+String[] names = new String[3];
+for(int name : names) {  // DOES NOT COMPILE
+   System.out.print(name + " ");
+}
+This code will fail to compile because the left side of the for-each statement does not define an instance of String. Notice that in this last example, the array is initialized with three null pointer values. In and of itself, that will not cause the code to not compile, as a corrected loop would just output null three times.
+
+
+
+for(int value : values) {
+   System.out.print(value + ", ");
+}
+for(Iterator<Integer> i = values.iterator(); i.hasNext(); ) {
+   int value = i.next();
+   System.out.print(value + ", ");
+}
+

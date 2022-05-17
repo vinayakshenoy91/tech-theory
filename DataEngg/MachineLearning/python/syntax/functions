@@ -1,0 +1,4 @@
+Inbuilt:
+--------
+let(list)
+sorted(list), sorted(names_by_rank, reverse=True)[:10] //Sort and slice

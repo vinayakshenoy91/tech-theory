@@ -1,0 +1,45 @@
+- Tree based DS that organises info in a hierarchy
+- They are used  as associative arrays(hashmap or dict) where keys are strings.
+- Motivation for tries is that : Does not support sorting + hash function is usually not perfect
+so we would like to construct a data structure where search and insert operations have running time proprotional to length of the key
+~ hashmap worst case search: O(N)
+- We would like to get rid of collisions: Solved using tries + sorting
+- Root associated with empty string (not all node contain a value)
+- All the descendents of a node have a common prefix of the string associated with the node.
+- Leaf node contains the values asscoiated with given key
+- All decendants of a node have common prefix (hence the name prefix tree)
+- It is a fast data structure but not very memory effecient.
+- With help of tries, we can search and sort strings very efficiently.
+
+
+Search=> O(m) time complexity
+For search miss, it is sublinear running time complexity
+
+
+Properties:
+-----------
+- Store or search string in space and time efficient way
+- Any node in trie can store non-repetitive multiple chars.
+- Every node stores link of the next char of the string
+- Every node keeps track of end of string
+
+Examples:
+---------
+
+- Spelling checker
+- Auto completion
+
+A) Insertion:
+
+case 1: A trie is blank.
+
+B) Search a string:
+case 1: String does not exist in trie. Return string does not exist.
+case 2: String exist in trie. -> String is complete and end of string reached.
+Case 3: String is prefix  but does not exist in trie.endOfString is false.
+
+
+C) Delete a string from Trie:
+
+1) Complete string
+2) String is a prefix of another string

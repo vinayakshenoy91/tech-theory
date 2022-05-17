@@ -1,0 +1,31 @@
+- Built using Scala and Akka
+- 1000 of virtual users on a single machine
+- Single load injector (Multiple user per thread) where as jmeter(single user per thread) is a multi load injector
+
+Key features:
+------------
+- HTTP protocol -> More focus on api testing
+- Scala - with expressive DSL
+- GUI recorder included for recording user journey
+- Simulate 1000s of users on a single instance
+- Run stress test as part of CI
+- Load reports
+
+Pre-req:
+-------
+- Intellij-scala     plugin
+
+Download:
+---------
+- Download and bin  and ./gatling.sh
+
+3 areas of gatling script:
+---------------------------
+- Common HTTP Config
+- Scenario Definition
+- Load scenario
+
+
+Running through terminal:
+------------------------
+mvn gatling:test -Dgatling.simulationClass=computerdatabase.BasicSimulation -DUSERS=10

@@ -1,0 +1,8 @@
+Heartbeating is one of the mechanisms for detecting failures in a distributed system. If there is a central server, 
+all servers periodically send a heartbeat message to it. If there is no central server, all servers randomly choose a 
+set of servers and send them a heartbeat message every few seconds.
+
+This way, if no heartbeat message is received from a server for a while, the system can suspect that the server might have crashed. 
+If there is no heartbeat within a configured timeout period, the system can conclude that the server 
+is not alive anymore and stop sending requests to it and start working on its replacement.
+

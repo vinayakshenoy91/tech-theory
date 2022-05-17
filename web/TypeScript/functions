@@ -1,0 +1,15 @@
+- JavaScript doesn’t support function overloading, and when you define two functions with the same name, 
+the second function replaces the first, regardless of the function’s parameters. The number of arguments 
+used to call a function is not important in JavaScript—if there are more parameters than arguments, 
+then the extra parameters are undefined. If there are more arguments than parameters, the function can either 
+ignore them or use the special arguments value, which provides access to all the arguments used to invoke the function. 
+
+
+- TypeScript has a stricter approach than JavaScript and expects functions to be used with the same number 
+of arguments as there are parameters.
+
+- Type annotations for optional parameters are applied after the question mark, like this: discount?: number.
+function calculateTax(amount: number, discount: number = 0, ...extraFees: number[]) {
+
+
+    

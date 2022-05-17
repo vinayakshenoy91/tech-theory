@@ -1,0 +1,151 @@
+- Cannot extend another enum or class.
+- Compile time error if you declare enum type as final or abstract.
+- A nested enum type is implicitly static.
+
+day.ordinal() -> position
+
+for(DayOfWeek day : DayOfWeek.values())
+-> day is string representation
+
+
+Syntax:
+------
+public enum BOOK {HORROR, FICTION}
+
+- BOOK.values() -> Returns array containing all values
+- BOOK.valuesOf() -> Returns the value that corresponds to a string.This is case sensitive.
+
+
+
+- They are static and final
+- for (BookGenre book: BookGenre.values()){
+
+}
+
+Custom values corresponding to enum:
+----------------------------------------
+enum BookGenre{
+ BIOGRAPHY(12),
+ HORROR(15);
+
+ private BookGenre(int minAgeToRead){
+     this.mingAgeToRead= minAgeToRead;
+ }
+
+ private int mingAgeToRead;
+
+ public int getMinAgeToRead(){
+     return mingAgeToRead;
+ }
+}
+
+
+More complex ex:
+------------------
+
+enum Weekdays[
+ 
+   SUNDAY("SUN","test"),
+   SUNDAY("SUN","test");
+
+   String abb;
+
+   String description;
+
+Weekdays(String abb){
+    this.abb=abb;
+}
+
+Weekdays(String abb, String description){
+
+}
+
+public String printType(){  //In main call this as Weekday.SUNDAY.printType()
+    if(this== SATURDAY)
+      return "x";
+}
+
+
+
+Complex enum part 2:
+--------------------
+public enum P {
+    A(4)
+    B(2){
+        int adjustScore(){
+            return 2;
+        }
+
+        public void describe(){
+            //logic
+        }
+
+        //You cannot put a method here which is not declared in enum body with required modifiers.
+    };
+
+    protected int score;
+
+    P(int s){
+        this.score=score;
+    }
+
+    abstract public void describe();
+}
+
+
+
+Nested classes:
+-----------------
+public class Book{
+
+
+enum BookGenre{
+ BIOGRAPHY(12){
+     boolean isKidFriendly(int age){ //Approach 1
+         return age >=minAgeToRead
+     }
+ },
+ HORROR(15);
+
+ abstract boolean isKidFriendly(int age)
+
+ private BookGenre(int minAgeToRead){
+     this.mingAgeToRead= minAgeToRead;
+ }
+
+ protected int minAgeToRead; //Make this private as well
+
+ public int getMinAgeToRead(){
+     return mingAgeToRead;
+ }
+
+ public boolean isKidFriendly(int age){ //Approach 2
+     switch(this){
+         case BIOGRAPHY: return age >=minAgeToRead;
+     }
+     return false;
+ }
+}
+
+}
+
+
+Enum style:
+-----------
+public enum CoffeeType{
+   
+   ESPRESSO(7,8),
+   LATTE(7,227)
+
+   private final int requiredBeans;
+   private final int requiredMilk;
+
+   Coffeetype(int requiredBeans, int requiredMilk){
+       this.requiredBeans = requiredBeans;
+       this.requiredMilk= requiredMilk;
+   }
+
+   public int getRequiredBeans(){return requiredBeans;}
+   public int getRequiredMilk(){return requiredMilk;}
+
+}

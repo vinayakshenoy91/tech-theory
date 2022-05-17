@@ -1,0 +1,72 @@
+- Defines a one-to-many dependency between given objects or entities.
+- Subject is object being monitored
+- Observers are dependent on subject.
+- UI related components. When the button is clicked the listeners are notified about components.
+
+
+public interface Observer{
+    public void update(int temp, int pressure);
+}
+
+
+public interface Subject{
+
+   public void addObserver(Observer o );
+   public void removeObserver(Observer o);
+   public void notifyObservers();
+
+}
+
+
+public class WeatherStation implements Subject{
+
+    private int temp;
+    private int pressure;
+    private int List<Observer> observerList;
+
+
+    public WeatherStation(){
+        this.observerList=new ArrayList<>();
+    }
+
+   public void addObserver(Observer o){
+       this.observerList.add(o);
+   }
+
+   public void removeObserver(Observer o){
+       this.observerList.remove(o);
+   }
+
+   public void notifyObservers(){
+       for(Observer o:this.observerList){
+           o.updtate(temp,pressure);
+       }
+   }
+}
+
+
+public class WeatherObserver extends Observer{
+    private int pressure;
+    private int temp;
+    private Subject subject;
+
+    public WeatherObserver(Subject subject){
+        this.subject=subject;
+        this.subject.addObserver(this);
+    }
+
+    @Override
+    public void update(int pressure, int temp){
+        this.pressure=pressure;
+        this.temp=temp;
+    }
+}
+
+
+main{
+    WeatherStation ws = new WeatherStation();
+    WeatherObserver observer = new WeatherObserver(ws);
+    ws.setHumidity(100);
+}
+
+Next, Create observers by extending Observer class and add them to weather station

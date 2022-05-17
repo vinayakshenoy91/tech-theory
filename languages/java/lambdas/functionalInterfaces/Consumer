@@ -1,5 +1,0 @@
-- Consumer  has a single method called accept and logic is provided as input
-
-arrayList.forEach(d->System.out.println(d))
-
-x.accept

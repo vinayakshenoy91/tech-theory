@@ -1,0 +1,114 @@
+- clear makes float element outer container to be as tall as float elements inside it.
+So always addded a div at end of all divs with class="clear-fix"
+
+- Margin -> go with em , padding and top/left/right -> go with px
+- when float -> width comes in %
+
+
+Header:
+-------
+header
+section
+nav
+footer
+
+
+
+Global layout rules:
+--------------------
+
+body{
+    margin:0px;
+    padding:0px;
+}
+
+header a.logo{
+    display:block;
+    position:absolute;
+    background-position:0px 0px;
+    background-repeat:no-repeat;
+}
+
+header{
+    height:225px;
+    background:url(.../images/banner_large.jpg) no-repeat right 0px;
+
+}
+
+
+CSS:
+----
+background: #5d357d url(../images/background_gradient.jpg) repeat-x 0px 0px;
+background:url(.../images/banner_large.jpg) no-repeat right center;
+.page{  //This is a div container after body
+    max-width:980px;
+    margin: 0px auto 0px auto; //Divide the gap equally between left and right
+    position:relative;
+}
+
+nav{
+    width:100%;
+    display:block;
+    position:absolute; //This is relative to the page
+    top:225px;
+}
+
+using ems:
+
+body{
+    font-size:14px;
+}
+
+
+h1{
+    margin:0em 0em .75em 0em;
+}
+
+p{
+    line-height:1.4em;
+    margin:0em 0em .75em 0em;
+}
+
+padding -> put in px
+margin and font size put in em
+
+.promo p{ //element parent has class
+}
+
+.promo.test{ //Two classes added side by side
+
+}
+
+a.cta{ //element + class on that element
+
+}
+
+CSS:
+----
+.promo{
+    background-repeat: no-repeat;
+    text-transform:uppercase
+}
+
+.clear-fix{
+    clear:both;
+    line-height:1px;
+}
+
+
+
+Media queries:
+--------------
+float:none;
+width:auto;
+
+For small screen devices:
+-------------------------
+- Put navigation as static
+
+
+
+Polyfills:
+----------
+-webkit-border-radius:12px;
+-moz-border-radius:12px;

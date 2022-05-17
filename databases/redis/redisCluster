@@ -1,0 +1,190 @@
+- It is basically a data sharding strategy, with the ability to reshard keys from one node to another while the cluster is running, 
+together with a failover procedure that makes sure the system is able to survive certain kinds of failures.
+
+-
+The two major advantages of Redis cluster are:
+
+The ability to automatically split the dataset among multiple nodes.
+The ability to continue operations when a subset of the nodes are experiencing failures or are unable to communicate with the rest of the cluster.
+
+Redis cluster working #
+In Redis cluster, each node has two TCP connections open:
+
+The normal port which is used for client communication, such as 6379. This connection is available to all clients as well as those cluster nodes that need to use client connection for key migration.
+The cluster bus port, which is used by other cluster nodes for failure detection, configuration updates, and fail-over authorization. This channel uses less bandwidth by utilizing a binary protocol for data exchange. This port is always 10000 + the normal port. So if the normal port is 6379, then the cluster bus port will be 16379.
+
+==> Hash slots #
+Redis cluster uses hash slots to shard the keys. A Redis cluster has 16,383 slots. These slots are distributed among the servers. So, if there are 3 servers in a cluster, then:
+
+Server A contains hash slots from 0 to 5,500.
+Server B contains hash slots from 5,501 to 11,000.
+Server C contains hash slots from 11,001 to 16,383.
+It is not necessary for the slots to be equally distributed among the servers.
+
+Whenever a new server is added or deleted, these slots are redistributed. Moving hash slots from a node to another does not require you to stop operations. Thus, adding and removing nodes, or changing the percentage of hash slots held by nodes does not require any downtime.
+
+When a key is inserted in Redis, the hash slot is found using the CRC-16 hash function to convert the key into an integer. Then modulo 16383 of that integer is calculated to get the hash slot for this key.
+
+HASH_SLOT = CRC16(key) mod 16383
+
+
+==> Hash tags #
+The Redis cluster allows multiple key operations, if the keys are on the same node and have the same hash slot. The user can force multiple keys to be part of the same hash slot by using hash tags.
+
+In hash tags, a sub-string within {} is added between the key. The hash is then calculated using this sub-string. Thus, all the keys return the same hash. Let’s say we are storing a few keys in Redis, and we want them to end up in the same node. We will insert a random substring(let’s say abcd) in between our keys, e.g., 23464{abcd}2344, relat{abcd}ed, pre34{abcd}pared. When these keys are inserted, the hash slot will be calculated using the string, abcd. Thus, all the keys will have the same hash slot.
+
+
+
+==> Fault tolerance in Redis cluster #
+The sharding of data won’t help in the case of a server failure. If a server goes down all the keys stored on that server will be lost. To handle this kind of situation, replication is required. Redis Cluster uses a master-slave model, where every hash slot has anywhere from one (the master itself) to N replicas (N-1 additional slave nodes). To be considered healthy, a cluster should have atleast three master nodes and one replica for each master. So, a cluster should have at-least 6 nodes. M1, M2, and M3 are the master nodes, and S1, S2, and S3 are the replicated nodes.
+
+Redis cluster writes data to the slave node asynchronously. This means that when a key is inserted or updated, the master node sends this information to the slave node but does not wait for acknowledgement. If the master node crashes, it is possible that the slave does not contain all the keys that a client has entered. This problem can be solved by storing the data in a slave node synchronously, but doing this will slow down the server. Thus, Redis cluster makes a trade-off between performance and consistency.
+
+
+==> Redis cluster configuration #
+By default Redis runs as a single-instance server. If we want to run Redis in cluster mode then we need to provide a new set of directives in the redis.conf file. These directives are defined below.
+
+cluster-enabled: This property should be yes if we need to start the Redis instance in cluster mode. If this property is no, then this instance cannot be used in a Redis cluster.
+
+cluster-config-file: This directive sets the path for the configuration file that stores the changes happening to the cluster. This file is created by Redis and this directive should not be changed by the user. It stores things like the number of nodes in the cluster, their state etc. When a Redis cluster is started, this file is read.
+
+cluster-node-timeout: This property defines the maximum amount of time in milliseconds, that a node can be unavailable without being considered failed. If a master node is not reachable for more than the specified amount of time, then a slave node is promoted to master. If a slave node is not reachable then it stops accepting requests from clients.
+
+cluster-slave-validity-factor: If a master is disconnected from the cluster, then a slave tries to fail-over a master. If the value of this property is 0, then a slave will always try to fail-over a master, regardless of the amount of time the link between the master and the slave remains disconnected.
+
+However, it is possible that a master is disconnected from a slave for so long that the slave is no longer the right candidate to become a master because it has very old data. This time is calculated using this property.
+
+max time = cluster-node-timeout * cluster-slave-validity-factor 
+So, if cluster-node-timeout is 2 and cluster-slave-validity-factor is 10, then the maximum timeout is 20 milliseconds. If a slave is disconnected from a master for more than 20 seconds, it is considered unsuitable and cannot be promoted to master.
+
+cluster-migration-barrier: This directive defines the minimum number of slaves that a master will remain connected with before another slave migrates to a master that is no longer covered by any slave. Let’s say we have two masters, A and B. A has two slaves, called A1 and A2. B has one slave, called B1. If the master B goes down, then B1 is promoted to master. Now master B does not have any slaves. If cluster-migration-barrier is set to 2, then B1 will not be able to borrow a slave from A because 2 is the minimum requirement.
+
+cluster-require-full-coverage: If a master server fails and it does not have any slaves, then the keys that were stored on this server are lost. If this property is set to yes, as it is by default, then the entire cluster will become unavailable. If the option is set to no, then the cluster will still serve the queries, but the keys that are lost will return an error.
+
+
+Redis installation:
+
+https://www.educative.io/courses/complete-guide-to-redis/JQrkDp2wv7g
+
+Creating a cluster:
+---------------------
+
+There are two ways to create a Redis cluster, the easy way and the hard way. The easy way is to create a cluster using the create-cluster command. The hard way is to configure the Redis servers to create a cluster manually.
+
+The first step in creating a cluster is to create multiple Redis instances that will be added to the cluster. 
+We will create six instances. Three will be masters, and three will be slaves.
+
+We have created six folders and installed a Redis instance in each folder using the below commands.
+
+$ wget http://download.redis.io/redis-stable.tar.gz
+$ tar xzf redis-stable.tar.gz
+$ cd redis-stable
+$ make
+
+We will need to provide some configuration in the redis.conf file to start the server in cluster mode. Provide the following configuration in the redis.conf file of each instance.
+
+port 7001
+cluster-enabled yes
+cluster-config-file nodes.conf
+cluster-node-timeout 10000
+appendonly yes
+
+
+Once this configuration is done, open six terminals and start each instance using the following command:
+
+./src/redis-server ./redis.conf
+
+To create a cluster, run the following command in a new terminal:
+./redis-cli --cluster create 127.0.0.1:7001 127.0.0.1:7002 127.0.0.1:7003 127.0.0.1:7004 127.0.0.1:7005 127.0.0.1:7006 --cluster-replicas 1
+
+
+The –cluster-replicas 1 option means that each master should have one slave. Since we have six instances, three masters and three slaves will be created.
+
+
+Connecting to a cluster #
+To connect to a cluster, we will need to connect to one of the nodes. The command to connect to the instance running on port 7001 is shown below. This command is used to indicate that the client should be using the cluster mode.
+
+./src/redis-cli -c -p 7001
+
+The CLUSTER INFO command can be used to check the cluster status as shown below. It shows that the cluster state is ok, and all the slots are assigned.
+
+
+Adding nodes to a cluster :
+=============================
+
+When a new node is added to a cluster, it is considered a master. It does not have any hash slots assigned, so it cannot store any key. It is up to us to determine which hash slots we need to move to the newly added master. We can move the hash slot from one master to another and then migrate the keys stored on that hash slot. The step-by-step guide to adding a new node to the cluster is shown below.
+
+
+
+The CLUSTER MEET command is used to introduce a new instance to the cluster. Run the following command in a new terminal to inform the cluster that a new node is available.
+
+redis-cli -c -p 7001 CLUSTER MEET 127.0.0.1 7007
+
+
+We will move the hash slot, 9709, which is currently on the node running at port 7002. To move the hash slot, we will first need to find out the source and destination node id. This can be done using the CLUSTER NODES command.
+
+./redis-cli -c -p 7001 CLUSTER NODES
+
+The steps to migrate a hash slot from one node to another are listed below:
+
+a) Import a hash slot #
+The receiving node will run a command to inform the cluster that it wishes to import a hash slot. The command for this is:
+
+CLUSTER SETSLOT <hash-slot> IMPORTING <source-id>
+Here, hash-slot is the slot that needs to be moved, and source-id is the node id of the node on which this hash slot is currently residing. In our case, we need to import a hash slot from the node running on port 7002. So, we will be running the following command from the node that is going to receive the hash slot.
+
+CLUSTER SETSLOT 9709 IMPORTING 3d34b22b9d3f16c22eb312705c3ce5929742f6b5
+
+
+b) Migrate the hash slot #
+Once the receiving node has run the import command, the source node will run the migrate command. The command for migrating a hash slot is:
+
+CLUSTER SETSLOT <hash-slot> MIGRATING <destination-id>:
+Here, destination-id is the node id of the destination server.
+
+Since we are moving the slot to a node running on port 7007, we will run the following command:
+
+CLUSTER SETSLOT 9707 MIGRATING 2206481813a1cbe55043f92b05726290737adb7b
+
+c) Migrating the keys #
+We have migrated the hash slot, 9709, to the new node. Now it’s time to move the keys that were stored on this slot to the new node. The following command will tell us how many keys are in a particular slot.
+
+CLUSTER COUNTKEYSINSLOT 9707
+
+To migrate the key, we should know the key name as well. This can be found using the following command:
+
+CLUSTER GETKEYSINSLOT <slot> <amount>
+
+Once we know the key name, we can run the following command to migrate the key.
+
+MIGRATE <host> <port> <key> <db> <timeout>
+
+#Informing all the nodes about hash slot migration #
+All the nodes in the cluster should be informed of the new location of the hash slot. This is required so that other nodes can look for the key at the correct location. The command for this operation is:
+
+CLUSTER SETSLOT <hash-slot> NODE <owner-id>:
+Here, owner-id is the node id of the instance where the hash slot has been moved.
+
+This command should only be run for master nodes.
+
+$ redis-cli -c -p 7001 CLUSTER SETSLOT 9709 NODE
+2206481813a1cbe55043f92b05726290737adb7b
+$ redis-cli -c -p 7002 CLUSTER SETSLOT 9709 NODE
+2206481813a1cbe55043f92b05726290737adb7b
+$ redis-cli -c -p 7003 CLUSTER SETSLOT 9709 NODE
+2206481813a1cbe55043f92b05726290737adb7b
+
+#Removing nodes from a cluster #
+To remove a node, first, we need to migrate all its hash slots to different nodes. A node can only be removed from a cluster when there are no hash slots assigned to it.
+
+After all the slots are migrated from a node, then the following command should be run on all the master nodes.
+
+CLUSTER FORGET <node-id>
+
+As soon as CLUSTER FORGET is executed, the node is added to a ban list. This ban list exists in order to avoid adding the node back to the cluster when nodes exchange messages. The expiration time for the ban list is 60 seconds, so the above command should be executed in all of the master servers within 60 seconds.
+
+
+
+
+
+

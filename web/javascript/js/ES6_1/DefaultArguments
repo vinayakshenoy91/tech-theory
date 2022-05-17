@@ -1,0 +1,1 @@
+function calculatePrice(total, tax = 0.1, tip = 0.05){}

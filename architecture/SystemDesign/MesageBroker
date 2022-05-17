@@ -1,0 +1,23 @@
+- A software arch building block that uses the queue DS to store messages between senders and receivers
+- A message broker is used inside our system and not exposed externally
+Basic capabilities:
+- Storing/temporary buffering messages
+- Message routing
+- Transformation validation
+- Load balancing
+- Also works as pubsub
+
+
+Open Source Message Brokers
+Apache Kafka - The most popular open-source message broker nowadays. Apache Kafka is a distributed event streaming platform used by thousands of companies for high-performance data pipelines, streaming analytics, data integration, and mission-critical applications.
+
+RabbitMQ - A widely deployed open source message broker. It is used worldwide at small startups and large enterprises.
+
+Cloud Based Message Brokers
+Amazon Simple Queue Service (SQS) - Fully managed message queuing service that enables you to decouple and scale micro-services, distributed systems, and serverless applications.
+
+GCP Pub/Sub and Cloud Tasks - Publisher/Subscriber and message queue solutions offered by Google Cloud Platform. See this article for comparison between the two offerings
+
+Microsoft Azure Service Bus - Fully managed enterprise message broker with message queues and publish-subscribe topics
+
+

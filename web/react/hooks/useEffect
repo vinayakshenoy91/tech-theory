@@ -2,7 +2,46 @@
 - Runs function on component reload
 - By default, runs on every reload or specify to run only when certain values change.
 - When empty array given, it will run only on mount[componentDidMount alternative]
+- Adding and removing DOM listeners
 
 import React, {useEffect} from 'react';
 React.useEffect(()=>{},[])
 
+
+
+
+useEffect(()=>{
+ return ()=>{
+     if(timeout){
+         clearTimeout(timeout);
+     }
+ }
+},[])
+
+useEffect(()=>{
+ return ()=>{
+     if(timeout){
+         clearTimeout(timeout);
+     }
+ }
+},[time, setTime])
+
+useEffect(()=>{
+ return ()=>{
+     if(timeout){
+         clearTimeout(timeout);
+     }
+ }
+})
+
+
+useEffect(()=>{
+    window.addEventListener("scroll", scrollHandler)
+ return ()=>{
+      window.removeEventListener("scroll", scrollHandler)
+ }
+},[])
+
+
+
+Note: Write async function outside and call it from inside the useEffect

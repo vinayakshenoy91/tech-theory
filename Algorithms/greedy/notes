@@ -1,0 +1,15 @@
+- It is an algo paradigm that builds the solution piece by piece
+- It fits well for those soln in which local optimnal soln lead to global soln
+- It constructs the final solution by choosing the best option possible in every iteration.
+It combines locally optimal solutions to get the global solution.
+
+Greedy algos:
+--------------
+- Dijkstra
+- Insertion sort
+- Topological sort
+- Prim's
+- Kruskal
+
+
+

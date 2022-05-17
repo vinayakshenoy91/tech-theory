@@ -1,0 +1,10 @@
+== //Equals
+dfname[dfname.column.20] //Filtering the table by comparing column
+
+
+if x in p:
+
+elif x in p:
+
+else:
+ 

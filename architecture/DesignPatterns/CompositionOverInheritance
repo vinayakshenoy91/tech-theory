@@ -1,0 +1,108 @@
+- inheritance you get all methods that are not required. With Composition, you can take whatever you require.
+- is a relationship
+
+
+
+interface Bird {
+  hasBeak(): boolean;
+  canFly(): boolean;
+}
+class CommonBird implements Bird {
+  hasBeak() { return true; }
+  canFly() { return true; }
+}
+class Penguin implements Bird {
+  private bird = new CommonBird();     
+  hasBeak() { return bird.hasBeak(); }
+  canFly() { return false; }
+}
+
+
+- A more important problem with implementation inheritance is coupling, 
+- Global variables are the classic example of why strong coupling is bad. 
+- One good use of extends is in class normalization.
+A normalized class hierarchy concentrates into base classes code that would otherwise be implemented identically in multiple derived classes.
+It’s often the case that you notice that certain kinds of objects use only a subset of the operations in a given class. Whenever you see a subset, you should think “normalization.”
+
+
+
+
+Sample stack:
+-------------
+class Stack
+{
+    private int      topOfStack = -1;
+    private Object[] theData    = new Object[1000];
+
+    public void push( Object article )
+    {   theData[ ++topOfStack ] = article;
+    }
+
+    public Object pop()
+    {   Object popped = theData[ topOfStack-- ];
+        theData[topOfStack] = null; // prevent memory leak
+        return popped;
+    }
+
+    public void pushMany( Object[] articles )
+    {   assert (topOfStack + articles.length) < theData.length;
+        System.arraycopy(articles, 0, theData, topOfStack+1,
+                                                articles.length);
+        topOfStack += articles.length;
+
+    }
+
+    public int size()  // current stack size.
+    {   return topOfStack + 1;
+    }
+}
+
+
+Uisng abstract factory with singleton:
+---------------------------------------
+1  public interface Employee
+2  {   void youAreFired();
+3  }
+4  
+5  public static class EmployeeFactory
+6  {   private Factory(){/*empty*/}
+7
+8      public static Employee create()
+9      {   return new Peon();
+10     }
+11  }
+12
+13  /*package*/ class Peon implements Employee
+14  {   public void youAreFired()
+15      {   // lots of code
+16      }
+17  }
+
+---
+//
+public static class EmployeeFactory
+{   private EmployeeFactory(){/*empty*/}
+
+    public static Employee create()
+    {   return new Peon();
+    }
+
+    private static class Peon implements Employee
+    {   public void youAreFired()
+        {   // lots of code
+        }
+    }
+}
+
+OR
+
+abstract class  Employee
+{   abstract void youAreFired();
+    static Employee create()
+    {   return new Employee()
+        {   public void youAreFired()
+            {   // lots of code
+            }
+        }
+    }
+}

@@ -1,0 +1,82 @@
+import {GraphQLServer} from 'graphql-yoga';
+
+Query fired: When using custom types, you have to ask for specific fields in the query
+-----------
+query {
+  greeting(name:'jessi')
+  hello
+  field2 {
+      id
+      name
+  }
+}
+
+
+mutation {
+    createUser(name: 'Andrew', email:'testing@example.com'){
+        id
+        name
+        email
+    }
+}
+
+TypeDef: App schema -> Data type and ops performed. If ! is not specified, that mean that the value can be null
+For arrays use: [User!]!
+-------
+const typeDefs = `
+   type Query {
+      greeting(name:String):String!
+      me: User!
+      employed:Boolean!
+
+   }
+
+   type Mutation{ //This is for mutation
+      createUser(nmae:String!, email:String!, age: Int):User!
+   }
+
+  type User { //Custom types
+      id:String!
+   }
+  type Post{
+      id:String!
+      author:String!
+  }
+`
+
+Resolvers:  Functions that run for each of the ops perfomed on an api
+---------
+const resolvers = {
+
+   Query:{
+
+       greeting(parent, args,ctx,info) {
+           return 'Hello'
+       },
+       me(){
+
+       }
+
+   },
+   Mutation:  {
+       createUser(parent, args, ctx,info){
+
+       }
+   }
+   Post:{     //This is used incase there is a relationship with another type
+       author(parent, args, ctx, info){
+           parent.author
+       }
+   }
+
+}
+
+const server = GraphQLServer({
+    typeDefs:typeDefs,
+    resolvers:resolvers
+})
+
+server.start(()=>{  //port 4000
+    console.log("server is up");
+})
+

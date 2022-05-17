@@ -1,0 +1,55 @@
+typeof myVariable
+- When the typeof keyword is used on null values, the result is object.
+
+
+if (typeof taxValue === "number") {
+} else if (typeof taxValue === "string") {
+
+
+UNDERSTANDING TYPE COERCION
+When an operator is applied to values of different types, the JavaScript runtime converts one value into an equivalent value in the other type, a process known as type coercion. It is the type coercion feature—also known as type conversion—that causes the inconsistent results
+
+The double equal sign performs a comparison using type coercion so that JavaScript will try to convert the values it is working with in order to produce a useful result. This is known as the JavaScript abstract equality comparison, and when a number is compared to a string, the string value is converted to a number value, and then the comparison is performed. This means when the number value 100 is compared with the string value 100, the string is converted to the number value 100, and this is the reason why the if expression evaluates to true.
+
+
+
+When you use the + operator on a number and a string, one of the values is converted. The confusing part is that the conversion isn’t the same as for comparisons. If either of the values is a string, the other value is converted to a string, and both string values are concatenated. This means that when the number value 100 is added to the string value 100, the number is converted to a string and concatenated to produce the string result 100100.
+
+let totalPrice = Number(hatPrice) + Number(bootsPrice);
+
+The double equal sign (==) performs a comparison that applies type coercion. The triple equal sign (===) applies a strict comparison that will return true only if the values have the same type and are equal.
+
+Appreciating the Value of Explicitly Applied Type Coercion:
+------------------------------------------------------------
+Type coercion can be a useful feature when it is explicitly applied. One useful feature is the way that values are 
+coerced into the boolean type by the logical OR operator (||). Values that are null or undefined are converted into the false 
+value, and this makes an effective tool for providing fallback values
+
+
+let firstCity;
+let secondCity = firstCity || "London";
+console.log(`City: ${ secondCity }`);
+
+The undefined type is used when variables are defined but have not been assigned a value, which is the case for the variable named firstCity, and the use of the || operator ensures that the fallback value for secondCity will be used when firstCity is undefined or null.
+
+
+NaN:
+-----
+
+Note: If one if the number is undefined, then the sum result is NaN:
+
+The final function call uses number arguments but doesn’t provide a third value, which causes an undefined parameter. 
+JavaScript coalesces undefined to the special number value NaN (meaning not a number). The result of addition that includes 
+NaN is NaN, which means that the type of the result is number but the value isn’t useful and is unlikely to be what was intended.
+
+Number.isNaN(Number(val)) ? 0 : Number(val))
+
+
+Understanding the this Keyword:
+--------------------------------
+The this keyword can be confusing to even experienced JavaScript programmers. In other programming languages, 
+this is used to refer to the current instance of an object created from a class. In JavaScript, the this keyword 
+can often to appear to work the same way—right up until the moment a change breaks the application and undefined values start to appear.
+
+
+

@@ -1,0 +1,88 @@
+A service mesh should deliver the following capabilities:
+
+A reliable, efficient, secured, and fast transport infrastructure that ensures that services can always reach one another.
+Dynamically discover new services and their active instances through the use of a service registry (later described).
+Dynamically route and load-balance requests to all or specific active instances of a service (especially as instances are added or removed on the fly). For example, it might be desired to incrementally introduce a new version of a service by only routing a certain percentage of its traffic to a newly deployed version.
+Prevent faults from being propagated by implementing bulkheads and circuit breakers so service instances that are underperforming and/or malfunctioning can be isolated, thus preventing faults from spreading to all services in the bounded context.
+
+A popular choice for implementing a service mesh in Kubernetes infrastructures is Istio.io. Another popular choice for a Java-based service mesh is Hystrix, which was originally developed by Netflix but also open sourced.
+
+
+Service mesh with istio:
+------------------------
+
+Service mesh: Control plane -> proxy -> service
+
+Proxies communicate with each other through data plane. Proxies are implemented using envoy in istio.
+
+Service mesh is a dedicated and configurable infra layer that handles the comms between svc without     
+having to change the code in a microservice arch. When one service talks to another, you can have mutual TLS.
+You can hacve better traffic mgmt and observability.
+Service discovery -> Discovery, Health check and LB
+
+Istio: It is an open source service mesh platform
+------
+- Control plane -> Citadel (Manage cert gen), Pilot(service discovery), Galley(Validating config files
+They were combined into single diamont called IStiod
+
+Each component has -> Envoy + Istio agent(passing config secrets to envoy proxy)
+
+- It provides E2E service for network operations
+
+- If yo want istio to inject proxy as side car, you need to mention it in the ns.
+
+Installing istio:
+------------------
+1) istioctl 
+istioctl install --set profile=demo -y
+istioctl verify-install
+
+
+
+or
+2) istio operator
+or
+3) helm
+
+istio-system (ns) -> istio-ingressgateway,istiod,istio-egressgateway
+
+Setup in local:
+----------------
+minikube start
+minikube addons enable ingress
+
+minikube delete
+minikube start --vm=true
+minikube addons enable ingress
+
+Installation step by step:
+---------------------------
+curl -L https://istio.io/downloadIstio | sh -
+cd istio-1.10.3 -> ls
+
+export $PATH=$PWD/bin:$PATH
+istioctl install --set profile=demo -y
+istioctl verify-install  -> Verify the installation
+istioctl version
+istioctl analyze
+kubectl label namespace default istio-injection=disabled     //or enabled
+[Once this is done, every pod in namespace will get this sidecar atomatically]
+
+Deploy app: kubectl apply -f filepath
+kubectl delete deployments --all
+
+Valid networking: networking.isito/v1alpha3
+
+
+Visualization using kiali:
+--------------------------
+- Define, validate, observe
+
+
+kubectl apply -f samples/addons
+kubectl rollout status deployent/kiali -n istio-system
+kubectl get svc -n istio-system
+istioctl dashonard kiali
+
+localhost:20001
+

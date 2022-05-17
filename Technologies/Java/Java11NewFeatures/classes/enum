@@ -1,0 +1,11 @@
+public enum FlightRules{
+ 
+    X(10);
+    Y(20);
+
+    private int p;
+
+    FlightRules(int p){this.p=p;}
+
+    public int getMinSeparation(){ return minSeparation; }
+}

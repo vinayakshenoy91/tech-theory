@@ -1,0 +1,280 @@
+
+
+
+
+arrayname.push(x)  and arrayname.unshift(y)
+arryname.pop() and arrayname.shift()
+
+
+Array.from():
+-------------
+Array.from() is the first of many new array methods that ES6 introduced.
+It will take something arrayish- meaning something that looks like an array but isn’t- and transform it into a real array.
+
+ex: Array.from([1, 2, 3], x => x * x);
+
+Example:
+
+ <div class="fruits">
+    <p>Apple</p>
+    <p>Banana</p>
+    <p>Orange</p>
+  </div>
+
+document.addEventListener("DOMContentLoaded", function () {
+  const fruits = document.querySelectorAll(".fruits p");
+// fruits is a nodelist (an array-like collection) containng our three p tags
+// now we convert it in an Array
+const fruitArray = Array.from(fruits);
+
+console.log(fruitArray);
+// [p,p,p]
+
+//since now we are dealing with an array we can use map
+const fruitNames = fruitArray.map( fruit => fruit.textContent);
+
+console.log(fruitNames);
+// ["Apple", "Banana", "Orange"]
+});
+Array.of():
+----------
+Array.of() will create an array with all the arguments we pass into it.
+const digits = Array.of(1,2,3,4,5);
+console.log(digits);
+
+// Array [ 1, 2, 3, 4, 5];
+
+
+Array.find():
+-------------
+Array.find() returns the value of the first element in the array that satisfies the provided testing function. Otherwise undefined is returned.
+
+const array = [1,2,3,4,5];
+
+// this will return the first element in the array with a value higher than 3
+let found = array.find( e => e > 3 );
+console.log(found);
+// 4
+
+
+Array.findIndex():
+-------------------
+Array.findIndex() will return the index of the first element that matches our condition.
+
+
+Array.some() :
+---------------
+.some() will search if there are some items matching the condition and stop once it finds the first one
+
+let arraySome = array.some( e => e > 2);
+console.log(arraySome);
+// true
+
+
+Array.every():
+--------------
+.every() will check if all items match the given condition or not.
+
+let arrayEvery = array.every(e => e > 2);
+console.log(arrayEvery);
+// false
+
+Array.prototype.includes() #
+-----------------------------
+The includes() method will return true if our array includes a certain element, or false if it doesn’t.
+
+let array = [1,2,4,5];
+
+console.log(array.includes(2));
+// true
+console.log(array.includes(3));
+// false
+
+//Providing a fromIndex.
+let array = [1,3,5,7,9,11];
+
+console.log(array.includes(3,1));
+// find the number 3 starting from array index 1
+// true
+console.log(array.includes(5,4));
+//false
+console.log(array.includes(1,-1));
+// find the number 1 starting from the ending of the array going backwards
+// false
+console.log(array.includes(11,-3));
+// true
+
+array.includes(11,-3); returned true because we went back to the index -3 and moved up, finding the value 11 on our path.
+
+
+Array.prototype.flat() / Array.prototype.flatMap() #
+-----------------------------------------------------
+
+Array.prototype.flat() will flatten the array recursively up to the depth that we specify. 
+If no depth argument is specified, 1 is the default value. We can use Infinity to flatten all nested arrays.
+
+
+const letters = ['a', 'b', ['c', 'd', ['e', 'f']]];
+// default depth of 1
+console.log(letters.flat());
+// ['a', 'b', 'c', 'd', ['e', 'f']]
+
+// depth of 2
+console.log(letters.flat(2));
+// ['a', 'b', 'c', 'd', 'e', 'f']
+
+// which is the same as executing flat with depth of 1 twice
+console.log(letters.flat().flat());
+// ['a', 'b', 'c', 'd', 'e', 'f']
+
+// Flattens recursively until the array contains no nested arrays
+console.log(letters.flat(Infinity));
+// ['a', 'b', 'c', 'd', 'e', 'f']
+
+
+Array.prototype.flatMap() is identical to the previous one with regards to the way it handles the depth argument, 
+but instead of simply flattening an array, with flatMap() we can also map over it and return the result in the new array.
+
+let greeting = ["Greetings from", " ", "Vietnam"];
+
+// let's first try using a normal `map()` function
+greeting.map(x => console.log(x.split(" ")));
+// ["Greetings", "from"]
+// ["", ""]
+// ["Vietnam"]
+
+
+greeting.flatMap(x => console.log(x.split(" ")))
+// ["Greetings", "from", "", "", "Vietnam"]
+
+As you can see, if we use .map() we will get a multi level array, which is a problem that we can solve by using .
+flatMap(). This will also flatten our array.
+
+
+Aarryname.slice(begin,end): provides a new immutable array
+
+
+
+arrayname.splice:
+----------------
+The splice() method adds/removes items to/from an array, and returns the removed item(s).
+
+Note: This method changes the original array.
+
+s
+function sliceSplice(array1, array2, n) {
+  //modify this code to return the correct answer
+  var newArray = array2.slice(0)
+  
+  console.log(newArray);
+  newArray.splice(n,0,...array1);
+  return newArray;
+}
+
+console.log(sliceSplice([1, 2, 3], [4, 5, 6], 1));
+
+Ex:
+
+var fruits = ["Banana", "Orange", "Apple", "Mango"];
+fruits.splice(2, 0, "Lemon", "Kiwi");
+[Banana,Orange,Lemon,Kiwi,Apple,Mango] //It modifies the array so this is the fruits object.
+
+arrayname.splice(index, howmany, item1, ....., itemX)
+
+index	Required. An integer that specifies at what position to add/remove items, Use negative values to specify the position from the end of the array
+howmany	Optional. The number of items to be removed. If set to 0, no items will be removed
+item1, ..., itemX	Optional. The new item(s) to be added to the arrays
+
+var fruits = ["Banana", "Orange", "Apple", "Mango"];
+fruits.splice(2, 0, "Lemon", "Kiwi");//Banana,Orange,Lemon,Kiwi,Apple,Mango
+
+
+
+
+
+
+----
+
+Method
+
+Description
+
+concat(otherArray)
+
+This method returns a new array that concatenates the array on which it has been called with the array specified as the argument. Multiple arrays can be specified.
+
+join(separator)
+
+This method joins all the elements in the array to form a string. The argument specifies the character used to delimit the items.
+
+pop()
+
+This method removes and returns the last item in the array.
+
+shift()
+
+This method removes and returns the first element in the array.
+
+push(item)
+
+This method appends the specified item to the end of the array.
+
+unshift(item)
+
+This method inserts a new item at the start of the array.
+
+reverse()
+
+This method returns a new array that contains the items in reverse order.
+
+slice(start,end)
+
+This method returns a section of the array.
+
+sort()
+
+This method sorts the array. An optional comparison function can be used to perform custom comparisons.
+
+splice(index, count)
+
+This method removes count items from the array, starting at the specified index. The removed items are returned as the result of the method.
+
+unshift(item)
+
+This method inserts a new item at the start of the array.
+
+every(test)
+
+This method calls the test function for each item in the array and returns true if the function returns true for all of them and false otherwise.
+
+some(test)
+
+This method returns true if calling the test function for each item in the array returns true at least once.
+
+filter(test)
+
+This method returns a new array containing the items for which the test function returns true.
+
+find(test)
+
+This method returns the first item in the array for which the test function returns true.
+
+findIndex(test)
+
+This method returns the index of the first item in the array for which the test function returns true.
+
+forEach(callback)
+
+This method invokes the callback function for each item in the array, as described in the previous section.
+
+includes(value)
+
+This method returns true if the array contains the specified value.
+
+map(callback)
+
+This method returns a new array containing the result of invoking the callback function for every item in the array.
+
+reduce(callback)
+
+This method returns the accumulated value produced by invoking the callback function for every item in the array.

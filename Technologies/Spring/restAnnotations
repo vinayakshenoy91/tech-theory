@@ -1,0 +1,231 @@
+https://learning.oreilly.com/library/view/enterprise-java-microservices/9781617294242/kindle_split_011.html
+
+@JsonInclude(value = Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
+
+
+
+@RestController
+@RequestMapping("/orders")
+
+@PostMapping                                             
+public ResponseEntity<Order> placeOrder(@RequestBody Order order) {
+
+    String orderId = UUID.randomUUID().toString();
+
+
+
+//Enabling security
+@EnableResourceServer
+
+@EnableWebSecurity
+@RestController
+@RequestMapping("/orders")
+public class OrderProcessingService extends WebSecurityConfigurerAdapter {
+}
+
+
+Filter code:
+------------
+@Configuration
+@EnableResourceServer
+public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
+
+private static final String SECURED_READ_SCOPE =
+                                   "#oauth2.hasScope('read')";
+
+private static final String SECURED_WRITE_SCOPE =
+                                   "#oauth2.hasScope('write')";
+
+private static final String SECURED_PATTERN_WRITE = "/orders/**";
+
+private static final String SECURED_PATTERN_READ = "/orders/{id}";
+
+@Override
+public void configure(HttpSecurity http) throws Exception {
+
+http.requestMatchers()
+.antMatchers(SECURED_PATTERN_WRITE).and().authorizeRequests()
+.antMatchers(HttpMethod.POST,SECURED_PATTERN_WRITE)
+.access(SECURED_WRITE_SCOPE)
+.antMatchers(HttpMethod.GET,SECURED_PATTERN_READ)
+.access(SECURED_READ_SCOPE);
+}
+
+@Override
+public void configure(ResourceServerSecurityConfigurer resources) {
+       resources.resourceId("sample-oauth");
+}
+
+
+Response entity:
+----------------
+- return ResponseEntity.status(INTERNAL_SERVER_ERROR).build()   
+- return ResponseEntity.ok(response);
+
+
+
+Annotations:
+------------
+
+1. @SpringBootApplication
+This is one of the most important and core annotation from Spring Boot. We use this annotation to mark the main 
+class of our Spring Boot application.
+
+@SpringBootApplication
+public class SpringOrderAnnotationApplication {
+
+ public static void main(String[] args) {
+  SpringApplication.run(SpringOrderAnnotationApplication.class, args);
+ }
+}
+
+You have the option to use @Configuration, @EnableAutoConfiguration, and @ComponentScan individually but the 
+recommendation is to @SpringBootApplication annotation.
+
+2. @EnableAutoConfiguration
+
+@EnableAutoConfiguration annotation is the intelligent configuration system available with Spring Boot. As the name suggests, Spring Boot system attempting to guess and configure beans that you are likely to need. Auto-configuration classes are usually applied based on your classpath and what beans you have defined.
+
+
+
+importorg.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.context.annotation.Configuration;
+
+@Configuration
+@EnableAutoConfiguration
+public class CarConfig {}
+
+3. @Condition Annotations
+Spring Boot provides the option to create custom auto-configurations. While writing these custom auto-configuration, we want Spring to use them conditionally. 
+
+3.1 @ConditionalOnClass and @ConditionalOnMissingClass
+These annotations allow configurations based on the presence or absence of specific classes. 
+
+if DataSource class is present in the classpath, this condition is matching and Spring Boot 
+will load the configuration available in the MySQLAutoConfiguration class.
+@Configuration
+@ConditionalOnClass(DataSource.class)
+class MySQLAutoConfiguration {
+ //...
+}
+
+3.2 @ConditionalOnBean and @ConditionalOnMissingBean
+
+These annotations are also known as bean conditions and let a bean inclusion based on the presence or absence of specific beans.
+
+@Configuration
+public class CarConfig {
+
+ @Bean
+ @ConditionalOnBean
+ public CarService carService() {
+  //
+ }
+}
+In the preceding example, Spring creates the carService bean if bean of type CarService is already in the ApplicationContext. @ConditionOnMissingBean works in a similar way but in reverse condition.
+
+3.3 @ConditionalOnProperty
+The @ConditionalOnProperty annotation lets configuration be included based on a Spring Environment property. Use the prefix and name attributes to specify the property for checking. Let’s take an example to understand it in more detail.
+
+@ConditionalOnProperty(prefix = "spring.rabbitmq", name = "dynamic")
+public AmqpAdmin amqpAdmin(CachingConnectionFactory connectionFactory) {
+ return new RabbitAdmin(connectionFactory);
+}
+
+In the above configuration, the condition matches if spring.rabbitmq.dynamic is present in the Environment.
+
+
+3.4 @ConditionalOnResource Annotation
+The @ConditionalOnResource annotation lets configuration be included only when a specific resource is present. Let’s create an example to understand it more clearly.
+
+@ConditionalOnResource(resources = "classpath:mysql.properties")
+Properties databaseProperties() {
+ // ...
+}
+In the above example, we are adding extra database properties if mysql.properties file is available in the classpath.
+
+@ConditionalOnResource(resources = "classpath:META-INF/build-info.properties")
+Properties buildProperties() {
+ // ...
+}
+
+
+3.5 @ConditionalOnWebApplication and @ConditionalOnNotWebApplication
+These annotations let configuration be included depending on whether the application is a “web application”.Let’s take an example where we want to expose a service for a web application, to handle this use case, we use @ConditionalOnWebApplication annotation.
+
+@ConditionalOnWebApplication
+Version applicationVersion() { // .. }
+
+
+3.6 @ConditionalOnExpression Annotation
+The @ConditionalOnExpression annotation allows configurations based on the result of a SpEL expression. Spring will use the marked definition when the SpEL expression evaluated to true
+
+@Controller
+@ConditionalOnExpression("${controller.enabled})
+  public class WebController { // ... }
+Let’s take a look at another example, where we want to include certain configurations for development mode only
+
+@Bean
+@ConditionalOnExpression("${devonly}")
+DataSource dataSource() {
+    // ...
+}
+ 
+
+3.7 @Conditional
+Most of the auto-configuration feature of Spring Boot is building based on @Conditional annotation. Spring 4.0 introduced the @Conditional annotation. This annotation indicates that a component is only eligible for registration when all specified conditions match. We can use this annotation to build our own custom conditions not available in the Spring Boot annotation defined in this post.
+
+To get a basic understanding, Let’s say we want to create a service which recommends an insurance to the customer based on the domestic or international travel.
+
+public interface Insurance {
+ RecommendedPolicy insurance();
+}
+
+@Component
+@Conditional(DomesticInsuranceCondition.class)
+public class DomesticInsurance implements Insurance {
+
+ public RecommendedPolicy insurance() {
+  System.out.println("Domestic Insurance");
+  return DomesticInsurance;
+ }
+}
+
+@Component
+@Conditional(InternationalInsuranceCondition.class)
+public class InternationalInsurance implements Insurance {
+
+ public RecommendedPolicy insurance() {
+  System.out.println("International Insurance");
+  return InternationalInsurance;
+ }
+}
+ 
+
+
+
+---------
+
+
+Calling apis
+
+@Override
+public Product createProduct(Product body) {
+    try {
+        return restTemplate.postForObject(
+                   productServiceUrl, body, Product.class);
+    } catch (HttpClientErrorException ex) {
+        throw handleHttpClientException(ex);
+    }
+}
+
+
+@Override
+public void deleteProduct(int productId) {
+    try {
+        restTemplate.delete(productServiceUrl + "/" + productId);
+    } catch (HttpClientErrorException ex) {
+        throw handleHttpClientException(ex);
+    }
+}

@@ -1,0 +1,6 @@
+import { ajax } from "rxjs/ajax";
+
+const ajax$=ajax(url);
+ajax$.subscribe(data=>{
+
+});

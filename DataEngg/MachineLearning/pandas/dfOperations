@@ -1,0 +1,5 @@
+print(df.head()) //First 5 lines are printed
+
+df.info() //Info method
+
+column=dfname['columnname'] or dfname.columnname

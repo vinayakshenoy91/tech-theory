@@ -1,0 +1,78 @@
+minimal requirements of the underlying storage of the data by the broker:;
+
+Partitioning
+Event streams can be partitioned into individual substreams, the number of which can vary depending on the needs of the producer and consumer. This partitioning mechanism allows for multiple instances of a consumer to process each substream in parallel, allowing for far greater throughput. Note that queues do not require partitioning, though it may be useful to partition them anyway for performance purposes.
+
+Strict ordering
+Data in an event stream partition is strictly ordered, and it is served to clients in the exact same order that it was originally published.
+
+Immutability
+All event data is completely immutable once published. There is no mechanism that can modify event data once it is published. You can alter previous data only by publishing a new event with the updated data.
+
+Indexing
+Events are assigned an index when written to the event stream. This is used by the consumers to manage data consumption, as they can specify which offset to begin reading from. The difference between the consumer’s current index and the tail index is the consumer lag. This metric can be used to scale up the number of consumers when it is high, and scale them down when it is low. Additionally, it can also be used to awaken Functions-as-a-Service logic.
+
+Infinite retention
+Event streams must be able to retain events for an infinite period of time. This property is foundational for maintaining state in an event stream.
+
+Replayability
+Event streams must be replayable, such that any consumer can read whatever data it requires. This provides the basis for the single source of truth and is foundational for communicating state between microservices.
+
+
+
+There are a number of additional factors to consider in the selection of an event broker.
+
+Support tooling
+Support tools are essential for effectively developing event-driven microservices. Many of these tools are bound to the implementation of the event broker itself. Some of these include:
+
+Browsing of event and schema data
+
+Quotas, access control, and topic management
+
+Monitoring, throughput, and lag measurements
+
+See Chapter 14 for more information regarding tooling you may need.
+
+Hosted services
+Hosted services allow you to outsource the creation and management of your event broker.
+
+Do hosted solutions exist?
+
+Will you purchase a hosted solution or host it internally?
+
+Does the hosting agent provide monitoring, scaling, disaster recovery, replication, and multizone deployments?
+
+Does it couple you to a single specific service provider?
+
+Are there professional support services available?
+
+Client libraries and processing frameworks
+There are multiple event broker implementations to select from, each of which has varying levels of client support. It is important that your commonly used languages and tools work well with the client libraries.
+
+Do client libraries and frameworks exist in the required languages?
+
+Will you be able to build the libraries if they do not exist?
+
+Are you using commonly used frameworks or trying to roll your own?
+
+Community support
+Community support is an extremely important aspect of selecting an event broker. An open source and freely available project, such as Apache Kafka, is a particularly good example of an event broker with large community support.
+
+Is there online community support?
+
+Is the technology mature and production-ready?
+
+Is the technology commonly used across many organizations?
+
+Is the technology attractive to prospective employees?
+
+Will employees be excited to build with these technologies?
+
+Long-term and tiered storage
+Depending on the size of your event streams and the duration of retention, it may be preferable to store older data segments in slower but cheaper storage. Tiered storage provides multiple layers of access performance, with a dedicated disk local to the event broker or its data-serving nodes providing the highest performance tier. Subsequent tiers can include options such as dedicated large-scale storage layer services (e.g., Amazon’s S3, Google Cloud Storage, and Azure Storage).
+
+Is tiered storage automatically supported?
+
+Can data be rolled into lower or higher tiers based on usage?
+
+Can data be seamlessly retrieved from whichever tier it is stored in?

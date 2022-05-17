@@ -1,0 +1,14 @@
+- Used in boolean decision making like filtering
+
+
+ Predicate<String> bool = ()->{}
+
+@FunctionalInterface
+public interface Predicate<T>{
+    boolean test(T t);
+}
+
+p.test
+
+
+Predicate<? super Integer> isEvenPredicate = x -> x%2==0

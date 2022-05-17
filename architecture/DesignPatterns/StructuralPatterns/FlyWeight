@@ -1,0 +1,10 @@
+- Minimize memory usage by sharing as much data as possbile with similar objects.
+- Ex: in a document, every single character share the same features - font metrics, etc.
+We create a flyweight object and every single character refers to it.
+- Objects storing instrinsic states (properties that are common to variosu objects) exclusively are Flyweights.
+
+- Objects are reused instead of creating a new instance.
+Suppose we have a Shape factory with a hashmap. That map contains objects with keys as color.
+If object of that color present, the return it else create a new instance, add to map and then return it.
+
+- String constant pool uses this.

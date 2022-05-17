@@ -1,0 +1,17 @@
+HA -> 5 9 or more
+
+
+99% -> 87.7hr
+99.9% -> 8.8hrs
+99.99% -> 52.6 min
+99.999% -> 5.3 min
+
+SLA -> Service level agreement is is a collection og gurarantee given to a customer by a service provider.
+SLA makes guarantee of system avaialbility
+SLAs are made up of one or multiple SLOs
+
+SLO: Service Level Objective
+- gurarantee given to a customer by service provider.
+
+
+SLAs are taken very seriously

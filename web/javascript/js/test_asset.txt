@@ -1,0 +1,352 @@
+2007 - Aberdeen Extra
+2008 - Abingdon Extra
+2015 - Aberdare
+2019 - Altrincham Extra
+2020 - Amersham
+2025 - Aldershots
+2030 - Andover Extra
+2031 - Ashford C/Foot Extra
+2038 - Aylesbury Extra
+2041 - Aylesbury 2
+2042 - Ayr Extra
+2044 - Ashby De La Zch Extra
+2047 - Ashford Middlsx Extra
+2049 - Alfreton
+2055 - Baldock Extra
+2064 - Banbury Extra
+2065 - Bar Hill Cambs Extra
+2067 - Bathgate Blackburn Rd
+2071 - Barnsley Ext
+2073 - Basildon Extra
+2078 - Barkingside
+2080 - Basingstoke
+2083 - Barnstaple
+2087 - Bedford 1
+2096 - Barrow Extra
+2098 - Bidston Moss Extra
+2101 - Bishops Stortford
+2102 - Bognor
+2103 - Blackpool Clifton Ext
+2104 - Blackburn
+2105 - Bedford Extra
+2108 - Boston
+2122 - Wembley Extra
+2126 - Borehamwood Extra
+2132 - Bracknell
+2136 - Bristol East Extra
+2141 - Brislington Extra
+2152 - Bromley By Bow
+2154 - Bridgend Extra
+2156 - Bursledon Twrs Extra
+2160 - Brooklands Extra
+2162 - Buckingham
+2163 - Burgess Hill
+2164 - Bournemouth Extra
+2166 - Bury St Edmunds
+2168 - Bradford Peel Centre
+2171 - Beverley
+2172 - Braintree Grt Notley
+2174 - Braintree Marks Farm
+2179 - Gallions Reach Extra
+2186 - Burnley Extra
+2187 - Batley Extra
+2195 - Antrim Massrne Extra
+2200 - Broadstairs Extra
+2222 - Carlisle 2
+2228 - Cambridge Newmarket Road
+2230 - Cardiff Extra
+2248 - Catterick Garrison
+2266 - Chichester Extra
+2272 - Chester Broughton Ext
+2275 - Chorley Extra
+2279 - Cirencester Extra
+2280 - Cheltenham
+2286 - Cleethorpes Extra
+2294 - Coleraine
+2310 - Colchester 2
+2313 - Crawley Hazelwick Ext
+2326 - Colchester Extra
+2328 - Coventry Arena Extra
+2329 - Cheshunt Extra
+2330 - Chelmsford 2
+2335 - West Bromwich Extra
+2340 - Corstorphine Extra
+2361 - Cumbernauld Extra
+2371 - Durham Extra
+2375 - Dingwall Mart Road
+2387 - Dalkeith Hardengreen
+2388 - Dumfries Extra
+2389 - Dundee Extra
+2392 - Doncaster Extra
+2394 - Lakeside Extra
+2396 - Douglas I O M
+2397 - Dunfermline Extra
+2406 - Dungannon
+2422 - Dover Extra
+2423 - Dorchester
+2425 - Dunstable Extra
+2429 - Dundee Rivrside Extra
+2436 - Dereham Extra
+2444 - Ebbw Vale
+2450 - Eastbourne Extra
+2461 - Edinburgh Colinton
+2470 - Ely
+2487 - Exeter Vale Extra
+2535 - Folkestone
+2538 - Feltham Dukes Green
+2549 - Fraserburgh
+2551 - Gainsborough
+2555 - Fulbourn Cherryhinton
+2557 - Forres Nairn Rd
+2569 - Goodmayes Extra
+2574 - Great Dunmow
+2587 - Glasgow St Rollox Ext
+2590 - Guildford
+2636 - Haslemere
+2638 - Hartlepool Extra
+2639 - Harlow Edinburgh Way
+2647 - Haverfordwest Extra
+2653 - Henley
+2654 - Hatfield Extra
+2663 - Hemel Hempstead Extra
+2667 - Hereford 2
+2675 - Horsham Extra
+2676 - Holyhead Extra
+2693 - Hull
+2694 - Huntingdon Extra
+2699 - Horwich Extra
+2736 - Inverurie Extra
+2737 - Inverness Extra
+2742 - Irvine Riverway Extra
+2744 - Irlam Extra
+2748 - Ipswich Extra
+2767 - Kettering Extra
+2770 - Kidderminster
+2797 - Knocknagoney Road Ext
+2799 - Talbot Green Extra
+2800 - Launceston
+2801 - Lanark Gallowhill Rd
+2804 - Leyland Extra
+2808 - Leeds Seacroft Extra
+2812 - Leatherhead
+2814 - Leeds Roundhay
+2819 - L/Ster Hamilton Extra
+2825 - Leighton Buzzard
+2835 - Llanelli Extra
+2836 - Llandudno Junction
+2838 - Lisnagelvin
+2840 - Lisburn Bentrim Road
+2846 - Leicester Extra
+2848 - Lowestoft 2
+2849 - Loughborough Extra
+2850 - Longton Extra
+2856 - Ludlow
+2876 - Macclesfield 2
+2877 - Martlesham Extra
+2880 - Midsomer Norton
+2882 - Maldon Extra
+2885 - M K Kingston Extra
+2886 - Melton Mowbray
+2898 - Milton Key Bletch Ext
+2900 - Meir
+2907 - Montrose
+2917 - Newcastle U/T Extra
+2919 - Newbury Extra
+2920 - Newton Abbot
+2924 - New Milton
+2933 - New Oscott Extra
+2934 - New Malden Extra
+2943 - Northwich
+2947 - Lee Mill Extra
+2949 - Long Eaton Extra
+2952 - Northampton South Ext
+2955 - Norwich Extra
+2962 - Norwich Harford Bridg
+2969 - North Shields Extra
+2971 - Stockton Extra
+2989 - Oban
+2992 - Oldham Chadderton
+2994 - Oxford 2
+3008 - Perth Extra
+3009 - Peterborough Extra
+3026 - Penzance
+3031 - Plymouth Roboroughext
+3036 - Poole Extra
+3039 - Plymouth Transit Way
+3040 - Poole Fleets Cnr Ext
+3041 - Prestwich
+3055 - Portsmouth N H Extra
+3060 - Pitsea Extra
+3063 - Pontypridd Extra
+3065 - Prescot Extra
+3066 - Purley Extra
+3074 - Quedgeley Extra
+3084 - Redditch Extra
+3095 - Reading Extra
+3097 - Richmond Metro
+3108 - Royston Extra
+3115 - Rugby
+3120 - Romford Gallws Cn Ext
+3133 - Salisbury 2 Extra
+3142 - St Austell 2
+3145 - St Neots Extra
+3149 - Sandhurst Extra
+3166 - Scarborough 2
+3178 - Shoreham Extra
+3179 - Sheerness
+3181 - Sheffield Abbeydale
+3188 - Solihull Extra
+3190 - Southampton
+3193 - Southport Extra
+3212 - Stratford Upon Avon
+3213 - Stevenage Extra
+3219 - Swansea Extra
+3220 - Sunbury Extra
+3222 - Stroud Green Metro
+3228 - Skegness
+3230 - Swindon Extra
+3234 - Sudbury
+3237 - Stirling
+3239 - Stoke
+3240 - Stowmarket
+3243 - Scunthorpe Extra
+3281 - Taunton
+3288 - Thirsk
+3290 - Telford Extra
+3297 - Toton Extra
+3301 - Thetford
+3310 - Truro
+3316 - Trowbridge Extra
+3324 - Twickenham Extra
+3333 - Lea Valley Extra
+3344 - Wadebridge
+3345 - Warrington Extra
+3356 - Waltham Abbey
+3370 - Warwick
+3372 - Watford Extra
+3377 - Weston Favell Extra
+3378 - Stockport Extra
+3380 - Wellingborough 2
+3387 - Weston Super Mare
+3398 - Stafford Extra
+3401 - Whitstable Extra
+3406 - Winchester Extra
+3411 - Wokingham
+3426 - Wigan Extra
+3429 - Workington 2
+3430 - Worcester 1
+3433 - Wrexham Extra
+3439 - Worksop
+3440 - Worcester 2
+3470 - Yeading Extra
+3480 - York Extra
+3488 - York Tadcaster Rd Ext
+3490 - Great Yarmouth Extra
+3493 - Yeovil Extra
+4362 - Lincoln 2 Extra
+4375 - Wisbech Extra
+4425 - Dunfermline Fre Staon
+4480 - Bicester
+4483 - Newmarket
+4505 - Rotherham Civic Centre
+4506 - Banbridge Bridgewater
+4579 - Portsmouth Fratton Park
+4630 - Aberystwyth
+4858 - Borehamwood Spoke
+4879 - Purley Trunking
+4882 - Bromley By Bow Spoke
+5014 - Evesham Worcester Rd
+5031 - Newry Downshire Extra
+5110 - Carnforth
+5124 - Haslingden
+5125 - Clacton
+5128 - Burnage
+5131 - Newtownbreda Ni Ext
+5132 - Bradford Extra
+5133 - Wishaw Belhaven Extra
+5135 - Slough Wellington Ext
+5137 - Carrickfergs Cstl Ext
+5138 - Tiverton Blundells
+5168 - Coventry Crosspt Ext
+5170 - Redruth Extra
+5171 - Coatbridge Extra
+5184 - Hexham Extra
+5194 - Bangor Extra
+5249 - Swansea Llansmlet Ext
+5290 - Huntly
+5293 - Rutherglen Extra
+5307 - Glasgow Silverbrn Ext
+5326 - Haydock Church Road
+5330 - Wick
+5331 - Carmarthen Extra
+5332 - Shrewsbury Extra
+5333 - Enniskillen
+5335 - Ballymena
+5336 - Galashiels Extra
+5363 - Gloucester Brck Extra
+5378 - Nottingham Tv Extra
+5379 - Mansfield Jubilee Ext
+5438 - Shepton Mallet 1
+5441 - Port Glasgow Extra
+5456 - Hull St Stephens Ext
+5458 - Stretford Extra
+5528 - Reading West Extra
+5566 - Manchester Gortn Ext
+5567 - Ryde Extra
+5601 - Hastings Extra
+5652 - Bradley Stoke Extra
+5731 - Oldham Hudrsfld Extra
+5740 - Hemsworth
+5745 - Dundee South Road Ext
+5760 - Lerwick
+5762 - Stornoway
+5769 - Edinburgh Hermiston
+5851 - Hanley Extra
+5852 - Lichfield Extra
+5930 - Crediton
+5939 - Haverhill
+5982 - Skipton
+5992 - Chesterfield Extra
+5998 - Aylesford Dotcom Ctre
+5999 - Croydon Dotcom Centre
+6002 - Havant Extra
+6017 - Walkden Extra
+6053 - Newtown Cattle Market
+6056 - West Durrington Extra
+6109 - Greenford Dotcom Cntr
+6161 - Walsall Extra
+6181 - Berwick Upon Tweed
+6193 - Musselburgh Extra
+6197 - Dudley Extra
+6225 - Risca Extra
+6264 - Helston
+6265 - Clay Cross Extra
+6269 - Barnstaple Extra
+6270 - Newtownards Extra
+6271 - Craigavon Extra
+6273 - Kirkwall
+6329 - Bishop Auckland Extra
+6401 - Sheffield Savil Extra
+6419 - Crewe Extra 1
+6420 - Yate Extra
+6440 - Enfield Dotcom Centre
+6457 - Seaton
+6459 - Newport Spytty Extra
+6467 - Aberdeen Woodend
+6471 - Ammanford 1
+6473 - Bedworth Extra
+6504 - St Helens Extra
+6505 - Falkirk Vf Northern
+6506 - Northcott Extra
+6553 - Hattersley Extra
+6647 - Crawley Dotcom
+6653 - Sunderland Rt P Extra
+6739 - Welwyn Express
+6781 - Corby Oakley Rd
+6797 - Prestatyn
+6810 - Gateshead Trnty Extra
+6814 - Kings Lynn Hrwck Ext
+6997 - Erith Dotcom Centre
+9001 - Spare Vans Marshall Fleet Solutions
+9003 - Spare Vans EFM
+9004 - Spare Vans Jordan Fleet

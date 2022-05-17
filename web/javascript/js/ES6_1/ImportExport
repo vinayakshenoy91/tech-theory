@@ -1,0 +1,3 @@
+import name, {message } from './...';
+
+export { message, name as default}

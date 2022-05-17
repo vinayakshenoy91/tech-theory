@@ -1,0 +1,12 @@
+- How to encapsulate the creation and initilization of the object, if it can have different types?
+- define an interface for creating an object, but let subclasses decide which class to instantiate.
+The Factory method lets a class defer instatiation it uses to subclasses.
+
+- Have an abstract method that allows us to delegate into subclasses the decision of 
+which concrete type to return.
+
+public class UKCarFactory extends CarFactory{
+    protected Car createCar(){
+        return new LeftSideSteerWheelCar();
+    }
+}

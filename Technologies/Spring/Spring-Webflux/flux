@@ -1,0 +1,8 @@
+import reactor.core.publisher.Flux;
+
+public Flux<String> namesFlux(){
+ return Flux.fromIterable(List.of("Alex","Mat"));
+}
+
+x.namesFlux().subscribe(name-> System.out::println);
+

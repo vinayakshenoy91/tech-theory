@@ -1,0 +1,148 @@
+Hiding Static Methods
+A hidden method occurs when a child class defines a static method with the same name and signature as an inherited static method defined in a parent class. Method hiding is similar but not exactly the same as method overriding. The previous four rules for overriding a method must be followed when a method is hidden. In addition, a new rule is added for hiding a method:
+
+The method defined in the child class must be marked as static if it is marked as static in a parent class.
+Put simply, it is method hiding if the two methods are marked static, and method overriding if they are not marked static. If one is marked static and the other is not, the class will not compile.
+
+Let’s review some examples of the new rule:
+
+
+public class Bear {
+   public static void eat() {
+      System.out.println("Bear is eating");
+   }
+}
+ 
+public class Panda extends Bear {
+   public static void eat() {
+      System.out.println("Panda is chewing");
+   }
+   public static void main(String[] args) {
+      eat();
+   }
+}
+In this example, the code compiles and runs. The eat() method in the Panda class hides the eat() method in the Bear class, printing "Panda is chewing" at runtime. Because they are both marked as static, this is not considered an overridden method. That said, there is still some inheritance going on. If you remove the eat() method in the Panda class, then the program prints "Bear is eating" at runtime.
+
+Let’s contrast this with an example that violates the fifth rule:
+
+public class Bear {
+   public static void sneeze() {
+      System.out.println("Bear is sneezing");
+   }
+   public void hibernate() {
+      System.out.println("Bear is hibernating");
+   }
+   public static void laugh() {
+      System.out.println("Bear is laughing");
+   }
+}
+ 
+public class Panda extends Bear {
+   public void sneeze() {           // DOES NOT COMPILE
+      System.out.println("Panda sneezes quietly");
+   }
+   public static void hibernate() { // DOES NOT COMPILE
+      System.out.println("Panda is going to sleep");
+   }
+   protected static void laugh() {  // DOES NOT COMPILE
+      System.out.println("Panda is laughing");
+   }
+}
+In this example, sneeze() is marked static in the parent class but not in the child class. The compiler detects that you’re trying to override using an instance method. However, sneeze() is a static method that should be hidden, causing the compiler to generate an error. In the second method, hibernate() is an instance member in the parent class but a static method in the child class. In this scenario, the compiler thinks that you’re trying to hide a static method. Because hibernate() is an instance method that should be overridden, the compiler generates an error. Finally, the laugh() method does not compile. Even though both versions of method are marked static, the version in Panda has a more restrictive access modifier than the one it inherits, and it breaks the second rule for overriding methods. Remember, the four rules for overriding methods must be followed when hiding static methods.
+
+
+-------
+HIDING VARIABLES
+As you saw with method overriding, there are a lot of rules when two methods have the same signature and are defined in both the parent and child classes. Luckily, the rules for variables with the same name in the parent and child classes are a lot simpler. In fact, Java doesn’t allow variables to be overridden. Variables can be hidden, though.
+
+A hidden variable occurs when a child class defines a variable with the same name as an inherited variable defined in the parent class. This creates two distinct copies of the variable within an instance of the child class: one instance defined in the parent class and one defined in the child class.
+
+As when hiding a static method, you can’t override a variable; you can only hide it. Let’s take a look at a hidden variable. What do you think the following application prints?
+
+class Carnivore {
+   protected boolean hasFur = false;
+}
+ 
+public class Meerkat extends Carnivore {
+   protected boolean hasFur = true;
+  
+   public static void main(String[] args) {
+      Meerkat m = new Meerkat();
+      Carnivore c = m;
+      System.out.println(m.hasFur);
+      System.out.println(c.hasFur);
+   }
+}
+It prints true followed by false. Confused? Both of these classes define a hasFur variable, but with different values. Even though there is only one object created by the main() method, both variables exist independently of each other. The output changes depending on the reference variable used.
+
+----
+
+OVERRIDING VS. HIDING MEMBERS
+While method overriding replaces the method everywhere it is called, static method and variable hiding does not. Strictly speaking, hiding members is not a form of polymorphism since the methods and variables maintain their individual properties. Unlike method overriding, hiding members is very sensitive to the reference type and location where the member is being used.
+
+Let’s take a look at an example:
+
+class Penguin {
+   public static int getHeight() { return 3; }
+   public void printInfo() {
+      System.out.println(this.getHeight());
+   }
+}
+public class CrestedPenguin extends Penguin {
+   public static int getHeight() { return 8; }
+   public static void main(String... fish) {
+      new CrestedPenguin().printInfo();
+   }
+}
+The CrestedPenguin example is nearly identical to our previous EmporerPenguin example, although as you probably already guessed, it prints 3 instead of 8. The getHeight() method is static and is therefore hidden, not overridden. The result is that calling getHeight() in CrestedPenguin returns a different value than calling it in the Penguin, even if the underlying object is the same. Contrast this with overriding a method, where it returns the same value for an object regardless of which class it is called in.
+
+What about the fact that we used this to access a static method in this.getHeight()? As discussed in Chapter 7, while you are permitted to use an instance reference to access a static variable or method, it is often discouraged. In fact, the compiler will warn you when you access static members in a non-static way. In this case, the this reference had no impact on the program output.
+
+Besides the location, the reference type can also determine the value you get when you are working with hidden members. Ready? Let’s try a more complex example:
+
+
+class Marsupial {
+   protected int age = 2;
+   public static boolean isBiped() {
+      return false;
+   }
+}
+ 
+public class Kangaroo extends Marsupial {
+   protected int age = 6;
+   public static boolean isBiped() {
+      return true;
+   }
+ 
+   public static void main(String[] args) {
+      Kangaroo joey = new Kangaroo();
+      Marsupial moey = joey;
+      System.out.println(joey.isBiped());
+      System.out.println(moey.isBiped());
+      System.out.println(joey.age);
+      System.out.println(moey.age);
+   }
+}
+The program prints the following:
+
+true
+false
+6
+2
+Remember, in this example, only one object, of type Kangaroo, is created and stored in memory. Since static methods can only be hidden, not overridden, Java uses the reference type to determine which version of isBiped() should be called, resulting in joey.isBiped() printing true and moey.isBiped() printing false.
+
+Likewise, the age variable is hidden, not overridden, so the reference type is used to determine which value to output. This results in joey.age returning 6 and moey.age returning 2.
+
+image
+DON’T HIDE MEMBERS IN PRACTICE
+Although Java allows you to hide variables and static methods, it is considered an extremely poor coding practice. As you saw in the previous example, the value of the variable or method can change depending on what reference is used, making your code very confusing, difficult to follow, and challenging for others to maintain. This is further compounded when you start modifying the value of the variable in both the parent and child methods, since it may not be clear which variable you’re updating.
+
+When you’re defining a new variable or static method in a child class, it is considered good coding practice to select a name that is not already used by an inherited member. Redeclaring private methods and variables is considered less problematic, though, because the child class does not have access to the variable in the parent class to begin with.
+
+For the exam, make sure you understand these examples as they show how hidden and overridden methods are fundamentally different. In practice, overriding methods is the cornerstone of polymorphism and is an extremely powerful feature.
+
+
+
+
+
+

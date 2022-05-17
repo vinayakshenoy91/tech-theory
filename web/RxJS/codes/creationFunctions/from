@@ -1,0 +1,4 @@
+import {from} from "rxjs";
+
+from([A,B,C])
+from(promise)

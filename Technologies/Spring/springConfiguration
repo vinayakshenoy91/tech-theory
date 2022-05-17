@@ -1,0 +1,160 @@
+public class SimpleSpringPropertyTest {
+    @Value("${user.firstName}") private String firstName;
+    @Value("${user.lastName}") private String lastName;
+ } 
+
+<parent>
+   <groupId>org.springframework.boot</groupId>
+   <artifactId>spring-boot-starter-parent</artifactId>
+   <version>1.5.3.RELEASE</version>
+   <relativePath/> <!-- lookup parent from repository -->
+</parent>
+
+
+
+To understand this feature, we can take an example of a custom property file which contains configuration properties for Database, Email Server and something else, on a high level that property might look like
+
+
+#Database Configuration
+
+db.driver =org.hsqldb.jdbcDriver
+db.username	=test
+db.password	=test
+db.tablePrefix =_prefix
+
+#SMTP Configuration
+
+mail.from =test@test.com	 
+mail.host =test@test.com
+mail.port =25
+mail.security.userName 	=test
+mail.security.password 	=test
+
+#Server Configurations
+
+server.tomcat.httpPort =80
+server.tomcat.sslPort =443
+server.tomcat.ajpPort =444
+server.tomcat.jmxPort =445
+
+#Global Properties
+username=umesh
+welcomeMessage = Welcome Umesh!!!
+
+3.1 Binding Properties
+We will start by creating a separate POJO class to store and handle our application specific configuration properties by annotating it with @ConfigurationProperties 
+
+@Configuration
+@ConfigurationProperties
+public class ApplicationConfigurationProp {
+
+}
+@Configuration annotation will allow Spring to detect and register this Bean which means we can inject this configuration bean in our application. Above code will work fine if we want to access only global properties (i.e. username and welcomeMessage).
+
+@Configuration annotation is most suitable when we want to access hierarchical properties and we want to access/filter properties based on the prefix. Let’s say we want to bind all the properties starting with prefix “mail” to our  ApplicationConfigurationProp  Class, we can use prefix property on the @ConfigurationProperties annotation.
+
+ 
+
+@Configuration
+@ConfigurationProperties(prefix = "mail")
+public class ApplicationConfigurationProp {
+
+
+    private String from;
+    private String host;
+    private int port;
+
+    //getter and setter
+
+    public static class Security{
+        private String userName;
+        private String password;
+
+        //getter and setter
+    }
+
+}
+Once we run above application, all properties defined in the property files with prefix “mail” will automatically be bind / assigned to this object.
+
+
+
+3.2 Binding Custom Properties File
+While working on the above example we assume that we define all these properties in the Spring Boot’s application.properties file, let’s say we want to define these properties in our custom property file (custom.properties) and not in the application.properties file. We can use @PropertySource annotation to define custom property file.
+
+@Configuration
+@PropertySource("classpath:custom.properties")
+@ConfigurationProperties(prefix = "mail")
+public class ApplicationConfigurationProp {
+}
+
+
+3.3 Relaxed binding
+One of the interesting features of the Spring Boot property binding is “relaxed binding rules”. Under relaxed binding, Spring Boot need not be an exact match between the properties. For a property db.username, all the following variations are valid in Spring Boot property binding
+
+Property Name	Description
+db.userName	 
+db.user-name	 Dashed notation will work for username
+db.user_name	 underscore notation
+db.USER_NAME	upper case format
+ 
+
+3.4. Property Validation
+We can use JSR-303 Validation API to validate property defined using@ConfigurationProperties. To use bean validation with Spring Boot, we need to add JSR-303 compliant validation API in our project. For this post, I will use Hibernate Validator by adding it in our pom.xml file
+
+<dependency>
+    <groupId>org.hibernate</groupId>
+   <artifactId>hibernate-validator</artifactId>
+   <version>5.4.1.Final</version>
+   <relativePath/>
+</dependency>
+We need to add standard @Validated annotation in order for bean validation to validate given bean. To understand how Bean Validation will work with @ConfigurationProperties let’s take an example where we want to ensure that userName should be validated against following rules
+
+Minimum length of username should be 5
+User Name length can not be over 10.
+To achieve this, we will add JSR-303 javax.validation constraint annotations directly on your configuration class.
+
+@Configuration
+@PropertySource("classpath:custom.properties")
+@ConfigurationProperties(prefix = "mail")
+@Validated
+public class ApplicationConfigurationProp {
+
+    @Valid
+    private Security security= new Security();
+
+    public static class Security{
+
+        @Length(max = 10, min = 5)
+        private String userName;
+
+        public String getUserName() {
+            return userName;
+        }
+
+        public void setUserName(String userName) {
+            this.userName = userName;
+        }
+    }
+
+}
+We have following property file defined in our custom.properties file 
+
+
+5. Complex or Nested Properties
+I have taken a simple example (with nested class) to show how Spring Boot can map these properties in our configuration class, We can use similar techniques to bind even complex hierarchy using Spring Boot’s @ConfigurationProperties
+
+app.servers[0]=dev.test.com
+app.servers[1]=foo.test.com
+To bind above properties using Spring Boot’s @ConfigurationProperties, We only need to define properties in the target bean either as a java.util.List, or Set. Converting these properties in to List or Map will be handled by Spring DataBinder. (You can even register your custom Data Binder to map custom properties).
+
+@ConfigurationProperties(prefix="app")
+public class AppConfig {
+
+    private List servers = new ArrayList();
+
+    public List getServers() {
+        return this.servers;
+    }
+}
+
+

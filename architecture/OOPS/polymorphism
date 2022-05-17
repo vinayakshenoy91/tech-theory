@@ -1,8 +1,0 @@
-- Supertypes can be assigned any subtypes
-
-User user = new Editor(); 
-
-Reference Type is User and Object type is Editor
-
-- Compiler uses Reference type to decide whether  a method can be invoked
-- JVM uses object type to decide whihc method is invoked

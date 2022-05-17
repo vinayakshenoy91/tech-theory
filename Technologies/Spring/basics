@@ -1,0 +1,50 @@
+Using the @Bean annotation:
+You have full control over the instance creation you add to the Spring context. It is your responsibility to create and configure the instance in the body of the method annotated with @Bean. Spring only takes that instance and adds it to the context as-is.
+
+You can use this method to add more instances of the same type to the Spring context. Remember, in section 2.1.1 we added three Parrot instances into the Spring context.
+
+You can use the @Bean annotation to add to the Spring context any object instance. The class that defines the instance doesn’t need to be defined in your app. Remember, earlier we added a String and an Integer to the Spring context.
+
+You need to write a separate method for each bean you create, which adds boilerplate code to your app. For this reason, we prefer using @Bean as a second option to stereotype annotations in our projects.
+
+Using stereotype annotations:
+
+You only have control over the instance after the framework creates it.
+
+This way, you can only add one instance of the class to the context.
+
+You can use stereotype annotations only to create beans of the classes your application owns. For example, you couldn’t add a bean of type String or Integer like we did in section 2.1.1 with the @Bean annotation because you don’t own these classes to change them by adding a stereotype annotation.
+
+Using stereotype annotations to add beans to the Spring context doesn’t add boilerplate code to your app. You’ll prefer this approach in general for the classes that belong to your app.
+
+
+
+Dependencies to add:
+---------------------
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0     
+  http://maven.apache.org/xsd/maven-4.0.0.xsd">
+ 
+  <modelVersion>4.0.0</modelVersion>
+ 
+  <groupId>org.example</groupId>
+  <artifactId>sq-ch2-ex1</artifactId>
+  <version>1.0-SNAPSHOT</version>
+ 
+  <dependencies>
+     <dependency>
+        <groupId>org.springframework</groupId>
+        <artifactId>spring-context</artifactId>
+        <version>5.2.6.RELEASE</version>
+     </dependency>
+     <dependency> //This is for post construct
+   <groupId>javax.annotation</groupId>
+   <artifactId>javax.annotation-api</artifactId>
+   <version>1.3.2</version>
+</dependency>
+  </dependencies>
+    
+</project>
+
+

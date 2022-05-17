@@ -1,0 +1,119 @@
+
+Microservice requires:
+- API
+- tracing
+- monitoring
+- logging
+- security
+- CICD
+- resilience
+- elasticity
+- Invocation
+- discovery
+
+
+
+
+
+https://pages.cs.wisc.edu/~zuyu/files/fallacies.pdf
+
+
+1) Service discovery:
+----------------------
+a) Client side routing -> Client uses a library  that communicates with service discovery service to find out the 
+proper instances to send the requests to.
+
+b) Server-side routing -> Service discovery service exposes a reverse proxy that all requests are sent to.
+The reverse proxy forwards the requests to a proper microservice instance on behalf of the client.
+
+
+2) Edge Server:
+------------------ 
+- An edge server typically behaves like a reverse proxy and can be integrated with a discovery service to provide 
+dynamic load-balancing capabilities.
+
+- Hide internal services that should not be exposed outside their context; that is, only route requests to microservices that 
+are configured to allow external requests
+
+- Expose external services and protect them from malicious requests; that is, use standard protocols and best practices such as 
+OAuth, OIDC, JWT tokens, and API keys to ensure that the clients are trustworthy
+
+3) Reactive microservices:
+---------------------------
+- Whenever feasible, use an asynchronous programming model, sending messages without waiting for the receiver to process them.
+
+- Microservices must also be designed to be resilient and self-healing. Resilient meaning being capable of producing a response 
+even if one of the services it depends on fails; self-healing meaning 
+that once the failing service is operational again, the microservice must be able to resume using it.
+
+
+4) Central configuration:
+-------------------------
+- Get complete picture of configuration
+- Update configuration and make sure that all affected microservices instances are updated correctly.
+- So we need a configuration server connected to DB having all configs.
+
+5) Centralized log analysis:
+----------------------------
+- Detecting new microservice instances and collecting log events from them
+- Interpreting and storing log events in a structured and searchable way in a central database
+- Providing APIs and graphical tools for querying and analyzing log events
+
+- Microservices stream log events to standard system output, stdout. This makes it easier for a log collector 
+to find the log events compared to when log events are written to microservice-specific logfiles.
+- Microservices tag the log events with the correlation ID described in the next section regarding the Distributed 
+tracing design pattern.
+- A canonical log format is defined, so that log collectors can transform log events collected from the 
+microservices to a canonical log format before log events are stored in the central database. 
+Storing log events in a canonical log format is required to be able to query and analyze the collected log events.
+
+
+6) Distributed tracing:
+-----------------------
+- CorrelationId -> traceId
+- To be able to analyze delays in a call chain of cooperating microservices, we must be able to collect timestamps for 
+when requests, responses, and messages enter and exit each microservice.
+- Assign unique correlation IDs to all incoming or new requests and events in a well-known place, such as a header with a 
+standardized name
+- When a microservice makes an outgoing request or sends a message, it must add the correlation ID to the request and message
+- Trace records must be created for when requests, responses, and messages both enter or exit a microservice instance
+
+7) Circuit breaker:
+--------------------
+- Add a circuit breaker that prevents new outgoing requests from a caller if it detects a problem with the service it calls.
+
+How it works?
+Open the circuit and fail fast (without waiting for a timeout) if problems with the service are detected.
+Probe for failure correction (also known as a half-open circuit); that is, allow a single request to go through on a regular basis to see whether the service is operating normally again.
+Close the circuit if the probe detects that the service is operating normally again. This capability is very important since it makes the system landscape resilient to these kinds of problems; in other words, it self-heals.
+
+- Timeout while calling each microservice. Respond with fallback logic.
+
+8) Control loop:
+-----------------
+- The control loop will constantly observe the actual state of the system landscape, comparing it with a desired state, 
+as specified by the operators. 
+If the two states differ, it will take actions to make the actual state equal to the desired state.
+
+9) Centralized monitoring and alarms:
+--------------------------------------
+It must be able to collect metrics from all the servers that are used by the system landscape, which includes autoscaling servers
+It must be able to detect new microservice instances as they are launched on the available servers and start to collect metrics from them
+It must be able to provide APIs and graphical tools for querying and analyzing the collected metrics
+It must be possible to define alerts that are triggered when a specified metric exceeds a specified threshold value
+
+Note a table in this on tools used:
+---------------------
+https://learning.oreilly.com/library/view/microservices-with-spring/9781801072977/Text/Chapter_1.xhtml#_idParaDest-61
+
+
+
+10) DDD:
+--------
+
+
+11) API design:
+---------------
+https://semver.org/. 
+https://m.signalvnoise.com/the-majestic-monolith/#.6674fa2ze
+https://pages.cs.wisc.edu/~zuyu/files/fallacies.pdf

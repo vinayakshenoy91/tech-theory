@@ -1,0 +1,303 @@
+Interfaces:
+-----------
+- Use when we have very diff object that we want to work together.
+- promotes loose coupling
+- Creates a new type , describing the property names and value types of an object.
+-If the shape of our variable is much more complicated and 
+we need to reuse it in multiple places.
+
+export interface Car {
+  readonly wheels: number; //read only
+  color: string;
+  brand: string;
+  coupe?: boolean; //Optional property
+  summary():string{//Having a function and this should be done.
+     return `Name: ${this.name}`;
+  } ,
+  summary():string;
+}
+
+
+Implementation:
+---------------
+//Once  the interface is exported from other file
+
+export class A implements Mappable{
+
+   constructor(){
+
+   }
+
+   constructor(public filename:string){ //This cane be declared separately
+
+   }
+}
+
+Abstract classes:
+----------------
+- Used when we are trying to build up a definition of an object. Strongl;y couples classes together.
+
+export abstract class Sorter{
+  data:MatchData[]=[];
+  constructor(public filename:string);
+  abstract compare(leftIndex: number, rightIndex: number):boolean;
+  abstract swap(leftIndex: number, rightIndex: number):boolean;
+  abstract length:number;
+}
+
+
+Generics: For all commmon/general class/parent class, think of inheritance. They are like fn args.
+--------- 
+CSV readers as parent class that contains some child class. Or use interfaces
+
+class HoldAnything<T>{
+  data:T;
+}
+
+const x = new HoldAnything<X>();
+
+//Usage
+
+add(a:T):T{
+}
+
+export class MatchReader extends CsvFileReader<MatchData>{
+}
+
+Extends:
+-------
+
+export class NumbersCollection extends Sorter{
+
+  compare(leftIndex: number, rightIndex: number):boolean{
+
+  }
+}
+
+
+Enums:
+-----
+enum MatchResult{
+  HomeWin = 'H',
+  AwayWin='A',
+  Draw='D'
+}
+
+OR
+
+enum MatchResult{
+  HomeWin,
+  AwayWin,
+  Draw
+}
+
+
+Specify types:
+---------------
+[row[0] as MatchResult,row[1]]
+
+Creating types:
+----------------
+type MatchData = [Date, string, number];
+
+Practise
+---------
+- Every class will have interface and class def
+
+Interface with anonymous functions:
+-------------------------------------
+We can also create the shape for functions with interfaces, not just objects.
+
+    interface Greet {
+      (greeting: string, name: string): string
+    }
+
+    let greetingFunction: Greet;
+
+    greetingFunction = (greeting: string, name: string): string => {
+      console.log(`${greeting} ${name}`);
+      return `${greeting} ${name}`;
+    }
+    greetingFunction('Bye', 'Alberto');
+
+Extending Interfaces #:
+------------------------
+
+//Checks if the object has that interface [Remember map marker, you passed user and 
+company object which impl this interface]
+
+interface{
+  location:{
+    lat:number;
+    lng:number;
+  }
+}
+
+interface Vehicle {
+  wheels: number;
+  color: string;
+}
+
+interface Airplane extends Vehicle {
+  wings: number;
+  rotors: number;
+}
+
+Classes:
+--------
+- Classes in TS have modifiers
+
+
+
+class Animal {
+  private color: string;
+  private location:{
+    lat:number;
+    long:number;
+  }
+  constructor(coor:string){
+     this.color = color;
+  }
+}
+
+OR
+//Less code
+class Animal {
+  constructor(public color:string){
+  }
+}
+
+For inmem db creation:
+-----------------------
+class InMemBD implements Database{
+  
+  private db: Record<string,string>={};
+
+}
+
+
+
+
+class Animal {
+  private color: string;
+
+
+  eat = ()=> {
+    console.log('gnam gnam')
+  }
+  sleep = () => {
+    console.log('zzzz')
+  }
+}
+
+class Human extends Animal {
+  work = ()=> {
+    console.log('zzzzzzz')
+  }
+}
+const me = new Human();
+me.work();
+// zzzzzzz
+me.eat();
+// gnam gnam
+me.sleep()
+// zzzz
+
+If we want them to be accessible anywhere, we need to use the keyword public.
+class Animal {
+  public eat = ()=> {
+    console.log('gnam gnam')
+  }
+  public sleep = () => {
+    console.log('zzzz')
+  }
+}
+const dog = new Animal();
+dog.eat();
+// gnam gnam
+
+TypeScript also offers us to mark a member as private which means that it will not be accessible from outside of the class.
+
+class Animal {
+  public eat = ()=> {
+    console.log('gnam gnam');
+  }
+  public sleep = () => {
+    console.log('zzzz')
+  }
+}
+
+class Human extends Animal {
+  private work = ()=> {
+    console.log('zzzzzzz');
+  }
+}
+
+const me = new Human();
+me.work();
+// Property 'work' is private and only accessible within class 'Human'
+
+
+We can also mark a member as protected so that it will be accessible only inside the class where it’s declared and the classes extending it.
+
+class Human {
+  protected work: ()=> {
+    console.log('zzzzzzz')
+  }
+}
+
+class Adult extends Human {
+ 
+  constructor(public wheels:number){
+    super(); //Calling parent constructor. If any args, e need to pass it here.
+  }
+
+
+  public doWork = () => {
+    console.log(this.work)
+  }
+}
+
+
+Intersection Types #:
+-----------------------
+As the name implies, intersection types allow us to join together multiple types. Let’s look at how to use them:s
+
+interface Person {
+  sex: 'male' | 'female' | 'N/A',
+  age:number,
+}
+
+interface WorkerAdult {
+  job: string
+}
+
+type Adult =  Person & WorkerAdult;
+
+const me: Adult = {
+  sex: 'male',
+  age: 27,
+  job: 'software developer'
+}
+console.log(me);
+// { sex: 'male', age: 27, job: 'software developer' }
+
+Union Types :
+-------------
+Remember that we can only access common members of all types of the union.
+
+interface Kid {
+  age:number
+}
+interface Adult {
+  age: number,
+  job: string
+}
+
+function person(): Kid | Adult {
+  return { age: 27 }
+  }
+
+const me = person();
+me.age // ok
+me.job // error

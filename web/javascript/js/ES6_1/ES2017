@@ -1,0 +1,105 @@
+String padding:
+----------------
+console.log("hello".padStart(6));
+// " hello"
+console.log("hello".padEnd(6));
+
+We specified that we want 6 as our padding, so then why in both cases did we only get 1 space? It happened because padStart and 
+spadEnd will go and fill the empty spaces. In our example “hello” is 5 letters, and our padding is 6, which leaves only 1 empty space.
+
+console.log("hello".padEnd(13," Alberto"));
+// "hello Alberto"
+console.log("1".padStart(3,0));
+// "001"
+console.log("99".padStart(3,0));
+// "099"
+
+Object.values()  & Object.entries():
+------------------------------------
+
+Object.values() returns an array of all the values while Object.entries() returns an array of arrays containing both keys and values.
+
+Object.getOwnPropertyDescriptors() #:
+-------------------------------------
+This method will return all the own property descriptors of an object. The attributes it can return are value, writable, get, set, configurable and enumerable.
+
+  const myObj = {
+  name: "Alberto",
+  age: 25,
+  greet() {
+    console.log("hello");
+  },
+}
+console.log(Object.getOwnPropertyDescriptors(myObj));
+// age:{value: 25, writable: true, enumerable: true, configurable: true}
+
+// greet:{value: ƒ, writable: true, enumerable: true, configurable: true}
+
+// name:{value: "Alberto", writable: true, enumerable: true, configurable: true}
+
+Atomics:
+---------
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Atomics
+
+When memory is shared, multiple threads can read and write the same data in memory. Atomic operations make sure that predictable values are written and read, 
+that operations are finished before the next operation starts and that operations are not interrupted.
+
+
+Atomics is not a constructor. All of its properties and methods are static (just like Math) therefore we cannot use it with a new operator or invoke the Atomics object as a function.
+
+Examples of its methods are:
+
+add / sub
+and / or / xor
+load / store
+Atomics are used with SharedArrayBuffer (generic fixed-length binary data buffer) objects which represent generic, fixed-length raw binary data buffer.
+
+
+Atomics.add() will take three arguments, an array, an index and a value and will return the previous value at that index before performing an addition.
+
+// create a `SharedArrayBuffer`
+const buffer = new SharedArrayBuffer(16);
+const uint8 = new Uint8Array(buffer);
+
+// add a value at the first position
+uint8[0] = 10;
+
+console.log(Atomics.add(uint8, 0, 5));
+// 10
+
+// 10 + 5 = 15
+console.log(uint8[0])
+// 15
+console.log(Atomics.load(uint8,0));
+// 15
+
+Atomics.sub()
+
+// create a `SharedArrayBuffer`
+const buffer = new SharedArrayBuffer(16);
+const uint8 = new Uint8Array(buffer);
+
+// add a value at the first position
+uint8[0] = 10;
+
+console.log(Atomics.sub(uint8, 0, 5));
+// 10
+
+// 10 - 5 = 5
+console.log(uint8[0])
+// 5
+console.log(Atomics.store(uint8,0,3));
+// 3
+console.log(Atomics.load(uint8,0));
+// 3
+
+
+We are then using Atomics.store() to store a specific value, in this case 3- at a specific index of the array, or in this case 0, the first position. Atomics.store() will return the value that we just passed, in this case 3. You can see that when we call Atomics.load() on that specific index we get 3 and not 5 anymore.
+
+ 
+
+Atomics.and(), Atomics.or() and Atomics.xor() #
+These three methods all perform bitwise AND, OR and XOR operations at a given position of the array. You can read more about bitwise operations on Wikipedia.
+
+
+

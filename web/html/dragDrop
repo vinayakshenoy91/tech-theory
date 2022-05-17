@@ -1,0 +1,8 @@
+following properties is used to determine what kind of drag operation was intended? - dropEffect
+A listener for the dragenter and dragover events is used to indicate valid drop targets, i.e., 
+places where dragged items may be dropped.
+
+dataTransfer -> Common in all drag events
+
+Calling which of the following methods during both the dragenter and dragover events will indicate that a drop 
+is allowed at the required location? -> preventDefault

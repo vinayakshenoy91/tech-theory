@@ -1,0 +1,104 @@
+
+About arrays:
+-------------
+memory address = array's address + index* data size(4 bytes)
+- stacks, queue, hash table and dict.
+- Matrix related ops
+
+
+//java.util.Arrays -> Explore more
+Arrays.toString(arrayName) -> Print array properly
+Arrays.copyOf(array,array.length+1) //Shallow copy
+
+array1.equals(array2) -> Only if references are equals
+Arrays.equals(arr1,arr2) -> Only elements and they arre compared element by element. If one is unsorted, then return false.
+
+prefix -> Common set of elements starting at index 0
+
+
+Arrays.compare rules:
+--------------------
+If Arrays.equals is true, return 0
+If first array passed to parameter is null, return -1, else if a second array is null, return 1
+If length of first array is 0, return (0-lenght of 2nd)
+If length of second array is 0, return (lenght of 1st-0)
+
+Arrays.binarySearch:
+-------------------
+- Searches for a matching element and returns and integer indicating the array index where there is a mismatch
+- No match, return -1
+- Elements must be sorted.
+- Array with duplicate values, no guarantee which elements will be returned
+- If you want the first match in an array whihc might have duplicates, use List.indexOf method instead.
+
+Arrays.mismatch(a1,a2);
+
+arr1.lastIndexOf("jkl");
+
+firstList.containsAll(Arrays.asList(arr))
+
+
+Manipulating data in arrays:
+---------------------------
+Arrays.fill(arr1,5); //Fill all array elements with 5
+Arrays.fill(0,2,5);
+Arrays.setAll(intArray, (index)-> index+1); //set all with certain value, you can pass a lambda
+Arrays.sort(intArray, Collections.reverseOrder());//Reversing an array
+Arrays.parallelPrefix(intArray, (left,right)->left+right); //Same as setAll but supports binary ops
+Arrays.asList(arr);
+list1.sort(String.CASEINSENSITIVE_ORDER);
+list1.replaceAll((s)->s+"ish");
+list1.set(0,'value');
+
+//Immutable list returned
+List.of
+List.copyOf
+
+ListIterator lit = list.listIterator();
+li.hasNext()
+lit.next()
+
+Arrays.copyOf(arr,15);
+Arrays.copyOfRange(arr,2,6);
+
+List an = List.of(arr1)
+Arrays.asList(arr1).subList(3,7);
+an.toArray(arr1);
+an.toArray(new String[0]); //Exactly the length of the list
+
+arr2d.clone()//Shallow clone
+
+
+
+Array declaration styles:
+--------------------------
+int[] arr;
+
+short shortArray[];
+
+int a, b[],c;
+
+int[] d, e,f[];
+
+String[] stringArray[];
+
+Rules:
+------
+You cannot define variables of multiple types in same line separated by commas.
+- You can set array to null:  int[] x = null;
+
+
+Create array:
+-------------
+int [] x = new int[10]; 
+int [] x = {10,20,30}; //array initilizer. It must be in same statement as declaration. They cannot be used in a compound statement.
+String[] s[] = {{"one, "ttow"},{"three", "four"}};
+Object o = new int[5];
+int [] a = new int[]{10,20}; //Do not specify array size.
+int [][] matrix = new int[2][];
+
+
+new String[10] //Array of 10 elements all initialized to null.
+
+
+

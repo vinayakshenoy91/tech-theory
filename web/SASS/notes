@@ -1,0 +1,284 @@
+CSS pitfalls:
+--------------
+- No encapsulation
+- No variables
+- Not composable
+- Bad modularity  primitives
+- Globals
+- Beating into submission driven dev
+
+Preprocessors: Abstraction of css. LESS,SASS, Stylus
+--------------
+- Compile to CSS
+- Parameterised (variables)
+- composable
+- modular
+- Plug into your existing Tool
+- Benefits: They are DRY, Keep styles organised, easy to setup, style is easier to maintain and builds fast.
+
+Basics of SASS:SASS syntax does not have brackets. So SCSS is still strong . Alway use SCSS file extension
+----------------
+- Extenstion language
+- Tool to convert: SASS to CSS
+- sass-lang.com
+- Nesting and scoping: Descendent style rules
+  Styles can be placed in declaration block of parent
+  Everything is expanded during sass compilation process.
+  Descendent:
+  .container{
+      .left-area{
+
+      }
+  }
+
+  Direct descendent:
+   .container{
+      > .left-area{
+          
+      }
+  }
+
+  Parent Selector(&) ->  <div class="container right-nav">   In normal css, .container.right-nav{color:'xyz'}
+  - Used while adding secondary class changes styles
+  .container{
+      &.right-nav{
+
+      }
+  }
+
+  and
+    
+  .button{          //In css, .button{color:xyz} .theme-dark .button{color:xyz}
+      color:xyz;
+      .theme-dark &{
+          color:xyz;
+      }
+  }
+
+npx sass --watch main.scss output.css
+
+style.scss
+
+SASS variables:
+---------------- 
+- Globalize a variable
+$xyz:#FFF !default -> ! default means that it will be used if error color has not be defined elsewhere
+
+a{
+    color:$xyz
+}
+
+OR
+
+.alert-error{
+     $text_color:#ddd  //Local variable declaration
+     color:$text_color
+}
+
+SASS Imports:
+-------------
+- Using an @import in css results in a new round trip HTTP request and is a performance concern
+- Files that users download and files that we used to manage source code are diff concerns.
+In SASS: Combines all into a single file
+- Splitting up code into smaller files using @import
+- Name file as : _header.scss . Files with _ are meant to be imported into another file and are called partials.
+In another sheet do,
+@import 'bootstrap';
+@import '_header';
+
+String interpolation in comments:
+-----------------------------------
+/**
+* Hue is #{hue(green)}   -> Converted to Hue is 120deg
+*
+*/
+
+
+SASS Mixins:
+--------------
+- Reusable functions, a function that returns style and that is merged right into wherever you define your include.
+- Separate from styles like variables.
+- Allows for resuse fo styles
+- Bring mixins first and then variables
+
+---Ex1-----
+
+@mixin alert-text{
+    color: white;
+}
+
+.error-text{
+  @include alert-text;
+}
+
+---EX2 - Gettign in variables -----
+
+//Put this in _mixins.scss file
+
+@mixin verticalGradient($fromColor,$toColor){   // or $fromColor:green -> // Default arg values. FI null value passed, that declaration will be skipped
+    background-image:linear-gradient(to bottom,$fromColor, $toColor)
+}
+
+@import '_mixins';
+
+.btn-b{
+    @extend .btn-a;
+    @include verticalGradient(#FFF,#000)
+}
+
+.btn-b{
+    @extend .btn-a;
+    @include verticalGradient($fromColor:green,#000) // Default arg values
+}
+
+
+---Ex3 ---
+
+_mixins.scss use:
+
+@mixin bp-babyBear{
+    @media only screen and (max-width:480px){
+        @content;
+    }
+}
+
+@import 'mixins'
+.site-header{
+    li{
+        float:left;
+        @include bp-babyBear{
+            float:none;
+            margin-right:0;
+        }
+    }
+}
+
+
+SASS functions:
+----------------
+rgb($red, $gree, $blue)
+rgba($red, $gree, $blue, $alpha)
+red($color)
+green($color)
+blue($color)
+mix($color1., $color2, [$weight])
+adjust-hue($color, $degrees) //#63F, 60deg
+darken($color, $percent)
+lighten($color, $percent) #63f, 20%
+saturate($color, $percent)
+desaturate($color, $percent)
+
+)
+
+SASS Control flow:
+---------------
+//If
+@mixin foo($size){
+    font-size:$size;
+    @if $size > 20 {
+        line-height: $size;
+    }
+}
+
+//for
+@for $i from 1 through 5 {
+    h#{$i}{
+        font-size: 5rem - $i*0.75rem;
+    }
+}
+
+//List
+$mylist: 0 0 2px #000;
+.foo{
+    @each $i in $mylist{
+        /* #{$i} */
+    }
+}
+
+//nth
+$gradients:
+   (to left top, blue, red),
+   (to left, top, blue, yellow);
+.foo{
+    background: linear-gradient(nth($gradients,2));
+}
+
+//Maps
+$myMap{
+    dark:#009,
+    light: #66f
+}
+
+@mixin theme-button($t){
+    color: map-get($mymap, $t);
+}
+
+Custom SASS functions:
+---------------------
+@function double($x){
+    @return 2*$x;
+}
+
+.thick-border{
+    border-width: double(2);
+}
+
+
+SASS inheritance/@extends: [Use with caution] 
+-------------------------------------
+- Use extends at a high level
+- Use with placeholders(%)
+
+.btn-a{
+    background:red;
+    color:white;
+}
+
+.btn-b{
+    @extend .btn-a;
+    backgroud-color:black;
+}
+
+OR  Using place holders
+//% is used to signify that there is a ripple effect when this class is changed
+%btn-a{
+    background:red;
+    color:white;
+}
+
+.btn-b{
+    @extend %btn-a;
+    backgroud-color:black;
+}
+
+
+CSS architecture: [BEM]
+----------------
+Block -> standalone entity  that is meaningful on its own. [header, container, menu, checkbox, input]
+Elements -> A part of block that has no standalone meaning and is semantically tied to its block.
+[menu-item,list-item, header-title, checkbox-caption]
+Modifier -> A flag on a block or element, used to change appearence and or behaviour
+[disabled, highlighted, checked, color-yellow, size-big]
+
+<div class="textfield textfield--state-validated">
+  <label for ="first-name" class="textfield__label">
+     First Name
+  </label>
+  <input name="first-name" type="email" class="textfield__input" />
+  <span class="textfield__validation-error">
+    Must be two characters or longer
+  </span>
+</div>
+
+.textfield{
+    &__input{
+    }
+    &__label{
+
+    }
+    &__validation-error{
+
+    }
+    &.textfield--state-error{}
+    &.textfield--state-validated{}
+}

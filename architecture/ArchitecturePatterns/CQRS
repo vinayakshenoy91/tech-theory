@@ -1,0 +1,47 @@
+Why CQRS? -> Comamnd and Query responsibility segregation
+- Simultaneous txns lead to data contentions and conflicts
+- Service and data source with mixed read and write are expensive to scale.
+- Security is not granular based on read and write.
+- Used there Data  frequently queried than altered. Indexes slows writes but increases read perf
+- Could cause data contention when exeuciton both read and write on same model. Compete for same index or data block at sametime.
+- Read and write representation differ substantially.
+- Manage query and command security and permission differently
+
+
+- We can optimize a distributed DB only for one type of operation at the expense of other.
+1) Read intensive workload  - Compromise on slower writes
+2) Write intensive workload - Compromise on performance of read operation.
+
+- if both are important, the you use CQRS
+- If joining multiple tables located in separate databases that belong to diff microservices.
+Service C can save a materizlied view from service A and service B
+
+
+By:
+Greg young
+Bertrand mayor
+
+CQS:
+- Every method must be a command or query. One produces side effect and other is side effect free.
+Void or non-void
+
+CQRS:
+----
+- There can be separate DB or same DB
+- The service are split into two: One solely for read and other solely for write, update, delete.
+
+Cons of CQRS
+Some place atomic operations are required and CQS cannot be used like Check file exist and then write to it
+
+
+What is command?
+-----------------
+- Combination of expressed intent. Something that you want to be done.
+
+
+Events:
+------
+- Tells that something has happened in the application
+- Named in past participle -> Account opened event, DepositedEvent
+- typical source of a event is the aggregate.
+

@@ -1,0 +1,17 @@
+Step1:  EC2 -> Launch configs/Launch template ->create Ec2 instance
+Step2: Create LB  -> Create TargetGroups to route traffic to servers
+Step3: Create ASG-> use launch config [Name of ASG + network and subnets]  and add it the LB created above
+Step 4: Goto ASG and assign target group -> Healthcheck on ELB
+
+Flow:
+ASG -> LB -> target group -> instance 
+
+
+
+Get a mix of normal and spot instances.
+-> Give sometime for instance to comeup and do healthchecks
+Example:
+gist.github.com/mikepfeiffer/apache.sh
+
+*Note: use launch template instead of launch config -> VVIP
+Provides versioning

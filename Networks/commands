@@ -1,0 +1,6 @@
+dig algoexpert.io
+
+nc -l 8081
+nc 127.0.0.1 8081
+
+curl --header ''  <url> --data '{}'

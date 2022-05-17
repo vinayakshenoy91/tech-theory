@@ -1,0 +1,26 @@
+- Select algo at runtime
+- Define family of algo, put each of them into separate class and make objects interchangeable.
+- Prootes encapsulation
+- We should always program to ointerface or supertype.
+- Actual runtime object should not be locked into code.
+- type of variable should be abstract.
+- DI principle handles this problem.
+- Composition over inheritance. -> HAS A
+- Strategy pattern is based on composition instead
+- It operates on object level which means it is dynamic
+
+
+You need to have an abstract layer between high level modules and low level modules
+
+//This intermediate class is required as part of strategy pattern
+public class OperationManager[
+    private Strategy strategy;
+
+    public void setStrategy(Strategy s){
+        this.strategy=s;
+    }
+
+    public void execute(int num1, int num2){
+        this.strategy.execute(num1,num2);
+    }
+]

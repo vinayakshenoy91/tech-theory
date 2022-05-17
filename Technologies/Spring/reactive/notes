@@ -1,0 +1,76 @@
+server.tomcat.max-threads -> By default it can handle 200 connection
+
+Each thread takes some memory. High threadpool, higher the size.
+Common stack is 1MB
+High threadpool size -> high memory -> poor app perf
+
+
+Completable future is not a great call with async call with multiple items in response and error handling.
+
+
+Better api design:
+- Async and non-blocking
+- Move away from thread per request model
+- User fewer threads 
+- Back pressure compatible.
+
+
+
+Reactive Stream Spec -> Spec or Rules for Reactive stream and implementation of this is Reactive Lib
+---------------------------------------------------------
+
+3 events:
+
+onNext(item) -> data stream events
+onComplete() -> Completion event
+onError() -> Error event
+
+--------
+
+4 Interfaces:
+
+- Publisher
+- Subscriber
+- Subscription
+- Processor
+
+1) Publisher:
+
+- Data source
+
+public interface Publisher<T>{
+    public void subscribe(Subscriber<? super T> s);
+}
+
+2) Subscriber:
+public interface Subscriber<T>{
+    public void onSubscribe(Subscription s);
+    public void onNext(T t);
+    public void onError(Throwable t);
+    public void onComplete();
+}
+
+3) Subscription:
+
+public interface Subscription{
+    public void request(long n);
+    public void cancel();
+}
+
+4) Processor interface:
+
+public interface Processor<T,R> extends Subscriber<T>, Publisher<R>{
+
+}
+
+Reactive Libraries:
+--------------------
+- RxJava
+- Reactor -> Use this with spring boot and maintained by pivotal [https://projectreactor.io/]
+- Flow class - JDK 9
+
+
+Flux and Mono: Reactvie types of project reactor
+-------------
+Flux -> class representing 0-N elements
+Mono -> class which represents 0-1 element.

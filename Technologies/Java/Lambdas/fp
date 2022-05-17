@@ -1,0 +1,81 @@
+Functional programming is a way of writing code more declaratively. 
+
+Deferred execution:
+The point here is that it is really easy to write code that uses lambdas once you get the basics in place. This code uses a concept called deferred execution. Deferred execution means that code is specified now but will run later. In this case, later is when the print() method calls it.
+
+- A lambda infers the types from the surrounding context. That means you get to do the same.
+
+
+
+
+Functional interfaces:
+----------------------
+- Interfaces having only one abstract method.
+
+1) Predicate: Accepts one and return boolean
+-------------
+public interface Predicate<T> {
+   boolean test(T t);
+}
+
+Ex:
+
+private static void print(List<Animal> animals,
+11:       Predicate<Animal>  checker) {
+12:       for (Animal animal : animals) {
+13:          if (checker.test(animal))
+14:             System.out.print(animal + " ");
+15:       }
+16:       System.out.println();
+17:    }
+
+2) Consumer:  Only accepts and no return
+------------
+void accept(T t)
+
+Consumer<String> consumer = x -> System.out.println(x);
+
+public static void main(String[] args) {
+   Consumer<String> consumer = x -> System.out.println(x);
+   print(consumer, "Hello World");
+}
+private static void print(Consumer<String> consumer, String value) {
+   consumer.accept(value);
+}
+
+3) SUPPLIER: Only returns
+-------------
+T get()
+
+public static void main(String[] args) {
+   Supplier<Integer> number = () ->  42;
+   System.out.println(returnNumber(number));
+}
+ 
+private static int returnNumber(Supplier<Integer> supplier) {
+   return supplier.get();
+}
+
+
+4) COMPARATOR: accepts 2 param and returns int
+--------------
+Comparator<Integer> ints = (i1, i2) -> i1 - i2;
+
+//Both of these comparators actually do the same thing: sort in descending order
+Comparator<String> strings = (s1, s2) -> s2.compareTo(s1);
+Comparator<String> moreStrings = (s1, s2) -> - s1.compareTo(s2);
+
+
+Trick question:-
+----------------
+11: public void variables(int a) {
+12:    int b = 1;
+13:    Predicate<Integer> p1 = a -> {
+14:       int b = 0;
+15:       int c = 0;
+16:       return b == c;}
+17: }
+
+There are three syntax errors. The first is on line 13. The variable a was already used in this scope as a method parameter, so it cannot be reused. The next syntax error comes on line 14 where the code attempts to redeclare local variable b. The third syntax error is quite subtle and on line 16. See it? Look really closely.
+
+The variable p1 is missing a semicolon at the end. There is a semicolon before the }, but that is inside the block. 

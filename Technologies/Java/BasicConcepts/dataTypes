@@ -1,0 +1,216 @@
+
+Variables:
+----------
+- primitive types
+- object reference
+
+
+VARARGS:
+--------
+Which method do you think is called if we pass an int[]?
+
+public void fly(int[] lengths) {}
+public void fly(int... lengths) {}     // DOES NOT COMPILE
+
+fly(new int[] { 1, 2, 3 });
+fly(1, 2, 3);
+
+Primitive types:
+-----------------
+byte -> 8 bits -> -2^7 to 2^7-1 -> default : 0
+short ->16 bits -> -2^15 to 2^15-1 -> default : 0
+int -> 32 bits -> -2^31 to 2^31-1 -> default : 0
+long -> 64 bits -> -2^63 to 2^63-1 -> default : 0 -> 222222222L,22_22_22_222L //Help with readability
+float -> 32 bits -> -3.4E38 to 3.4E38 -> default: 0.0f -> 6-7 decimal digit precision
+double -> 64 bits -> -1.7E308 to 1.7E308 -> default: 0.0d -> 15-16 decimal digit precision
+char
+boolean
+
+- IEEE 754 floating point scheme used for float and double.
+- Exponential ex: 3.8e4
+
+Keyword	Type	Example
+boolean	true or false	true
+byte	8-bit integral value	123
+short	16-bit integral value	123
+int	32-bit integral value	123
+long	64-bit integral value	123L
+float	32-bit floating-point value	123.45f
+double	64-bit floating-point value	123.456
+char	16-bit Unicode value	'a'
+
+FLOATING-POINT NUMBERS AND SCIENTIFIC NOTATION
+While integer values like short and int are relatively easy to calculate the range for, floating-point values like double and float are decidedly not. In most computer systems, floating-point numbers are stored in scientific notation. This means the numbers are stored as two numbers, a and b, of the form a x 10b.
+
+This notation allows much larger values to be stored, at the cost of accuracy. For example, you can store a value of 3 x 10200 in a double, which would require a lot more than 8 bytes if every digit were stored without scientific notation (84 bytes in case you were wondering). To accomplish this, you only store the first dozen or so digits of the number. The name scientific notation comes from science, where often only the first few significant digits are required for a calculation.
+
+Don’t worry, for the exam you are not required to know scientific notation or how floating-point values are stored.
+
+
+
+Boxed variables:
+-------------------
+Integer.compare(person1.age(), person2.age())
+
+Tips:
+------ 
+1) use int and double most of the time.
+2) Use BigDecimal for precision.
+BigDecimal x = new BigDecimal("0.1");
+x.add(second)
+
+Note: Long literal can only be assigned to long. byte, short, int will have int literals
+
+- int x = Integer.MIN_VALUE
+  int y = Integer.MAX_VALUE
+
+Hexadecimal:
+------------
+- int intHex = 0x0041L
+
+Binary:
+-------
+int bin = 0b01000001
+
+Octal:
+-----
+int oct = 0101;
+
+Char type:
+----------
+- single letter characters
+- char x = 'B' -> This is stored as 66
+- Uses: 16 bit unsigned int
+- char -> 16 bits -> 0 to 2^16-1 [0-65536] -> default '\u0000' 
+- Mapping between character and number mapping is kept by unicode character set.
+Maps every characer with hexa number called code point -> whihc maps to integer value -> stored in a binary format.
+Unicode impl used is UTF-16 [encoding scheme]
+'B' -> encoded as 0042 [Hexa number] -> 00000000 01000010 [Stored in binary format] //Binary value is 66
+
+MIN_VALUE = '\u0000'
+MAX_VALUE = '\uFFFF'
+
+- unicode-table.com
+char x =66;
+char x_hex = 0x0041
+
+int x = 'A' -> This will print 65
+
+
+Static Variables:
+-----------------
+- They are unique to the class.
+
+Declaration ways:
+-----------------
+double x = 2.0, y = 3.0;
+
+Typecasting:
+-------------
+
+
+Literals:
+---------
+int million1 = 1000000;
+int million2 = 1_000_000;
+
+
+Some exceptions:
+----------------
+
+1) Can do only one conversion:
+As accommodating as Java is with trying to find a match, it will do only one conversion:
+
+public class TooManyConversions {
+   public static void play(Long l) {}
+   public static void play(Long... l) {}
+   public static void main(String[] args) {
+      play(4);      // DOES NOT COMPILE
+      play(4L);     // calls the Long version
+   }
+}
+Here we have a problem. Java is happy to convert the int 4 to a long 4 or an Integer 4. It cannot handle converting to a long and then to a Long. If we had public static void play(Object o) {}, it would match because only one conversion would be necessary: from int to Integer. Remember, if a variable is not a primitive, it is an Object,
+
+
+2) that method overloads must differ in at least one of the method parameters
+
+GENERICS
+You might be surprised to learn that these are not valid overloads:
+
+public void walk(List<String> strings) {}
+public void walk(List<Integer> integers) {}    // DOES NOT COMPILE
+Java has a concept called type erasure where generics are used only at compile time. That means the compiled code looks like this:
+
+public void walk(List strings) {}
+public void walk(List integers) {}    // DOES NOT COMPILE
+We clearly can’t have two methods with the same method signature, so this doesn’t compile. 
+Remember that method overloads must differ in at least one of the method parameters.
+
+
+
+
+Note:
+
+Note that Java can only accept wider types. An int can be passed to a method taking a long parameter. Java will not automatically convert to a narrower type. If you want to pass a long to a method taking an int parameter, you have to add a cast to explicitly say narrowing is okay.
+
+
+
+Exceptions:
+------------
+REFERENCE TYPES
+Given the rule about Java picking the most specific version of a method that it can, what do you think this code outputs?
+
+
+public class ReferenceTypes {
+   public void fly(String s) {
+      System.out.print("string");
+   }
+ 
+   public void fly(Object o) {
+      System.out.print("object");
+   }
+   public static void main(String[] args) {
+      ReferenceTypes r = new ReferenceTypes();
+      r.fly("test");
+      System.out.print("-");
+      r.fly(56);
+   }
+}
+The answer is string-object. The first call is a String and finds a direct match. There’s no reason to use the Object version when there is a nice String parameter list just waiting to be called. The second call looks for an int parameter list. When it doesn’t find one, it autoboxes to Integer. Since it still doesn’t find a match, it goes to the Object one.
+
+Let’s try another one. What does this print?
+
+public static void print(Iterable i) {
+   System.out.print("I");
+}
+public static void print(CharSequence c) {
+   System.out.print("C");
+}
+public static void print(Object o) {
+   System.out.print("O");
+}
+public static void main(String[] args){
+   print("abc");
+   print(new ArrayList<>());
+   print(LocalDate.of(2019, Month.JULY, 4));
+}
+The answer is CIO. The code is due for a promotion! The first call to print() passes a String. As you learned in Chapter 5, String and StringBuilder implement the CharSequence interface.
+
+The second call to print() passes an ArrayList. Remember that you get to assume unknown APIs do what they sound like. In this case, Iterable is an interface for classes you can iterate over.
+
+The final call to print() passes a LocalDate. This is another class you might not know, but that’s okay. It clearly isn’t a sequence of characters or something to loop through. That means the Object method signature is used.
+
+
+AUTOBOXING
+In Chapter 5, you saw how Java will convert a primitive int to an object Integer to add it to an ArrayList through the wonders of autoboxing. This works for code you write too.
+
+public void fly(Integer numMiles) {}
+This means calling fly(3) will call the previous method as expected. However, what happens if you have both a primitive and an integer version?
+
+public void fly(int numMiles) {}
+public void fly(Integer numMiles) {}
+Java will match the int numMiles version. Java tries to use the most specific parameter list it can find. When the primitive int version isn’t present, it will autobox. However, when the primitive int version is provided, there is no reason for Java to do the extra work of autoboxing.
+
+
+
+

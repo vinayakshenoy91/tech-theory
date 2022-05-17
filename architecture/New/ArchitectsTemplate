@@ -1,0 +1,67 @@
+Types of architects:
+---------------------
+1) Infra architects
+2) Software architects
+3) Enterprise architects - Works with top level mgmt, streamline IT to support business
+Prereq -> Senior Software architect or PM
+
+Any software requirement:
+1) Fast
+2) Secure
+3) Reliable
+4) Easy to maintain
+
+Qualities/Decision:
+- Trust worthiness
+- Support dev
+- Be familiar with : Weakness, strength, competition and growth strategy of org.
+- Works with end  user in mind
+- Right people with right language.
+- Waht current dev skills are and project quality
+- When recommending a product someone who is not a dev will take care of it
+- Buy or build
+
+Steps in project:
+-----------------
+1) requirement: Business flow, business services, UI
+2) NFR:Perf(Latency and throughput), Load, Data volume, Concurrent users, SLA
+3) Map components - Understand system functionality and communicate  your understanding the client.
+4) Select tech stack
+5) Design architecture
+6) Arch document
+7) Support the team
+
+Latency -> Time taken to perform a single task.[Taime take to save in DB or read file from file system]
+throughput -> How many task can be performed in given time unit? 
+load -> quantity of work withstand without crashing
+Data volume -> amount of data, consider data growth
+Concurrent users: Concurrent users = Load X 10
+SLA -> Uptime : (365*24)(1-0.9999)=downtime hours
+
+Note: The System Analyst is the one that defines the functional requirements.
+
+Be smart not right
+
+Public speaking: Define a  clear goal, know your audience,be confident, dont read, maintain eye contact
+
+Blogs, articles, conference-> Dzone, InfoQ, Orielly
+Microsoft build, Qcon,NDC conf, software architecture conf
+
+
+Application types:
+------------------
+1) Websites/ Web apps
+2) Webapi
+3) mobile
+4) console/CLI
+5) Service -> service managers, long running process
+6) Desktop apps
+
+
+Project setup template:
+------------------------
+1) Logging
+2) Metrics
+3) Conneciton setup and configs to databases and message brokers
+4) Fault tolerance:
+- Circuit breaker

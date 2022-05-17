@@ -1,0 +1,21 @@
+- Stream is used to process collection of objects
+- Common ForkJoin pool execution engine for parallel streams.
+
+
+Not to use when:
+---------------
+- Split or combine is not well
+- Data set is small
+- Autoboxing and unboxing does not perform better
+- Stream api operators -> iterate() and limit() does not work well
+
+
+Listname.stream().map().parallel().
+Listname.parallelStream().map().sequential().
+
+Default parallelism value and changes:
+---------------------------------------
+Default parallelism=Number of cores-1
+
+System.setProperty("java.util.concurrent.ForkJoinPool.common.parallelism","100");
+-Djava.util.concurrent.ForkJoinPool.common.parallelism=100

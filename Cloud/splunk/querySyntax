@@ -1,0 +1,251 @@
+
+ 
+ Syntax snippet used:
+ ---------------------
+ * -> any/Like
+
+ NOT , OR, AND  -> failed NOT password,  Executed in order of  NOT, OR, AND. Use paranthesis when required.
+
+= , !=, > ,>=,<=,< -> Field operators
+
+host !=mail or NOT host=mail //Returns same result, but not always(in NOT case , if a record does not have host field, 
+that will also be included). WARN
+
+# -> numerical
+a dest 4 -> string with 4 values
+
+- Field keys are case sensitive
+- Field values are not case sensitive
+
+time > index > source > host > sourcetype
+
+Query practises:
+----------------
+
+- index=  sourcetype= source= host= and time based
+- status IN ("500","503","505")
+- Time selections in query:
+[-30s, -30m,-2h,  -30d, -30w,, -30mon,-30y -30m@h(Any event happened on 9:37, instead of results from 9:07, it 
+will return from 9:00, roundoff)
+earliest=-2h latest=-1h
+earliest=01/08/2020:12:00:00]
+
+Search:
+=======
+Syntax: search terms | search components (commands/functions) | search components
+
+settings:
+
+ctl + command + \ -> Put search in new line.
+Preference -> SPl editor -> Advanced -> Compact -> line breaks and numbers.
+
+For better search use: |fields fieldname
+
+search queries:
+--------
+sourcetype=acc* status=200 | stats list(product_names) as "Games sold" | top "Games"
+sourcetype=acc* status=200 | timechart span=1h by sourcetype
+sourcetype=acc* status=200 | fields status clientip //Include fields
+sourcetype=acc* status=200 | fields - status clientip //Exclude fields
+sourcetype=acc* status=200 | table JSESSIONID, product_name,price |rename JSESSIONID as "User session" product_name as "PNAME"
+sourcetype=acc* status=200 | dedup JSESSIONID | table JSESSIONID, product_name,price //Depup can happpen for one or more fields
+sourcetype=acc* status=200 | table JSESSIONID, product_name,price | sort product_name
+sourcetype=acc* status=200 | table JSESSIONID, product_name,price | sort - sale_price Vendor limit=20 //Sort descending limit 20
+
+Transforming commands:
+----------------------
+search command | top fieldname showperc=false countfield="Number of sales" useother=True
+search command | top fieldname by <fieldname2> limit=3 showperc=false countfield="Number of sales" //[Group by]Like top 3 products sold by a vendor
+search command | rare fieldname showperc=false countfield="Number of sales" useother=True //Least common values
+
+//Timechart(Time is always the X-axis) & Chart
+sourcetype=acc* status=200 | timechart span=1h by sourcetype 
+sourcetype=acc* status=200 | timechart count(linecount) as "Units sold" by product_name limit=5
+sourcetype=acc* status=200 | timechart span=12h sum(price) by product_name  //Show instances at every 12h interval
+sourcetype=acc* status=200 | chart count over status //count vs status
+sourcetype=acc* status=200 | chart count over status by host | fillnull value="NA"
+sourcetype=acc* status=200 | chart count over host by product_name usenull=f useother=f
+
+//Compare entities at two diff times (Timewrap)
+sourcetype=acc* status=200 | timechart span=12h sum(price) by product_name |timewrap 7d
+|rename _time as Day | eval Day=strftime(Day,"%A")
+
+//Stats
+sourcetype=acc* status=200 | timechart count by src_ip
+search command | stats count as "Title"  by fieldname | search Visits >1 //Groupby
+search command | stats count(action) as "ActionEvents", count as "Total Events" //Only count fields that have action
+search command | stats count(eval(status<300)) as "Success", count(eval(status>=400 AND status<500)) as "Client Error" |where x>y
+search command | stats distinct_count //select by distinct count
+search command | stats distinct_count(fieldname) as "Numbers" by sale_price //select by distinct count
+search command | stats sum(fieldname) as "FieldTitle" by fieldname2 //All products sold wrto each product
+search command | stats count as "Units sold "sum(fieldname) as "FieldTitle" by fieldname2 //All products sold wrto each product with count
+search command | stats avg(sale_price) as "Avg Units sold", min(price), max(price) by categoryId
+search command | stats list(Asset) as "Assets" by Employee //Give all value that employee holds
+search command | stats values(s_hostname) by username //Site visited by each user
+sourcetype=acc* status=200 | iplocaton src_ip | geostats count by Country
+search command |stats sum(sale_price) as "Total", count as "#Sold" by date_hour | rename date_hour as "Time"
+|table "Time" "#Sold" "Total"
+
+
+//Geographical
+search command | iplocation src_ip
+search command | geostats latfield=latitude longfield=longitude  count by product_name globallimit=4 //Usage, global limit to see columns
+index=web sourcetype=access_combined action=purchase status=200 | iplocation clientip | geostats count by clientip
+
+
+//Chloropleth maps
+requires keyhole markup language file (.kmz)
+search command | stats count as Sales by VendorCountry
+| geom geo_countries featureIdField=VendorCountry
+
+//trendline
+sourcetype=acc* status=200 | timechart sum(prices) as sales | trendline wma2(sales) as trend //sma,ema
+
+//Total of row
+sourcetype=acc* status=200 | chart count over status by host | addtotals col=true label="Total" labelfield="host"
+sourcetype=acc* status=200 | stats count over status by host | addtotals col=true row=f labelfield="host"
+
+
+//Eval command
+- Arithmetic, concatenation, boolean opertors supported
+- Results can be written to new field or replace existing field
+- Field values are case sensitive
+- You can pipe multiple eval commands
+
+Bytes usage:
+index=network  sourcetype=x | stas sum(sc_bytes) as Bytes by usage | eval bandwidth = round(Bytes/1024/1024,2)
+| sort -bandwidth | rename bandwidth as "Bandwidth (MB)" | eval bandwidth=bandwidth."MB" fields - Bytes 
+
+using to string: 
+| eval total_price = "$"+tostring(total_price)
+| fieldformat total_price = "$"+tostring(total_price) //Underlying value no changed and only representation is changed.
+
+if condition:
+|eval x = if(y>10,"A","B")
+
+case condition:
+|eval x = case(status>=200 AND status<300,"Success", status>=300 AND status<400,"Redirect", status>500,"Server error")
+
+VVIP:
+|stats count(eval(status<300)) as "Success", count(eval(status>=400 AND status<500)) as "Client Error"
+
+//where
+
+| where x like "_or%" //You cannot use wildcard
+| where isnull(x)
+| where isnotnull(x)
+
+//transactions are used when correlation is required
+- Use to see events correlated together
+- Use when events need to be groupedon start and end values.
+maxpause
+maxspan
+endswith
+startswith
+
+Field extraction:
+----------------
+setting -> field -> field extraction
+
+
+Field alias:
+------------
+settings -> fields -> field alias -> add new
+settings -> field -> calculated fields
+Field from lookup table ro search cannot be used. Then must be generated.
+
+Calculated fields:
+------------------
+Used to save formulas that can be used across.
+
+
+Tags:
+-----
+- If you want to rename your production servers.
+- Expand i button of event -> against host right handside you have a expand button -> create tag.
+- Now search tag=SF
+- tag values are case sensitive
+
+Event types:
+------------
+- Categorise your events and get them coloured. Categoriose events based on search string.
+- Use tags to organise data.
+- eventtype field within a search string
+- Time range not available
+
+Macros:
+--------
+- Reusable search strings or portions of search strings that are reusable.
+- Store entire search string
+- time range independent
+- pass arguments to search
+- Settings > advanced search > search macros
+- In definition field type eval command : eval ..... and name it as x
+- In search do this -> |`x`   //Pipe and then surrounding by backticks
+- eval $arg1$ = tostring(round($arg1$,2))  //Accept one input args
+- `x("sales_input")`
+- $cmd$ $arg1$ = tostring(round($arg1$,2))  //Accept multiple args
+- in arguments field, type: cmd,arg1
+- Validation expression: $cmd$="fieldformat"
+- Validation error
+
+cmd + shift+E -> Shows search as is
+
+Workflow actions:
+----------------
+- Settings > fields > workflow actions
+- Get WhoIs for $src_ip$
+- apply fields: src_ip
+- http://xyz.com/$src_ip$
+- Used to post details to bug tracker.
+
+summary = $status$ error $host$
+occured=$_time$
+environment=$host$
+details =$_raw$
+
+Datamodels:
+------------
+- Consists of events, searches and txns
+- Root dataset can have multiple child dataset
+
+
+Reports (Saved reports:
+--------
+- Save query as reports to get the data
+- Fixed search criteria
+- Time range and formatting needed
+- Share with other users.
+- add reports to dashboards.
+
+
+Pivot:
+------
+- Try using this for visualisations [Create all through pivots]
+
+Lookups:
+-------
+Setting -> lookup -> add new lookup table files -> select app[uplaod file]
+- Field values from lookup are case sensitive by default.
+- tag values are case sensitive
+
+Check if lookup is working: in search tab put:
+
+|inputlookup http_status.csv
+
+Give name to uploaded lookup like http_status
+search | lookup http_status code as status //Matching status data with code value
+
+
+
+Scheduled Reports:
+-----------------
+
+
+
+
+Alerts:
+--------
+- Search 
+- Set alert
+

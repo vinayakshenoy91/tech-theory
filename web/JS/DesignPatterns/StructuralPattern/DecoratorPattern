@@ -1,0 +1,9 @@
+- Object with additional fucntionlity
+- Keep functionality separate.
+- Able to interact with existing structure.
+- Facilitate the additon of behaviours wihout inheriting from them.
+https://tesco.udemy.com/course/design-patterns-javascript/learn/lecture/14401242#notes
+
+Two options:
+- Inherit.
+- Decorator , whihc simplify  reference decorated obj

@@ -1,0 +1,189 @@
+- what technology to use for each database.
+
+How to make a DB choice:
+- ACID vs eventual consistancy
+- Polyglot persistence means applying the right technology to address each of the different data access patterns required in an application.
+
+
+Key–value: The data structure is based on a key and the value associated with the key. These are the simplest of NoSQL databases, which have strong scalability and availability capabilities—but limited data model flexibility and query facilities.
+
+Document: The data structure is based on a self-describing document, usually in a format such as JavaScript Object Notation (JSON). These databases are powerful for evolving data models because documents of the same type do not have to be of exactly the same structure.
+
+Wide column: The data structure is based on a set of columns7 (versus row-based for a typical relational database). The columns also do not need to form a first normal form (1NF) table. Their benefit is scalability, but they struggle with ad hoc query patterns.
+
+7. Here we are referring to wide column stores that are part of the NoSQL family. Relational databases also support column-oriented operations and there are a group of column-oriented databases that follow the relational database model. See Daniel Abadi, DBMS Musings (2010) (https://dbmsmusings.blogspot.com/2010/03/distinguishing-two-major-types-of_29.html) for a good overview.
+
+Graph: The data structure is based on nodes and edges (i.e., entities and their relationships). These databases are very powerful for managing queries, which are predominantly based on the relationships between nodes. Unlike other NoSQL databases, their query engines are optimized for efficient graph traversal.
+
+
+
+Type
+
+Main Differentiators (Strengths)
+
+Limitations
+
+Typical Application
+
+Examples
+
+Key–value
+
+Scalability, availability, partition tolerance
+
+Limited query functionality; cannot update part of the value separately
+
+Storage of session data, chat room enablement, cache solutions
+
+Memcached, Redis, Amazon Dynamo, Riak
+
+Document
+
+Flexible data model, easy to develop with because data representation is close to code data structures; some have ACID capabilities
+
+Analytic processing, time series analysis; cannot update part of the document separately
+
+Internet of Things data capture, product catalogs, content management applications; changing or unpredictable structures
+
+MongoDB, CouchDB, Amazon Document DB
+
+Wide column
+
+Ability to store large datasets at high reads, scalability, availability, partition tolerance
+
+Analytic processing, aggregation heavy workloads
+
+Catalog searches, Time series data warehouses
+
+Cassandra, HBase
+
+Graph
+
+Relationship-based graph algorithms
+
+Transactional processing, not easy to configure for scalability
+
+Social networking, n-degree relationships
+
+Neo4j, Amazon Neptune, Janus Graph, GraphBase
+
+
+
+Evaluating DB tech:
+
+ If you are interested in a structured approach to evaluate different NoSQL database technologies against quality attributes, the Lightweight Evaluation and Architecture Prototyping for Big Data (LEAP4PD) method provided by the Software Engineering Institute at Carnegie Mellon University is a good reference.9
+
+8. Ian Gorton and John Klein, “Distribution, Data, Deployment: Software Architecture Convergence in Big Data Systems,” IEEE Software 32, no. 3 (2014): 78–85.
+
+9. Software Engineering Institute, LEAP(4BD): Lightweight Evaluation and Architecture Prototyping for Big Data (2014). https://resources.sei.cmu.edu/library/asset-view.cfm?assetid=426058
+
+
+CAP theorem:
+------------
+
+11. Eric Brewer, “CAP Twelve Years Later: How the ‘Rules’ Have Changed,” Computer 45, no. 2 (2012): 23–29.
+
+11. Eric Brewer, “CAP Twelve Years Later: How the ‘Rules’ Have Changed,” Computer 45, no. 2 (2012): 23–29.
+
+The CAP theorem is further expanded in Daniel Abadi’s PACELC,12 which provides a practical interpretation of this theorem: If a partition (P) occurs, a system must trade availability (A) against consistency(C). Else (E), in the usual case of no partition, a system must trade latency (L) against consistency (C).
+
+12. David Abadi, “Consistency Tradeoffs in Modern Distributed Database System Design,” Computer 45, no. 2, (2012): 37–42. http://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf
+
+Event sourcing:
+--------------
+14. Martin Fowler, “What Do You Mean by ‘Event-Driven’?” (2017) provides a good overview. https://martinfowler.com/articles/201701-event-driven.html
+
+Relational DB properties:
+------------------------
+A relational database with the referential integrity rules implemented ensures that the state of the system at any point in time is internally consistent. For example, if there is evidence of delivery of goods through the Good Tracking Service, based on the transaction boundary we define, the database can ensure that the Good table and associated payments and account information are also updated consistently.15 Another example is when database constraints ensure that the database applies all of the business consistency rules we have defined (e.g., all accounts have an associated seller as a foreign key).
+
+CQRS and event  sourcing:
+-------------------------
+The key benefit of this pattern is that it simplifies the writes and supports high-write workloads. The challenge is the difficulty in supporting queries. In our example, the original database can answer questions about the current state of accounts and associated payments in a straightforward way. However, a “pure” event-sourced system would need to re-create the state of the entity using the events before being able to answer the same questions. A resolution to this problem is to store the current state of the entity as well as the events or perhaps store a recent snapshot that requires only a few events to be applied to it.
+
+This model is still significantly more complex than a conventional entity-based data model. That is why the Event Sourcing pattern is often used in conjunction with the Command Query Responsibility Segregation (CQRS) pattern.16 This architectural pattern results in two different storage models within a system, one model to update information and a second model to read information. Another way to look at it is that every system request should be either a command that performs an action (resulting in a write) or a query that returns data to the caller (i.e., a read), but not both. Note that a command and an event are not the same thing. Commands are instructions to change the state of the system, whereas events are notifications.
+
+16. Command query segregation was first coined by Bertrand Meyer in Object-Oriented Software Construction (Prentice Hall, 1988). Command query responsibility segregation was introduced by Greg Young, CRQS Documents, https://cqrs.files.wordpress.com/2010/11/cqrs_documents.pdf
+
+Datascience:
+------------
+Data engineers focus on sourcing, combining, and structuring data into useful information
+
+The ability to capture the data first and then decide how to analyze it is one of the key benefits of modern analytics approaches. This is referred to as schema on read versus schema on write. The schema on read versus schema on write tradeoff can also be framed as a performance tactic. In fact, much of the motivation for using schema on read in early NoSQL databases was performance. Minimizing the amount of transformation done on the way into the system naturally increases its ability to handle more writes.
+
+There has been a lot of hype regarding schema on read. It is a powerful architectural tactic, but you still need to understand your data. With schema on read, though, you do not have to understand and model all of it up front. In data science, significant effort is focused on data engineering (i.e., understanding and preparing your data to be able to support the analysis that is required).
+
+
+Coupled vs decoupled:
+--------------------
+Decoupled (e.g., messaging): The analytics components listen to all events that happen in the core transactional layer. This option has the benefits of fully decoupling the schema between the environments and of being a real-time approach. However, a key challenge with this option is ensuring consistency between the transactional and analytics environments. For example, if a payment is not processed successfully, how can they be sure that the transactional layer and analytics layer have a consistent state?
+
+Coupled (e.g., database replication): Database replication technology is utilized between the transactional and analytics components. This option has the benefit of consistency being easier to manage, particularly considering that the TFX system primarily uses SQL databases in most of its core transactional components. It can also be implemented relatively quickly by using standard features that databases provide. However, the schemas of the transactional and analytics environments are more tightly coupled.
+
+VVIP: data ownership, data integration, and schema evolution.
+---------------------------------------------------------------
+- Maintain a data ownership table to check who owns the data and who consumes it.
+- Once a decision is made that a data entity is owned by a single component, we must decide how the data should be shared with 
+other components. It is important that a data entity is always interpreted consistently across the entire system. The safe way to 
+accomplish this is to share data by reference, that is, by passing an identifier that uniquely identifies the data element. Any component 
+that needs further detail regarding a data entity can always ask the data source for additional attributes that it might need.
+
+Metadata:
+--------
+topic of metadata, which, as every technologist knows, is data about data. It basically means that you have business-specific data, such as attributes associated with a contract. Then you have data describing either the attributes or the entire contract, such as when it was created, last updated, version, and component (or person) who updated it. Managing metadata has become increasingly important, particularly for big data systems and artificial intelligence. There are three main reasons for this growing importance.
+
+First, large data analytics systems contain data from multiple sources in varying formats. If you have sufficient metadata, you can discover, integrate, and analyze such data sources in an efficient manner.
+
+Second is the need to track data lineage and provenance. For any output generated from the system, you should be able to clearly identify the journey of the data from creation to the output.
+
+Data integration:
+-----------------
+The topic of data integration covers a wide area, including batch integration, traditional extract–transform–load (ETL), messaging, streaming, data pipelines, and APIs.
+
+At a high level, there are two reasons for data integration:
+
+Integrating data between components to facilitate a business process, such as how data is shared between different services in the TFX system. This is where we would find messaging, APIs, remote procedure calls, and sometimes file-based integration. We could also architect our system by utilizing streaming technologies, which would be a different approach to data integration.
+
+Moving data from multiple sources into a single environment to facilitate additional capabilities such as monitoring and analytics. This is where we traditionally used ETL components, and these days, we consider other solutions such as data pipelines.
+
+
+Notes:
+------
+The huge success of REST (compared to former integration approaches such as Simple Object Access Protocol [SOAP]) 
+is partially because it is an architectural pattern rather than a tightly specified standard or a specific set of technologies.
+
+
+
+Data (Schema) Evolution
+------------------------
+Within component:
+Schema evolution can be considered from two perspectives: within a component (intercomponent) and between components (intracomponent).
+Architecting for build, test, deploy, and operate (principle 5) helps in dealing with this challenge. Wherever possible, we should treat the database schema as code. We want to version and test it, just as we would do with any other software artifact. Extending this concept to datasets used in testing is also extremely beneficial
+
+
+With time, you realize that you need to enhance your initial understanding of the data, introducing new entities, attributes, and relationships. Within a component, managing how the application code deals with the changes in the underlying data structures is what schema evolution is about. Backward compatibility is a commonly used tactic in this context and basically means that older application code can still read the evolving data schema. However, there is a tradeoff in increased complexity of application code.
+
+Between components:
+schema evolution focuses on data defined in interfaces between two components. For most applications, this is an interface definition implemented in a technology such as Swagger that implements the OpenAPI standard.23 For intracomponent schema evolution, concerns similar to those of intercomponent schema evolution apply. As the data being distributed from a component evolves, we want to make sure that consuming components can deal with the changes.
+23. API Development for Everyone (https://swagger.io) and The OpenAPI Specification (https://www.openapis.org).
+
+
+Note:
+ In other words, if you are a producer of an API, you should comply with specific formats and schemas. By contrast, if you are a 
+ consumer of an API, you should be able to manage dealing with unknowns in the APIs that you consume from. 
+ For example, you should be able to ignore any new fields that you are not consuming. 
+
+Breaking changes and versioning:
+--------------------------------
+By applying Postel’s law, additive data fields become manageable in schema evolution. Consumers that require those fields 
+can consume them, and consumers that do not need them can just ignore them. The challenge comes if the API producer needs to remove 
+certain data fields or significantly alter the schema, commonly known as breaking changes. This leads us to the topic of versioning 
+and how we manage change.
+
+
+As a producer, we need to version our APIs (i.e., our schema). Versioning enables effective management of change by providing a mechanism to communicate with data consumers. Any significant change in the data schema of the API will have to be managed over a period of time. In today’s distributed application landscape, it is not reasonable to expect that all consumers of an API can deal with a breaking change at the same time. Consequently, as a producer of an API, you will need to support multiple versions. Consumers that require the new version for their own functionality can start consuming directly, and other consumers are given time to change to the new version.
+
+This evolutionary way to deal with changes is commonly called the Expand and Contract pattern. In this pattern, you first expand to support both old and new versions of the schema. Then you contract and support only the new version of the schema. There are multiple ways of implementing this pattern depending on the technology stack you are using.
+
+
+

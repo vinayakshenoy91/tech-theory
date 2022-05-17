@@ -1,0 +1,28 @@
+- Always yield values
+- It yields value and waits for us to instruct again
+- It can have one or multiple yield
+- Generator returns an iterator
+
+function* testing(){
+     yield 1;
+     yield 2;
+     yield 3;
+}
+
+const iterator = testing();
+
+console.log(iterator.next()) -> You get a a value and done flag. If there is a code between two yield, 
+it will run all the code before it gets to next yield
+
+- After the yield is compelte and if we jkeep calling yield, it will give value as undefined and done as true.
+- We control when to enter and exit a function
+
+
+//the fourth fetch statement will take us back to yield 1
+function* testing(){
+    whitle(true){
+     yield 1;
+     yield 2;
+     yield 3;
+    }
+}

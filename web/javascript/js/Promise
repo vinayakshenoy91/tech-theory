@@ -1,0 +1,11 @@
+var k = new Promise((resolve,reject)=>{
+
+})
+
+
+k.then(()=>{},()=>{})
+
+
+- Promise.all(getA(),getB(),getC()).then(results=>{
+    
+})

@@ -1,0 +1,8 @@
+- Hashtable + Doubly Linked List
+- Splay trees work fine but again we store all items in a tree like structure.
+- We just update references which can be done in O(1) constant time complexity
+- Use age bits to track items in cache. Higher age bits means frequently used.
+- When cache full, remove least recently used.
+
+
+

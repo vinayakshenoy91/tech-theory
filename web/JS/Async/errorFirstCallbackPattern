@@ -1,0 +1,22 @@
+function square(number, callback){
+    setTimeout(function(){
+        if(typeof number !== 'number'){
+            callback(nwe Error('Input is not a number'));
+            return;
+        }
+
+    const result =number * number;
+    callback(null, result);
+
+    },1000);
+}
+
+
+
+square('x',(err,value)=>{
+    if(err!==null){
+        console.log(err);
+        return;
+    }
+})
+

@@ -1,0 +1,12 @@
+- It is the ability of compiler to look at each method invocation and corresponding declaration
+in order to determine the type argument  such as T generic type that make invocation applicable.
+
+- The type inference algo determines the <T> type of arguments.
+and the type that the result is being assigned or returned if available.
+
+<T> is to tell java that we are using generic type
+
+- Type inference algo tries to find the most specific type that works with all of the arguments.
+
+
+ 

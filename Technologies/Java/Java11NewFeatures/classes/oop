@@ -1,0 +1,29 @@
+Object: Software construct that models real world concepts
+
+Class: Prototype from whihc objects can be created or instantiated
+
+Constructor:
+-----------
+- Default no-args Constructor is available even if you dont declare it
+- They can be overloaded -> They must differ by number of arguments or argument types
+
+
+public JetEngine(String model){ this.model=model;}
+public JetEngine(String model, String fx){ this(model); this.fx=fx;}
+
+Initilizer block:
+------------------
+- Code that is executed whenever an instance is created. It has no data type, no associated name 
+and is placed outside of any method
+
+class JE{
+   String model;
+   int maxThrust;
+
+   {
+       this.model="";
+       sysout("x");
+   }
+
+   JetEngine(int maxThrust){ this.maxThrust=maxthrust;}
+}

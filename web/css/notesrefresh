@@ -1,0 +1,157 @@
+- We use , for grouping multiple selectors.
+p, div, span {
+  background-color: yellow;
+}
+
+- All spans in all paragraphs, descendent selector
+p span {
+  background-color: skyblue;
+}
+
+- This is an example of an adjacent sibling selector. All the immediate h1 tags after p tags changed their background color to orange.
+ If there is any other element between p tag and h1 tag then this rule is not applicable.
+p + h1 {
+  background-color: orange;
+}
+
+- All the h1 tags after the first occurrence of p tags.
+
+p ~ h1 {
+  background-color: orange;
+}
+
+- If we have id and class selector -> Both selectors are applied since the id selector has more specificity than the class selector. 
+The rule defined in id selector overrides the rule defined in the class selector.
+
+- Specificity:               100pts 10pts   1pts
+!important > inline styles > id > class > element attributes
+
+- The [attribute*="value"] selector matches every element whose attribute value contains the specified substring.
+[id*="demo"] {
+  font-size: 30px;
+  background-color: skyblue;
+}
+
+<p id="contains-demo-string"> Styled using id attribute selector. </p>
+
+- The float property is used for positioning and formatting content.
+
+- float: inherit; on an element, it will inherit the value of float property from its parent element.
+
+- HTML elements are positioned static by default. 
+
+-  With float and clear they will be stacked
+p {
+  border: 2px solid coral;
+  float: right;
+  width: 30%;
+  clear: both;
+}
+
+-> clear with property value "both" is used to remove floating elements from the left and right sides
+
+body {
+  font: 1.2em / 1.5 Helvetica Neue;
+}
+
+//Generic solution
+
+//All the elements must have a border-box around them so that the padding and border are included in an element’s total width and height. 
+//The default margin and padding of all the elements are set to 0 because we want to add our custom values.
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+}
+
+.box {
+  width: 90%;
+  padding: 0.5em;
+}
+
+.float {
+  margin: 15px;
+  width: 150px;
+  height: 150px;
+  color: white;
+  border-radius: 5px;
+  background-color: steelblue;
+  padding-top: 3em;
+  text-align: center;
+}
+
+.float1 {
+  float: left;
+}
+
+.float2 {
+  float: right;
+}
+
+@media screen and (max-width: 500px) {
+  section {
+    display: block;
+    width: 95%;
+    margin: 1rem;
+  }
+}
+
+Display:
+--------
+Block-level elements always start on a new line and take full width available. div, p, header etc. are examples of block-level elements. 
+
+p {
+    border: 2px black solid;
+}
+
+- Display:none does not take up any space as well
+
+- If we add a block level element inside an inline element -> It starts from the new line and takes up the full width available
+
+- inline-block property aligns the block-level elements inline and we can edit the height and the width of the block.
+The display: inline-block; converts the display of block-level elements into inline. The block-level elements are 
+aligned with inline elements.
+
+- The tag with display: none; property will not appear on the page, but you can still interact with it through the DOM. 
+If the tag is present between two other tags, there will be no space assigned to that tag.
+- The tag with visibility: hidden; is also not visible, but the blank space is allocated for it on the page. 
+The tag is rendered; it is just not seen on the page.
+
+Position:
+---------
+- The top, bottom, right, left, and, z-index has no effect if the position is set to static.
+
+- An element with position: fixed; is positioned relative to the viewport, which means it always stays 
+in the same place even if the page is scrolled
+
+- An element with position: absolute; is positioned relative to the nearest positioned ancestor. If an absolute positioned element has 
+no positioned ancestors, it uses the document body and moves along with page scrolling.
+
+- An element with position: sticky; is positioned based on the user’s scroll position.
+
+- z-index sets the stack order of an element. Default value is "auto".
+auto sets the stack order equal to its parents. This is default value of z-index
+
+- We have set the z-index values for blue, red, and black boxes to 5, 3, 150, respectively. If we place black box div in red box div 
+then no matter how big the z-index value of the black box is, the parent element red box z-index value is less than the blue box so 
+blue box appears on the top.
+
+- The relative positioned element is always placed on top of the static positioned element because the z-index value can be added 
+to the relative positioned element. 
+
+- Can you think of some other ways to create a stacking context other than the z-index property?#
+We can use the opacity and transform properties for the stacking context. The z-index and position properties are not required here. 
+Any opacity value other than 1 will do the trick we used 0.99 as a value.
+
+#outer-1 #box-1 { //back
+  opacity: 0.99;
+}
+
+#outer-2 #box-2 { //front
+  transform: scale(1);
+}
+
+Block Formatting Context:
+--------------------------
+

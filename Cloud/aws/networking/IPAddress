@@ -1,0 +1,34 @@
+- VPC require IP range and is defined using Classless Inter-Domain Routing (CIDR) block
+- Allowed block size is between /16 and /28
+
+10.0.0.0/16 -> 65535 address (10.0.0.0.-10.0.255.255)
+10.0.0.0/28 -> 16 address (10.0.0.0-10.0.0.15)
+
+CIDR.xyz can be used to calculate first and last ip and available ips
+
+Subnet block -> 10.0.0.0/20
+AWS reserves first 4 and last address of each subnet block
+.0,.1,.2,.3,.15.255
+
+- Subsets of VPC CIDR and they should not overlap
+Subnet 1 -> 10.0.0.4-10.0.15.254
+subnet 2 -> 10.0.16.4 - 10.0.31.254
+
+- Instance address determined by subnet CIDR
+
+External IP address assigned by AWS from pool of pulbic ip address. Incase you want same ip, use elastic ip
+Elastic ip can be reassigned
+
+- Elastic IP has to be assigned to a running instance and it is free. If you keep it idle it will be charged.
+
+Internal:
+---------
+- Addressable from inside VPC only
+- based on subnet CIDR
+- Stays same for lifetime of instance.
+
+External:
+----------
+- Addressable from outside of VPC
+- Can change on instance start or stop
+- Pulled from AWS pool of external IPs

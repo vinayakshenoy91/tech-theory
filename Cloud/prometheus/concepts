@@ -1,0 +1,1 @@
+Prometheus is the de facto standard for storing the generated information. Essentially, it is a complete open source monitoring system that includes a time-series database. Prometheus’s web UI gives you access to metric querying, alerting, and visualizations and helps you gain insights into your systems.

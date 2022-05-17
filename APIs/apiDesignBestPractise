@@ -1,0 +1,228 @@
+- focus not on exposing on your company’s internal infrastructure but on the experience that an outside developer should have when interacting with your API. 
+
+- Make It Fast and Easy to Get Started
+- In addition to interactive documentation, tools such as software development kits (SDKs) can go a long way toward helping 
+developers use your API. These code packages are designed to help developers 
+get up and running quickly with their projects by simplifying some of the transactional layers and setup of an application.
+
+- Work Toward Consistency
+Consistency generally means that there are a number of patterns and conventions repeated throughout your API, in such a way that 
+developers can begin to predict how to use your API without seeing the documentation. That could include anything from data access 
+patterns to error handling to naming. The reason consistency is important is that it reduces the cognitive load on developers who 
+are trying to figure out your API. Consistency helps your existing developers in adapting new features by reducing forks 
+in their code, and it helps new developers hit the ground running with everything you’ve built on your API. 
+
+- Make Troubleshooting Easy
+Another best practice for designing APIs is making troubleshooting easy for developers. 
+This can be done through returning meaningful errors as well as by building tooling.
+
+Categorise errors:
+
+Error category	Examples
+System-level error	
+Database connection issue
+
+Backend service connection issue
+
+Fatal error
+
+Business logic error	
+Rate-limited
+
+Request fulfilled, but no results were found
+
+Business-related reason to deny access to information
+
+API request formatting error	
+Required request parameters are missing
+
+Combined request parameters are invalid together
+
+Authorization error	
+OAuth credentials are invalid for request
+
+Token has expired
+
+----- https://tools.ietf.org/html/rfc7807 -- 
+Error category	HTTP status	HTTP headers	Error code (machine-readable)	Error message (human-readable)
+System-level error	500	--	--	--
+Business logic error	429	Retry-After	rate_limit_exceeded	“You have been rate-limited. See Retry-After and try again.”
+API request formatting error	400	--	missing_required_parameter	“Your request was missing a {user} parameter.”
+Auth error	401	--	invalid_request	“Your ClientId is invalid.”
+
+
+Before you troubleshoot real-time traffic, be sure to respect customer privacy by redacting any 
+personally identifiable information (PII). 
+
+- Make Your API Extensible
+
+
+APi design steps:
+------------------
+- what problem are you trying to solve, and what is the impact you want to have by building this API?
+
+What APIs are available, and what are their patterns and conventions?
+
+What are the most popular features of the comparable APIs that you have already released? Can you use existing 
+instrumenting or logging to pull supporting metrics?
+
+What would you most like to change about the APIs that you already have, and what is your strategy for doing so?
+
+Which other teams will be affected by your new API, and how can you get their feedback early?
+
+After you outline the problem and desired impact, write down some of the use cases that you expect your API to fulfill.
+
+As a [user type], I want [action] so that [outcome]
+
+Paradigm	Pros	Cons	Selected?
+REST	
+MyFiles is essentially resource-oriented—the resources are the archived content and metadata.
+
+The operations to support are simple Create, Read, Update and Delete (CRUD) operations.
+
+REST would be a long-term commitment to a resources model for files. If we need to support several actions, REST might not be a great fit.	✓
+RPC	Expandable to other actions beyond CRUD.	At this time, there are no operations outside of CRUD that this API will execute, so there doesn’t appear to be a need to support other actions.	χ
+GraphQL	
+Flexible for developers.
+
+Easy to keep payloads small.
+
+Overly complicated to implement. No client presentation needed at this time.	χ
+
+Write an API Specification:
+----------------------------
+Now that you’ve made some key high-level decisions, it’s time to write a specification (also called a spec). 
+The spec gives you an opportunity to think through your design thoroughly. It also serves as an artifact that 
+you can use to communicate with other people, especially when you are soliciting feedback from stakeholders. 
+Finally, after you have reached agreement on the spec, 
+it serves as a contract, enabling you to build the various parts of the API implementation in parallel.
+
+
+THE INTRODUCTION FOR THE MYFILES API TECHNICAL SPECIFICATION
+A strong spec starts off with a high-level summary, detailing major decisions you’ve made, and a brief explanation of why you made those decisions. The following offers an example of how that might look for MyFiles.
+
+Title
+Proposal: MyFiles API Spec
+
+Authors
+Brenda Jin
+
+Saurabh Sahni
+
+Amir Shevat
+
+Problem
+Our archive repositories provide valuable file metadata to our direct customers. Customers use this data to integrate with business-critical services, but they are currently doing so by downloading CSVs and uploading CSVs to other business products. We are currently not providing a way to programmatically grant access to the repository metadata to customers who use third-party integrations.
+
+Solution
+Build an API that allows developers to programmatically access MyFiles files.
+
+Implementation
+For this API, we’ve decided to use REST for the following reasons:
+
+REST resource paradigm matches how MyFiles treats files in our tech stack.
+
+Desired file operations for the API match closely to CRUD operations.
+
+No need for event transport at this time.
+
+Authentication
+This API will use OAuth 2.0 with refresh tokens and token expiry.
+
+Other things we considered
+WebHooks are a great way for developers to get information about user events, such as files uploaded and files changed without continuously polling for data. We’ve decided to incorporate an outline of how these would work. We anticipate building those as a phase 2 for the API.
+
+We have decided not to implement a DELETE operation for third-party developers at this time, because we consider it high risk and unnecessary for the initial API launch.
+
+
+
+Event driven api:
+------------------
+Pros and cons of event-driven API paradigms for the MyFiles API
+Paradigm	Pros	Cons	Selected?
+WebHooks ->	MyFiles developers might want to receive an event every time files are added, removed, or changed.	If files are changing too frequently, we might need sophisticated infrastructure to deduplicate events so that we don’t inadvertently initiate distributed denial-of-service (DDoS) events on our developers’ applications.	✓
+WebSockets -> 	Can be used by internal clients for UI display.	
+We don’t want developers creating UI clients for MyFiles via the API.
+
+We don’t believe there is a use case to support long-lived connections for the types of events that developers would want to know about.
+
+χ
+HTTP Streaming -> Good for pushing data frequently.	With the low frequency of changes per file, we don’t see a need for HTTP Streaming.	χ
+
+REVIEWING THE SPECIFICATION WITH STAKEHOLDERS
+
+One of the guiding principles of the design methodology described in this chapter is enabling feedback early and often. 
+The spec you have just written is a starting point for much of this, where you can get feedback on the problem, 
+the high-level solution, and the nitty-gritty details. Review your spec with others and solicit feedback on the design. 
+Find a developer who might build a business integration and ask them what they think. If your stakeholders are internal, 
+make sure that you get their input. It is important to go through these cycles of feedback before you write any code because 
+the mindsets for creating and consuming an API are different, and the input you receive will help you fix usability issues 
+before you start building.
+
+MOCKING DATA FOR INTERACTIVE USER TESTING
+We recommend using whatever tools are available to you in order to test your design and gather the feedback you need. One of the tools you might want to use is mock data. 
+
+
+Worksheet of api design; https://learning.oreilly.com/library/view/designing-web-apis/9781492026914/app01.html#appendix
+
+Uisng query params:
+--------------------
+GET /api/v1/books?limit=1&sort=created_at
+
+
+Hide the complexity of your actions behind the ? sign.
+
+PUT /api/v1/blogposts/12342 ?action=like
+
+GET /api/v1/books ?q=[SEARCH-TERM]
+
+GET /api/v1/authors ?filters=[COMMA SEPARATED LIST OF FILTERS]
+
+
+Tools used:
+
+There are tools on the market dedicated to the API design-first cycle, the most popular ones being Apiary.io and SwaggerHub (swagger.io); however, the latter only supports the OpenAPI Specification (OAS), whereas Apiary offers OAS in addition to API Blueprint.
+
+Automatically generate API mocks directly from the API specification without having to write any code. The idea is that the API mock, its specification, and any relevant documentation can be shared with the API's consumers for feedback.
+
+The expectation is that this capability will offer a self-service functionality that will allow us to:
+
+Quickly design APIs with any of the main specifications available, such as OAS, API Blueprint, RESTful API Modeling Language (RAML), or even GraphQL-based APIs.
+Automatically generate API mocks directly from the API specification without having to write any code. The idea is that the API mock, its specification, and any relevant documentation can be shared with the API's consumers for feedback.
+Monitor the API mock usage, including successful and failed tests.
+Carry out API specification compliance checks (typically referred to as stylesheets) in order to automatically verify consistency and compliance in the way APIs are being designed. Ideally, it should be possible to create custom stylesheets based on one's specific needs and desires.
+Further functionality includes:
+
+A templating engine, so the process of designing an API can be aided with pre-created sample API specifications.
+An API catalogue, so available designs can be found and reused if desired.
+Integration with version control systems (for example, GitHub), so the API specification and associated documentation can be version controlled and managed just like another piece of code.
+A rich CLI, so API specifications can also be found and tried via command lines.
+Scaffolding of server and client code (in multiple languages) generated directly from the API specification. This feature is important, as it can seriously speed up the process of consuming and implementing APIs and associated services.
+A runtime API specification validation tool, so it's possible to verify the compliance of a running service against its specification.
+
+
+
+
+API exposure:
+------------
+The API exposure block defines several types of policies that can be used to address different types of requirements. For example, policies can be applied to protect against common security threats, to implement authentication and authorization, to route and load balance incoming calls to multiple backend services, and even to enforce monetization plans.
+
+
+
+
+https://www.restapitutorial.com/resources.html
+
+ For a reference maturity model for REST APIs, refer to the Richardson Maturity Model:
+https://restfulapi.net/richardson-maturity-model/
+
+For bad practices to avoid and how to do so, refer to this article:
+http://www.soa4u.co.uk/2018/10/the-se7en-deadly-sins-of-api-design.html
+
+
+Caching
+
+Headers, such as Cache-Control and Expires, can be used for this purpose. In the case of GraphQL, it is more difficult because each call can be different. Therefore, GraphQL clients can't rely on HTTP caching. Instead, it has to be part of the client application code, though most clients do provide rich support for this (for example, the Apollo GraphQL client provides rich client caching support). In the case of gRPC, libraries are emerging to accomplish this task (for example, https://godoc.org/k8s.io/client-go/tools/cache).
+
+
+The following article offers a good perspective on how choreographies compare to orchestrations in the context of microservices architectures:
+http://www.soa4u.co.uk/2018/02/is-bpm-dead-long-live-microservices.html

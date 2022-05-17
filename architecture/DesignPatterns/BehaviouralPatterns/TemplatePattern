@@ -1,0 +1,3 @@
+- Subclass will override the specific steps and decide the concrete behaviour of the modules.
+- It is based on inheritance
+- It operates on class level which means it is static.

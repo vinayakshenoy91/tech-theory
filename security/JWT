@@ -1,0 +1,12 @@
+Claims can be viewed as meta data that is encrypted and attached to a JWT for the purposes of authentication, authorization and for exchanging sensitive information
+
+- This is stateless. Send the token and requester has to send the token on every single request
+- It is one of the bearer token strategy  that allows the api to be stateless with user auth.
+- Created by a combination of secrets on the api and a payload like a user object.
+- Get the payload from the token and then provide the access
+
+use import jwt from 'jsonwebtoken';
+
+
+
+

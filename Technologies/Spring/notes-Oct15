@@ -1,0 +1,121 @@
+- Convention over configuration by spring-boot
+
+---------------
+@SpringBootApplication -> 
+
+- It enables component scanning, that is, looking for Spring components and configuration classes in the package of the application class and all its sub-packages.
+- The application class itself becomes a configuration class.
+- It enables autoconfiguration, where Spring Boot looks for JAR files in the classpath that it can configure automatically. For example, 
+if you have Tomcat in the classpath, Spring Boot will automatically configure Tomcat as an embedded web server.
+
+package se.magnus.myapp;
+
+@SpringBootApplication
+@ComponentScan({"se.magnus.myapp","se.magnus.utils"}) //Scanning external folders.
+public class MyApplication {
+
+----------------
+Component scanning -> 
+
+Reason for constructor injection (over field and setter injection) to keep the state in my components immutable. 
+An immutable state is important if you want to be able to run the component in a multithreaded runtime environment.
+
+
+@Component
+public class MyComponentImpl implements MyComponent { ...
+
+public class AnotherComponent {
+
+  private final MyComponent myComponent;
+
+  @Autowired
+  public AnotherComponent(MyComponent myComponent) {
+    this.myComponent = myComponent;
+  }
+
+Java based configuration:
+------------------------
+@Configuration
+public class SubscriberApplication {
+
+  @Bean
+  public Filter logFilter() {
+    CommonsRequestLoggingFilter filter = new 
+        CommonsRequestLoggingFilter();
+    filter.setIncludeQueryString(true);
+    filter.setIncludePayload(true);
+    filter.setMaxPayloadLength(5120);
+    return filter;
+  }
+
+------------------------------------------------------------------------------------------------
+Gradle code
+------------
+plugins {
+    id 'org.springframework.boot' version '2.5.2'
+    id 'io.spring.dependency-management' version '1.0.11.RELEASE'
+    id 'java'
+}
+
+
+group = 'se.magnus.microservices.composite.product'
+version = '1.0.0-SNAPSHOT'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+    testImplementation 'io.projectreactor:reactor-test'
+}
+
+test {
+    useJUnitPlatform()
+}
+
+Setting up multi-project builds in Gradle
+To make it a bit simpler to build all the microservices with one command, we can set up a multi-project build in Gradle. The steps are as follows:
+
+First, we create the settings.gradle file, which describes what projects Gradle should build:
+cat <<EOF > settings.gradle
+include ':microservices:product-service'
+include ':microservices:review-service'
+include ':microservices:recommendation-service'
+include ':microservices:product-composite-service'
+EOF
+Next, we copy the Gradle executable files that were generated from one of the projects so that we can reuse them for the multi-project builds:
+cp -r microservices/product-service/gradle .
+cp microservices/product-service/gradlew .
+cp microservices/product-service/gradlew.bat .
+cp microservices/product-service/.gitignore .
+We no longer need the generated Gradle executable files in each project, so we can remove them with the following commands:
+find microservices -depth -name "gradle" -exec rm -rfv "{}" \; 
+find microservices -depth -name "gradlew*" -exec rm -fv "{}" \; 
+The result should be similar to the code you can find in the folder $BOOK_HOME/Chapter03/1-spring-init.
+
+Now, we can build all the microservices with one command:
+./gradlew build
+If you haven't run the preceding commands, you can simply go to the book's source code and build it from there:
+
+cd $BOOK_HOME/Chapter03/1-spring-init
+
+./gradlew build
+
+
+API project:
+------------
+ext {
+    springBootVersion = '2.5.2'
+}
+dependencies {
+    implementation platform("org.springframework.boot:spring-boot-dependencies:${springBootVersion}")
+
+dependencies {
+   implementation project(':api')
+   implementation project(':util')
+
+

@@ -1,0 +1,13 @@
+- Used when a class that has a "HAS a" relationship with another class is saved in same table.
+
+Two classes will change: On that has a "HAS A" relation and the parent class
+
+@Embeddable
+Address
+
+-----
+Employee
+
+   @Embedded
+   Address address;
+

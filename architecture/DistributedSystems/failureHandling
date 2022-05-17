@@ -1,0 +1,7 @@
+1) Problem:
+Identify POST is for new creation second time or it was tried due to a failure retry
+
+Solved using client id:
+1) Create GUID at client side
+2) Call POST with that GUID -> inserted -> return call fails due to network error
+3) Client tries again with that id and  app will see that it is already inserted and just returned a 201 CREATED

@@ -1,0 +1,11 @@
+Thread of execution:
+---------------------
+- Goes through code line-by-line
+
+- When you exeucte a code, it has a thread of execution and memory
+
+- Monitor the thread of exeuciton using callstack
+
+Call stack:
+-----------
+- JS keeps track of what function is currently running. Add and remove functions from call stack

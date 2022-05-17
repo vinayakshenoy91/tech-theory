@@ -1,0 +1,11 @@
+Debugging: Viw component hierarchy and properties
+Profiling: Determine performance and rendering speed of components.
+
+React profiler:
+- Record app performance
+- View commitwise render details
+- view componentwise render details
+
+Commit chart, flame graph
+Ranked chart
+

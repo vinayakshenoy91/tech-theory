@@ -1,0 +1,111 @@
+A generator function is a function that we can start and stop, for an indefinite amount of time.
+And also restart with the possibility of passing additional data at a later point in time.
+
+Example:
+
+function* fruitList(){
+  yield 'Banana';
+  yield 'Apple';
+  yield 'Orange';
+}
+
+const fruits = fruitList();
+
+fruits;
+// Generator
+console.log(fruits.next());
+// Object { value: "Banana", done: false }
+console.log(fruits.next());
+// Object { value: "Apple", done: false }
+console.log(fruits.next());
+// Object { value: "Orange", done: false }
+console.log(fruits.next());
+// Object { value: undefined, done: true }  //here we get done=true
+
+Looping over array with generator:
+---------------------------------
+
+// create an array of fruits
+const fruitList = ['Banana','Apple','Orange','Melon','Cherry','Mango'];
+
+// create our looping generator
+function* loop(arr) {
+  for (const item of arr) {
+    yield `I like to eat ${item}s`;
+  }
+}
+
+
+const fruitGenerator = loop(fruitList);
+console.log(fruitGenerator.next());
+// Object { value: "I like to eat Bananas", done: false }
+console.log(fruitGenerator.next());
+// Object { value: "I like to eat Apples", done: false }
+console.log(fruitGenerator.next().value);
+// "I like to eat Oranges"
+
+
+Finish the generator with .return() #:
+--------------------------------------
+Using .return() we can return a given value and finish the generator.
+
+function* fruitList(){
+  yield 'Banana';
+  yield 'Apple';
+  yield 'Orange';
+}
+
+const fruits = fruitList();
+
+console.log(fruits.return());
+// Object { value: undefined, done: true }
+
+Catching errors with .throw() #:
+---------------------------------   
+
+function* gen(){
+  try {
+    yield "Trying...";
+    yield "Trying harder...";
+    yield "Trying even harder..";
+  }
+  catch(err) {
+    console.log("Error: " + err );
+  }
+}
+
+const myGenerator = gen();
+console.log(myGenerator.next());
+// Object { value: "Trying...", done: false }
+console.log(myGenerator.next());
+// Object { value: "Trying harder...", done: false }
+console.log(myGenerator.throw("ooops"));
+// Error: ooops
+// Object { value: undefined, done: true }
+
+Promise with genrator:
+----------------------
+
+const myPromise = () => new Promise((resolve) => {
+  resolve("our value is...");
+});
+
+function* gen() {
+  let result = "";
+  // returns promise
+  yield myPromise().then(data => { result = data }) ;
+  // wait for the promise and use its value
+  yield result + ' 2';
+};
+
+// Call the async function and pass params
+const asyncFunc = gen(); 
+const val1 = asyncFunc.next();
+console.log(val1);
+// call the promise and wait for it to resolve
+// {value: Promise, done: false}
+val1.value.then(() => {
+  console.log(asyncFunc.next());
+})
+// Object { value: "our value is... 2", done: false }
+

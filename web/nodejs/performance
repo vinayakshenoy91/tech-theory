@@ -1,0 +1,40 @@
+1) Cluster mode: (Recommended)
+----------------
+
+- Cluster manager is responsible for health of individual instances.
+
+- 1st time it will produce cluster manager and then it will produce the worker instances.
+
+
+cosnt cluster = require('cluster');
+
+
+
+
+if(isClusterRequired && cluster.isMaster){
+
+
+}
+
+
+
+2) Worker Threads:
+------------------
+
+
+{
+"tasksResponse": {
+"id": "task",
+"taskType": "ACTIVITY",
+"type": "task",
+"locations":{
+
+"uniqueId":{"locationId":"6454","locationName":"", "status":""},
+"uniqueId1":{"locationId":"6454","locationName":"", "status":""}
+
+},
+"vehicles":{"uniqueId":
+{"vehicleManufacturer":"Manufacture","model":"", "fuelType":""}},
+"taskStatus": "INPROGRESS"
+}
+}

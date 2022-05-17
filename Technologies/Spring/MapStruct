@@ -1,0 +1,21 @@
+@Mapper(componentModel = "spring")
+public interface ProductMapper {
+
+    @Mappings({
+        @Mapping(target = "serviceAddress", ignore = true)
+    })
+    Product entityToApi(ProductEntity entity);
+
+    @Mappings({
+        @Mapping(target = "id", ignore = true),
+        @Mapping(target = "version", ignore = true)
+    })
+    ProductEntity apiToEntity(Product api);
+}
+
+//Mapping with different field
+  @Mapping(target = "rate", source="entity.rating"),
+    Recommendation entityToApi(RecommendationEntity entity);
+
+    @Mapping(target = "rating", source="api.rate"),
+    RecommendationEntity apiToEntity(Recommendation api);

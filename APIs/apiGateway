@@ -1,0 +1,60 @@
+API gateway:
+------------
+this block is responsible for securely and reliably exposing access to API endpoints. The typical means to deliver the set of capabilities within the block is by implementing an API gateway.
+
+
+API composition
+API composition refers to the ability of an API exposure block to perform split joins against one or many downstream service endpoints. The idea is that instead of an API consumer having to make multiple API requests, for example, to perform multiple queries, a single request payload can be split into multiple downstream calls. The responses can then be joined into a single payload before the response is sent back to the consumer.
+
+This capability can be very useful, for example, when it is required to optimize the number of API calls made by a mobile device, as network bandwidth is often a premium resource, or when the number of API calls required would end in too much chattiness between the API consumer and API exposure, therefore affecting the overall user experience.
+
+API composition differs from orchestration in that there is no (or should not be any) business logic implemented in the composition, for example, if/then/switch conditionals, for/while loops, or complex data transformations. If business processing logic is required, then this should be implemented as a service in the business capability block.
+
+Redaction
+Redaction refers to having the ability of removing, masking, and/or limiting the presence of fields 
+within request/response payloads and/or headers. Such a capability can be useful; for example, when it is required 
+to completely remove sensitive data from payloads (for example, credit card data) and thus comply with regulation such 
+as GDPR in the EU.
+
+
+
+Header handling
+Header handling refers to being able to propagate, add, rename and/or remove transport headers. This capability can be useful when there is a requirement to propagate or modify transport headers in support of downstream service invocations.
+
+Fault handling
+As the API exposure block handles incoming calls and enforces policies such as authentication/authorization, API key validation, and routing, errors might occur, which will result in exceptions being thrown back to the caller.
+
+This capability is about being able to handle faults, such as adequate and standard error codes, and ensuring messages can be sent back to the callers, as opposed to just relying on the underlying infrastructure to do this, which typically is the default position.
+
+
+
+Caching
+In simple terms, caching refers to being able to cache API response data. In the most basic scenario, this is the ability to cache the response of a downstream service call. For example, when a second (similar) call occurs, the downstream service won't have to be invoked as the response is already cached. This known as a Response Cache.
+
+This capability can be extremely useful when preventing a large number of similar calls translating to an even larger number of downstream service calls. Caching response data means not only faster response times, but also avoiding unnecessary downstream service calls. However, conditions will be required in order to prevent consumers from receiving outdated/irrelevant data.
+
+
+Webhooks:
+----------
+
+The most common way to implement this capability is via Webhooks. Webhooks enable API consumers 
+to subscribe to specific API events, for example, changes in data for a specific resource, and during the
+subscription process (which is typically just an API POST request), API consumers provide a call-back URL 
+that is subsequently used by the server to push the events.
+
+
+
+Instead, this capability refers to the ability of an API gateway to also act as a client-based load balancer, thus removing the need for a load balancer in between. The consequence of this is that the API gateway should have the ability to introspect a service registry in order to dynamically determine the active endpoints of a service at any given point in time. Therefore, when a request does come in, the gateway itself can load-balance to all active endpoints.
+
+The following article authored by Phil Wilkins explains in a great level of detail how this capability could be implemented:
+https://paascommunity.com/2018/03/25/registries-use-cases-for-api-management-and-microservices-by-phil-wilkins/
+
+
+
+Orchestration
+Service orchestration, a well-known capability in traditional service-oriented architectures, typically refers to the ability of a service to coordinate multiple calls to other services in order to deliver a pre-defined process
+This refers to the process of converting data payloads from one structure (for example, a JSON schema) to another. Data transformation is typically combined with an orchestration capability in order to transform payloads resulting from the orchestration itself into a common data object, which is then sent back to the consumer of the service.
+
+Data validation
+As the name suggests, data validation refers to the ability to validate data that is structural (for example, compliance with pre-defined schemas), semantic (for example, consistent use of terms), or functional (for example, verifying that payloads conform to business rules).
+

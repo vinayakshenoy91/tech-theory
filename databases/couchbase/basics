@@ -3,30 +3,68 @@ Tools for data modelling:
 hackolade.com
 erwin
 
+NoSQL -> Not Just SQL.Best for unstructured data and likely to evolve over time.
+
+
+
+
+Concepts:
+--------
+- Couchbase stores data as items
+- Each item has a key and value.Value must be either binary or JSON document.
+- Each bucket has 1024 bucket.Only on data nodes.COuc h calls this auto-sharding.
+- For every vbucket created, replica can  be created.
+- If first node fails, the original vBucket is auto deactivated and replica vBucket is said to be  active.
+- Buckets are only hosted on data service nodes.Hosts data, query and index.
+Prod recommended is 3node cluster.
+- Single node can contain one or more service.
+- Memory first architecture  where memeory is backed by data persistance.
+- By default, data persistance is async,without requiring client processing to wait for completion
+Client processing can choose to wait for data persistance when business needs require.
+
+
+Various CB services:
+--------------------
+1.Data service:
+---------------
+Cache ejection on LRU basis as needed.
+Data is automatically equally distributed across all data nodes.
+
+
 
 CB server:
 ---------
 - Open source , distributed, NoSQL document-oriented database optimised for interactive apps, uses the N1QL query language
 - CB is a key value store
-- Key is made of 250 UTF-8characters per key
+- Key is made of <250 bytes UTF-8 string with no spaces . They must be unique within bucket.
 - Data <20MB [Binary or JSON]
-
-
-
-
+- Binary values cannot be parsed or indexed, only retrieved by key
+- JSON docs can be parsed , indexed and queried and Query data using N1QL
 - Heterogenous service in separate node is called multi dim scaling
+- Attribute values can be basic types like number , string , boolean or array, embedded document
 
 Note: For community edition, you need to have data , query and index on same node.
 
 - Standard global secondary index are stored on disk and memeory used for update and scaling.
 - Memory optimised -> Index are stored in memory
 
+Data items stored in bucket:
+- Couchbase buckets -> Exists both in memory and on disk
+- Ephemeral buckets -> Only in memory
 
 
+Resilient featutes:
+-------------------
+- Node failure, node removal  dno not cause data loss
+- Cluster manager regulates all nodes
+
+
+Features:
+----------
 
 
 FTS :
-
+-----
 -  In-memory inverted indexing
 - Result by relevance,  scoring
 - Tokenbization, Stemming, faceting, etc
@@ -41,11 +79,82 @@ Eventing :
 Bucket in DB:
 -------------
 Bucket in couchbase is a keyspace. It is a logical container of uniquely keyed documents
-Couchbase -> Exists both in memory and on disk.Data will be stored and retrieved memeory first. Stored in ram and then flushed into disk
-Ephemeral -> Memory only
-Memecached -> No replication., compression. backup, query, etc. Deprecated and available for backward compatibility
+Types of buckets:
+-----------------
+1) Couchbase -> Exists both in memory and on disk.Data will be stored and retrieved memeory first. 
+Allow data to be replicated for HA and dynamically scaled across multiple cluster by means of XDCR
+Stored in ram and then flushed into disk
+2)Ephemeral -> Memory only. Data is transient and once lost cannot be recovered.
+Allow highly consistent in-memory perf and faster node rebalances.
+3) Memecached -> No replication., compression. backup, query, etc. Deprecated and available for backward compatibility
+Data is not persistent. 1MB limit.Meant for use along with other DB. Cache freq accesesed data.
+Used for smaller data sets and are limited to k/v.
+They are directly addressable, distributed,in-memory kv cache.
+
+Virtual buckets:
+----------------
+- They make up bucket and help with replication and optimal data distribution across a cluster.
+- They are impl of buckets.
+- 1024 vBuckets form one bucket (windows /linux) in mac it is 64. These are active vBuckets
+- vBuckets are distributed evenaly across memory and storage of cluster.
+- Buckets can be replicated and replica bucket now consists of replica vBuckets.
+- Write only on active buckets and then propagated to replicas. Read ops on active vBuckets + may be replicas.
+- Within each bucket there are 1024 vBuckets-> also called shards spread out equalluy and automatically
+only on Data nodes.Couchbase refers to this automatic distribution as auto sharding.
+- For every vbucket, a replica can be created.The replica bucket lives somewhere on another node
+to ensure fault tolerance.If first ndoe fails, the original vBucket is automatically deactivated, the replica vBucket
+is set to active and can be accessed.
+
+Document metadata?
+-------------------
+
+- meta -> key of meta atrribute
+- id -> Identifier of the document
+- rev -> revision  or sequence number
+- expiration -> document TTL
+- flags: Couchbase SDK flags
+- xattrs : Extended attributes
+
+Document Expiration:
+--------------------
+- Bucket TTL by default 0 (no expiry)
+- Bucket TTL must not be specified on Couchbase eventing or couchbase mobile buckets.
+This can result in failures.
+
+Bucket metadata ejection:
+--------------------------
+Eviction policy:
+- Value-only Ejection: Remove data but keep metadata
+- Full ejection: Remove all metadata, keys and key-values
 
 
+Compaction:
+----------
+Background process that reclaims disk space and reduces fragmentation.
+Fragmentation - Ineffecient distribution of vBuckets across diff nodes of a Couchbase cluster
+Fragmentation can occur due to Failover, Expiry of docs, deletion of docs. 
+To mitigate fragmentation , you rebalance or compact.
+
+Compaction can be automatic or manual. No shutdown or pause.
+Compaction is performed on every node and bucket in cluster.
+Perform during off peak. Cannot propagate changes to new files of the updates are very frequent.
+Sufficient disk space required almost doubling usage od disk space.
+
+Mechanics of data compaction:
+- Couchbase server creates a new file
+- Active info is written to this new file - but only if not stale
+- Existing data remains as before.
+- Ensures availability during compaction
+- Once new file is complete, old file is disabled and deleted.
+
+30% is default -> DB fragment level when compaction auto triggered.
+
+
+
+Failover:
+---------
+- Graceful vs Hard
+- Manual vs automatic
 
 
 Why more than one bucket per app?
@@ -65,6 +174,7 @@ Data types:
 - Primitives -> Boolean, string, int , double
 - Incomplete info -> Null , Missing
 - Composite -. Object, array
+- Complex types -> Array, Embedded document
 
 Query:
 ------
@@ -86,6 +196,9 @@ Metadata in CB:
 
 Indexes:
 --------
+Standard Gloabl secondary -> Index stored in disk and memory
+
+
 1) PRIMARY: An index that covers all document keys in a given bucket is called Primary index.
 Syntax: CREATE PRIMARY INDEX <index_name> ON <bucket_name>
 CREATE PRIMARY INDEX <index_name> ON <bucket_name>(field1, field2,field3)
@@ -234,6 +347,34 @@ Protects from server restarts.Developers can set persistance properties at bucke
 collection.upsert(id,doc,upsertOptions().durability(DurabilityLevel.MAJORITY)); //Write occurs to majority of replicas.
 
    
+Architect task
+--------------
+
+FR:
+-----
+1. App specific language/OS/infra compatibility
+2. Essentail business reqt
+3. Access based on language
+4. Read and write structure
+5. Query needs
+6. Search capabilities
+7. Offline data management support
+8. Triggers
+
+NFR:
+----
+1. overall perf
+2. Scalability
+3. Durability
+4. HA
+5. Disaster recovery
+6. Security
 
 
 
+N1QL:
+-----
+- Non-first Normal Form (N1) Query Language:
+- Based on ANSI SQL 2003
+- Powerful index engine optimised for highly parallel multicore execution.
+- 

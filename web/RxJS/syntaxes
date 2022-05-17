@@ -1,0 +1,11 @@
+Pipe functions:
+---------------
+
+1) Map:
+let newObservable$ = oldObservable$.pipe(
+  map(someFunc)
+);
+
+- Even though new data arrives over time, this map immediately modifies the data and passes it on. 
+- the modification in map is synchronous
+

@@ -1,0 +1,4 @@
+- Pattern in which object behaviour is determined by its state.
+- Object can transition from one state to another.
+- Construct which manages the transition is a state machine.
+- https://tesco.udemy.com/course/design-patterns-javascript/learn/quiz/4632060#notes

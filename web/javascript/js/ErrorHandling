@@ -1,0 +1,57 @@
+try{
+
+}catch(err){
+
+}finally{
+
+}
+
+// Use this for standard browser error message display, instead of console log
+
+window.onerror = function(message, source, lineNumber, colNumber, errorObject){
+
+}
+
+
+In promises:
+=============
+getProfile().then(()=>{}).catch(err=>{
+
+    //Handles error from function and then callback
+})
+
+
+
+Strategy pattern:
+==================
+
+
+export class ErrorHandler{
+constructor(messageHandler,logger){
+    this.messageHandler=messageHandler;
+    this.logger=logger;
+}
+
+
+handle(header, content ,severity,errorObject){
+ this.messageHandler(header, content, severity);
+ this.logger(errorObject);
+}
+}
+
+
+export function MessageHandlingStrategy(header,content, severity){
+    //Handle the error the way you want., use toasters
+    //if severity else severity
+}
+
+export function LoggingStrategy(header,content, severity){
+    //Send the error to server
+}
+
+
+
+
+window.onerror = function(message, source, lineNumber, colNumber, errorObject){
+    let erroHandler = new ErrorHandler(messageHandler, logger);
+}

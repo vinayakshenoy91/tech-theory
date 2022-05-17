@@ -1,0 +1,68 @@
+What to monitor?
+
+- Req/Sec
+- # of failures
+- Latency
+- CPU
+- Num of users
+- session number
+- Geographic distribution
+- RAM
+
+beeceptor monitor -> used as runscope -> configured on Azure
+
+
+-  this should include the ability to configure SLAs.
+
+The second one relates to real-time analytics. The focus is to provide comprehensive data visualizations and reports around API usage patterns and DX, transaction throughput, success/failure rates, response times, and/or other interesting information that enables architects and designers to make design decisions on how to improve an API. This same information can also be used when considering if certain APIs are candidates for retirement and decommissioning.
+
+
+Note that the vast majority of commercial API management solutions do offer broad capabilities to monitor, visualize, and analyze APIs, and their underlying infrastructure. However, such offers won't typically cover the independent runtimes (for the service infrastructure) and additional tooling, such as the popular prometheus.io, datadoghq.com, and elastic.co or the equivalent, may be required.
+
+
+
+Another important aim of API monitoring is the definition of alerts and notifications to ensure that SLAs, such as availability, throughput, and response times, are not being breached.
+
+In runtimes such as Kubernetes, there are several capabilities available in order to conduct this type of monitoring; for example, the Istio service mesh can be configured to instrument log and trace data, which can later be visualized and analyzed with tools such as Prometheus (prometheus.io) and Grafana (grafana.com). Other tools, such as Kiali (kiali.io), can be configured as well to get proper visibility about the service mesh.
+
+
+
+---
+End-to-end monitoring
+
+As its name suggests, this type of monitoring aims to gain holistic and complete understanding of the entire system, as opposed to just its individual pieces. This type of monitoring is more complex, as it requires instrumentation across relevant components of the distributed system in order to collect meaningful log, metrics, and trace data. Assuming this has been done, end-to-end monitoring then can be classified into the following categories.
+
+Log analytics
+
+This type of monitoring involves collecting, aggregating, indexing, and analyzing log data produced by applications. The aim is to use this data in aid of activities such as debugging, troubleshooting, root cause analysis, SIEM (described subsequently), or just day-to-day operations.
+
+There are several log analytics tools on the market; however, Splunk (splunk.com) and the ELK stack (elastic.co/elk-stack) are very popular choices. This type of monitoring is typically also carried out by platform engineers and developers during day-to-day operations, and when debugging and troubleshooting APIs and their services.
+
+Security information and event management (SIEM)
+
+This is a sub-discipline of log analytics. The aim of this type of monitoring is to continuously analyze log and trace data in search of potential security alerts that may compromise the system. This task involves defining correlation rules and patterns to analyze structured and unstructured data, with the aim of identifying potential security vulnerabilities.
+
+In terms of tools, there are several options on the market for this; from log analytics such as Splunk that also support SIEM (though as an additional capability), to specialized vendors such as LogRhythm (logrhythm.com) and even traditional security vendors such as McAfee, which also plays in this space. This type of monitoring is typically carried out by a security team, which will normally explain what type of data is expected to be collected.
+
+Application performance monitoring (APM)
+
+The aim of this type of monitoring is to continuously observe the performance and availability of applications. This type of monitoring is extremely useful for detecting and diagnosing complex application performance problems in distributed systems.
+
+In terms of tools, vendors such as AppDynamics (appdynamics.com) and New Relic (newrelic.com) are popular choices for specialized APM software.
+
+However, large log analytics vendors, such as Splunk, also offer APM add-ons.
+
+This type of monitoring is typically carried out by platform engineers and performance engineers who are conducting day-to-day operation activities, but also when they are troubleshooting performance issues and/or when performance tuning the system.
+
+Distributed tracing
+
+Given that, in distributed systems, a single business transaction may span across several architectural components (for example, API gateways, load balancers, services, databases, or event hubs), understanding and analyzing transaction flows can be extremely complicated. Therefore, in order to reconstruct the series of events that build up the flow, each component of the distributed system must generate traces. Such traces must therefore share some form of correlation ID, so the end-to-end flow can later be reconstructed.
+
+The correlation ID is typically generated by the first component that handles a request (for example, an API gateway or sometimes even the client application itself) and is then propagated to all subsequent components that take part in the flow.
+
+Once distributed traces are available for different transaction flows, this monitoring capability becomes extremely powerful for pinpointing which component in a transaction flow is responsible for potential issues (for example, performance bottlenecks or errors).
+
+Zipkin (zipkin.io) and Jaeger (jaegertracing.io) are perhaps the most popular open source tools for distributed tracing; however, tools such as Splunk and ELK could also be used for this purpose (but will most likely require additional add-ons).
+
+This type of monitoring is typically carried out by platform engineers during day-to-day operation activities and also by developers when debugging and troubleshooting APIs and services.
+

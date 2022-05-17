@@ -1,0 +1,54 @@
+- Prefix sum array -> Every item with index i is the sum of all the preceeding items with index [0:i].
+This usually takes O(N). Updating requires the complete array updation.
+- Fenwick tree reduces this to O(logN)
+- Fenwick tree uses binary representation of the numbers and indexes. Hence name binary indexed Tree.
+- It is fast to do the operations in binary
+- The sum of first N numbers depdends on the binary representation of that given number.
+- Binary indexed trees are DS that can calculate prefix sums in an array of numbers + efficient update operation as well
+
+
+How to do it?
+-------------
+
+Step 1: - We have to divide the original array into binary ranges. These binary ranges form the fenwick tree.
+We have to calculate the sum of all the previous nos for the binary ranges [1,2,4,8]. Even number power <= array.length
+Index starting from 1
+
+Step 2: In next iteration, consider the cluster that are not considered or there is a hole in cluster.
+
+Step 3: After 2 iteration, the array is going to be fenwick tree or binary index tree.
+Also add an array in the beginning for index 0. Fenwick tree length = original array length + 1
+
+
+How to construct tree from it?
+- Calculate binary representation of node's index.
+- Flip the right most 1 to 0
+- That is the index of parent in binary
+
+How to calculate prefix sum with the help of binary index tree? - Below steps help calculate parent node easily.
+
+1) First find right most 1
+
+x AND (-x)
+
+2) Subtract it from the original x sequence (we go to left)
+
+x-(x&(-x))
+
+
+How to find next node in the tree?
+1) Find right most 1
+
+x AND (-x) where x is binary sequence
+
+2) Add it to the original x sequence
+
+x + (x&(-x))
+
+0101+0001=0110
+
+[Update only those node that contain the changed range]
+
+Basically, we add the last set bit to the actual index this is how we get the next node in tree we have to update.
+
+

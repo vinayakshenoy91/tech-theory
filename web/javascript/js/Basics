@@ -1,0 +1,209 @@
+- variable hoisting (For var it will be hoisted, for let it will be block scoped)
+- seven primitive data types: boolean, number, string, undefined, object, function, and symbol.
+- typeof xyz //Return the type
+- If that variable is empty, null, or undefined, it will be evaluated as false.
+- Because JavaScript is loosely typed and will coerce a string into a number in a numerical operation, this works pretty well
+- As the tokens are parsed from left to right, if an unexpected token is encountered and a line break separates 
+it from the previous token, then a ; is automatically inserted before the encountered token.
+
+- var does two things poorly. First, 
+it does not prevent a variable from being redefined in a scope. Second, it does not have block scope.
+
+- If you don't find the variable , reference error will be thrown
+
+
+Some functions/operators:
+arrayname.splice(index,0);
+
+Best practise:
+---------------
+’use strict’; //Top of every file
+
+- Well-designed software is cohesive. Cohesion is when a piece of code is narrow, 
+focused, and does one thing well. A good designer strives to achieve cohesion at all levels: functions, classes, and especially files.
+
+
+let does not permit a variable in a scope to be redefined.
+
+
+- Cohersion comparisions:
+--------------------------
+
+​//BROKEN CODE​
+​ 	​const​ a = ​'1'​;
+​ 	​const​ b = 1;
+​ 	​const​ c = ​'1.0'​;
+​ 	
+​ 	console.log(a == b);
+​ 	console.log(b == c);
+​ 	console.log(a == c);
+
+true
+​ 	true
+​ 	false
+
+When comparing a with b and b with c, type coercion was involved before the comparison. 
+However, when a and c were compared, a lexical comparison was used. Hence we see a different result than what we may otherwise expect.
+
+
+"Check if two objects are equal:"===>
+function isEquivalent(a, b) {
+      // arrays of property names
+       var aProps = Object.getOwnPropertyNames(a);
+       var bProps = Object.getOwnPropertyNames(b);
+ 
+       // If their property lengths are different, they're different objects
+       if (aProps.length != bProps.length) {
+           return false;
+       }
+
+      for (var  i = 0; i < aProps.length; i++) {
+          var propName = aProps[i];
+
+          // If the values of the property are different, not equal
+          if (a[propName] !== b[propName]) {
+              return false;
+          }
+      }
+     // If everything matched, correct
+     return  true;
+}
+isEquivalent({'hi':12},{'hi':12}); /
+
+- JavaScript uses a 32-bit floating-point representation for numbers
+
+- options = options || {}; //Uisng or notation
+
+
+-------Object.create ----------
+
+var car = Object.create(vehicle, {
+
+  "id": {
+    value: MY_GLOBAL.nextId(),
+    // writable:false, configurable:false by default
+    enumerable: true 
+  },
+
+  "model": {
+    value: "Ford",
+    enumerable: true
+  }
+
+});
+
+
+String to base 64:
+
+data.toString('base64')
+
+Check if type is function: typeof handler === 'function'
+typeof handler === 'object'
+
+
+Inbuilt functions:
+------------------
+isNaN(x)
+
+.toString() -> Gives string item.
+
+
+Iterate overobjects:
+for(property in student) {
+  console.log(property);
+}
+--------------
+Tips and tricks:
++new Date ->  Get date in epoch format
++true
++false
++"1e-8"
+
+const random = {
+  'valueOf': () =>  Math.floor(Math.random()*100)
+}
+
++random
++random
+
+we are overriding the valueOf() method of the random object, and the + operator “grabs” its value by converting it to a Number
+
+-  The debugger Statement or --inspect for node js -> JS debugging
+
+Set -> https://www.geeksforgeeks.org/sets-in-javascript/
+https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Set
+
+Webapis: https://developer.mozilla.org/en-US/docs/Web/API
+
+// 5- Web APIs (to run in the browser)
+const webapi = () => {
+    // Performance API
+    const start = performance.now();
+    const fib = n => {
+        if(n <= 1) return n;
+        return fib(n-1) + fib(n-2);
+    }
+    fib(15);
+    const end = performance.now();
+    console.log(end - start);
+    // 0.1699999994598329 (on my machine)
+
+    // Navigator API
+    navigator.geolocation.getCurrentPosition(pos => {
+        const { coords: { latitude, longitude } } = pos;
+        console.log(latitude, longitude);
+        // 48.9080891 2.2699974
+    });
+}
+
+
+// 3- The comma operator - Explore this
+const comma = () => {
+    let money = 10;
+    const hasStudied = false;
+    const relax = () => console.log("relax");
+    const study = () => console.log("study");
+    hasStudied ? (money++, relax()) : ((money /= 2), study());
+    console.log(money); // study 5
+
+    // multiple variables in loops
+    for (let i = 1, j = 2; i + j < 10; i++, j++) {
+    console.log(i, j);
+    }
+    // 1 2; 2 3; 3 4; 4 5;
+
+    // for debugging purposes
+    const coins = [
+    { value: 4, currency: "EUR" },
+    { value: 1, currency: "USD" },
+    { value: 5, currency: "BTC" },
+    ];
+    const countOddCoins = (coins) => {
+        let oddCoins = 0;
+        coins.forEach(({ value, currency }) => {
+          if (value % 2 != 0) {
+            oddCoins++, console.log(`${oddCoins} with ${currency}`);
+            // 1 with USD
+            // 2 with BTC
+          }
+        });
+        return oddCoins;
+    };
+    console.log(countOddCoins(coins)); // 2
+};
+
+Handling dates:
+----------------
+new Date(2020,0,1) //Creating date object. Put these in utils
+
+This keyword:-
+
+this is a special keyword in JavaScript that always refers to the object that it belongs to:
+
+In a method, this refers to the class object (instance of the class).
+In an event handler, this refers to the element that received the event.
+In a function or when standing alone, this refers to the global object. For example, in a browser, the global object is the Window object.
+In strict mode, this is undefined in a function.
+
+- Hooks allow us to reuse stateful logic between components, without creating higher-order components.
+

@@ -1,0 +1,64 @@
+Level 0 - HTTP/RPC
+
+Establishes that the API is built using HTTP and has the notion of one URI and one HTTP method. Taking our example above of GET /attendees, if we stopped there the example would match Level 0. Essentially this represents an RPC (Remote Procedure Call) implementation, a consideration we will compare and contrast throughout this chapter.
+
+Level 1 - Resources
+
+Establishes the use of resources, and starts to bring in the idea of modelling resources in the context of the URI. In our example if we added GET /attendees/1 returning a specific attendee it would start look like a level 1 API. Martin Fowler draws an analogy to the classic object oriented world of introducing identity.
+
+Level 2 - Verbs (Methods)
+
+Starts to introduce the correct modelling of multiple resources URIs accessed by different request methods (also know as HTTP Verbs) based on the effect of the resources on the server. An API at level 2 can make guarantees around GET methods not impacting server state and presenting multiple operations on the same resource URI. In our example adding DELETE /attendees/1, PUT /attendees/1 would start to add the notion of a level 2 compliant API.
+
+Level 3 - Hypermedia Controls
+
+This is the epitome of REST design and involves navigable APIs by the use of HATEOAS (Hypertext As The Engine Of Application State). In our example when we call GET /attendees/1 the response would contain the actions that are possible on the object returned from the server. This would include the option to be able to update the attendee or delete the attendee and what the client is required to invoke in order to do so.
+
+Most APIs reach API maturity level 2, but with this wide range of options there is a lot for the developer to consider. The practical applications of HATEOAS are limited in modern RESTful APIs and this is where the theoretical ideal REST concept meets the battle testing of production code. In order to be consistent we need to establish baseline expectations of the APIs implemented using REST and provide that consistency across all the APIs offered.
+
+
+POST:
+----
+POST http://mastering-api.com/attendees
+{
+    "displayName": "Jim",
+    "givenName": "James",
+    "surname": "Gough",
+    "email": "jim@mastering-api.com"
+}
+---
+201 CREATED
+Location: http://mastering-api.com/attendees/1
+
+however the Microsoft REST API guidelines recommend in section 7.9 that PII should not be part of the URL.
+
+GET:
+----
+GET http://mastering-api.com/attendees
+---
+200 OK
+[
+    {
+        "displayName": "Jim",
+        "givenName": "James",
+        "surname": "Gough",
+        "email": "jim@mastering-api.com",
+        "id": 1,
+    },
+    {
+        "displayName": "Matt",
+        "givenName": "Matthew",
+        "surname": "Auburn",
+        "email": "matt@mastering-api.com",
+        "id": 2,
+    }
+]
+
+GET http://mastering-api.com/attendees?$filter=displayName eq 'Jim' //Filtering
+
+A PUT is used to replace the resource entirely with the content of the request, 
+where as a PATCH would only update the attributes specified by the request.
+
+two PUT operations would likely involve a lost update whereas two PATCH requests may be successful independently.
+
+

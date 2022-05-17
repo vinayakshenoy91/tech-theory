@@ -1,0 +1,90 @@
+Static:
+-------
+Static -> class level -> This gets executed first before static block.
+No static -> Object level
+static methods can only access static field
+
+//Executed before a main method is Executed
+//Static block
+static{
+  
+}
+
+
+//method
+static void method1(){
+
+}
+
+//Variable
+static int num
+
+Non static:
+----------
+Non static block:
+{
+
+}
+- Non static block gets called just before constructor gets called and just after main method.
+- Non staic block gets executed everytime with constructor
+
+
+- Static block is executed at time of class loading. Memory is allocated and variables are 
+initialised during class loading.
+- Memory is allocated and variables are initilized during class loading.
+
+
+- Not static block is executed and memory is allocated at the time of object creation.
+
+
+----------------
+
+Enums: Ordinal used to find position of enum. Enum cannot extend other class.
+------
+- Enums are -> public static final
+public enum M{
+
+    A(5),B(6),C(7);
+    int fee;
+    PaymentType(int fee){
+        this.fee=fee;
+
+    }
+
+    public int getFee(){
+        return this.fee;
+    }
+
+}
+
+- Every enum is a java class internally
+
+----------------------------------------
+
+Concurrent collections: [They are from java.concurrent package]
+-----------------------
+- ArrayList, HashSet and HashMap implement fail fast iterators.
+If we get an iterator out of it and loop throguh them and add/removing element, we get this 
+concurrent modification exception. You also get his in a single threaded env.
+- Entire collection is locked by a thread.
+
+1) CopyOnWriteArrayList 
+2) CopyOnWriteArraySet
+3) ConcurrentHashMap
+4) BlockingQueue - Block producer if it is full. BlockingQueue<String>
+
+
+
+
+
+
+
+
+- Concurrent collection has fine grained locking.
+- Modify the vehicles DS.
+
+- Copy of list/set is made and manipulation happens on the copy.
+Later the sync happens.
+- Usecase: Lot of reads and few writes.
+
+

@@ -1,0 +1,5 @@
+- Way of separating an algo from an object structure on which it operates.
+- We delegate the problem to the object because the object knows exactly how to save the shape.
+- Satisfies open-closed principle.
+- We can extract common opertion into a unique class. Eg: Webshop app.
+

@@ -1,0 +1,148 @@
+React features:
+---------------
+a) Declarative:
+
+- Every single step need to be described. From creting an element till rendering it.
+Which is imperative.
+Declarative: Instead of telling React how to do things, we tell it what we want it to do. 
+As a result, we can easily design our applications and React will efficiently update and render just 
+the right components when the data changes.
+You defined the desired target state.
+
+b) Component-based: React is all about components.React encapsulates components that manage their own state and views, and then allows 
+us to compose them in order to create complex user interfaces.
+Mainly around reusability and separation of concerns.
+
+
+c) Learn once, write anywhere: React does not make assumptions about your technology stack, and tries to 
+ensure that you can develop apps without rewriting existing code as much as possible.
+
+
+
+Note:
+-----
+- Which ever component state is present, that will be re-evaluated.
+- When parent component state changes, it re-render and even the children will re-render even though they 
+do not accept any props from parent. They are still part of the parent.
+- Though DOM does not change, there is some unnecessary function execution and evaluation.
+
+
+JSX:
+----
+React.createElement('div',{},'content between tags');
+
+Composition:
+------------
+- This is done using props.children
+
+How react works behind the scenes?
+-----------------------------------
+- React determines how the component tree currenty looks like and what it should look like.
+- ReactDOM received the differences and then manipulates the real DOM
+- Components are re-evaluated when props, state or context changes  and react executes components functions.
+- Changes to the DOM are only made when there are differences between evaluations.
+
+- Re-evaluation !== Re-rendering
+
+
+
+
+
+
+Analyse a standard react project:
+--------------------------------
+
+
+
+
+
+
+Diffing algorithm in react:
+--------------------------
+
+
+
+React.memo(): 
+------------
+- Execute only when proper change
+- Tells react to check the proper the component gets and check new value for all the props
+and compare with previous value.
+- This comes at a cost as it needs to store previous value + do the comparision [Using regular comparision operator]
+
+Benefit: Large apps and large components trees 
+
+Gotcha: This will not work if props is a function as it will be re-created when the parent function is executed.
+
+export default React.memo(componentName);
+
+
+States:
+------
+- When you call setState, the state change is scheduled and not executed immediately
+- If you are dependent on previous state, use:
+
+setShowParagraph((prevState)=> !prevState)
+
+- If multiple state update in one function, react will batch those state updates.
+
+
+Refs:
+----
+- Access to other dom elements
+- Connection between html element and other js code
+
+useRef hook
+
+const nameInputRef = useRef();
+
+<input ref={nameInputRef}/> => When first rendered, nameInputRef value is set. Initial value will be undefined.
+
+nameInputRef-> Will have a current key in object
+nameInputRef.current.value => You can submit the value that is stored in this.
+
+Note: Rarely use refs to manipulate the DOM
+
+
+
+
+Fragments:  Semantically more correct code  
+----------
+Alternative is to use wrapper/custom code:
+
+const Wrapper = props => {
+    return props.children;
+}
+
+export default Wrapper;
+
+OR
+
+<React.Fragment></React.Fragment>
+
+OR
+
+<></>
+
+Portals: Semantically more correct code
+--------
+- Modal are overlay content and should not be in the html tree. They should be somewhere outside the nesting.
+
+Step 1: Goto to index.html and add a div <div id="backdrop-root"></div>
+Step 2: import ReactDOM from 'react-dom';
+Step 3: 
+<>
+{ReactDOM.createPortal(<Backdrop/>,document.getElementById('backdrop-root'))} //This will always be on top
+</>
+
+
+Uncontrolled components:
+------------------------
+- Accessing value using refs as you directly manipulate the dom.React does not control it.
+We get value using ref and then use the dom api for setting the value.
+
+Controlled component:
+--------------------
+- If you connect react state to the components.
+
+
+

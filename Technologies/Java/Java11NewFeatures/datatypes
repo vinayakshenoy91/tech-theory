@@ -1,0 +1,197 @@
+Keyword	Type	Example
+boolean	true or false	true
+byte	8-bit integral value	123
+short	16-bit integral value	123
+int	32-bit integral value	123
+long	64-bit integral value	123L
+float	32-bit floating-point value	123.45f
+double	64-bit floating-point value	123.456
+char	16-bit Unicode value	'a'
+
+
+
+//Java to know it is long
+long max = 3123456789L;
+
+//Easy to related
+int million2 = 1_000_000;
+
+The float and double types are used for floating-point (decimal) values.
+A float requires the letter f following the number so Java knows it is a float.
+The byte, short, int, and long types are used for numbers without decimal points. In mathematics, these are all referred to as integral values, but in Java, int and Integer refer to specific types.
+Each numeric type uses twice as many bits as the smaller similar type. For example, short uses twice as many bits as byte does.
+All of the numeric types are signed in Java. This means that they reserve one of their bits to cover a negative range. For example, byte ranges from -128 to 127. You might be surprised that the range is not -128 to 128. Don’t forget, 0 needs to be accounted for too in the range.
+
+
+SIGNED AND UNSIGNED: SHORT AND CHAR
+For the exam, you should be aware that short and char are closely related, as both are stored as integral types with the same 16-bit length. The primary difference is that short is signed, which means it splits its range across the positive and negative integers. Alternatively, char is unsigned, which means range is strictly positive including 0. Therefore, char can hold a higher positive numeric value than short, but cannot hold any negative numbers.
+
+The compiler allows them to be used interchangeably in some cases, as shown here:
+
+short bird = 'd';
+char mammal = (short)83;
+Printing each variable displays the value associated with their type.
+
+System.out.println(bird);   // Prints 100
+System.out.println(mammal); // Prints S
+This usage is not without restriction, though. If you try to set a value outside the range of short or char, the compiler will report an error.
+
+short reptile = 65535;  // DOES NOT COMPILE
+char fish = (short)-1;  // DOES NOT COMPILE
+Both of these examples would compile if their data types were swapped because the values would then be within range for their type. You’ll learn more about casting in Chapter 3
+
+
+SIGNED AND UNSIGNED: SHORT AND CHAR
+For the exam, you should be aware that short and char are closely related, as both are stored as integral types with the same 16-bit length. The primary difference is that short is signed, which means it splits its range across the positive and negative integers. Alternatively, char is unsigned, which means range is strictly positive including 0. Therefore, char can hold a higher positive numeric value than short, but cannot hold any negative numbers.
+
+The compiler allows them to be used interchangeably in some cases, as shown here:
+
+short bird = 'd';
+char mammal = (short)83;
+Printing each variable displays the value associated with their type.
+
+System.out.println(bird);   // Prints 100
+System.out.println(mammal); // Prints S
+This usage is not without restriction, though. If you try to set a value outside the range of short or char, the compiler will report an error.
+
+short reptile = 65535;  // DOES NOT COMPILE
+char fish = (short)-1;  // DOES NOT COMPILE
+
+
+FLOATING-POINT NUMBERS AND SCIENTIFIC NOTATION
+While integer values like short and int are relatively easy to calculate the range for, floating-point values like double and float are decidedly not. In most computer systems, floating-point numbers are stored in scientific notation. This means the numbers are stored as two numbers, a and b, of the form a x 10b.
+
+This notation allows much larger values to be stored, at the cost of accuracy. For example, you can store a value of 3 x 10200 in a double, which would require a lot more than 8 bytes if every digit were stored without scientific notation (84 bytes in case you were wondering). To accomplish this, you only store the first dozen or so digits of the number. The name scientific notation comes from science, where often only the first few significant digits are required for a calculation.
+
+
+
+Java allows you to specify digits in several other formats:
+
+Octal (digits 0–7), which uses the number 0 as a prefix—for example, 017
+Hexadecimal (digits 0–9 and letters A–F/a–f), which uses 0x or 0X as a prefix—for example, 0xFF, 0xff, 0XFf. Hexadecimal is case insensitive so all of these examples mean the same value.
+Binary (digits 0–1), which uses the number 0 followed by b or B as a prefix—for example, 0b10, 0B10
+You won’t need to convert between number systems on the exam. You’ll have to recognize valid literal values that can be assigned to numbers.
+
+
+There are only four rules to remember for legal identifiers:
+
+Identifiers must begin with a letter, a $ symbol, or a _ symbol.
+Identifiers can include numbers but not start with them.
+Since Java 9, a single underscore _ is not allowed as an identifier.
+You cannot use the same name as a Java reserved word. A reserved word is special word that Java has held aside so that you are not allowed to use it. Remember that Java is case sensitive, so you can use versions of the keywords that only differ in case. Please don’t, though.
+
+Note:
+If you want to declare multiple variables in the same statement, they must share the same type declaration and not repeat it. double d1, d2; would have been legal.
+
+
+Instance and class variables do not require you to initialize them. As soon as you declare these variables, they are given a default value.
+
+Default initialization values by type
+
+Variable type	Default initialization value
+boolean	false
+byte, short, int, long	0
+float, double	0.0
+char	'\u0000' (NUL)
+All object references (everything else)	null
+
+
+The VAR keyword from java 10 onwards:
+--------------------------------------
+- The formal name of this feature is local variable type inference. 
+public void whatTypeAmI() {
+   var name = "Hello";
+   var size = 7;
+}
+
+
+7:  public void reassignment() {
+8:     var number = 7;
+9:     number = 4;
+10:    number = "five";  // DOES NOT COMPILE
+11: }
+
+Note: Now we know the initial value used to determine the type needs to be part of the same statement. 
+
+13: var n = "myData";
+14: n = null;
+15: var m = 4;
+16: m = null;  // DOES NOT COMPILE
+
+but the following does compile:
+17: var o = (String)null;
+Since the type is provided, the compiler can apply type inference and set the type of the var to be String.
+
+Below code works:
+
+package var;
+ 
+public class Var {
+   public void var() {
+      var var = "var";
+   }
+   public void Var() {
+      Var var = new Var();
+   }
+}
+Believe it or not, this code does compile. Java is case sensitive, so Var doesn’t introduce any conflicts as a class name. Naming a local variable var is legal. Please don’t write code that looks like this at your job!
+
+
+
+There’s one last rule you should be aware of. While var is not a reserved word and allowed to be used as an identifier, it is considered a reserved type name. A reserved type name means it cannot be used to define a type, such as a class, interface, or enum. For example, the following code snippet does not compile because of the class name:
+
+public class var {  // DOES NOT COMPILE
+   public var() {
+   }
+}
+
+
+We recommend the one titled “Style Guidelines for Local Variable Type Inference in Java,” which is available at the following location. This resource includes great style suggestions.
+
+https://openjdk.java.net/projects/amber/LVTIstyle.html
+
+Review of var Rules
+We complete this section by summarizing all of the various rules for using var in your code. Here’s a quick review of the var rules:
+
+A var is used as a local variable in a constructor, method, or initializer block.
+A var cannot be used in constructor parameters, method parameters, instance variables, or class variables.
+A var is always initialized on the same line (or statement) where it is declared.
+The value of a var can change, but the type cannot.
+A var cannot be initialized with a null value without a type.
+A var is not permitted in a multiple-variable declaration.
+A var is a reserved type name but not a reserved word, meaning it can be used as an identifier except as a class, interface, or enum name.
+
+LIMITING SCOPE
+Local variables can never have a scope larger than the method they are defined in. However, they can have a smaller scope. Consider this example:
+
+3: public void eatIfHungry(boolean hungry) {
+4:    if (hungry) {
+5:       int bitesOfCheese = 1;
+6:    }  // bitesOfCheese goes out of scope here
+7:    System.out.println(bitesOfCheese);  // DOES NOT COMPILE
+8: }
+
+
+REVIEWING SCOPE
+Got all that? Let’s review the rules on scope:
+
+Local variables: In scope from declaration to end of block
+Instance variables: In scope from declaration until object eligible for garbage collection
+Class variables: In scope from declaration until program ends
+
+
+The following is a list of all data types supported by switch statements:
+
+int and Integer
+byte and Byte
+short and Short
+char and Character
+String
+enum values
+var (if the type resolves to one of the preceding types)
+
+
+Array:
+------
+int[][] myComplexArray = {{5,2,1,3},{3,9,8,9},{5,7,12,7}};
+

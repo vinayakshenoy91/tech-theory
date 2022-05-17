@@ -1,0 +1,45 @@
+- Items are retrived in random order in which they are added.
+- Will allow for nukll key and null values
+
+Working?
+----------
+- Built on an array
+- Compute hashcode from key -> whihc cell to put the key in
+- Each cell is called a bucket.Check if bucket is there or not.Check if key is there or not if bucket exists
+- In hashmap, it will create a linked list  upto a certain number of key value pair and will switch 
+to Red-black tree post this number.
+- Update map
+hash % bucket_count
+
+- Above step must not be interrupted by any thread in concurrent world
+
+- Hashmap has a factor of 0.75 and will double its size when it reaches this.
+Resizing requires every item to be re-evaluated as the hash changes.
+
+Map<String, Book> books = new HashMap<String,Book>(500000, 0.6f);
+
+Hashcode rules:
+---------------
+- You should get good range of numbers
+- Equal objects must have equal hash codes.
+
+- Use key as hashcode to get effeciency 
+
+Map<x,y> j = new HashMap<>();
+map.put
+map.get
+
+- Hash map can handle null
+
+for(Integer key: map.keySet()){
+
+}
+
+for(Map.Entry<Integer, String>entry:map.entrySet()){
+    entry.getKey();
+    entry.getValue();
+
+}
+
+
+- Generate hash code and to equals

@@ -1,0 +1,28 @@
+- If we need to store the elements in sorted order, we can use sorted sets, also known as ZSets, in Redis.
+Now, the important thing to note is how the element will be sorted. Each element should be assigned a score 
+before it is inserted into a sorted set. The Redis database sorts the elements in ascending order of this score.
+
+- ZADD key score value …
+
+zadd countries 120 USA 45 canada
+
+- ZRANGE key start end //If we need to fetch all the elements in the sorted set, we can provide -1 in the end field 
+
+- ZRANGEBYSCORE key start end
+
+- ZCARD key //To get the number of elements in the sorted set
+
+- ZCOUNT key min max //This command is used to find the number of elements within a certain range of scores.
+
+- ZREM key value
+
+- ZRANK key member
+
+- ZREVRANK key member //command is used to find the rank from the reverse
+
+- ZSCORE key member //To get the rank of an element, use the ZSCORE command
+
+
+
+
+

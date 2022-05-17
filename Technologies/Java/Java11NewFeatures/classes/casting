@@ -1,0 +1,7 @@
+We summarize these concepts into a set of rules for you to memorize for the exam:
+
+Casting a reference from a subtype to a supertype doesn’t require an explicit cast.
+Casting a reference from a supertype to a subtype requires an explicit cast.
+The compiler disallows casts to an unrelated class.
+At runtime, an invalid cast of a reference to an unrelated type results in a ClassCastException being thrown.
+

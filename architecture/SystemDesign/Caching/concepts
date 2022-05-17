@@ -1,3 +1,11 @@
+Cache hit -> requested data is found in cache
+Cache miss -> Requested data could have been found in cache but is not.
+
+Cache eviction -> FIFO, LRU, LFU
+
+Popular CDN -> Cloudflare  and Google cloud CDN
+
+
 Different kinds of caches are listed below.
 1.	
 Query cache
@@ -163,3 +171,6 @@ Use for write heavy loads
 - Data that is cached must not change often and must be accessed often
 - Prepopulate the cache.
 - put expiration policies
+
+
+

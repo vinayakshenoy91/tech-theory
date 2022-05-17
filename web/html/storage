@@ -1,0 +1,53 @@
+LocalStorage:
+-------------
+
+Data with no expiration date is stored by the localStorage object. Here the data is not deleted if we close the browser. We can have data on the next day or week or year - the storage is persistent.
+
+Syntax:
+
+localStorage(“firstname”,”Tanya”); document.getElementById(“id1”).innerHTML= localStorage.getItem(“firstname”); 
+
+localStorage.setItem("lastname", "Smith");
+
+document.getElementById("result").innerHTML = localStorage.getItem("lastname");
+
+Session storage:
+----------------
+sessionStorage object works the same as the localStorage object except that the data is stored for one session only.
+
+When the user closes their browser the data for that session is deleted.
+
+Syntax:
+
+
+sessionStorage.firstname-“Tanya”; document.getElementById(“id1”).innerHTML= sessionStorage.firstname;
+
+Web storage interface:
+-----------------------
+There are only three web storage interfaces, that are: window, storage, and storageEvent. The window object provides access to the local storage objects. storage retrieves, sets and removes data from the domain. storageEvent is fired when the storage area on a document’s window changes.
+
+Events:
+-------
+When removeItem(), clear(), and setItem() are invoked the events are fired on the window object, which accesses newly stored or removed data, as defined by localStorage and sessionStorage attributes.
+
+
+Storage Event Interface:
+------------------------
+There are many storgeEvent interfaces like event.key, event.newValue, event.url, event.oldValue, and event.storageArea.
+
+event.key returns the key if the storage item is changed, event.oldValue and event.newValue return the old value and the new value of the key whose value has been changed. event.url returns the URL of a document that has been changed.
+
+Clear all:-
+----------
+If we want to delete all the settings we can call the localStorage.clear() method; localStorage.remove(key) only removes the key of the value that we have given. Same can be applied with sessionStorage; the syntax will be sessionStorage.clear().
+
+Count the number of times a user has clicked a button in current session:
+------------------------------------------------------------------------
+
+if (sessionStorage.clickcount) {
+  sessionStorage.clickcount = Number(sessionStorage.clickcount) + 1;
+} else {
+  sessionStorage.clickcount = 1;
+}
+document.getElementById("result").innerHTML = "You have clicked the button " +
+sessionStorage.clickcount + " time(s) in this session.";

@@ -1,0 +1,19 @@
+Text analysis process:
+-----------------------
+Tokenize(chope and drop punctuation,tags,etc) 
+Reduce to common case (all upper or lower case)
+Remove stop words(Words more common like in/on etc),
+Reduce to common stems (remove plurals, common endings)
+Aling to common language form
+
+Design steps:
+-------------
+Index - what should be searchable - Doctypes and fields to index, Map fields and sections, Comfigure field settings.
+Analyse - How text segmented and filtered - Filter for unwanted chars, split input into segments = tokenize, filter out tokenized inputs.
+Search - how will queries run - choose approach, run queries with modifiers, sequence results by field/score/by facets.
+REsults - Evaluate result compared to previous searches.
+
+Couchbase FTS search is powered by Elastigo
+
+Indexing and search use same analysers
+

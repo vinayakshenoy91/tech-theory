@@ -1,0 +1,58 @@
+Symbols are always unique and we can use them as identifiers for object properties.
+
+Let’s create a Symbol together:
+const me = Symbol("Alberto");
+console.log(me);
+// Symbol(Alberto)
+
+
+Here we have our office object with three people, two of which share the same name. To avoid naming collisions we can use symbols.
+
+const office = {
+  [Symbol("Tom")] : "CEO",
+  [Symbol("Mark")] : "CTO",
+  [Symbol("Mark")] : "CIO",
+}
+
+for(person in office) {
+  console.log(person);
+}
+// undefined
+
+We got undefined when we tried to loop over the symbols because they are not enumerable, so we can’t loop over them with a for in.
+
+If we want to retrieve their object properties we can use Object.getOwnPropertySymbols().
+
+const office = {
+  [Symbol("Tom")] : "CEO",
+  [Symbol("Mark")] : "CTO",
+  [Symbol("Mark")] : "CIO",
+};
+
+const symbols = Object.getOwnPropertySymbols(office);
+console.log(symbols);
+// 0: Symbol(Tom)
+​// 1: Symbol(Mark)
+​// 2: Symbol(Mark)
+​// length: 3   
+
+
+We retrieved the array, but to be able to access the properties we have to use map
+
+const symbols = Object.getOwnPropertySymbols(office);
+const value = symbols.map(symbol => office[symbol]);
+console.log(value);
+// 0: "CEO"
+​// 1: "CTO"
+​// 2: "CIO"
+​// length: 3
+
+
+//ES2018
+
+const me = Symbol("Alberto");
+console.log(me.description);
+// "Alberto"
+
+console.log(me.toString());
+//  "Symbol(Alberto)"

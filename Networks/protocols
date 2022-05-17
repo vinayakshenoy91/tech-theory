@@ -1,0 +1,43 @@
+TCP:
+----
+
+- Websockets 
+- HTTP : REST , GRPC, Graphql
+
+- It is reliable, ordered , error-checked
+- Slower than other protocols
+- Checksum is basically size of message, if part of it gets corrupted. Checksum is calculated by recevied and then compared with what sender sent.
+
+
+UDP:
+----
+- Faster than TCP as there is no ordering etc
+- Out of order and unreliable.
+- Good for constant stream of data 
+- Moinitoring metrics, Video streaming, gaming
+
+Qn to be asked: Is it ok to loose data?
+
+
+HTTP:
+-----
+- Layer 7
+
+Long polling:
+------------
+- Real time message delivery
+- Good option if websockets are not an option. Set long lived connection and then close connection when you get message and then again open it
+
+gRPC:
+-----
+- Invoke another servcice as it is a local function call
+- Function is described in IDL
+Generator takes description as input and creates impl in particular language.
+Uses Protobuf as IDL
+-gRPC is binary protocol and RPC is text based protocol
+
+
+Questions for protocol:
+-----------------------
+grpc not good option for external client
+UDP protocol for collecting metrics from diff servers

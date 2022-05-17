@@ -1,2 +1,37 @@
 const para = document.querySelector('div.error'); //div with a class of error
 const para = document.querySelectorAll('p'); //div with a class of error
+
+
+
+JavaScript defines a global object, 
+which can be assigned values that are available throughout an application. The global object is 
+used to provide access to the essential features in the execution environment, such as the document object 
+in browsers that allows interaction with the Document Object Model API.
+
+greeting = "Hello";
+
+Values assigned names without using the let, const, or var keyword are assigned to the global object. The statement that assigns 
+the string value Hello creates a variable in the global scope. When the function is executed, this is assigned the global object, 
+so reading this.greeting returns the string value Hello, explaining the output produced by the application.
+
+
+writeMessage.call(global, "It is sunny today");
+
+window/global:
+--------------
+
+- The name of the global object changes based on the execution environment. 
+In code executed by Node.js, global is used, but window or self will be required in browsers.
+
+strict mode:
+-------
+
+UNDERSTANDING THE EFFECT OF STRICT MODE
+JavaScript supports “strict mode,” which disables or restricts features that have
+ historically caused poor-quality software or that prevent the runtime from executing code efficiently. 
+ When strict mode is enabled, the default value for this is undefined in order to prevent accidental use of the global object, 
+ and values with global scope must be explicitly defined as properties on the global object. 
+ See https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Strict_mode for details. 
+ The TypeScript compiler provides a feature for automatically enabling strict mode in the JavaScript code it generates
+
+

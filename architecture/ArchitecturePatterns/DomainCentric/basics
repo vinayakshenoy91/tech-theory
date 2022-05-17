@@ -1,0 +1,11 @@
+- Hexagonal architecture is domain centric architecture.
+- Onion architecture [Domain -> domain svc -> app svc]
+
+- Cons: REquires more thought on whihc classes lie where like in app vc layer or domainsvc 
+
+- Centers the dev to a programming a domain model that has a rich understanding of the processes and rules of a domain.
+
+- Should be applied to only complex domains where the model and the lingustic processes provide
+clear benefits in the communication of complex info and in the formulation of common understanding of the domain.
+
+- Business domian complexity only not tech complexity

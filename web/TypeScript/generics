@@ -1,0 +1,15 @@
+//Describing a generic item
+type Link<T>={
+    value:T,
+    next:Link<T>
+}
+
+//Describing a generic function
+function createNode<T>(value:T):Link<T>{
+    return {value}
+}
+
+function tap<T>(arg:T,fn:(x:T)=>void):T{
+      fn(arg);
+      return arg;
+}

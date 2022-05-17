@@ -1,0 +1,44 @@
+- Use thwne object creation is costly or time consuming. So with this pattern we create object 
+with existing object itself.
+
+- if object is already present, clone it from there
+
+This can be done using Object cloning:
+- Implement Cloneable interface. Cloning is of two types shallow and deep cloning.
+- clone() method will do a shallow cloning.
+
+class x implements Cloneable{
+
+}
+
+In jdk, they are presented in: 
+- java.lang.Cloneable and java.lang.Object#clone()
+
+
+- Specify the kinds of objects to create using a prototypical instance and create new objects by copying 
+this prototype.
+
+//New object and does not modify the original
+public static Configuration from(Configuration original){
+    return new Configuration(org.alignment, org.colspan);
+}
+
+
+Drawback of object.clone():
+---------------------------
+1) Too extralinguistic
+   - clone() is not from Cloneable interface
+   - Calling super.clone() is not mandatory unlike constructors.
+
+2) It is still necessary to propagate the clone (deep copy)
+3) It can be problematic not to call the constructor
+We cannot modify a final variable.
+4) Some experts recommend using a "factory method"  instead of clone.
+
+
+Usecase:
+--------
+- Used when system should be independent of how its products are created, composed and represented.
+- Class to intantiate are specified at runtime by dynamic loading.
+- To avoid building a class hierarchy of factories that parallels the class hierarchy of products.
+- When instances of a class can have one of only a few diff combinations of state.

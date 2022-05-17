@@ -1,0 +1,11 @@
+Factors:
+---------
+- Structured or unstructured
+- Structured data? ACID required or not -> Payment or invenotry needs ACID
+- Document DB [MongoDB & Couchbase]-> Wide variety of query and wide variety of datatypes
+- Columnar DB[Cassandra, HBASE] -> Every increasing data in a non-linear fashion + finite queries
+
+Time series database to keep track of inputs from monitopring systems : OpenTSDB
+
+Offline alaytics like : Hadoop
+

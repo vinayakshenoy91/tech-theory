@@ -1,0 +1,20 @@
+- Provides best of both worlds by providing batch vs real time processing
+- Nathan marz came up with this arch
+Balance between:
+- High fault tolerance and comprehensive analysis from batch processing
+- Low latency (from real time processing)
+
+Three layer:
+- Batch, speed and serving layer
+
+Data coming in is dispatched to batch and speed layer.
+
+Batch layer (Output is batch view)
+- Manager dataset and be a system of records
+- Precompute batch views
+
+Speed layer (Output is real time view): Queue + processing = Real time
+- Operates only on the most recent data
+- Doesnt attempt to provide a complete view or make any complex data corrections
+
+Serving layer -> Serves the queries by merging both batch views and real time views.

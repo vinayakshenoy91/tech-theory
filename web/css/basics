@@ -1,7 +1,132 @@
 box-sizing: border-box; -> If we add padding or border on element, it does not effect the width of it
 display:flex -> Center everything
 height: 100vh; -> take entire height of browser
+background-color:lighten(orange, 45%);
+
+Specificity: Which styles to listen to when two or more styles are competing.
+Class selectors are specific than descendent selectors.
+Descendent selector with class is specific than class selector. footer .hello{}
+
+
 
 Note:
 -----
 - flex-direction and align-items are related. Alignment will happen accordign to direction. If column then horizontal.
+
+
+
+
+
+.container{
+    max-width:940px;
+    margin: 0 auto;
+    padding-left:40px;
+    padding-right:40px;
+}
+
+
+Attaching css:
+---------------
+<link rel="stylesheet" href="css/style.css">
+
+Styles:
+-------
+color:orange
+text-align:center;
+
+Selectors:
+----------
+1) Type selectors:
+
+2) Descendent selectors:
+header p span{
+
+}
+
+3) Class selectors:
+.xyz {
+    color:yellow
+}
+
+Box model:
+----------
+width->padding-> border -> margin
+box-sizing:border-box; // Width 250px would mean -> width+padding+border
+
+Layout and floats:
+------------------
+<div class="container group"></div>
+.container{
+    max-width:940px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+.main-area{
+    width:66%;
+    float:left;
+}
+
+.sidebar{
+    width:34%;
+    float:left;
+}
+
+.group:before,
+.group:after{
+  content:"";
+  display:table;
+}
+
+.group:after{
+    clear:both;
+}
+
+.group{
+    zoom:1;
+}
+
+Create a div below sidebar and then put it above style:
+
+Styling navigation:
+-------------------
+<nav class="site-nav">
+
+ <ul class="group">
+   <li><a></a></li>
+   <li></li>
+ </ul> 
+
+</nav>
+
+
+.site-nav li{
+  float:left;
+  list-style:none;
+}
+
+.site-nav ul{
+  margin:0;
+  padding:0;
+}
+
+.site-nav a{
+    display:block;
+}
+
+
+Color:
+-------
+rgba(0,0,0,opacity)
+
+Remember:
+----------
+display:block;
+z-index:10;
+
+
+Measurements:
+--------------
+em -> base size is defined interms of parents elements 
+rem -> it is em except the base size is always the root font size.
+

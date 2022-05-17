@@ -1,0 +1,11 @@
+Having said that, monetization won't happen on its own and therefore a set of capabilities is required, most notably:
+
+API plans: The ability to define different monetization plans based on direct or indirect schemes, such as the ones mentioned earlier (for example, pay per call, freemium, and so on), or custom ones.
+API monetization policies: The ability to implement and enforce a monetization plan to any given API or group of APIs (this capability is also explained in the subsequent chapter).
+API billing: The ability to bill based on the implemented plan. When the scheme is based on a direct monetization plan, then this capability should also offer either basic finance capabilities, such as the ability to bill and invoice based on the scheme selected, or a pre-built integration with any of the popular billing systems.
+
+
+Quotas and plans
+A capability in support of API monetization, quotes, and plans refers to having the ability to define and enforce quotas and/or plans to a given API, against a well-defined audience. For example, user Luis is subscribed to the Gold Plan of the Orders API. The Gold Plan defines a quota of 10k API calls per day. Exceeding that quota may result in additional charges and/or simply a blockage of the service for the rest of the day.
+
+

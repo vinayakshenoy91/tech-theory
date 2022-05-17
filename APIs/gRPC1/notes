@@ -1,0 +1,32 @@
+The Golden Specification
+The .proto file for attendees and the OpenAPI specification do not look too dissimilar, they contain the same fields and both have data types. Is it possible to generate a .proto file from an OpenAPI specification using the openapi2proto tool? Running openapi2proto --spec spec-v2.json will output the .proto file with fields ordered alphabetically by default. This is fine until we add a new field to the OpenAPI specification that is backwards compatible and suddenly the ID of all fields changes, breaking backwards compatibility.
+
+The sample .proto file below shoes that adding a_new_filed would be alphabetically added to the beginning, changing the binary format and breaking existing services.
+
+message Attendee {
+    string a_new_field = 1;
+    string email = 2;
+    string givenName = 3;
+    int32 id = 4;
+    string surname = 5;
+}
+OpenAPI specifications support the idea of extensions, and by using the openapi2proto specific OpenAPI extensions it is possible to generate the compatibility between the two mechanisms of specification.
+
+NOTE
+There are other tools available to solve the specification conversion problem, however it is worth noting that some tools only support OpenAPI Specification version 2. The time taken to move between version 2 and 3 in some of the tools built around OpenAPI has led to many products needing to support both versions of the OAS.
+
+An alternative option is grpc-gateway, which generates a reverse-proxy providing a REST facade in front of the gRPC service. The reverse proxy is generated at build time against the .proto file and will produce a best effort mapping to REST, similar to openapi2proto. You can also supply extensions within the .proto file to map the RPC methods to a nice representation in the OpenAPI specification.
+
+import "google/api/annotations.proto";
+//...
+service AttendeesService {
+  rpc getAttendees(AttendeesRequest) returns (AttendeeResponse) {
+	option(google.api.http) = {
+		get: "/attendees"
+	};
+}
+Using grpc-gateway gives us another option for presenting both a REST and gRPC service. However, grpc-gateway involves several commands and setup that would only be familiar to developers who work with the go language or build environment.
+
+
+
+

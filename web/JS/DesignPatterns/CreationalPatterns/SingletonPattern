@@ -1,0 +1,17 @@
+- Constructor call is expensive and we need to happen it only once.
+Like DB repo, object factory etc
+- We provide everyone with same instance.
+- Want to prevent anyone from creating additional copies.
+- A component that is instantiated only once.
+
+https://tesco.udemy.com/course/design-patterns-javascript/learn/lecture/14401180#notes
+
+class Singleton{
+    constructor(){
+        const instance = this.constructor.instance;
+        if(instance){
+            return instance;
+        }
+        this.constructor.instance=this;
+    }
+}

@@ -1,0 +1,7 @@
+SET `compiler.parallelism` "1";
+
+SET `compiler.groupmemory` "64MB";
+
+SET `compiler.sortmemory` "67108864"; //In bytes
+
+SELECT ....

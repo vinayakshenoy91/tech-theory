@@ -1,0 +1,53 @@
+Assertions:
+------------
+assertEquals(expected,actual)
+assertEquals("expected","actual", "message");
+assertArrayEquals(expected, actual)
+assertTrue(condition, error message) \
+assertFalse(condition, () -> error message))
+assertNull(condition)
+assertNotNull(condition)
+assertAll("address", ()-> asserEquals(),()-> asserEquals() )
+assertSame(x,y) //Refer to same object in memory
+assertIterableEquals(collection1, collection2)
+
+Testing timeout:
+-----------------
+@Test(timeout=10000) | Check this in junit4
+assertTimeout(Duraton.ofMillis(4),()->method)
+assertTimeout(ofMinutes(2),()->{});
+AsserTimeoutPreemptively -> Execution of code will be preemptively aborted if the timeout is exceeded.
+
+Testing exception:
+-------------------
+assertThrows(IllegalArgumentException.class, ()->{
+    //Code under test 
+},"message")
+Throwable exception = assertThrows(IllegalargException.class, ()->{
+    throw new Illegalarg("a.messsage");
+})
+assertEquals("a.message", exception.getMessage())
+
+
+Nested: In test file write inner class
+-------
+@Nested
+class isDietRecommendedTest{
+    //Write tests here
+}
+
+
+Assume:
+-------
+//Test will be skipped. Usercase like should run only in a given env.
+assumeTrue("1".equals(System.getenv("TEST_POINTS"))); //Tests/assertion post this won't be executed
+Can also be put in beforeEach method
+assumeTrue(false)
+assumeFalse(true)
+assumingThat(false, ()-> fail("Test 3 failed"))
+
+
+In junit 4:
+-----------
+@Test(expected=NullPointerException.class)
+

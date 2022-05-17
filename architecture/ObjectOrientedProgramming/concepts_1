@@ -1,0 +1,82 @@
+Why static?
+-------------
+The static keyword signifies that there will be only one copy of this attribute for all the objects instantiated by this class. 
+
+Static methods promote strong coupling to classes. You cannot abstract a static method. You cannot mock a static method or static class. 
+You cannot provide a static interface. The only time it is reasonable to use static classes (within application development—framework 
+development is a bit different) is if you're working with some sort of helper class or extension method that does not produce side 
+effects. For example, a static class to add numbers is fine. 
+A static class that interacts with a database or a web service is not.
+
+
+- Java provides an interface called Serializable that provides serialisation and deserialisation
+
+
+Inheritance represents the is-a relationship
+
+Composition involves using other classes to build more complex classes
+Composition represents a has-a relationship. For example, a car has an engine.
+
+
+ACCESS MODIFIERS:
+----------------
+Java offers four choices of access modifier:
+
+private The private modifier means the method can be called only from within the same class.
+
+Default (Package-Private) Access With default access, the method can be called only from classes in the same package. This one is tricky because there is no keyword for default access. You simply omit the access modifier.
+
+protected The protected modifier means the method can be called only from classes in the same package or subclasses. You’ll learn about subclasses in Chapter 8, “Class Design.”
+Subclasses and classes in the same package are the only ones allowed to access protected members.
+
+
+public The public modifier means the method can be called from any class.
+
+Applying Access Modifiers
+You already saw that there are four access modifiers: public, private, protected, and default access. We are going to discuss them in order from most restrictive to least restrictive:
+
+private: Only accessible within the same class
+Default (package-private) access: private plus other classes in the same package
+protected: Default access plus child classes
+public: protected plus classes in the other packages
+
+
+
+OPTIONAL SPECIFIERS:
+--------------------
+final The final modifier is used when a method is not allowed to be overridden by a subclass.
+
+synchronized The synchronized modifier is used with multithreaded code.
+static The static modifier is used for class methods
+
+abstract The abstract modifier is used when a method body is not provided. 
+
+strictfp The strictfp modifier is used for making floating-point calculations portable.
+
+native The native modifier is used when interacting with code written in another language such as C++
+
+Method name:
+-------------
+-  To review, an identifier may only contain letters, numbers, $, or _.
+
+
+Varargs:
+---------
+public void walk1(int... nums) {}
+public void walk2(int start, int... nums) {}
+public void walk3(int... nums, int start) {}    // DOES NOT COMPILE
+public void walk4(int... start, int... nums) {} // DOES NOT COMPILE
+
+
+
+Access modifiers:
+-----------------
+A method in _________ can access a _________ member	private	Default (package-private)	protected	public
+
+the same class	                                     Yes	Yes	Yes	Yes
+another class in the same package	                  No	Yes	Yes	Yes
+in a subclass in a different package	              No	No	Yes	Yes
+an unrelated class in a different package	          No	No	No	Yes
+
+
+

@@ -1,0 +1,84 @@
+Selectors:
+-----------
+#id, .class, element selectors(li, h2)
+
+//descendnet selector-> Mateches nested lis.Every li element of unordered list even if nested order list
+// Any descendent li element
+ul li, ol li{ 
+
+}
+
+//Child selector -> Matches lis in ols but not nested uls
+// Exact child element li
+ol>li{
+
+}
+
+li.hasaclass + li -> adjacent sibling
+
+li.hasaclass ~ li -> General sibling selector
+
+
+Custom properties:  ##they are inherited
+---------------------
+#aboutme{
+    --text-color: blue
+}
+
+#aboutme aside{
+    color: var(--text-color);
+    color: var(--test-color,red);
+}
+
+Same property inherited instead of repeating: //Custom properties for cascading variables.
+----------------------------------------------
+:root{
+    --accent-color: rgba(x,y,z,r)
+}
+
+Attribute selectors:
+---------------------
+img[alt]{
+
+}
+
+img:not([alt]){
+
+}
+
+E[attr~="val"] -> Covers full word
+E[attr="val"] -> Exact case sensitive, or jsut val if case insensitive
+E[attr|=val] -> Element E whose attr has a value val or begins with val- ("val" plus "-"). p[lang|="en"]  <p lang="en-uk">
+E[attr^=val] -> Value that starts with
+E[attr$=val] -> Value that ends with 
+E[attr*=val] -> val is anywhere in the content
+E[foo="bar" i] -> val is case insensitive
+
+a[href^=http]:after{content: " ("attr(href) ")";}
+
+UI selectors:
+-------------
+:enabled
+:disabled
+:checked
+:intermediate
+
+//For input element mostly 
+:default
+:valid
+:invalid  -> THis is same as input:not(:valid)
+:required
+:optional
+:in-range
+:out-of-range
+:read-only
+:read-write
+:placeholder-shown
+:user-error or :user-invalid
+
+input[type=checkbox]:checked+label{
+
+}
+
+Structural selectors:
+---------------------

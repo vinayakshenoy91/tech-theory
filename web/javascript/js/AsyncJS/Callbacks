@@ -1,0 +1,12 @@
+var btn = document.querySelector("#item1");
+
+function x(e){
+ console.log(e);
+}
+
+btn.addEventListener("click", x)
+
+typeof callback === "function"
+
+
+setTimeout(fn,millisec, args)

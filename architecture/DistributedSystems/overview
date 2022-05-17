@@ -1,0 +1,5 @@
+Reliable app properties:
+- Idempotency
+- Immutability
+- Location independence
+- Versioning

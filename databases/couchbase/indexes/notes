@@ -1,0 +1,134 @@
+- Auxillary data structure used to enhance performance of query and search operations.
+- Index in a DB contains subset of the data in a bucket.Subset includes commonly queried attributes
+Each index entry points to corresponding document.
+- Indexes can be stored in memory to optimise lookup operations.
+- Index on specific attribute: Index values and pointers to corresponding documents.
+Can speed up range and exact lookup queries. (Depends on underlying DS like Btree or hash)
+- Auxiliary data structure occupies space.
+- Index updated when data modified and hence insert, update and delete operations becomes slower
+
+
+Indexes in CB:
+-------------
+1) Primary indexes: 
+- Min 1 required in any bucket.
+- Based on unique key of each item within bucket.
+- Maintained async
+- used with simple queries with no filters, no predicates.
+- Maintained by index svc in couchbase
+- Index that includes all document keys in a given bucket is called a Primary index.
+
+
+
+2) Secondary indexes (Global Secondary Indexes (GSI)):
+- based on attribute values within documents.
+- Maintained by index svc in couchbase
+- Attributes can be of any types: scalar, object, array
+- Features: Advanced scaling, Predicatble perf, independent partition, low latency query
+- Index may caontain one or more attributes
+
+2.1) Composite index:
+---------------------
+- It is s kind of secondary index
+- Secondary index with multiple index keys.
+- Useful for queries with multiple filters (predicates)
+- Improve performance since fewer indexes are required to execute queries.
+- Limits number of documents to retrieve from disk
+- If composite index X, Y, Z, then queries must include X in the where clause.
+- Can hurt perf if one of the keys is not selective and matches most/all index entries.
+
+
+Partial index:
+--------------
+- Also called filtered index. Cover subset of docs.Where clsuse filters the docs that will be covered by index.
+CREATE INDEX IDX_NAME ON BUCKETNAME(NAME) WHERE type="xyz";
+- Reduces the amount of resource that index consumes.
+
+
+
+
+Note: Primary and secondary index works on exact matches or exact ranges of values.
+
+3) Full text indexes :
+- Optimsied for text searches
+- target texual content of docs
+- Docs can be in one or more buckets.
+- Docs can be in one or more buckets
+- diff degrees of exactn ess in search
+- Copes well with punctuation and html tags.
+- Provided by search svc
+
+
+4) View indexes [Deprecated as of 6.5]
+- tied to couchbase views.
+- Fields and information extracted from docs
+- Transformation of underlying data
+
+
+5) Adaptive indexes:
+---------------------
+- It is a special type of GSI array index that can index all or specified fields of a document.
+
+
+
+
+What is index svc?
+-------------------
+- Support creation of primary and secondary indexes.
+- Index is saved on node on which it is created.
+- Each index created on one bucket only.
+- Multiple index can exist on bucket.
+
+Storage config of index svc [How are index stored?]:
+-----------------------------
+1) Standard Storage:
+- Indexes persisted to disk
+- Community and enterprise ED
+- B-tree index
+- Each index has a dedicated file.
+- b-tree indexes stored in forestDB (kv)
+- Index size can exceed node memory
+- Community Ed: Writes can be append-only or wrtie with circular reuse
+- Enterprise ed: auto compaction for indexes. Free up space occupied by deleted data.
+
+2) Memory optimsied storage
+- Indexes saved in memory
+- Enterprise Ed only
+- lock-free skiplist
+- Snapshot on disk for recovery from node failure.
+- Lokc free design enhances copncurrency.
+- Skiplist rather than Btree optimises memory consumption
+
+Duplicate indexes:
+------------------
+- When multiple indexes exist on identical keys and with identical WHERE cluases but 
+different names, couchbase will round-robin through these to distribute load and to increase
+availability and performance.
+
+
+Index partitioning: Starting 5.5
+-------------------
+- Horizontal scalign of index info across multiple nodes to improve perf.
+- Scale and perf. Based on hash partitioning.
+- Number of index partition fixed on index creation
+- By default 8 partitions are created.
+- Transparent to queries.
+- Scale index as index size grows. Need not worry about new data added.
+- Large aggregated queries benefit most since partitions can be scanned in parallel.
+- Also reduces latency on range queries.
+- partition key determines where document resides.Can include one or more terms.
+- Keys can be any data types like number, string, boolean, arrya, object, or null
+- Array expressions are not allowed to be keys.
+- If key does change, documents should be deleted and recreated.
+- partition helps distribute query load.Replica partitions will span server groups.
+- When index nodes are added or removed, it has to be rebalanced. Stats collected -> fed to opt algo -> Check placement of partitions
+- Rebalanceing may not work in situation where:
+1. Data skew across partition
+2. Cost of moving index data is high.
+3. Mix of partitioned and non-partitioned index.
+
+
+
+
+
+

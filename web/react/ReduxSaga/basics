@@ -1,0 +1,65 @@
+- It is based on JS generators
+- Decide flow of side effects call. When delete button is keyed twice, you can block the second call until first one is complete.
+
+
+
+
+
+Setup:
+-----
+
+import reducers from './reducers'; 
+import {Provider} from 'react-redux';
+import {createStore, applyMiddleware} from 'redux';
+import createSagaMiddleware from 'redux-saga';
+import rootSaga from './sagas';
+
+const sagaMiddleware = createSagaMiddleware();
+const store=createStore(reducers,applyMiddleware(sagaMiddleware));
+sagaMiddleware.run(rootSaga);
+
+ReactDOM.render(<Provider store={store}><App/></Provider>)
+
+//In the app class, 
+import {connect} from 'react-redux';
+import {getUserRequest} from '../actions/users';
+
+export default connect(({users})=>({users}),{
+getUserRequest
+} ) (App);
+
+
+
+Cheatsheet:
+-----------
+
+- Under the hood, take every is having a white true loop that is monitoring various action 
+
+
+takeEvery:
+--------
+_ Keep sending requests
+- Use this when: You want to watch for EVERY time a specific redux action was dispatched.
+
+takeLatest: 
+------------
+- used basically for post and put. Also, used for 
+
+- Because if there is a second call made before 1st one is resolved, the 1st one is cancelled 
+and 2nd one is fired. 
+
+- There's the potential for a redux action to be dispatched multiple times in a short period and could potentially initiate the running of multiple instances of the same saga - use takeLatest to ONLY take the latest currently running saga for the associated dispatched redux action.
+
+
+take:
+-----
+- Need to wait until the current ones resolve.
+
+
+"call"
+Use this when: You want to call a function or a promise but want to wait for that function or promise to finish running before executing the next line of code.
+
+
+
+"put"
+Use this when: You want to dispatch a redux action from within a redux saga.

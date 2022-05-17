@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+   <groupId>com.javadevjournal</groupId>
+   <artifactId>standalone-application</artifactId>
+   <version>0.0.1-SNAPSHOT</version>
+   <packaging>jar</packaging>
+   <name>standalone-application</name>
+   <description>Spring Boot Standalone application</description>
+   <parent>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-parent</artifactId>
+      <version>2.0.0.RELEASE</version>
+      <relativePath />
+      <!-- lookup parent from repository -->
+   </parent>
+   <properties>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+      <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+      <java.version>1.8</java.version>
+   </properties>
+   <dependencies>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>org.springframework.boot</groupId>
+         <artifactId>spring-boot-starter-test</artifactId>
+         <scope>test</scope>
+      </dependency>
+   </dependencies>
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-maven-plugin</artifactId>
+         </plugin>
+      </plugins>
+   </build>
+</project>
+
+
+4. Spring Boot Main Class
+To bootstrap our application, let’s create our main class and annotate it with @SpringBootApplication annotation.
+
+@SpringBootApplication
+public class SpringBootStandaloneApplication implements CommandLineRunner {
+
+	public static void main(String[] args) {
+		SpringApplication.run(SpringBootStandaloneApplication.class, args);
+	}
+	@Bean
+	public HelloService getHelloService(){
+		return  new DefaultHelloService();
+	}
+
+	@Override
+	public void run(String... args) throws Exception {
+		getHelloService().hello();
+	}
+}
+Using CommandLineRunner is not required, but it provides several advantages during the application startup and management.
+
+CommandLineRunner executes after the application context loaded so we could use it to check if certain beans 
+exist or required values correctly initialized.
+Provide control of the system startup process.
+
+
+
+Running the app: mvn spring-boot: run 
+
+
+

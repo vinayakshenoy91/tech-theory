@@ -1,0 +1,21 @@
+timer creation function: Similar to setTimeout
+=========================
+Wait for sometime, emit a value and complete
+
+
+import {timer} from "rxjs";
+
+timer(2000).subscribe({
+    next: value => console.log("Hello");
+});
+
+
+const timer$ = new Observable<number>(subscriber=>{
+    const timeoutId=setTimeout(()=>{
+         console.log('Timeout!');
+         subscriber.next(0);
+         subscriber.complete();
+    },2000);
+
+    return ()=> clearTimeout(timeoutId)
+})

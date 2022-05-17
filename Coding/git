@@ -1,0 +1,19 @@
+git config --global user.name "vinayak"
+git config --global user.email "email_id"
+
+
+Get gitignore templates:
+------------------------
+- github.com/github/gitignore
+
+Configuring ssh:
+----------------
+- ls -al ~/.ssh
+- ssh-keygen -t rsa -b 4096 -C emailid
+- Adding ssh to git
+eval "$(ssh-agent -s)"
+ssh-add ~/.ssh/id_rsa //Configure ssh locally
+- Now you need to add pub file to git:
+pbcopy < ~/.ssh/id_rsa.pub
+Goto profile -> ssh ekys -> paste the thing copied in clipboard
+- ssh -T git@github.com

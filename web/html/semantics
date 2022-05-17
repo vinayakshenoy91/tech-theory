@@ -1,0 +1,19 @@
+Semantic markup is a method of writing and formatting the HTML (Hypertext Markup Language) to emphasize the semantic meaning, or purpose 
+of the content, as opposed to its appearance.
+
+- Semantics and accessibility are part of HTML 
+
+“Semantic markup-ing” means understanding the hierarchy of your web page’s content and how it will be read by both users and machines. 
+Much of that may sound like good judgment; when you write a heading, 
+mark it with a heading tag (<h1>, <h2>, etc.), and when you write a paragraph you write a paragraph, mark it with a paragraph tag (<p>)
+
+- Semantic markup means that HTML tags are never selected based on how they appear in a web browser-they are selected based 
+on the content 's importance and structure.
+
+While HTML has included semantic markup from the beginning, the advent of HTML5 brought with it even more semantic tags such as <section>, 
+<article>, <footer>, <nav>, and <aside>.
+
+The aim of using semantic markup is to make it simpler for browsers, programmers, and crawlers to differentiate between specific data types. 
+All these semantic tags make it clearer 
+what information is on the web page and how important that information is.
+

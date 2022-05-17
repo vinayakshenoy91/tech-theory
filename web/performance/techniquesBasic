@@ -1,3 +1,7 @@
+Optimising practises:-
+
+
+
 To optimize website assets, we can follow the below techniques:
 
 File compression
@@ -11,5 +15,36 @@ Using internal and external style sheets and minimizing inline CSS
 Using a CDN (content delivery network) for media files and hosting
 Hosting our website’s assets on different domains while also reducing DNS lookups
 Using a domain that is cookie-free to place the assets and splitting them among different domains
+
+
+1. Reduce Application Size With Webpack
+
+
+2. Use Cache in The Browser [Read more on this]
+- JavaScript Cache API or you can use the HTTP protocol cache. You need to install a service worker for JavaScript Cache API. 
+
+3. Place JavaScript at The Bottom of the Page
+
+5. Use Minification
+
+
+6. Use Gzip Compression
+
+7. Avoid Unnecessary Access to DOM
+
+Accessing DOM slower down the performance of the website. The browser has to refresh the page every time when you interact with 
+the DOM outside the JavaScript native environment. It’s good to keep DOM access to a minimum or in your web application if you need 
+to read the content several times then it’s good to save it in local variables. 
+
+Keep in mind that if you remove the value of the DOM then set the variable to NULL to avoid the memory leak in your application. 
+
+
+Another way to measure it is => Run a robot that loads your site periodially from various places and test it.
+
+pingdom
+new relic tool
+requestmetrics.com
+
+
 
 

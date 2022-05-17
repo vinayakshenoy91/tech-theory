@@ -1,0 +1,5 @@
+- Underlying store is a nosql store.
+- Partition key -> Used to define the partition to store the entities
+- Row key -> Helps to uniquely identify an entity in the partition
+
+Query based on partition key or row key

@@ -1,0 +1,74 @@
+JavaScript performance API comes with a variety of inbuilt functions 
+like Console.time, Console.timeEnd, Performance.now, Performance.mark, Performance.measure, etc
+
+
+
+Performance.mark():
+--------------------
+As the name implies, Performance.mark function creates marks in our code and track whenever we call it. This function 
+requires a string parameter to execute, and that string is used to identify the mark uniquely.
+
+performance.mark(‘mark-name’);
+
+When we use Performance.mark in our code, it creates timestamps in the performance buffer alongside mark name, 
+'start time, entry type, and duration. Here, the entry type is set by default for each mark, and the duration will 
+always be zero.
+
+Performance.measure():
+----------------------
+Performance.measure() function is mainly used to measure the execution time between 2 marks we set before.
+
+//between 2 marks
+performance.measure('measure-name', 'mark-1-name', 'mark-2-name');
+//from start to measure
+performance.measure(‘measure-name’);
+//from start to mark
+performance.measure('measure-name', undefined, 'mark-2-name');
+//from mark to measure
+performance.measure('measure-name', 'mark-1-name');
+
+
+performance.mark(‘functionStart’);
+testingFor(arr);
+performance.mark(‘functionEnd’);
+performance.measure('functionMeasure', 'functionStart', 'functionEnd');
+
+
+If you need to get a specific measure or an execution time, Performance API provides another 3 functions.
+performance.getEntries() - Returns everything stored in the performance entry buffer.
+performance.getEntriesByName('name') - Returns entries that match the given name.
+performance.getEntriesByType('type') - Returns entries of a specific type.
+
+console.log(performance.getEntriesByName(‘functionMeasure’)[0].duration);
+
+You do not need to console log, chrome shows it now in the performance:
+Chrome DevTools can now log the Performance Mark events in the timing section under the Performance tab.
+
+Keep a performance timer:
+-------------------------
+let t0 = performance.now()
+let t1 = performance.now()
+
+Measuring render wrto react:
+-----------------------------
+class Home extends React.Component {
+
+  render() {
+     performance.mark('ComponentMountStart');
+     // ...
+   }
+
+  componentDidMount() {
+    this.mounted = true;
+    performance.mark('ComponentMountEnd');
+    performance.measure('HomeComponentMount', 'ComponentMountStart', 'ComponentMountEnd');
+  }
+
+}
+
+Note:
+-----
+Apart from JavaScript running in the browser, Node.js has also extended its support for 
+using Performance API from v15 onwards
+
+

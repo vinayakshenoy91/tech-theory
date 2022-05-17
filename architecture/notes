@@ -1,0 +1,138 @@
+Role of architect:
+
+Image Leadership: mentoring, team-building, establishing a vision, coaching
+
+Image Communication: both technical and nontechnical, encouraging collaboration
+
+Image Negotiation: dealing with internal and external stakeholders and their conflicting needs and expectations
+
+Image Technical skills: life-cycle skills, expertise with technologies, continuous learning, coding
+
+Image Project skills: budgeting, personnel, schedule management, risk management
+
+Image Analytical skills: architectural analysis, general analysis mindset for project management and measurement 
+
+Architectural Drivers:
+-----------------------
+
+drivers include a design purpose, quality attributes, primary functionality, 
+architectural concerns, and constraints. 
+These considerations are critical to the success of the 
+system and, as such, they drive and shape the architecture.
+
+Greenfield and brownfield:
+
+These purposes may be interpreted and realized differently for greenfield systems in mature domains, for greenfield systems in novel domains, and for existing systems. In a mature domain, the pre-sales process, for example, might be relatively straightforward; the architect can reuse existing systems as examples and confidently make estimates based on analogy. In novel domains, the pre-sales estimation process will be far more complex and risky, and may have highly variable results. In these circumstances, a prototype of the system, or a key part of the system, may need to be created to mitigate risk and reduce uncertainty. In many cases, this architecture may also need to be quickly adapted as new requirements are learned and embraced. In brownfield systems, while the requirements are better understood, the existing system is itself a complex object that must be well understood for planning to be accurate.
+
+The Quality Attribute Workshop (QAW)
+-------------------------------------
+
+The QAW is a facilitated, stakeholder-focused method to generate, prioritize, and refine quality attribute scenarios. A QAW meeting is ideally enacted before the software architecture has been defined although, in practice, we have seen the QAW being used at all points in the software development life cycle. The QAW is focused on system-level concerns and specifically the role that software will play in the system. The steps of the QAW are as follows:
+
+1. QAW Presentation and Introductions
+
+The QAW facilitators describe the motivation for the QAW and explain each step of the method.
+
+2. Business Goals Presentation
+
+A stakeholder representing the project’s business concerns presents the system’s business context, broad functional requirements, constraints, and known quality attribute requirements. The quality attributes that will be refined in later QAW steps will be derived from, and should be traceable to, the business goals presented in this step. For this reason, these business goals must be prioritized.
+
+3. Architectural Plan Presentation
+
+The architect presents the system architectural plans as they currently exist. Although the architecture has frequently not been defined yet (particularly for greenfield systems), the architect often knows quite a lot about it even at this early stage. For example, the architect might already know about technologies that are mandated, other systems that this system must interact with, standards that must be followed, subsystems or components that could be reused, and so forth.
+
+4. Identification of Architectural Drivers
+
+The facilitators share their list of key architectural drivers that they assembled during steps 2 and 3 and ask the stakeholders for clarifications, additions, deletions, and corrections. The idea here is to reach a consensus on a distilled list of architectural drivers that covers major functional requirements, business drivers, constraints, and quality attributes.
+
+5. Scenario Brainstorming
+
+Given this context, each stakeholder now has the opportunity to express a scenario representing that stakeholder’s needs and desires with respect to the system. The facilitators ensure that each scenario has an explicit stimulus and response. The facilitators also ensure traceability and completeness: At least one representative scenario should exist for each architectural driver listed in step 4 and should cover all the business goals listed in step 2.
+
+6. Scenario Consolidation
+
+Similar scenarios are consolidated where reasonable. In step 7, the stakeholders vote for their favorite scenarios, and consolidation helps to prevent votes from being spread across several scenarios that are expressing essentially the same concern.
+
+7. Scenario Prioritization
+
+Prioritization of the scenarios is accomplished by allocating to each stakeholder a number of votes equal to 30 percent of the total number of scenarios. The stakeholders can distribute these votes to any scenario or scenarios. Once all the stakeholders have voted, the results are tallied and the scenarios are sorted in order of popularity.
+
+8. Scenario Refinement
+
+The highest-priority scenarios are refined and elaborated. The facilitators help the stakeholders express these in the form of six-part scenarios: source, stimulus, artifact, environment, response, and response measure.
+
+The output of the QAW is therefore a prioritized list of scenarios, aligned with business goals, where the highest-priority scenarios have been explored and refined. A QAW can be conducted in as little as 2–3 hours for a simple system or as part of an iteration, and as much as 2 days for a complex system where requirements completeness is a goal.
+
+Utility Tree
+
+If no stakeholders are readily available to consult, you still need to decide what to do and how to prioritize the many challenges facing the system. One way to organize your thoughts is to create a Utility Tree. The Utility Tree, such as the one shown in the following figure, helps to articulate your quality attribute goals in detail, and then to prioritize them.
+
+
+2.4.4 Architectural Concerns
+Architectural concerns encompass additional aspects that need to be considered as part of architectural design but that are not expressed as traditional requirements. There are several different types of concerns:
+
+Image General concerns. These are “broad” issues that one deals with in creating the architecture, such as establishing an overall system structure, the allocation of functionality to modules, the allocation of modules to teams, organization of the code base, startup and shutdown, and supporting delivery, deployment, and updates.
+
+Image Specific concerns. These are more detailed system-internal issues such as exception management, dependency management, configuration, logging, authentication, authorization, caching, and so forth that are common across large numbers of applications. Some specific concerns are addressed in reference architectures (see Section 2.5.1), but others will be unique to your system. Specific concerns also result from previous design decisions. For example, you may need to address session management if you previously decided to use a reference architecture for the development of web applications.
+
+Image Internal requirements. These requirements are usually not specified explicitly in traditional requirement documents, as customers usually seldom express them. Internal requirements may address aspects that facilitate development, deployment, operation, or maintenance of the system. They are sometimes called “derived requirements”.
+
+Image Issues. These result from analysis activities, such as a design review (see Section 8.6), so they may not be present initially. For instance, an architectural evaluation may uncover a risk that requires some changes to be performed in the current design.
+
+Some of the decisions surrounding architectural concerns might be trivial or obvious. For example, your deployment structure might be a single processor for an embedded system, or a single cell phone for an app. Your reference architecture might be constrained by company policy. Your authentication and authorization policies might be dictated by your enterprise architecture and realized in a shared framework. In other cases, however, the decisions required to satisfy particular concerns may be less obvious—for example, in exception management or input validation or structuring the code base.
+
+
+-> well-documented design principles are oriented toward the achievement of specific quality attributes:(reusable realizations design concepts,)
+
+
+To help achieve high modifiability, aim for good modularity, which means high cohesion and low coupling.
+
+Image To help achieve high availability, avoid having any single point of failure.
+
+Image To help achieve scalability, avoid having any hard-coded limits for critical resources.
+
+Image To help achieve security, limit the points of access to critical resources.
+
+Image To help achieve testability, externalize state.
+
+-> Reference architectures are blueprints that provide an overall logical structure for particular types of applications.
+-> Design patterns are conceptual solutions to recurring design problems that exist in a defined context.->
+
+
+
+Reference architectures may be confused with architectural styles, but these two concepts are different. Architectural styles (such as “Pipe and Filter” and “Client Server”) define types of components and connectors in a specified topology that are useful for structuring an application either logically or physically. Such styles are technology and domain agnostic. Reference architectures, in contrast, provide a structure for applications in specific domains, and they may embody different styles. Also, while architectural styles tend to be popular in academia, reference architectures seem to be preferred by practitioners—which is also why we favor them in our list of design concepts.
+
+
+Here are a few criteria you should consider when selecting externally developed components:
+-------------------------------------------------------------------------------------------
+
+Image Problem that it addresses. Is it something specific, such as a framework for object-oriented to relational mapping or something more generic, such as a platform?
+
+Image Cost. What is the cost of the license and, if it is free, what is the cost of support and education?
+
+Image Type of license. Does it have a license that is compatible with the project goals?
+
+Image Support. Is it well supported? Is there extensive documentation about the technology? Is there an extensive user or developer community that you can turn to for advice?
+
+Image Learning curve. How hard is it to learn this technology? Have others in your organization already mastered it? Are there courses available?
+
+Image Maturity. Is it a technology that has just appeared on the market, which may be exciting but still relatively unstable or unsupported?
+
+Image Popularity. Is it a relatively widespread technology? Are there positive testimonials or adoption by mature organizations? Will it be easy to hire people who have deep knowledge of it? Is there an active developer community or user group?
+
+Image Compatibility and ease of integration. Is it compatible with other technologies used in the project? Can it be integrated easily in the project?
+
+Image Support for critical quality attributes. Does it limit attributes such as performance? Is it secure and robust?
+
+Image Size. Will the use of the technology have a negative impact on the size of the application under development?
+
+
+What should be documented?
+--------------------------
+The decision of what, when, and how to document should be risk based. 
+You should ask yourself: What is the risk of not documenting this decision? Could it be misinterpreted 
+and undermined by future developers? Could it contribute to near-term or long-term problems in the system?
+
+
+
+

@@ -1,0 +1,7 @@
+Advtg: Retrieval of element is faster
+
+Disadvtg: 
+- Preallocates all memory and waste of space
+- Fixed size
+- Complex position based insertions
+- One block allocation

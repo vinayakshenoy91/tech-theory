@@ -1,0 +1,76 @@
+DOM:
+-----
+- Document object model  and acess to this is provided by browser.
+- Document object has properties and methods.
+- DOM is an interface for valid HTML docs
+- DOM modifies your html if it has erros/invalidtag/no tag and  JS manipulates  instance.
+- DOM is not what you see in browser as it is not a render tree.
+- To display a page, browser has to construct whats knwon as the render tree.
+Render tree is what is rendered to the browser' screen.Often the DOM will contain elements that are hidden from browser view.
+- DOM has valid HTML and HTML only.
+- When you inspect, whatever you see in DOM
+- DOM is a representation of your HTML to the browser. It allows you to manipulate the page 
+- DOM is an interface and is simply an interface to webpages.
+- The DOM is effectively an object-based representation of the source HTML document.
+ It has some differences, as we will have seen in this section, but it is essentially an attempt to convert the structure 
+ and content of our HTML document into an object model that can be used by various languages.
+- the DOM has to be a valid representation of your HTML. This means if you have errors in your HTML code (e.g. forgetting a closing tag, 
+or including text below the </body>), the DOM will correct these and modify it in small ways. Over and above this, we may also want to 
+dynamically change the layout and content of our page on 
+the fly (via JavaScript), which also modifies the DOM which will be different to your HTML code. 
+- Strictly speaking the DOM has to be a valid representation of the HTML, and only HTML. This means it should exclude CSS. 
+But as we've seen, CSS pseudo-elements are included within the DevTools. 
+
+- window object is the root of all that exposes number of methods.
+- window.history
+- For window obejct you need not write window. and can write console straight
+- Page content is stored in DOM and is accessed by JS 
+
+- Each tab has its own window instance and has many properties:
+a) closed
+b) frames
+c) history
+d) location
+e) document
+- window.document
+
+- console.dir takes object as input and returns json like tree.
+- console.dir(document)
+- window.forms
+
+Code:
+------
+let newPara = document.createElement('p');
+newPara.innerHTML = "Iam new"
+let body = document.querySelector('body');
+body.appendChild(newPara);
+
+document.body.style.backgroundColor="pink"
+
+
+
+BOM:
+----
+- Allows JS to talk to browser about things other than the content of the page.
+- navigator, screen, location, history
+
+
+Psuedo elements:
+-----------------
+- It is a keyword added to a selector that lets you style a specific part of the element.
+::before
+::after
+::first-letter
+::first-line
+
+selector::psuedo-element{
+    property:value;
+}
+
+h1.heading::before{
+    content:"*"
+}
+
+
+
+

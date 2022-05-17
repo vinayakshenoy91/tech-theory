@@ -1,0 +1,54 @@
+- The destructuring assignment syntax is a JavaScript expression that makes it possible to unpack 
+values from arrays, or properties from objects, into distinct variables.
+
+const { first, last } = person;
+
+const person = {
+  name: "Alberto",
+  last: "Montalesi",
+  links:{
+    social: {
+      facebook: "https://www.facebook.com/alberto.montalesi",
+    },
+    website: "http://albertomontalesi.github.io/"
+  }
+}
+
+const { facebook:fb } = person.links.social;
+
+// it will look for the property person.links.social.facebook and name the variable fb
+console.log(fb); // https://www.facebook.com/alberto.montalesi
+console.log(facebook); //ReferenceError: facebook is not defined
+
+We can also pass in default values like this:
+const { facebook:fb = "https://www.facebook.com"} = person.links.social;
+
+
+
+Destruct arrays:
+-----------------
+const person = ["Alberto","Montalesi",25];
+const [name,surname,age] = person;
+console.log(name);
+
+Let’s say we want to grab all the other values remaining. We can use the rest operator for that:
+
+const person = ["Alberto", "Montalesi", "pizza", "ice cream", "cheese cake"];
+// we use the **rest operator** to grab all the remaining values
+const [name,surname,...food] = person ;
+console.log(food);
+// Array [ "pizza", "ice cream", "cheese cake" ]
+
+
+//Swap variables using destruct:
+--------------------------------
+
+let hungry = "yes";
+let full = "no";
+// after we eat we don't feel hungry anymore, we feel full, let's swap the values
+
+[hungry, full] = [full, hungry];
+console.log(hungry,full);
+// no yes
+
+

@@ -1,0 +1,4 @@
+- instanceof operator, which can be used to check whether an object belongs to a particular class or interface and to prevent ClassCastExceptions at runtime.
+
+
+

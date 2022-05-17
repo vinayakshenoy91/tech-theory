@@ -1,0 +1,30 @@
+Installations:
+--------------
+1) Install community edition from confluent website
+2) use the scripts in bin folder to  run it.[Windows folder contains windows bat script]
+
+
+Steps:
+-----
+1) Start zookeeper: sudo sh bin/zookeeper-server-start ./etc/kafka/zookeeper.properties 
+2) Start broker: sudo sh bin/kafka-server-start ./etc/kafka/server.properties
+3) Create topic:
+
+kafka-topics --create --topic test --partitions 1 --replication-factor 3 --bootstrap-server localhost:9092
+
+4) Sending and reading it using kafka producer and consumer
+kafka-console-producer --topic test --broker-list localhost:9092 < ../xyz.csv
+kafka-console-consumer --topic test --broker-list localhost:9092 --from-beginning --group group1
+
+5) Multinode[Same machine]: Create 3 copies of server.properties file as server-0.properties, server-1.properties, server-2.properties
+Change the 
+a) broker.id in server.properties
+b) listeners = PLAINTEXT://:9093, ..9094 etc
+c) log.dirs = /tmp/kafka-logs-0
+
+Note: Number of partitions depend on storage requirement and parallel processing.
+
+
+6) see log: /tmp/kafka-logs
+
+kafka-dump-log --files /tmp/kafka-logs/stock-ticks-1/000200wqw.log

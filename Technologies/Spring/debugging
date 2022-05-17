@@ -1,0 +1,20 @@
+1) have  spring boot maven plugin:
+
+<plugins>
+   ...
+   <plugin>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-maven-plugin</artifactId>
+      <version>2.0.1.RELEASE</version>
+   </plugin>
+   ...
+</plugins>
+
+mvn spring-boot:run -Drun.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5005"
+
+
+In intellij:
+-----------
+Open run/debug configuration dialogue box and click on the new icon
+
+Remote > ok

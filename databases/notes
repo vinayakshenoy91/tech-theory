@@ -1,0 +1,69 @@
+- Atomicity - Txn is sequence od operation that for an external observer should appear as a single operation
+- Consistency -> A txn that wasalready committed is seen by all future queries/txn
+Also does not violate any constraints that we set for our data.
+- Isolation -> Two concurrent txn do not see each otehr state.
+- RDBMS guarantee acid
+
+
+
+Choosing a right DB:
+--------------------
+
+
+
+Non-relational DB:
+-----------------
+1) Key value store
+2) Document store: 
+- More structure inside each document.
+- Each document is an object with different attributes and attributes can be of different types.
+3) Graph DB: Link, traverse and analyse records more effeciently
+Usecases: Fraud detection, Recommendation engines, 
+
+Non-relational DB considerations:
+- Query speed
+- Perfect choice for caching
+- Real time big data
+- Data is not structured
+
+Key/Value Stores Examples
+Redis
+
+Aerospike
+
+Amazon DynamoDB
+
+Document Store Examples
+Cassandra
+
+MongoDB
+
+Graph Databases Examples
+Amazon Neptune
+
+NEO4J
+
+Speed up DB operations:
+------------------------
+1) Indexing - Primary and compiste index
+We are making read queries faster
+Additional space is required for storing the index tables
+Speed of write operations
+
+2) database replication - Fault tolerant and reduce risk of data loss.
+tradeoff : High complexity when it comes to operations like write, update and delete
+Concurrent modifications don't conflict with each other
+Provides guarantees in terms of Consistency and correctness
+
+3) Database partitioning or sharding
+
+- Diff queries can be performed in parallel
+- Better perf and high scalability
+- In RDBMS, this is challenging as Queries involving multiple records are spread across multiple machines
+- when choosing RDMBMS for a high volume data, make sure paritioning is well supported.
+
+
+
+
+
+

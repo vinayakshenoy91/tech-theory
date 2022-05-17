@@ -1,0 +1,16 @@
+Caution:
+---------
+- Decompressing zip files - Set limits on decompressed data.
+- Deserialization of java obj or xml object.
+- Integer overflow errors.
+- Too many keys in hash table.
+- release resources : try-with-resource, output buffer flushed when output is successful.
+- Acess control
+- Validation
+- Use SecurityManager
+- Adding right modifiers.
+- Class or method that is not final is a candidate for a malicious attack through overriding.
+- A final class is earlier to implement and verify that it is secure.
+- Composition over inheritance.
+
+

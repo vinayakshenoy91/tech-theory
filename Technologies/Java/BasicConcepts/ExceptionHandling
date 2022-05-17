@@ -1,0 +1,125 @@
+- java.lang.Throwable class and all its subclasses are collectively the exception classes
+
+Object -> Throwable -> 1) error 2) Exception
+
+Error: Dynamic linking failure or otherhard failures in JVM occurs.
+
+Exception : Objects deriving from Exception class are generally predictable or known errors.
+They indicate that a problem occured but is not serious problem and recovery options may exist.
+
+- Invariant: Property of an object which remains unchanged even after operations are applied to the object.
+
+- Assertion -> statement that enables you to test your assumptions about your program.
+
+Checked exception:
+------------------
+- Throwable (Or any custom exception which extends Throwable)
+- Any exception not subclassed from runtime exception
+- Group of exceptions that compiler enforces compliance of the 'The catch or specify' requirement.
+
+Unchecked exception:
+---------------------
+- Error( or any custom exception which extends error)
+- Runtime exceptions
+- Arithmetic, ClassCastException, Null pointer exception, ArrayIndexOutOfBound
+
+
+
+Exception handling:
+-------------------
+1) try-catch-finally 
+try{
+
+}catch(Exception ex){
+    ex.getMessage() 
+    ex.printStacktrace();
+}
+
+Throwing an exception:
+-----------------------
+throw new IllegalArgumentException("Hello");
+
+
+Custom exception: [Code is here]
+-----------------
+
+public class InvalidStatementException extends Exception{
+
+    private static final int ERROR_CODE=9876;
+
+    InvalidStatementException(String message, Throwable clause,boolean writableStackTrace){
+        super(message+"("+ERROR_CODE+")",cause,false,writableStackTrace);
+    }
+
+
+    public InvalidStatementException(String message){
+         super(message);
+    }
+
+    public InvalidStatementexception(String message,Exception ex){
+        super(message,ex);
+    }
+}
+
+
+Chaining Exceptions:
+---------------------
+- throw meaning exception but still preserve underlying exception
+- can use inhertied initCause method
+- More common type include constructor that accepts original exception
+- useGetCause method to handle the chained exception
+
+//Throw a wrapped exception
+From actual method you type: throw new InvalidStatementexception("Error processign statement",ex)
+
+//Accessign wrapped exception
+ System.out.println(ex.getMessage());
+if(ex.getCause()!=null){
+    System.out.println("Caused by"+ ex.getCause());
+}
+
+
+
+Org excption handling:
+----------------------
+1) Centralised
+- group together
+- simplify exception handlign as all lies in oneplace.
+- May make exception recovery difficult.
+- exit processing logic prematurely
+
+
+2) localised
+- handling is closer to block where issue occured.
+- error handling spread throught code
+
+
+Try-with-resources:
+-------------------
+- parameterised try block, its parameters are called resources (they implement the java.lang.AutoCloseable interface)
+The params are initilized prior to or as part of the parameter declaration
+
+- Resources are closed automatically in the reverse order from which they were initilized or passed to block.
+
+- Resource must implement AutoCloseable interface.
+
+- Resources are closed before any additional catch or finally block is executed.
+
+try(FileReader fr = new FileReader(filename);FileWriter fr = new FileWriter(filename)){}
+
+- Implement AutoCloseable interface for custom resources:
+
+class Alarm implements AutoCloseable{
+    public void close(){
+        System.out.println("Test");
+    }
+}
+
+
+Misc variants:
+---------------
+catch(Exception e){
+    for(throwable t: e.getSupressed()){
+        System.out.println(t);
+    }
+}

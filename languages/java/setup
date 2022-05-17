@@ -1,6 +1,0 @@
-We recommend that you set the JAVA_HOME environment variable to point to the directory where Java 14 was installed 
-(the directory in which the JDK was unpacked) 
-and add $JAVA_HOME/bin (%JAVA_HOME%\bin for Windows users) to the general path of the system
-
-java -version 
-javac -version 

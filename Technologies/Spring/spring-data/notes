@@ -1,0 +1,231 @@
+@Entity
+@IdClass(ReviewEntityPK.class)
+@Table(name = "review")
+public class ReviewEntity {
+ @Id private int productId;
+ @Id private int reviewId;
+ private String author;
+ private String subject;
+ private String content;
+
+
+ Nosql:
+
+ @Document
+public class RecommendationEntity {
+
+    @Id
+    private String id;
+
+    @Version
+    private int version;
+
+    private int productId;
+    private int recommendationId;
+    private String author;
+    private int rate;
+    private String content;
+
+
+Repositories:
+-------------
+a repository can be declared as a Java interface, and Spring Data will generate its implementation on 
+the fly using opinionated conventions.
+
+import org.springframework.data.repository.CrudRepository; //OR couchbaserepository
+
+public interface ReviewRepository extends 
+  CrudRepository<ReviewEntity, ReviewEntityPK> {
+  
+  Collection<ReviewEntity> findByProductId(int productId);
+}
+
+//ReviewEntityPK -> Composite primary key
+public class ReviewEntityPK implements Serializable {
+    public int productId;
+    public int reviewId;
+}
+
+Spring Data comes with a set of base classes for defining repositories. We will use the base classes CrudRepository and PagingAndSortingRepository:
+
+The CrudRepository base class provides standard methods for performing basic create, read, update, and delete operations on the data stored in the databases.
+The PagingAndSortingRepository base class adds support for paging and sorting to the CrudRepository base class.
+
+public interface ProductRepository extends PagingAndSortingRepository <ProductEntity, String> {
+    Optional<ProductEntity> findByProductId(int productId);
+}
+
+public interface RecommendationRepository extends CrudRepository <RecommendationEntity, String> {
+    List<RecommendationEntity> findByProductId(int productId);
+}
+
+public interface ReviewRepository extends CrudRepository<ReviewEntity, Integer> {
+    @Transactional(readOnly = true)
+    List<ReviewEntity> findByProductId(int productId);
+}
+
+//Crud ops in sbv
+
+private final ServiceUtil serviceUtil;
+private final ProductRepository repository;
+private final ProductMapper mapper;
+
+@Autowired
+public ProductServiceImpl(ProductRepository repository, ProductMapper mapper, ServiceUtil serviceUtil) {
+    this.repository = repository;
+    this.mapper = mapper;
+    this.serviceUtil = serviceUtil;
+}
+public void deleteProduct(int productId) {
+    repository.findByProductId(productId).ifPresent(e -> 
+    repository.delete(e));
+}
+
+public Product getProduct(int productId) {
+    if (productId < 1) throw new InvalidInputException("Invalid 
+    productId: " + productId);
+    ProductEntity entity = repository.findByProductId(productId)
+        .orElseThrow(() -> new NotFoundException("No product found for 
+         productId: " + productId));
+    Product response = mapper.entityToApi(entity);
+    response.setServiceAddress(serviceUtil.getServiceAddress());
+    return response;
+}
+
+public Product createProduct(Product body) {
+    try {
+        ProductEntity entity = mapper.apiToEntity(body);
+        ProductEntity newEntity = repository.save(entity);
+        return mapper.entityToApi(newEntity);
+    } catch (DuplicateKeyException dke) {
+        throw new InvalidInputException("Duplicate key, Product Id: " + 
+        body.getProductId());
+    }
+}
+
+
+@Mapper(componentModel = "spring")
+public interface ProductMapper {
+
+    @Mappings({
+        @Mapping(target = "serviceAddress", ignore = true)
+    })
+    Product entityToApi(ProductEntity entity);
+
+    @Mappings({
+        @Mapping(target = "id", ignore = true),
+        @Mapping(target = "version", ignore = true)
+    })
+    ProductEntity apiToEntity(Product api);
+}
+
+-------
+
+Adding persistance:
+--------------------
+Let's start with adding a persistence layer to the core microservices. Besides using Spring Data, 
+we will also use a Java bean mapping tool, MapStruct, that makes it easy to transform between Spring Data 
+entity objects and the API model classes. For further details, see http://mapstruct.org/.
+
+ext {
+  mapstructVersion = "1.3.1"
+}
+
+implementation "org.mapstruct:mapstruct:${mapstructVersion}"
+
+ince MapStruct generates the implementation of the bean mappings at compile time by processing MapStruct annotations, we need to add an annotationProcessor and a testAnnotationProcessor dependency:
+
+annotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+testAnnotationProcessor "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+To make the compile-time generation work in popular IDEs such as IntelliJ IDEA, we also need to add the following dependency:
+
+compileOnly "org.mapstruct:mapstruct-processor:${mapstructVersion}"
+
+implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+implementation 'mysql:mysql-connector-java'
+
+implementation platform('org.testcontainers:testcontainers-bom:1.15.2')
+testImplementation 'org.testcontainers:testcontainers'
+testImplementation 'org.testcontainers:junit-jupiter'
+testImplementation 'org.testcontainers:mongodb'
+
+Significance of id and version field:
+
+The id field is used to hold the database identity of each stored entity, corresponding to the primary key when using a relational database. We will delegate the responsibility of generating unique values of the identity field to Spring Data. Depending on the database used, Spring Data can delegate this responsibility to the database engine or handle it on its own. In either case, the application code does not need to consider how a unique database id value is set. The id field is not exposed in the API, as a best practice from a security perspective. The fields in the model classes that identify an entity will be assigned a unique index in the corresponding entity class, to ensure consistency in the database from a business perspective.
+
+The version field is used to implement optimistic locking, allowing Spring Data to verify that updates of an entity in the database do not overwrite a concurrent update. If the value of the version field stored in the database is higher than the value of the version field in an update request, it indicates that the update is performed on stale data—the information to be updated has been updated by someone else since it was read from the database. Attempts to perform updates based on stale data will be prevented by Spring Data. In the section on writing persistence tests, we will see tests verifying that the optimistic locking mechanism in Spring Data prevents updates performed on stale data. Since we only implement APIs for create, read, and delete operations, we will, however, not expose the version field in the API.
+
+Mongo DB:
+---------
+
+@Document(collection="products")
+public class ProductEntity {
+
+ @Id
+ private String id;
+
+ @Version
+ private Integer version;
+
+ @Indexed(unique = true)
+ private int productId;
+
+ private String name;
+ private int weight;
+
+
+
+@Document(collection="recommendations")
+@CompoundIndex(name = "prod-rec-id", unique = true, def = "{'productId': 1, 'recommendationId' : 1}")
+public class RecommendationEntity {
+
+    @Id
+    private String id;
+
+    @Version
+    private Integer version;
+
+    private int productId;
+    private int recommendationId;
+    private String author;
+    private int rating;
+    private String content;
+
+
+@Entity
+@Table(name = "reviews", indexes = { @Index(name = "reviews_unique_idx", unique = true, columnList = "productId,reviewId") })
+public class ReviewEntity {
+
+    @Id @GeneratedValue
+    private int id;
+
+    @Version
+    private int version;
+
+    private int productId;
+    private int reviewId;
+    private String author;
+    private String subject;
+    private String content;
+
+
+
+Testing persistance:
+--------------------
+Writing automated tests that focus on persistence
+When writing persistence tests, we want to start a database when the tests begin and tear it down when the tests complete. However, we don't want the tests to wait for other resources to start up, for example, a web server such as Netty (which is required at runtime).
+
+Spring Boot comes with two class-level annotations tailored for this specific requirement:
+
+@DataMongoTest: This annotation starts up a MongoDB database when the test starts.
+@DataJpaTest: This annotation starts up a SQL database when the test starts.
+By default, Spring Boot configures the tests to roll back updates to the SQL database to minimize the risk of negative side effects on other tests. In our case, this behavior will cause some of the tests to fail. Therefore, automatic rollback is disabled with the class level annotation @Transactional(propagation = NOT_SUPPORTED).
+
+
+
+
+
+
+
+
+

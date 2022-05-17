@@ -1,0 +1,9 @@
+Software security is used to protect against:
+- Data loss
+- Disruption of svc
+- Data leak
+- Data inconsistency -> Data is manipulated by non-auth attackers and become inconsistent
+
+Threat -> Event if happens will lead to security incident. SQL injection, DDOS attack.
+
+Vulnerability -> Problem in system that can be used by attacker to execute and attack on the system and make it compromised.

@@ -1,0 +1,84 @@
+As the protocol is HTTP/2-based, it benefits from the following improvements:
+
+A binary protocol, thus making the transport far more compact and efficient.
+Header compression, thus reducing transmission overheads.
+Multiplexed requests over a single TCP connection, thus making communications much faster and more efficient.
+
+
+or more information on HTTP/2, refer to the official FAQ page:
+https://http2.github.io/faq
+Bidirectional streaming, allowing clients and servers to communicate in both directions.
+In-built flow control, thus preventing slow receivers from being overwhelmed by faster senders.
+A strongly typed interface definition language.
+A single compiler (protoc) to generate a client and servers in multiple languages.
+
+
+Perhaps because of these features and its high-scaling capabilities, 
+gRPC is particularly popular in microservice architectures as the means to enable service-to-service 
+communications in high-throughput environments.
+
+
+
+Architecture:
+-------------
+gRPC consists of a server that specifies methods that can be remotely invoked by clients. To achieve this, 
+gRPC introduces the notion of gRPC client stubs and gRPC servers.
+
+its support for the following four interaction styles:
+
+Unary: A traditional synchronous request/response interaction.
+Server streaming: A client sends a request to the server and the server in response sends back a message stream. The client reads the message stream until there are no more messages.
+Note that gRPC guarantees message ordering within an individual RPC call.
+Client streaming: The client writes a sequence of messages and streams them to the server. Once the client finishes writing messages, it waits for the server to return a response.
+Likewise, in client streaming gRPC guarantees message ordering within an individual RPC call.
+Bidirectional streaming: Both the client and servers communicate in both directions and completely asynchronously using read and write streams.
+For more information on basic gRPC concepts, please refer to the following link:
+https://grpc.io/docs/guides/concepts.html
+
+
+The gRPC architecture has the following characteristics:
+
+HTTP/2 is used as transport in gRPC.
+On top of HTTP/2, gRPC makes use of protocol buffers to define the service interface and as a payload format.
+gRPC servers and stubs can be generated directly from the .proto file in a variety of programming languages (using the protoc command line).
+gRPC servers and stubs can be can implemented by services calling other services.
+gRPC stubs can be implemented by native frontend applications (for example, Android apps) and server-side applications (for example, traditional MVC apps) calling gRPC servers.
+Browser-based applications can't implement gRPC stubs; instead, the gRPC-Web JavaScript client library has to be adopted, which lets browser clients access a gRPC server via an Envoy proxy acting as a HTTP 1.1 <> HTTP/2 bridge.
+For more information on gRPC-Web, refer to the following link:
+https://github.com/grpc/grpc-web
+CopyAdd HighlightAdd Note
+
+
+
+
+
+gRPC makes use of protocol buffers, which are Google's mature and open-source mechanism for serializing and de-serializing structured data.
+
+In gRPC, protocol buffers are used to:
+
+Define a service interface (basically an IDL) and the structure of messages.
+Serialize and deserialize the message payloads.
+Generate source code, in multiple languages, for both gRPC servers and stubs.
+Manage message versioning to ensure compatibility of servers and stubs.
+In gRPC, interfaces are defined using a .proto file, which is a text file that defines the data structures that are to be serialized and de-serialized using protocol buffers, and also the methods supported.
+
+
+Once the .proto file is created, then the protocol buffer compiler, protoc, can be used to generate data access classes in a variety of programming languages.
+
+Note that although protocol buffers have been around for a while and multiple versions exist, the latest version (at least at the time this book was written) is version three, referred to as proto3.
+
+For more details on protocol buffers, refer to the official developer guide:
+https://developers.google.com/protocol-buffers/docs/overview
+
+The steps are as follows:
+
+A frontend application developer obtains the .proto file containing the data structures and methods supported by the gRPC server (the API).
+The developer generates protocol buffer message classes for their language of choice using the protoc command line.
+The developer then generates the gRPC-Web client stub using the protoc command line with the gRPC-Web protoc plugin.
+The developer then writes the client code that is to be incorporated in the app itself.
+The client application makes a HTTP 1.1 request against the Envoy proxy URL, which contains as payload the protocol buffer message. The message itself contains information about what method is being invoked at the server-side, as well as any other required data.
+The Envoy proxy converts the request from HTTP 1.1 to a fully compliant HTTP/2 protocol buffer request that is then forwarded to the gRPC server.
+The gRPC server receives the request and processes it, and then sends a HTTP/2 response.
+The Envoy proxy converts the HTTP/2 response into a HTTP 1.1 response and sends it back to the client app.
+For detailed steps on how to implement a gRPC server and an Envoy proxy, please refer to the following link:
+https://github.com/grpc/grpc-web/blob/master/net/grpc/gateway/examples/echo/tutorial.md

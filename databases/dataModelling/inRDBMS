@@ -14,3 +14,5 @@ So that changes can be made in one place thereby making updates to the data easi
 4.	
 Preserving the integrity of the data
 Normalization slows retrieval with the increased number of tables involved. 
+
+

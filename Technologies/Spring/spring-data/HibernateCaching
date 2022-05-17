@@ -1,0 +1,57 @@
+- Hibernate caches the data which has lot of join to improve the performance.
+
+- Way it works is check L1 -> if not in L1, Check L2 -> Then hit DB
+
+Two types of cache:
+
+1) Level 1: Session -> Each session will have its own cache.
+2) Leave 2: SessionFactory -> Cached data will be shared across user sessions
+
+- For Hibernate L1 caching  to work -> Mark with annotation @Transactional. Spring session is associated with txn.
+Whatever happens within a txn is one single session.
+
+
+- To evict a cache, we use EntityManger provided by Spring
+
+@Autowired
+EntityManger entityManger; //From javax.persistance
+in method write,
+
+Session session = entityManger.unwrap(Session.class);
+Product product = repository.findOne(1);
+session.evict(product);
+
+- EHCache -> second level cache provider. Supports im memory and disk based caching.
+Steps:
+ 1) Add maven dependency
+
+<dependency>
+    <groupId>org.hibernate</group>
+    <artifactId>hibernate-ehcache</artifactId>
+</dependency>
+
+
+ 2) Enable caching for our application (app.properties)
+ spring.jpa.properties.hibernate.cache.use_second_level_cache=true
+ spring.jpa.properties.hibernate.cache.region.factory_class=
+
+
+ 3) Create ehcache.xml
+ 4) Mark entities as cacheable
+    On entity, mark it as @Cache(uage=CacheConcurrencyStrategy.READ_ONLY)
+    public class Product implements Serializable{ //Using second level cache, so that they can be written to disk
+
+    }
+
+
+ Cache concurrency strategy:
+  a) READ_ONLY
+  b) NONSTRICT_READ_WRITE -> Cache update only after commit(eventual consistency)
+  c) READ_WRITE ->  soft locks (Next txn will check cache and if locked, then read from DB)  More consistency
+  d) TRANSACTIONAL -> Distributed txn
+
+
+
+
+
+

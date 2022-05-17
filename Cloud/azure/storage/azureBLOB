@@ -1,0 +1,15 @@
+- Binary large objects
+- Hot cool and archive tiers are present
+- Images/videos
+
+Blob types in azure:
+--------------------
+- Block -> Text and binary data , files and videos
+- Append -> Similar to block blobs but optimised for append operations.
+- Page blobs -> Random access files upto 8TB. Store vitual hard drive files and serve as disk for azure VM
+
+- Resources:
+Storage account -> container -> blob
+
+
+Soft delete -> Retain deleted blobs for 7 days

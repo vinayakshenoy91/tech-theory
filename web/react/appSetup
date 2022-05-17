@@ -1,6 +1,10 @@
 Commands to setup application:
 ------------------------------
 
+npx create-react-app nameofApp
+yarn add redux react-redux redux-saga reactstrap react react-dom axios
+
+
 yarn add create react-app react-testing --template typescript
 yarn upgrade --latest 
 yarn add @types/node  @types/react @types/react-dom
@@ -19,9 +23,25 @@ FE:
 ---
 
 - src
+   - app
+      - user.js
+   - actions
+       - user.js
+   - reducers
+       - user.js
+       - index.js
+   - sagas
+       - user.js
+       - index.js
+   - themes
+      - light.js
+      - dark.js
    - components
       - pages
       - common
+
+Keep types and actions together| reducer and saga separate 
+
 
 BE:
 ----
@@ -53,3 +73,12 @@ create jsconfig.json in base directory to exclude nesting of path:
 
 create jest.config.js in root to handle jest configs:
 -----------------------------------------------------
+
+
+
+
+axios configs:
+-------------
+axios.defaults.withCredentials = true;
+axios.defaults.baseURL = 'http://url';
+

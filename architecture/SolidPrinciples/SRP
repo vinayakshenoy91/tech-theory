@@ -1,0 +1,5 @@
+- High cohesion: Degree to which elements inside a module belong together.
+- Low coupling
+- A class should have only one reason to change. Any change should accomodated in one class
+
+

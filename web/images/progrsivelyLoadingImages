@@ -1,0 +1,22 @@
+Solutions:
+-----------
+- JPEG -> Improved to progressive jpeg [When encoding an image, you can script what progressive passes should be]
+- Dont do interlaced png
+- Webp is derived from video format
+- No progressive rendering for AVIF
+- JPEG XL
+
+
+Things to read:
+---------------
+Tool to slow-load images → https://goo.gle/2ROdm7x 
+Squoosh → https://goo.gle/2OQBnGG 
+MozJPEG → https://goo.gle/34hOckh 
+lib-jpeg encoder bug → https://goo.gle/2Tn3KkJ 
+Scripting JPEG scans (see 'Multiple Scan / Progression Control') → https://goo.gle/3ccqJpd 
+Squoosh PR experimenting with scans → https://goo.gle/3vmjh2j 
+Jake's blog post on AVIF → https://goo.gle/3oQG9En 
+AVIF blurry preview demo → https://goo.gle/2SnUEUa 
+AVIF preview frame spec discussion → https://goo.gle/3bQ3WPC 
+AVIF preview thumbnail feature issue → https://goo.gle/3figOQO 
+BlurHash → https://goo.gle/2SqEGbR 

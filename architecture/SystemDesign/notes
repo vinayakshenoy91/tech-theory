@@ -1,0 +1,24 @@
+- Event can be notification or persistent records -> Both stating something happened.
+- Use time series data base when  data sent from sensor
+
+Stream processing -> Persistent and notification
+- Actor models / message brokers
+- continous queries/Stream queries
+- Incremental materialized view
+
+Stream processing -> If windowed -> Stream analytics, complex event processing
+If not windowed, Database replication materialized views
+
+
+Event 
+------
+- Replication can be done using: Log based event mechanism and is appended to the end.
+- Follower will read the logs and apply it
+
+How to construct a log?
+- designated primary
+- consensus algo [Paxos or rafto] -> Automated change to leader
+
+- Every replicate process events in same order.
+Cost: Every log append requires round trip to leader (and quorum incase of consensus protocol)
+Timestamp ordering still gives is a total order one events.

@@ -1,0 +1,12 @@
+1) Shorted range in K sorted list
+- Make K lists and keep a list pointer for each
+- Make 6 placeholders => min, max and range for a particular iteration. minRangeMin, minRangeMax and minRange at a global level.
+Only if range for iteration is < minRange, update the global parameters with the respective iteration parameters
+- Whichever is minimum keep moving that pointer forward
+- Stopping condition is if any iteration goes out of the list.
+
+- The time complexity has : iterating through min list (which is n times) and then finding min and max in each iteration
+Total time complexity: O(n*k)
+Space complexity: O(1)
+
+More effecient: Using minHeap -> O(n*log(k))

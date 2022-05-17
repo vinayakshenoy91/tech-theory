@@ -1,0 +1,26 @@
+of functions:
+==============
+
+- Allows to create observable, that emits a set of values and  completes
+
+import {of} from "rxjs";
+
+of('Alice','Ben','Charlie').subscribe(value=> console.log(value));
+
+of('Alice','Ben','Charlie').subscribe({
+    next: value=> console.log(value),
+    error: err => console.log(err),
+    complete: ()=> console.log('Completed')
+});
+
+
+const names$= new Observable<string>(subscriber=>{
+    subscriber.next('Alice');
+    subscriber.next('Ben');
+    subscriber.next('Charlie');
+    subscriber.complete();
+})
+
+function x(...args:string[]): Observable<string>{
+    
+}

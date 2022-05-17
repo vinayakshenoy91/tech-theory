@@ -1,0 +1,44 @@
+RxJS (short for “Reactive eXtensions to JavaScript”) 
+- It is a library for composing async and event based programs by using observable sequences.
+- It provides one core type: the observable, satellite types: Observable, Schedulers, subjects)
+- Operators inspired by Array#extras(map,filter,reduce) to allow handling async events as collections.
+- ReactiveX combines Observer pattern, iterator pattern and functional programming with collections to fulfil ideal way 
+of managing sequence of events.
+
+
+Observables:
+------------
+- Function which generate value once we subscribe to them.
+
+
+- Focus on : 
+1) Asynchronous calls and control flow
+
+A single AJAX request can be modeled as a promise, but more than one suddenly means there’s a cacophony of items 
+to manually track (and even cancel) as the user progresses through our app.
+
+2) State management
+
+RxJS compartmentalizes your eventing flows, encapsulating each action in a single function. Building on top of this, 
+RxJS also provides many helper operators that keep an internal state, allowing you to outsource your state worries to the library.
+
+In addition to these operators, you’ll learn about NgRx, a state management library built on top of RxJS in Advanced Angular.
+
+
+In Rx land, this constructor function will only run when someone subscribes to it. Not only that but if there’s a second subscriber, 
+all of this will run a second time, creating an entirely separate stream (this means that each subscriber gets its own timer)! You 
+can learn more about
+how all of this works in Multiplexing Observables, but for now, remember that each subscription creates a new stream.
+
+- Remember, each subscriber gets its own instance of the constructor and has its own cleanup function. 
+All of the setup and teardown logic is located in the same place, requiring less mental overhead to remember to 
+clean up all the created objects.
+
+- an observable stream modifies data after a root observable emits it using an operator tool.
+
+
+Operator:
+---------
+
+An operator is a tool provided by RxJS that allows you to manipulate the data in the observable as it streams through.
+

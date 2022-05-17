@@ -1,0 +1,53 @@
+1) GeolocationApi: [https://w3c.github.io/geolocation-api/]
+------------------
+Accuracy of latitude and longitude coordinates is given in meters by the accuracy parameter. Cords.altitudeAccuracy gives altitude accuracy of the position of the object. enableHighAccuracy is a Boolean variable which gives the most accurate position.
+
+The showPosition() method returns both the latitude and longitude of the user.
+
+Syntax:
+
+navigator.geolocation.getCurrentPosition(showPosition)
+The value of latitude and longitude returned will be in decimals.
+
+For getting a user’s position we use the getCurrentPosition() method.
+
+Syntax:
+
+navigator.geolocation.getCurrentPosition(showPosition)
+It is supported by most browsers like Chrome, Firefox, Internet Explorer, Opera, etc.
+
+Coordinates of objects are returned by the getCurrentPosition() method. getCurrentPosition() function accepts three parameters i.e. success, position and error. When data is fetched successfully success callback will be invoked. Latitude, longitude, direction, etc are the properties to be returned.
+
+The Geolocation API uses various techniques to identify the location of a user. Desktop browsers use the IP based position technique or WIFI. Mobile browsers use A-GPS, WIFI based position, or GPS based techniques.
+
+
+There is a privacy setting for sharing the user’s location, and the callback function is evoked only when a user accepts to share his location. Its input parameter is the position of the object. If this function fails, then the error callback function will be evoked.
+
+The timestamp property represents the time at which location data of the user was retrieved. This also provides us with the relevant date.
+
+The timestamp property is read-only.
+
+timestamp specifies the time when the location information was retrieved and the position object was created. cords.speed specifies a device’s current ground speed in meters per second, cords.heading specifies a device’s current direction of movement in degrees.
+
+There are many navigator object properties: geolocation returns a geolocation object that can be used to locate a user’s position, appVersion returns the version information of the browser, and appCodeName returns the code name of the browser.
+
+currentPositionBtn: The geolocation API includes a currentPositionBtn which is used to move the map to the current position of the device; there are 3 inputs to let the user choose the geolocation options enableHighAccuracy, timeout, and maximumAge.
+
+Errors returned:
+Examples of errors are: POSITION_UNAVAIALBLE, PERMISSION_DENIED, and TIMEOUT.
+
+PositionError is the object returned by Geolocation API in case of an error.
+
+zoom, center, mapTypeId are the three map display options:
+
+zoom specifies the zoom level of the map,
+center instructs the map to be centered at the user’s respective location,
+mapTypeId can be satellite, roadmap, or hybrid.
+
+2) Google maps api:
+---------------------
+variables defines properties for the map - mapOptions
+methods will return a DOM object that contains a map - getDiv()
+
+Which of the following types supports a 45-degree45−degree perspective view - Hybrid
+

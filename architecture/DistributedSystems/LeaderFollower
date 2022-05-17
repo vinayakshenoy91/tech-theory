@@ -1,0 +1,2 @@
+- Leader will take read and writes and replicate it to followers
+- Followers can take reads if load balanced

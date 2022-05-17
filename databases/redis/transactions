@@ -1,0 +1,47 @@
+A transaction is a sequence of commands that are executed atomically and in order. We can create transactions in Redis as well.
+
+MULTI command #
+To start a new transaction, the user should execute the MULTI command. This command tells the Redis server that a transaction has been started.
+
+EXEC command #
+When a transaction is started, the Redis client queues all commands sent by the user. When the user executes the EXEC command, the client sends the 
+commands to the server. All commands are executed in the order that they were provided.
+
+DISCARD command #
+If a user wants to end the transaction without executing the commands, the DISCARD command can be used. This will inform the Redis server that the transaction has ended.
+
+Note:
+------
+When a transaction is running in Redis, no other client can run a query. Suppose a transaction has 70 commands. 
+When EXEC is run, these 70 commands will run in the same order 
+as they were queued. No other client will be able to run any command until these 70 commands are completed.
+
+
+How redis txn works?
+
+- The Redis transactions are atomic which means that either all transactions will execute or none will execute. 
+If second command has error, then command above and below it will get executed.
+
+-  If we try to queue a syntactically incorrect command, Redis will not execute the transaction
+
+Optimistic locking:
+-------------------
+When a Redis transaction is executing, the Redis server does not accept any queries from other clients. However, it is possible 
+for data to be changed by another client while a user starts a transaction and before a transaction is executed.
+Suppose we want to increment the value of a key number by 10. We will start a transaction, add our command to the queue, 
+and then execute the transaction. It is possible that, while we are creating a transaction, another client also increases 
+the value of number by 10. To avoid this, we can use the WATCH command. WATCH means that, before executing our transaction, 
+the Redis server will check if the key we are watching key was modified by another client after we created our transaction. 
+If it was, the Redis server will abort our transaction.
+If a client needs to unwatch a key, then they can use the UNWATCH command.
+
+
+get number
+
+WATCH number
+
+multi
+
+set number 20
+
+exec

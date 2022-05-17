@@ -1,0 +1,11 @@
+- Business txn that span across multiple microservices.
+- Distributed txn involves two or more microservices.
+
+- Saga is a sequence of local txns. microservice executed txn locally , publish event that used to trigger next txn in saga.
+When on txn fails, saga executes a series of compensation txns.
+
+1) Choreography based saga:
+2) Orchestration based saga:
+
+
+- Compensate to undo txn

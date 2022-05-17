@@ -1,0 +1,47 @@
+- graphql spring boot starter
+- graphql java tools
+
+
+file: books.graphql under resources folder
+-------------------------------------
+
+
+schema {
+    query: Query
+}
+
+type Query{
+    allBooks:[Book]
+    book(id:String):Book
+}
+
+
+type Book{
+    title:String
+    publisher:String
+    authors: [String]
+}
+
+
+resource folder/ BookResource  -> Controller
+
+
+model/book model 
+
+
+service class:
+
+
+public class GraphQLService{
+
+    @Value("classpath:books.graphql")
+    Resource resource;
+
+    private GraphQL graphQL
+
+    @PostConstruct
+    https://www.youtube.com/watch?v=zX2I7-aIldE
+
+https://youtu.be/zX2I7-aIldE?t=978
+}
+

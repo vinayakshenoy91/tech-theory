@@ -1,0 +1,12 @@
+- If N items in a balanced tree, then there will be N/2 leaf nodes
+
+- Time complexity is : O(V+E)
+- Memory complexity is bit better than BFS
+- DFS you use Stack and BFS you use Queue.
+- Use DFS if you require less memory
+
+Difference between DFS and BFS:
+-------------------------------
+- In BFS we store, N items. IN DFS, memory complexity O(logN) which is the height of tree.
+
+ 

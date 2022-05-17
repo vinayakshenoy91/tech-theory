@@ -1,0 +1,10 @@
+- Shortest path -> Finding a path between two vertices in a graph such that sum of weights if its constituent edges is minimised.
+- Handle positive weights only
+- It can find the shortest path in a G(V,E) graph from v to u but it is able to construct a shortest path tree as well.
+- It is asymptotically the fastest know single source shortest path algo for arbitrary directed graphs with unbounded non-negative weights.
+- Greedy approach and tries to find global optimum with the help of local optimum.
+- On every iteration, we want to find min distance to next vertex possible.
+- The appropriate structure is a "priority queue(heap)" - [Minimum heap] -> you need to everytime take vertex with lowest value.
+- Running time complexity  - O(VlogV+E)
+- This is why to use data structures, heap boosts up this algorithm to end up with O(V logV + E) running time complexity
+

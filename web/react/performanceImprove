@@ -1,0 +1,133 @@
+
+Pagination:
+-----------
+- Split data to chunks
+- consistent ordering
+
+- Page size: max size of chunk of data set
+- offset: How may data points to skip before showing current data chunk
+- page: current chunk of data being displayed
+
+- Keep track of page size and current offset
+- Slice and render current page from dataset
+- Add page navigation controls.
+
+- Do a lazy loading on pagination
+- Remember: Computing in memory takes lesser time than rendering
+
+
+disadvtg: UI is not seamless.Keep changing pages.
+- Additional UI for page navigation
+
+export class Pagination{
+
+ constructor(data, pageSize){
+     this.data=data;
+     this.pageSize=pageSize;
+ }
+
+ getPage(n){
+     const offset = n*this.pageSize;
+     return  this.data.slice(offset,offset+this.pageSize);
+ }
+
+ getTotalPages(){
+     return Math.ceil(this.data.length/this.pageSize)
+ }
+
+ getUptoPage(n){
+      const offset = n*this.pageSize;
+      return  this.data.slice(0,offset+this.pageSize);
+ }
+
+}
+
+In component add below code:
+----------------------------
+//Adding dummy component
+
+this.bottomDetector = React.createRef();
+
+componentDidMount(){
+ 
+   var options ={
+       threshold:1.0,
+   }
+
+   const observer = new IntersectionObserver(thiis.extPage.bind(this), options);
+   observer.observe(this.bottomDetector.current);
+}
+
+
+componentDidUpdate(){
+     const  viewbox = this.bottomDetector.current.getBoundingClientRect()
+     if(viewbox.top<window.innerHeight && this.state.currentPage < this.totalPages){
+            this.nextPage();
+     }
+}
+
+const fiilteredPages = new Pagination(filteredEvents, 1);
+this.totalPages = filteredPages.getTotalPages();
+<div className="table">
+  <table>
+  </table>
+  <div ref={this.bottomDetector}></div>
+</div>
+
+
+Infinte scroll:
+--------------
+
+Impl:
+1) dummy component to bottom of table - detect position of userscreen relative to item in table.
+2) Observer that responds when user scrolls to bottom of page.
+3) Load next page once observer responds.
+
+Code above.
+
+Disadvtg:
+- User can get lost: Difficult for users  to keep track of where they are with large datasets
+- Accumulated DOM elements -> Since data is appended, the more the user scrolls, the more 
+DOM elements are present on screen.
+
+Using Windowing(react-window): Infinite scroll or windowing
+------------------------------
+- Render as needed
+Keep track of where the user is  and only render items currently in views
+
+- Highly effeicient -> App performs better since only a limited part of the data is rendered at all times.
+
+Windowing: Only the data user view is mounted and others is unmounted.
+
+Impl window:
+-> height of overall list is pre-calculated
+-> Each list element is assigned an absolute position within the list.
+-> Elements can be added or removed from the DOM as needed without affecting other elements.
+
+Using react-window library & react virtualized autosizer
+import Autosizer from react-virtualized-auto-sizer;
+
+Limitations:
+-----------
+- Complex Impl
+- Height and positioning constraints
+- Loss of HTML semantics -> Replacetable elements with plane divs.
+
+
+
+
+
+
+
+Notes to be kept in mind:
+------------------------
+Part of dataset -> mounted to virtual dom -> mounted to actual dom (5-7) is the page size
+The more datasets attached to dom, the more slower it gets
+
+For class component; override
+
+shoudlComponentUpdate(nextProps){
+    return true
+}
+
+add keys to list element with time if you dont get any

@@ -1,0 +1,14 @@
+Wait_time: (in seconds)
+--------- 
+1) between(1,3)
+2) constant(3) 
+3) constant_pacing(4) -> wait time adjusted according to task. 2(task time)+ 3(wait time)-> pacing (5)
+if task_time>pace , waitTime=0
+
+
+on_start and on_stop -> predefined task once like @before and @after . They are done at user level
+
+test_start and test_stop -> defined at module level.
+
+
+Taskset class:

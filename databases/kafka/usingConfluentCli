@@ -1,0 +1,101 @@
+./confluent local stop
+./confluent local start
+./confluent local destroy
+./confluent local start kafka
+
+Multiple kafka:
+---------------
+
+1) 
+cd config -> 
+cp server.properties server0.properties
+cp server.properties server1.properties
+cp server.properties server2.properties
+
+2) Change below properties
+change brolker.id =1
+log.dirs  = ......./kafka1
+listeners = PLAINTTEXT ... 9093
+
+3) Create log dirs:
+../
+mkdir data/kafka1
+nkdir data/kafka2
+
+4) start in diff terminal
+zookeeper-server-start config/zookeeper.properties
+
+5) start in diff terminal
+kafka-server-start config/server0.properties
+kafka-server-start config/server1.properties
+
+Kafka on docker:
+----------------
+https://github.com/conduktor/kafka-stack-docker-compose
+
+
+
+Problems:
+----------
+> The topics list is disappearing
+Make sure you have changed the Zookeeper dataDir=/path/to/data/zookeeper , and Kafka log.dirs=/path/to/data/kafka
+
+
+
+Kafka in windows:
+-----------------
+
+run from :/bin/windows/kafka-...bat
+same as path:
+setting up path: 
+
+goto environment -> Env variables -> Edit path variable -> New -> Paste absolute path
+c:\\kakfa\bin\windows
+
+You can now type kafka commands from any directory: kafka.bat
+Use all bat files instead of .sh files.
+
+
+
+
+Kafka in Linux:
+----------------
+1) sudo apt install openjdk-8-jdk
+2) same as map:
+3) Update kafka path for the command:
+.bachrc
+
+export PATH = /home/name/kafka../bin:$PATH
+
+
+
+
+
+Kafka in MAC: [Java and kafka binaries are required]
+-----------------
+1) Download jar  or brew install kafka
+2) tar -xvf kafka.tar.gz 
+3) cd /bin/kakfa_topics.sh
+
+brew tap caskroom/versions
+brew cask install java8
+
+4) cat ~/.bash_profile
+5) cd bin
+6) pwd
+7) Get the path and nano ~/.bash_profile
+8) export PATH="$PATH:/Users/stephanemaarek/kafka../bin"
+9) Open new tab and then kafka-  + type tab and then you will see all kafka command.
+
+Open a terminal window:
+zookeeper-server-start config/zookeeper.properties
+in zookeeper.properties => Change the data directory
+
+Open another terminal window: for brokers
+kakfa-server-start config/server.properties
+in server.properties =>log.dirs=.../kafka
+
+
+
+
+

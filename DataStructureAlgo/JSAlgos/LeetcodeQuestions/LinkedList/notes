@@ -1,0 +1,20 @@
+- Not doing more reads and doing more modifications -> Use linked list
+- No need to predeclare
+- Array should be 
+
+
+
+
+Pros:
+-----
+Great for adds
+Great for removals
+
+
+Cons: []
+-----
+- search
+
+
+Doubly linked list:
+------------------

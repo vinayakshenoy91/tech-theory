@@ -1,0 +1,12 @@
+- Web component is a spec. They are just vanillq JS with no dependencies. Easily re-usable.
+1) Custom HTML: They are custom HTML elements is part of the spec.This helps you register your own html tags.
+2) Shadow DOM: Manage a separate DOM node tree for your HTML elements (including scoped CSS styles)
+3) Templates and slots: Write HTML templates that you can add to your HTML elements.
+4) HTML imports spec: Importing HTML files [Not continued]
+
+- It helps us encapsulate logic and UI. That helps in reusability. Easy to understand and maintain
+Separation of concerns. Publish as NPM package.
+
+- Component driven approaches in all places.
+
+

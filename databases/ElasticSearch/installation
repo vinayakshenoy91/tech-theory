@@ -1,0 +1,16 @@
+Steps to install elastic search and kibana:
+-------------------------------------------
+
+
+
+
+
+Endpoints: https://www.elastic.co/guide/en/elasticsearch/reference/current/cluster-nodes-info.html
+----------
+
+GET /_cluster/health
+GET /_cat/nodes?v  //?v tells to put descriptive header
+GET /_cat/indices?v
+GET /_cat/shards?v
+
+PUT /pages //creating an index

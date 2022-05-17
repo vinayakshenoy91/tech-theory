@@ -1,0 +1,9 @@
+- Logically isolated piece of cloud
+- It is like own private DC
+- Can have multiple VPC in same region
+- VPC belongs to a region
+- Subnets are in a single AZ
+- EC2 instances are launched into subnet
+- Within AZ and between is a private AWS network
+- Global network backbone for region to region connection
+- EC2 network speed varies by instance type

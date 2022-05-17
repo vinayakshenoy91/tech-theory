@@ -1,0 +1,48 @@
+Static fields/Class variables: Fields that are associated with class.
+
+Final:
+------
+public class Constants{
+    public static final int SPEED_OF_SOUND = 343;
+}
+
+Static initilization block:
+---------------------------
+- Used to perform some gloabl checks or initilize static variables.
+
+static {
+    currentModelNb = 10;
+}
+
+
+Static nested class:
+---------------------
+A top level class that has been nested in another top  level class for convenience.
+
+Private static nested class: Used for serialization
+-----------------------------
+public class A{
+    private List<Entry> entries = new ArrayList<>();
+
+    private static class Entry{
+        private string x;
+        private Entry(){
+            this.x = x;
+        }
+    }
+}
+
+public static nested classes:
+
+public class A{
+    private List<Entry> entries = new ArrayList<>();
+    
+    public static class Entry{
+        private string x;
+        private Entry(){
+            this.x = x;
+        }
+    }
+}
+
+A.Entry x = new A.Entry(m);

@@ -1,0 +1,28 @@
+- Used to set the global config value
+
+
+1) export const ConfigContext = React.createContext();
+
+createContext([object,function])
+
+createContext([object,(obj)=>obj])
+
+2) Wrap the component with provider so that any component below this wrapper can access this
+
+const configValue={
+    xyz:true
+}
+
+<ConfigContext.Provider value={configValue}>
+ <div></div>
+</ConfigContext.Provider>
+
+3) In your app, import the context;
+
+import React , {useState, useEffect, useContext} from "react";
+import {ConfigContext} from './App';
+const context = useContext(ConfigContext);
+
+4) take the value from context
+context.xyz===false 
+

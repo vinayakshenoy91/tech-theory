@@ -1,0 +1,605 @@
+- Remember: class declaration (and expression) are not hoisted, which means that unless you want to get a ReferenceError you need to declare your class before you access it.
+
+// class declaration
+class Person {
+
+}
+
+// class expression
+const person = class Person {
+}
+
+
+Class example:
+----------------
+class Person {
+  constructor(name,age){
+    this.name = name;
+    this.age = age;
+  }
+  greet(){
+    console.log(`Hello, my name is ${this.name} and I am ${this.age} years old` );
+  } // no commas in between methods
+  farewell(){
+    console.log("goodbye friend");
+  }
+}
+
+const alberto = new Person("Alberto",26);
+
+
+//Static methods #
+-------------------
+Right now the two new methods that we created- greet() and farewell()- can be accessed by every new instance of Person,
+ but what if we want a method that can only be accessed by the class itself, similarly to Array.of() for arrays?
+
+The following example will throw an error:
+
+class Person {
+  constructor(name,age){
+    this.name = name;
+    this.age = age;
+  }
+  static info(){
+    console.log("I am a Person class, nice to meet you");
+  }
+}
+
+const alberto = new Person("Alberto",26);
+
+alberto.info();
+// TypeError: alberto.info is not a function
+
+Person.info();
+//This works
+
+set and get #:
+--------------
+We can use setter and getter methods to set and get values inside our class.
+
+class Person {
+  constructor(name,surname) {
+    this.name = name;
+    this.surname = surname;
+    this.nickname = "";
+  }
+  set nicknames(value){
+    this.nickname = value;
+    console.log(this.nickname);
+  }
+  get nicknames(){
+     console.log(`Your nickname is ${this.nickname}`);
+  }
+}
+
+
+const alberto = new Person("Alberto","Montalesi");
+
+// first we call the setter
+alberto.nicknames = "Albi";
+// "Albi"
+
+// then we call the getter
+alberto.nicknames;
+// "Your nickname is Albi"
+
+Extending class using extends:
+------------------------------
+class Adult extends Person {
+  constructor(name,age,work){
+    super(name,age);
+    this.work = work;
+  }
+}
+
+What we can do is create a new class that extends the array.??
+----------------------------------------------------------------
+
+class Classroom extends Array {
+  // we use rest operator to grab all the students
+  constructor(name, ...students){
+    // we use spread to place all the students in the array individually otherwise we would push an array into an array
+    super(...students);
+    this.name = name;
+    // we create a new method to add students
+  }
+  add(student){
+    this.push(student);
+  }
+}
+const myClass = new Classroom('1A',
+  {name: "Tim", mark: 6},
+  {name: "Tom", mark: 3},
+  {name: "Jim", mark: 8},
+  {name: "Jon", mark: 10},
+);
+
+
+Instances inherit from a class| Sub-class relationships are created//Classical inheitance.
+
+prototypal inheritance:
+
+Inherit directly from other objects
+Can be instantiated via Object.create
+Instances can be composed of different objects
+
+Prototypal inheritance does not result in a sub-class relationship; instead,
+  there is a flat hierarchy as objects inherit from each other.
+
+YOU ALWAYS PROTOTYPE FROM A FUNCTION  [VVVVIIIIIIPPPPP] 
+//Prototypal inheritance
+function Human(name, age) {
+    this.name = name;
+    this.age = age;
+};
+
+function Man(name,age) {
+    Human.call(this, name, age);
+};
+
+Man.prototype = Object.create(Human.prototype);
+Man.prototype.constructor = Man;
+
+
+function check(){
+    var obj = new Man("Tommy Tan",20);
+    console.log(obj.name) 
+    console.log(obj instanceof Human) 
+}
+check()
+
+However, once we set Man.prototype to point to Human, its constructor property also points to it.
+
+To reset it so that it points back to Man we write the following:
+
+Man.prototype.constructor = Man;
+This sets the constructor property to point to Man.
+
+
+Complete class example:
+
+class Vehicle {                            
+    constructor(fuel) { this.fuel = fuel; }      
+    turnOn() { 
+        console.log("Turned on")
+    }
+    turnOff(){
+        console.log("Turned off")
+    }                                      
+}
+ 
+class Car extends Vehicle {       
+    constructor(fuel,isparked) {
+        super(fuel);                           
+        this.isparked = isparked
+    }
+    turnOn(){
+        if ( this.fuel >= 500 ) {
+            super.turnOn()
+        }else{
+            console.log("Refill Fuel")
+        }
+    }
+    turnOff(){
+        if(this.isparked == true){
+            super.turnOff()
+        }else{
+            console.log("Car not parked")
+        }
+    }                               
+}
+
+Whu super is required in child class???
+
+The keyword new initializes this so that it can be used to assign values to properties (you can see this in lines 2-3). 
+However, when the keyword extends is used to create child classes, the initialization doesn’t happen. This is the reason you get the error 'this' is not allowed before super() when you run the code above.
+
+The parent class constructor does the initialization of this for the child class. Hence, the parent class constructor 
+needs to be called inside the child class constructor, and that is done using super().
+
+
+Static method:
+---------------
+
+class Animal {
+  constructor() {}
+
+  static count = 0;
+
+  static increaseCount() {
+    this.count += 1;
+  }
+
+  static getCount() {
+    return this.count;
+  }
+}
+
+function test(){
+  Animal.increaseCount(); 
+  console.log(Animal.getCount()); 
+}
+test()  
+
+
+OR
+
+class Animal {
+  constructor() {
+    this.count = 0;
+  }
+
+  static increaseCount() {
+    this.count += 1;
+  }
+
+  static getCount() {
+    return this.count;
+  }
+}
+Animal.count = 0;
+
+function test(){
+  Animal.increaseCount(); 
+  console.log(Animal.getCount()); 
+}
+test()
+
+
+
+Combining classes:
+--------------------
+class Vegetables {
+    veggies() {
+        return "Choose Veggies"
+    }
+}
+class Meat {
+    meat() {
+        return "Choose Meat"
+    }
+}
+
+
+class Sauces{
+  choosingSauces(){
+    return "Choose Sauces"
+    }
+}
+
+function combineClasses(dest,...src){
+  for (let _dest of src) {
+        for (var key of Object.getOwnPropertyNames(_dest.prototype)) {
+            dest.prototype[key] = _dest.prototype[key]
+        }
+    }
+}
+
+class Burger{
+}
+
+//adding a new class
+class Cheese{
+  addingCheese(){
+    return "Add Cheese"
+  }
+}
+
+combineClasses(Burger,Vegetables,Meat,Sauces,Cheese)
+
+var burger = new Burger()
+console.log(burger.veggies())
+console.log(burger.meat())
+console.log(burger.choosingSauces())
+console.log(burger.addingCheese())
+
+Mixins allows the composition of objects and classes without using inheritance. 
+It allows us to mix different properties together. The mixin can then be used by any other object or class that wants to access the properties from different classes and objects.
+
+If you understand this concept, you’ll know that in the code above, the function combineClasses is a mixin. 
+It combines the properties of the existing classes and any new ones.
+
+
+prototype and class differnce:
+------------------------------
+
+
+Prototype-based is more straightforward as you don’t need to create a blueprint beforehand which requires 
+pre-planning about the sort of properties required before creating an object. It is possible that you’re not able to predict everything that will be needed while making the blueprint.
+
+Since no class needs to be made, you can create the object directly, and its working can also easily be seen due to 
+complete transparency. This also offers flexibility; hence, any changes to the objects can easily and quickly be made while they are being used.
+
+While all these advantages exist in Prototype-based programming, there is a higher risk of incorrectness as abrupt changes can easily be made. Since in Class-based approach, the blueprints layout a plan beforehand the chances of bugs arising are fewer.
+
+In the end, both approaches have their pros and cons, so the choice depends on both the programmer as well as the type of problem being dealt with.
+
+- OOP in JavaScript follows prototype-based programming.
+
+About classes:
+--------------
+
+What we needed was a blueprint containing all properties and methods which could then be inherited by the object instances created from that blueprint. This saves us the time and effort to create separate object literals. The ES6 version introduces the class keyword to create classes which are used to implement this functionality. 
+The classes created then become the blueprints from which the objects inherit their properties.
+
+
+One of the differences between the constructor function and class-based implementation is that, in the 
+former the body of the function acts as the constructor, where all the properties are defined, whereas, in the latter,
+there is a separate constructor function defined inside the class used to initialize the properties.
+
+- Whenever a method is declared inside a class, it gets defined on the prototype of that class. 
+Hence, whenever an object instance accesses it, it gets taken from the respective class’s prototype.
+
+Get/Set Methods :
+
+//creating a class named employee
+class employee{
+  //creating the constructor function
+  constructor(name,age,designation){
+    //all properties defined as they were in the constructor function
+    this.name = name
+    this.age = age
+    this.designation = designation
+  }
+  //defining methods in a class
+  //getname method returning the name of the current object
+  get getname(){
+    return this.name
+  }
+  //setname method setting the name 
+  //and displaying the name and the number of alphabets in the name
+  set setname(val){
+    this.name = val
+    console.log("New name is:", this.name)
+    console.log(`The name ${this.name} has ${val.length} alphabets`)  
+  }
+}
+
+Protecting calss properties:
+-----------------------------
+class Student {
+  constructor(name,age,sex,grade) {
+    //properties hidden 
+    var _name = name
+    var _age = age
+    var _sex = sex
+    var _grade = grade
+    this.getName = function() {
+      return _name
+    }
+    this.getAge = function() {
+      return _age
+    }
+    this.getSex = function() {
+      return _sex
+    }
+    this.getGrade = function() {
+      return _grade
+    }
+  }
+}
+
+//If private things are to be extended:
+
+// Base Class
+class Vehicle {
+
+  constructor(){
+   var _speed = "100"
+   var _model = "Tesla"
+   this.getModel = function(){
+     return _model
+   }
+   this.getSpeed = function(){
+     return _speed
+   }
+  }  
+}
+
+// Derived Class
+class Car extends Vehicle {
+  constructor(){
+    super()
+    this.name = ""
+  }
+  
+  // This function sets the name of the car
+  setDetails(name) { // Setter Function
+    this.name = name;
+  }
+
+  // This function calls the Base class functions and appends the result with the input 
+  getDetails(carName) {
+		var details = carName + ", " + this.getModel() + ", " + this.getSpeed(); // calling Base Class Function
+		return details;
+  }   
+}
+
+Static methods:
+-----------------
+
+Methods that are used to implement functions belonging to a class only and not to any particular object of it are known as static methods.
+
+Since static methods are not defined on the prototype of class they cannot be accessed hence cannot be overridden by the child object inheriting it.
+
+ES6 version of JavaScript introduces the keyword static which assigns a method to the class directly instead of the class prototype object from
+where the objects were able to inherit it.
+
+class Student {
+  constructor(name,age,sex,marks) {
+    this.name = name
+    this.age = age
+    this.sex = sex
+    this.marks = marks
+  }
+  //defining a static method called "compareMarks"
+  //it compares marks of two students
+  static compareMarks(student1, student2){
+    if (student1.marks > student2.marks){
+      temp1 = student1.marks - student2.marks
+      console.log(`${student1.name} scored ${temp1} marks more than ${student2.name}`)
+    }
+    else if(student1.marks < student2.marks){
+      temp1 = student2.marks - student1.marks
+      console.log(`${student2.name} scored ${temp1} marks more than ${student1.name}`)
+    }
+    else{
+      console.log(`Both students scored ${student1.marks}`)
+    }
+  }
+}
+
+Student.compareMarks(student1,student2)
+
+
+- Note: 
+The class declaration creates a function as an end result.
+
+_proto_:
+----------
+In JavaScript the objects contain a property [[Prototype]] that is hidden. 
+This property either points to another object or is null.
+
+The [[Prototype]] property of objects i.e., anObject.[[Prototype]] defines the prototype of anObject.
+ It is defined through the __proto__ property which is used as a setter/getter for the [[Prototype]] property i.e.,
+ in order to access/set the [[Prototype]] property of an object __proto__ is used.
+
+- When the prototype property of Rectangle is set to Shape, it is able to access all the properties present in Shape. 
+So, upon accessing, if a property is not found in the object, such as the name property is not found in Rectangle, 
+JavaScript will automatically take it from the prototype of that object, Shape. This is known as prototypal inheritance.
+
+As discussed, every object created contains a private property called [[Prototype]] which points either to another object or null. Let’s consider an example where there is an object C whose [[Prototype]] property points to another object B and object B’s [[Prototype]] property, in turn, points to another object A, this could go on and on resulting in a chain getting formed known as the prototype chain.
+
+The prototype chain is used in prototypal inheritance. Whenever a property is to be found in an object, 
+it is first searched for in the object itself; if not found, it is then searched for on that object’s prototype, 
+if not found, it gets searched for in the object’s prototype’s prototype. 
+Hence, the whole prototype chain gets traversed for the property to be found until null is reached.
+
+constructor function initialized has a prototype property assigned to it known as the Prototype Object. It contains the properties constructor and __proto__ that sets the object’s [[Prototype]] property. Its [[Prototype]] is set to null. 
+All the object instances created will have their [[Prototype]] reference to the prototype object. 
+
+
+So it is established that all the object instances created will have the prototype object as their prototype and 
+will inherit its properties through prototypal inheritance. So whenever a property is accessed in an object, it will first 
+be searched in the object, 
+if it is not found, it’ll get searched and taken from the prototype object.
+
+//When object has property so does't traverse to the prorotype.
+Since age is found in employeeObj the age property in Employee.prototype is not visited. This is known as property shadowing.
+
+
+Down below is an example that is implementing class-based inheritance using constructor functions in ES5:
+
+
+//constructor function Shape
+function Shape(shapeName,shapeSides){
+  this.name = shapeName
+  this.sides = shapeSides
+}
+//defining the property "equalSides" on the prototype of Shape
+Shape.prototype.equalSides = 'yes'
+//displaying Shape.prototype
+//it will show "equalSides" that is defined on the prototype
+console.log(Shape.prototype)
+
+//constructor function Rectangle
+function Rectangle(shapeName,shapeSides,length,width){
+  //call function invoked to inherit and initialize the properites of Shape for Rectangle
+  Shape.call(this,shapeName,shapeSides)
+  //properties of rectangle
+  this.length = length
+  this.width = width
+}
+
+//Setting Shape object to be the prototype of Rectangle
+//so Rectangle can inherit Shape prototype properties
+//through the new object created
+Rectangle.prototype = Object.create(Shape.prototype)
+//setting Rectangle's prototype constructor so that it points to itself 
+Rectangle.prototype.constructor = Rectangle
+//defining a method "area" on the prototype of Rectangle
+Rectangle.prototype.getArea = function(){
+  return this.length*this.width
+}
+//displaying Rectangle.prototype
+//it will show getArea that is defined on its prototype
+//and constructor function pointing to Rectangle itself
+console.log(Rectangle.prototype)
+//creating a Rectangle object instance
+var obj = new Rectangle('Rectangle',4,3,5)
+
+
+Down below is an example that is implementing class-based inheritance  in ES6:
+
+
+super Keyword #
+The use of the keyword new initializes this so that it can be used to assign values to properties. However, when the keyword extends is used to create child classes the initialization doesn’t happen. Therefore, the code above gives the error.
+
+As the child class is derived from the parent class, the initialization of this for the child class is done by the parent class constructor. Hence, the parent class constructor needs to be called inside the child class constructor, and that is done by using super().
+
+super() acts as the parent class constructor; hence the parent class constructor parameters can also be passed into it. If super() is 
+called with the parameters inside the child class constructor the parent class properties will get initialized for the child class, i.e., 
+it will inherit the parent class properties.
+
+
+Overriding:  super.getArea()
+
+
+Mixin: [Multiple inheritance]
+------
+
+A mixin is a class that contains various methods that implement different functionalities. 
+Other classes can then inherit those methods without the mixin class having to be their parent class.
+
+A mixin class is not used alone. It only provides other classes with extra methods.
+
+
+Implementing a mixin:
+
+//creating a mixin
+var mixin = {
+  getName() {
+    console.log(`Name is ${this.name}`);
+  },
+  getSides() {
+    console.log(`Sides are ${this.sides}`);
+  }
+}
+
+//creating a class Shape
+class Shape {
+  constructor(shapeName,shapeSides) {
+    this.name = shapeName
+    this.sides = shapeSides
+  }
+}
+
+//setting mixin to be the prototype of Shape
+Shape.prototype =  mixin;
+//setting constructor of prototype equal to Shape
+Shape.prototype.constructor = Shape
+
+//creating a new Shape
+var rectangle = new Shape('Rectangle',4) 
+rectangle.getName()
+rectangle.getSides()
+
+
+
+
+
+Remember this: //Uisng functon constuctor:
+--------------
+function Triangle(name,sides,a,b,c){
+ 
+  Shape.call(this,name,sides)
+  this.a = a
+  this.b = b
+  this.c = c
+}
+
+Triangle.prototype = Object.create(Shape.prototype)
+
+Triangle.prototype.constructor = Triangle
+
+Objects can be created using object literals, class based, function constructors.

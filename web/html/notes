@@ -1,0 +1,596 @@
+
+All about DOCTYPES:
+-------------------
+<!doctype html> -> Writing in html5 to inform a browser that the document being rendered is an html document
+The <!DOCTYPE> declaration is written at the top of every HTML5 page, and it instructs the web browser about the version and 
+type of HTML being used in building the web document. This allows the browser to handle and load the web document properly.
+In HTML5, the DOCTYPE declaration is short and simple. It is also case-insensitive.
+
+There are three types of DOCTYPES, as mentioned below:
+
+Strict Doctype
+Frameset Doctype
+Transitional Doctype
+
+In HTML5, the Doctype declaration is only needed to enable a standard mode for documents that are written with the HTML5 syntax. Hence, the Doctype for HTML5 is case insensitive and relatively simple.
+
+<!DOCTYPE html>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+"http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+<link rel="stylesheet" type="text/css" href="./index.css">
+<script src="./index.js"></script> -> Put before the body tag
+
+Meta tags:
+----------
+- Store info about the webpage that is not necessarily visisble to end users.
+
+The <meta> element contains information about the web page. The description attribute contains the description of the web page, 
+keywords contains the list of comma-separated words, robots decide to add pages to search results.
+
+
+Robots tags:
+------------
+The robots tag makes it possible to control how a single page should be indexed and served in the Google 
+Search results or hidden to the search engine crawlers. 
+This tag is placed in the <head> section of the webpage. It has no function by the name norepeat.
+
+<meta name="robots" content="noindex" />
+<meta name="robots" content="nofollow" />
+<meta name="robots" content="noarchive" />
+<meta name="robots" content="index" />
+
+The information/value of the content is provided by http-equiv through HTTP header. Some values associated with http-equiv and 
+name attributes are given by the content attribute. A scheme to be used to interpret the value of the content is specified by the scheme tag. 
+The name attribute specifies the name of the input element and thus provides information/value of it.
+The time interval in seconds before the browser performs a refresh action is represented by the value of the content attribute.
+
+The nofollow attribute instruct search engines that a hyperlink should not influence the link target’s ranking in search engine. 
+noindex prevents a page from being indexed. To prevent a page from being cracked, noarchive tag can be used. 
+The noarchive value of an HTML robots meta tag requests that automated Internet bots avoid indexing a web page.
+
+noarchive tag:
+--------------
+prevents search engines from showing a cached link for a web page
+
+
+nofollow tag:
+-------------
+nofollow attribute instructs search engines that a hyperlink should not influence the link target’s ranking in search engine. noindex prevents the page from being indexed. To prevent a page from being cracked, noarchive tag can be used.
+If you want to block search engines from following a link on your website, you can add the tag to your HTML code.
+This is useful if you want to have links on your page to external sources. Nofollow tags can be added in one of two places:
+The <head> of the page (to nofollow all links on that page):
+<meta name=”robots” content=”nofollow” />
+The link code (to nofollow an individual link):
+<a href="http://www.externalsite.com" rel="nofollow">External site</a>
+By doing this, your visitors will be able to use the link, but the search engines will not “follow” it
+
+Changing which of the following attributes to a valid value can we define different meta tags? -> name
+
+
+Charset:
+--------
+A charset attribute is new in HTML5. The charset is used to provide character support. It the character encoding via an external script file.
+
+
+Viewport:
+---------
+HTML5 specified a way to let web developers take control over the viewport, through the <meta> tag.
+
+The viewport is the area of a web page that is visible to a user. It varies depending on the device; the viewport will be 
+smaller on a mobile phone than on a computer screen.
+
+You should include the following <meta> viewport element in all your web pages:
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+A <meta> viewport element gives the browser instructions on how to control the page’s dimensions and scaling.
+
+The width=device-width part defines the width of the page to follow the screen-width of the device. screen-width will vary 
+depending on the device the user is on.
+
+The initial-scale=1.0 part sets the initial zoom level when the page is first loaded by the browser.
+
+Attributes supported by the <meta> tag:
+---------------------------------------
+charset – Specifies the character encoding for the HTML document.
+content – Gives the value associated with the http-equiv or name attribute.
+http-equiv – Provides an HTTP header for the information/value of the content attribute.
+name – Defines a name for the metadata.
+scheme – Specifies a scheme to interpret the value of the content attribute. Not supported in HTML5.
+
+HTML5 Pros:
+-----------
+HTML5 introduces some new features including:
+
+Adding new parsing rules to enhance flexibility.
+Adding New attributes.
+Allow offline editing.
+Support (Web SQL)
+Support Protocol and MIME handler registration. These features can be used to change the way of user interaction with documents.
+
+Some of the most important features added by HTML5 include:
+
+Geolocation
+Offline Application Cache
+Client-side database
+Error Handling
+New Structure and new multimedia elements.
+Browser Support and compatibility.
+Supports Some New Application Programming Interface (API) like:
+
+Browser History Management
+Drag and Drop
+2D drawing on a web page
+Time media playback
+Supported Applications include:
+
+Web Workers – JavaScript
+Local File Access
+Application Cache
+Local data storage
+Local SQL databases
+
+The World Wide Web Consortium (W3C) is a community of developers working towards setting global standards for development.
+
+WHATWG is short for Web Hypertext Application Technology Working Group. It was created during a W3C workshop by Apple, 
+Mozilla and Opera Software in 2004. 
+WHATWG is a community of developers focused on setting HTML standards to improve on user needs.
+
+
+Media element tags:
+-------------------
+<audio>: Used for multimedia like sounds, audio streams, or music, embed audio content without any additional plug-in requirement like the flash player.
+<video>: Used for video content like video streams or movie clips, embed video content, etc.
+<source>: Used for multiple media resources in media elements, such as audio, video, picture, etc.
+<embed>: Used for external applications or embedded content (a plug-in).
+<track>: Used for adding subtitles or other files containing text in video or audio elements as the respective media play on a web page.
+
+Semantic HTML:
+--------------
+- Semantic HTML provides meaning to the web page as opposed to just presentation
+
+List tags in HTML:
+------------------
+
+Definition list: Offers a list within it and takes a definition term (<dt>…</dt>) and a detailed definition (<dd>…</dd>) of that term.
+
+Ordered list: Provides the user the required list in a numbered or alphabetical format.
+
+Unordered list: Offers the user the required list in a bullet format.
+
+multilingual site considerations:
+---------------------------------
+Basic things include setting the default language, using Unicode encoding, being aware of standard font sizes and text direction, using 
+the ‘lang’ attribute, and being aware of language word length (which may affect layout).
+
+List of page structure elements in HTML5:
+------------------------------------------
+
+<header> - Used to define header for a document or a section
+<nav> - Used to define container for navigation links
+<section> - Used to define a section inside a document
+<article> - Used to tag an independent self-contained article
+<aside> - Defines the content separately (just like a sidebar)
+<footer> - Used for tagging a footer inside a document or a section
+<details> - Used to define any additional details
+<summary> - Used to define a heading inside the <details> element
+
+HTML5 API (Application Programming Interfaces):
+-------------------------------------------------
+In HTML5 API (Application Programming Interfaces) is a
+means of creating numerous applications using pre-constructed components. Developers can incorporate 
+the functionality related to current APIs into their new websites.
+
+The APIs in HTML5 are:
+
+Media API
+Data Transfer API
+Application Cache API
+User Interaction
+History API
+Constraint Validation API
+Command API
+Text Track API
+HTML Web Workers
+HTML Drag and Drop
+HTML Application Cache
+HTML Local Storage
+HTML Geolocation
+
+Types of storage:
+------------------
+
+Session Storage: The data or details from only the user’s current browsing session are stored. 
+Once the user closes the browser, the storage data gets removed automatically.
+
+Local Storage: The data stays safe and does not get cleared automatically when the user closes the browser. 
+The data instead needs to be deleted manually to remove it from storage.
+
+Websockets and SSE:
+------------------
+
+Websockets connections can provide both ship statistics to the browser and acquire information from the browser. 
+A real-life example of an application that might use WebSockets is a chat application.
+
+server-sent events or (SSE) connections can solely push statistics to the browser. Online inventory prices or Twitter’s updating 
+timeline or feed are excellent examples of a utility that ought to benefit from SSE.
+
+IFrame:
+-------
+The <iframe> tag is used to specify a browsing context that is nested, or, in other words, an inline frame. 
+The <iframe> tag allows outside documents to be inserted in the main HTML document with great ease. A common example of usage 
+of inline frames is in online advertising, where the contents of the iframe can be an ad from a third party.
+
+iframes introduce security risks. When an iframe is added to a page, the website becomes vulnerable to cross-site attacks.
+
+Why style sheets are placed in head tag?
+
+Style sheets are linked in the head section of the HTML markup, allowing the browser to format and render the markup as it goes. 
+If you place the style details at the bottom of the document, the browser must restyle and render the whole document from the top.
+
+First of all, it takes longer: if a browser needs to wait before it meets the end of a document before the style details can be added, 
+it will probably have to render the page again, making the process slower. Secondly, it’s going to look unprofessional. This scenario 
+varies from the scripts included as the scripts can block loading until they are completed, meaning you could load them as late as possible.
+
+All the building blocks that constitute HTML5:
+----------------------------------------------
+Semantics
+Connectivity and communication with servers
+Offline storage
+Multimedia
+2D/3D graphics and effects
+Performance and integration
+Device access
+Styling
+
+
+How is HTML5 diff from HTML 4.01?
+--------------------------------
+The scheme attribute is not supported in HTML5.
+
+HTML5 introduces a new attribute, charset, which defines the character encoding for the HTML document:
+
+HTML4.01:
+
+<meta http-equiv="content-type" content="text/html; charset=UTF-8">
+HTML5:
+
+<meta charset="UTF-8">
+
+
+HTML Pros:
+----------
+HTML5 has made direct functionalities and provides access for a lot of things that in the past could only be used with third party plugins or separate programs.
+
+New semantic elements that are purposefully made for their name use like <header> for header section, <footer> for footer section and other <nav>, <article>, <section> and so on.
+
+Improved JavaScript API for geolocation, drag-and-drop, and media APIs.
+
+Support for audio with <audio> tag, Video with <video> tag and <canvas> tag for embedding graphics directly into HTML5.
+
+Enhanced support for multi-platform accessibility.
+
+New form elements(<time>, <url> etc) and validation process.
+
+
+usage of data-attributes in HTML5.:
+------------------------------------
+ <button onclick="showDetails(this)" id="html_interview" 
+                data-course-author="Educative">HTML5 - An Interview Refresher</button>
+
+function showDetails(course) { 
+            var course_author = course.getAttribute("data-course-author"); 
+            alert(course.innerHTML + " is written by "  
+                                    + course_author  + "."); 
+        } 
+
+datalist element:
+-----------------
+The HTML5 datalist element provides an auto-complete capability. The <datalist> 
+tag specifies a list of pre-defined options for an <input> element.
+
+Users will see a drop-down list of pre-defined options as they input data.
+
+The <datalist> element’s id attribute must be equal to the <input> element’s list attribute (this binds them together).
+
+<!DOCTYPE html> 
+<html> 
+    <head> 
+        <title>Datalist Tag</title> 
+    </head> 
+    <body> 
+        <h1>Educative</h1>
+        <form action=""> 
+            <label>Tracks on Educative:  </label> 
+            <input list="Tracks" id="tracksInput"> 
+            <datalist id="Tracks"> 
+                <option value="Machine Learning"/> 
+                <option value="Web Development"/> 
+                <option value="Interview Prep"/> 
+                <option value="Data Science"/> 
+                <option value="Algorithms"/> 
+                <option value="Data Structures"/>
+            </datalist> 
+            <button onclick="datalistcall()" type="button"> 
+                Click Here</button> 
+        </form> 
+        <p id="output"></p> 
+                <!-- Will display the selelct option -->
+        <script type="text/javascript"> 
+            function datalistcall(){ 
+                  var o1 = document.getElementById("tracksInput").value; 
+                  document.getElementById("output").innerHTML = "You selected the " 
+                    + o1 + " track"; 
+            } 
+        </script> 
+    </body> 
+</html>          
+
+
+Putting link in image:
+---------------------
+   <a href="https://www.educative.io/courses/advanced-typescript-masterclass">
+         <img src="https://lh3.googleusercontent.com/WhhKEbtaTB_VnC6mfdStRK_sF9Xz3m2Ia4TW4GHn5GdaaZfocjn9tcgPB1TL74gpd2A2b73FdqTRx5hyYBcoIvZ0eCSq=s620"
+         width="130" height="85">
+      </a>
+
+
+New elements in HTML5:
+----------------------
+
+Yes, it is possible to create new elements in HTML5 with the help of JavaScript:
+
+Custom elements are created using
+
+document.registerElement():
+
+var myElem = document.registerElement('my-elem');
+document.body.appendChild(new myElem());
+The first argument to document.registerElement() is the element’s tag name. The name must 
+contain a dash (-). So for example, , are all valid names, while and <my_tags> are not.
+
+
+
+Default font size:
+-------------------
+16px is the browser default in case there are no specified font size values being assigned in the CSS. 
+Otherwise, the given value will take effect.
+
+can we make use of percentages to define font sizes?:
+---------------------------------------------------
+
+Yes but only if we use them with a specific set e.g. if the website is set, with the default size of 16px16px 
+than we can use values like em to scale them with our choices i.e 1.25% em
+
+how we can pre-load content via HTML5?
+---------------------------------------
+We’ll use the preload rel value, which will transform the <link> tag into a preloader for any resource we want to preload. We can also specify:
+
+The type of resource in the as attribute.
+The path in the href attribute pointing towards the resource.
+Preload is a declarative fetch, that allows you to make the browser request for a resource without blocking the document’s onload event. 
+Preload only loads or that is to say, fetches the resource requested; 
+it does not, however, apply it. Instead, it keeps it in memory and is up to the developer to decide when to load it.
+
+<html>
+ <head>
+  <title>Preloading content in HTML Markup</title>
+
+  <link rel="preload" href="style.css" as="style">
+  <link rel="preload" href="index.js" as="script">
+  <link rel="stylesheet" href="style.css">
+  
+</head>
+
+<body>
+  <h1>Preloading JS and CSS files in HTML Markup</h1>
+  <script src="index.js" defer></script>
+</body>
+</html>
+
+Block level elements:
+--------------------
+The elements which always appear to start on a new line in the browser are known as block-level elements. Examples are <h1>,<ul>,<li> and <p>.
+
+Semantic markup:
+----------------
+Semantic markup provides extra information, such as where the emphasis is placed in a sentence, 
+that something you have written is a quotation, the meaning of acronyms, etc. However, it does not describe paragraphs.
+
+
+Reserved category:
+-------------------
+HTML code has some reserved characters, so to use those on page one needs to know “escape” characters. 
+If you want to add a copyright symbol to the web page, then use &copy or &#169.
+
+&amp
+&gt
+&lt
+
+
+The <strong> element shows the importance of text/paragraph between it’s tags. <b></b> makes text bold. 
+A section which is quoted from another source is specified by <blockquote>. The <em> element indicates emphasis, 
+browser will show the contents of <em> element in italic.
+
+The <em> element indicates emphasis, browser will show the contents of <em> element in italic. A section which is quoted from another source is specified by <blockquote>. The <abbr> defines abbreviation. We used <q> element for shorter quote. Browsers put quotes around the <q> element.
+
+standard color names does HTML support -> 140
+
+
+abbr:
+------
+We used <q> element for shorter quote. Browsers put quotes around <q> element. A section which is quoted from another source is specified by <blockquote>. For using abbreviations or acronyms the <abbr> element is helpful. A title attribute is to be used with abbr.
+
+<p>The <abbr title=”Doctor”>Dr.</abbr> is on the way.</p>
+
+The contact details of the author of a web page are specified by the <address> attribute.
+
+Example:
+
+<address>
+<a href="mailto:educative@educative.io">educative</a>
+</address>
+
+<strong> element shows the importance of text/paragraph between its tags. The <ins> element shows the content that has been inserted, usually it has underline. The <del> element shows text that has been deleted, usually it has a line that strikes through the content. Example:
+
+<p>This is <del>not</del> for deletion </p>
+Output:
+
+
+bdo:
+----
+For bidirectional override of current text direction, we use <bdo> element
+
+Example:
+
+<bdo dir="rtl">Text is right to left</bdo>.
+Output:
+
+Text is right to left.
+
+Example:
+
+<bdo dir="ltr">Text is right to left</bdo>.
+Output:
+
+Text is left to right.
+
+This element was already there before HTML5. It is supported by all the browsers.
+
+cite:
+------
+The tittle of a work is defined by <cite> elements.
+
+Example:
+
+<p><cite>Much Ado About Nothing</cite> by William Shakespeare</p>
+Output:
+
+Much Ado About Nothing by William Shakespeare
+
+Section:
+--------
+The grouping together of content that is related to each other is done by the <section> element. Each section will have its own heading. This element should not be used as a wrapper for the entire page. If we wish of containing a element for the entire page, this will be best done by the <div> element. The footer normally contains information about the author of the section, links to related documents, or copyright data. <aside> is a container of content related to its surroundings. For grouping together related elements we use the <div> element.
+
+
+Default value:
+-------------
+<button>, <li>, <progress>, <param>, <meter>, <input>, <option> are some elements used with the value attribute and defines a default value on the page load. <object> element is used with many attributes like border, data, form, height, etc. <area> is used with attributes like alt, cords, download, href, hreflang and many more.
+
+
+Title attribute:
+-----------------
+The title is a global attribute that displays text in a tooltip when hovered over the element. The title attribute specifies extra information about that element.
+
+Syntax:
+
+<p><abbr title=”Civil Superior Service”>CSS</abbr> is one of Pakistan’s most esteemed job.</p>
+CSS is one of Pakistan’s most esteemed job.
+
+
+srclang:
+-------
+
+The srclang attribute is used with <track>. It specifies the language of the text.
+
+Example:
+
+ <track src="ab12.ogg" srclang="en" label="English">
+<input> is used with many attributes like accept, alt, async, autocomplete, autofocus, checked, dirname, disabled, form, formaction, height, list and many more.
+
+
+datetime shows the date and time related to the element. Commonly use with <del>, <time>, <ins> elements. <del> is used with cite attribute, <ins> is also used with cite attribute, <form> element is used with various attributes like accept, action, accept-charset, etc
+
+The loop attribute is commonly used with the <audio>, <bgsound>, <video>, <marquee> and denotes whether the media should start playing from the beginning when it is finished. The <track> element is used with the default attribute and it checks whether the track is enabled or not.
+
+Reversed attribute:
+-------------------
+The reversed attribute is commonly used with the <ol> element. It indicates whether the list is to be displayed in descending order instead of ascending order. There is no reference for options like forward, straight and circular in HTML.
+
+
+
+Custom data attributes:
+----------------------
+HTML5 added custom attributes to its markup. All attributes of an element whose name begins with data- are attributes of data. The data- * attribute is used to store private custom data on the website or document, which helps one to add custom data attributes on all HTML elements.
+
+The data-* attribute consists of two parts:
+
+The name of the attribute will have no upper case characters, and must be at least one character long after the “data-” prefix.
+
+The attribute value can be any string
+
+The attribute data- * forms part of the Global attributes and can be used on any HTML element.
+
+<details>:
+-----------
+The <details> tag specifies additional details that the user can open and close on demand.
+
+The <details> tag is often used to create an interactive widget that the user can open and close. By default, the widget is closed. When open, it expands and displays the content within.
+
+<menu>:
+-------
+The menu tag defines a list/menu of commands. A list/menu of commands is displayed by the menu tag in HTML. It is used for context menus, toolbars, and for listing form controls and commands
+
+
+allow-*:
+--------
+Scripts are re-enabled by allow-scripts. allow-forms re-enables form submission. allow-same-origin allows an iframe’s content to be treated as coming from the same origin. API’s are re-enabled by allow-pointer-lock.
+
+<datalist>:
+----------
+he datalist tag is used to provide an “autocomplete” feature on input elements. Users will see a drop-down list of pre-defined options as they input data. password defines a password field in HTML forms. It is an attribute for input-type. The <keygen> element references form data after the form has submitted. The result of the calculation (script) is represented by the output tag.
+
+
+<optgroup> -> defines a group of related options in a drop-down list
+
+
+Form input types:
+----------------
+<form action="puppy.php"> 
+Name:<input type="text" name="name"> 
+</form> 
+<form action="/action_page.php">
+  <label for="favcolor">Select your favorite color:</label>
+
+ <input type="color" id="favcolor" name="favcolor" value="#ff0000"><br>
+
+<form action=”form.php”> week: <input type=”week” name=”week and year”> <input type=”submit”> </form>
+Anniversary (month and year) 
+<input=”month” name=”anniversary month” >
+
+<input type=”image” src=”img.gif” alt=”Submit”> 
+This sets the image provided as the submit button. Input type image sends the X and Y coordinates of the click and hence the image is activated by clicking the submit button.
+
+HTML5 has introduced new attributes like date, color, month, time, week, datetime-local, email, number, range, tel, url, search etc.
+
+
+type=file
+
+The file input type defines a file-select field and also provides a “Browse” button for file uploads.
+
+Syntax:
+
+<input type="file" name="image">
+checkbox gives the facility to select one or more than one option from the given choices. The button activates JavaScript code. The text attribute defines a single-line text field.
+
+password is the attribute that creates a text box which is similar to the single line text input, but the characters are blocked out. They are hidden due to the privacy of the user. The name attribute with a password sets the name of the password input; The size and maxlength attributes define the size and maximum length of the text box which is to be used for the password.
+
+
+<textarea>
+----------
+For creating multi-line text input we use <textarea> element. This is not empty element i.e. it requires both opening and closing tags. The cols attribute defines a width of the text area. The row attribute defines the number of rows that the textarea can require.
+
+JS encoder:
+—————
+There are some built in functions in JavaScript, ASP and PHP for URL encoding. JavaScript uses the encodeURI() function. ASP uses Server.URLEncode() function, rawurlencode() function is used by PHP. Space is encoded as %20 by JavaScript function.
+
+In URL encoding non-ASCII characters are replaced with “%” which is followed by hexadecimal digits. URL can only contain the ASCII character set. There should be no spaces in the URL, space is replaced by %20 or “+” in URL encoding.
+
+decodeURI()
+
+
+
+

@@ -1,0 +1,37 @@
+GDPR:
+-----
+
+- GDPR has the objective to give individuals (EU citizens) more control, protection, and privacy over how their personal information is used and by whom.
+
+- The regulation is quite extensive and, for many organizations, achieving GDPR compliance will be (or has been) an expensive and long process. The full GDPR regulation is available at
+https://www.itgovernance.eu/en-ie/eu-general-data-protection-regulation-gdpr-ie
+
+
+PSD2 :
+------
+PSD2 aims to stop financial institutions' monopoly over the use of customer data and payment services.
+
+By the end of 2018 (when the directive first came into effect), financials institutions in the EU should have opened the doors of their customers' data and payment services to third-party providers.
+
+The full PSD2 directive is available at
+https://ec.europa.eu/info/law/payment-services-psd-2-directive-eu-2015-2366_en
+
+
+
+Open Banking initiative being introduced in the United Kingdom as a result of the Retail Banking Market Investigation report produced by the Competition and Markets Authority (CMA). In a nutshell, the initiative aims to promote increased competition and consumer choices in the banking industry by forcing banks to securely share their data via an Open Banking API.
+
+For further reading on the Open Banking initiative, refer to the following link:
+https://www.gov.uk/government/news/open-banking-revolution-moves-closer
+
+
+a newer version of the widely adopted health-level 7 (HL7) international standard, known as the Fast Healthcare Interoperability Resources, or FHIR (pronounced "fire"), defines, in fact, a REST API.
+
+
+Further information on FHIR is available at
+https://www.hl7.org/fhir/http.html
+
+
+Recommend reading: A Brief Summary of the CMS Meaningful Use Final Rule
+http://geekdoctor.blogspot.co.uk/2015/10/a-brief-summary-of-cms-meaningful-use.html
+
+

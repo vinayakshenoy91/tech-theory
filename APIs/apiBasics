@@ -1,0 +1,347 @@
+API is an interface that hides the impl
+https://semver.org/, 
+
+Explore:
+-------
+- OpenAPI Specification (OAS) is a popular REST API description format.
+- Lower case letter in URI paths
+- CONSISTENT SUBDOMAIN NAMES SHOULD BE USED FOR YOUR APIS
+The top-level domain and first subdomain names (e.g., soccer.restapi.org) of an API 
+should identify its service owner. The full domain name of an API should add a subdomain named api. For example:
+
+http://api.soccer.restapi.org
+
+- CONSISTENT SUBDOMAIN NAMES SHOULD BE USED FOR YOUR CLIENT DEVELOPER PORTAL
+Many REST APIs have an associated website, known as a developer portal, to help on-board new clients with documentation, 
+forums, and self-service provisioning of secure API access keys. If an API provides a developer portal, by convention it 
+should have a subdomain labeled developer. For example:
+
+http://developer.soccer.restapi.org
+
+Some basics url creation rules:
+------------------------------
+- Use - for better readability
+- Dont use underscore
+= /collecitons/store/document-d  => plural/plural/singular
+- A VERB OR VERB PHRASE SHOULD BE USED FOR CONTROLLER NAMES
+Like a computer program’s function, a URI identifying a controller resource should be named to indicate its action. For example:
+
+http://api.college.restapi.org/students/morgan/register
+http://api.example.restapi.org/lists/4324/dedupe
+http://api.ognom.restapi.org/dbs/reindex
+http://api.build.restapi.org/qa/nightly/runTestSuite
+
+- RULE: THE QUERY COMPONENT OF A URI MAY BE USED TO FILTER COLLECTIONS OR STORES
+A URI’s query component is a natural fit for supplying search criteria to a collection or store. Let’s take a look at an example:
+
+GET /users
+GET /users?role=admin
+
+- RULE: THE QUERY COMPONENT OF A URI SHOULD BE USED TO PAGINATE COLLECTION OR STORE RESULTS
+A REST API client should use the query component to paginate collection and store results with the pageSize 
+and pageStartIndex parameters. The pageSize parameter specifies the maximum number of contained elements to return in the response. The pageStartIndex parameter specifies the zero-based index of the first element to return in the response. For example:
+
+GET /users?pageSize=25&pageStartIndex=50
+
+- When the complexity of a client’s pagination (or filtering) requirements exceeds the simple formatting capabilities 
+of the query part, consider designing a special controller resource that partners with a collection or store. 
+For example, the following controller may accept more complex inputs via a request’s entity body instead of the URI’s query part:
+
+POST /users/search
+
+- HEAD SHOULD BE USED TO RETRIEVE RESPONSE HEADERS
+Clients use HEAD to retrieve the headers without a body. In other words, HEAD returns the same response as GET, except that the API returns an empty body. Clients can use this method to check whether a resource exists or to read its metadata.
+
+The example below shows the curl command for retrieving headers with the HEAD method:
+
+$ curl --head http://api.example.restapi.org/greeting
+
+- POST MUST BE USED TO EXECUTE CONTROLLERS
+Clients use the POST method to invoke the function-oriented controller resources. A POST request message may include both headers and a body as inputs to a controller resource’s function.
+
+HTTP designates POST as semantically open-ended. It allows the method to take any action, regardless of its repeatability or side effects. This makes POST the clear choice to be paired with the equally unrestricted controller resources.
+
+Our REST API designs use POST, along with a targeted controller resource, to trigger all operations that cannot be intuitively mapped to one of the other core HTTP methods. In other words, the POST method should not be used to get, store, or delete resources—HTTP already provides specific methods for each of those functions.
+
+HTTP calls the POST request method unsafe and non-idempotent, which means that its outcome is unpredictable and not guaranteed to be repeatable without potentially undesirable side effects. For example, a resubmitted web form that uses POST might run the risk of double billing a user’s credit card. Controller resources trade a degree of transparency and robustness for the sake of flexibility.
+
+The example below demonstrates how a controller can be executed using the POST request method:
+
+POST /alerts/245743/resend
+
+- Note: if an API wishes to provide a “soft” delete or some other state-changing interaction, it should employ a special controller resource and direct its clients to use POST instead of DELETE to interact.
+
+ULE: OPTIONS SHOULD BE USED TO RETRIEVE METADATA THAT DESCRIBES A RESOURCE’S AVAILABLE INTERACTIONS
+Clients may use the OPTIONS request method to retrieve resource metadata that includes an Allow header value. For example:
+
+Allow: GET, PUT, DELETE
+In response to an OPTIONS request, a REST API may include a body that includes further details about each interaction option. For example, the response body could contain a list of link relation forms, which are discussed in the section
+
+OpenAPI spec:
+-------------
+- The OpenAPI Specification (OAS) is a programming language-agnostic REST API description format. 
+- The OAS (https://www.openapis.org) is a community-driven format; anyone can contribute to it through its 
+GitHub repository (https://github.com/OAI/OpenAPI-Specification).
+- Once you are familiar with what is presented in this book, I recommend you read the 
+OAS documentation (https://github.com/OAI/OpenAPI-Specification/tree/master/versions) and use 
+the OpenAPI Map (https://openapi-map.apihandyman.io), 
+a tool I created to help you find your way through the specification.
+Speaking of writing an OAS document, you can use your favorite text editor, but I recommend using an 
+editor that specifically handles this format. 
+You can use the online Swagger Editor (http://editor.swagger.io)
+
+- I personally use the Microsoft Visual Studio Code editor along with the Swagger Viewer extension 
+(https://marketplace.visualstudio.com/items?itemName=Arjun.swagger-viewer), which supplies a SwaggerUI-based preview 
+panel, and the openapi-lint extension 
+(https://marketplace.visualstudio.com/items?itemName=mermade.openapi-lint), which provides autocompletion and validation.
+An OAS document can be used to generate API reference documentation that shows all the available resources and operations. 
+You can use the Swagger UI (https://github.com/swagger-api/swagger-ui) 
+for this, which shows the OAS document as in the right-hand pane of the Swagger Editor.
+There are non-Swagger OpenAPI tools, too. For example, as an alternative to Swagger UI, you can use a 
+tool such as ReDoc (https://github.com/Rebilly/ReDoc), which is also open source.
+
+To learn more, I recommend you read the Schema Object description in the OAS 
+(https://github.com/OAI/OpenAPI-Specification/tree/master/versions), 
+and then the JSON Schema specification (http://json-schema.org/specification.html). 
+
+HTTP basics:
+-------------
+- It is a programming language-agnostic protocol that is designed to allow the exchange 
+of documents (also called resources) between applications over the internet.
+
+- Revisit this: https://learning.oreilly.com/library/view/the-design-of/9781617295102/OEBPS/Text/c04.xhtml
+
+
+Some rest patterns:
+--------------------
+- the most widely adopted format is /{plural name reflecting collection’s item type}/{item id}. 
+- structure can be extended to multiple levels as in:
+/resources/{resourceId}/sub-resources/{subResourceId}.
+- To only retrieve products matching some query, 
+like a product name or partial description, we need to pass a parameter to this request.
+GET /example?param1=value1&param2=value2
+
+- Delete doesn't return any info.
+
+- The PATCH HTTP method can be used to partially update a resource.Using patch: if you want to update a product’s price, 
+you can use PATCH on the product resource and pass the updated 
+price in the body. In our use case, this action does not return any information.
+If you want to update a product’s price, you can use PATCH on the product resource and 
+pass the updated price in the body. 
+
+
+
+- The PUT HTTP method can be used to totally replace an existing resource
+or to create a nonexisting one and provide its identifier.
+ In our use case, this action does not return information, but if you use PUT for creating a resource, the created resource should be returned.
+
+POST:
+-----
+- A POST request’s parameters are usually passed in the request body, so the product information parameter goes there. 
+Once the product resource is created, 
+the action should return the newly created resource identified by its path: /products/{addedProductId}.
+
+
+Truly restful:
+--------------
+To achieve all this—to be RESTful—a software architecture needs to conform to the six following constraints:
+
+Client/server separation —There must be a clear separation of concerns when components like a mobile application and its 
+API server work and communicate together.
+Statelessness —All information needed to execute a request is contained within the request itself. No client context is 
+stored on the server in a session between requests.
+Cacheability —A response to a request must indicate if it can be stored (so a client can reuse it instead of making the 
+same call again), and for how long.
+Layered system —When a client interacts with a server, it is only aware of the server and not of the infrastructure that 
+hides behind it. The client only sees one layer of the system.
+Code on demand —A server can transfer executable code to the client (JavaScript, for example). This constraint is optional.
+Uniform interface —All interactions must be guided by the concept of identified resources that are manipulated through 
+representations of resource states and standard methods. Interactions must also provide all metadata required to understand
+ representations and know what can be done with those resources. This is the most fundamental constraint of REST, and it is the origin of the Representational State Transfer name. 
+Indeed, using a REST interface consists of transferring representations of a resource’s states. 
+
+URL structure:
+--------------
+- Self explanatory
+- consistent across api
+- predicatable
+- Should have a FQDN (Fully Qualified Domain Name) -> Should have api in its name: api.tesco.com
+- Must be https
+- Word api should be part of domain name or the path
+- Version: /api/v1
+- /api/v1/order/17/items
+- With query param, we may get any number of entity. But with ID parameter, we should get only one entity.
+If id param not found, throw error. But Query param, empty result should be fine.
+- PUT /api/v1/blogposts/12342?action=like
+GET /api/v1/books?q=[SEARCH-TERM]
+GET /api/v1/authors?filters=[COMMA SEPARATED LIST OF FILTERS]
+
+OR
+
+POST /virtual-machines/<your-vm-id>/reboots
+{
+ "When": "now"
+}
+
+Search entities:
+GET /books/?q=Harry pott&p=1&size=10
+- If you can, and as long as it makes sense, always try to use endpoints such as 
+GET/action to provide information about the action and POST /action to perform it.
+
+- POST /student/15/grades
+
+Response codes:
+---------------
+1XX -Info
+2XX- Success
+3XX-Redirection
+4xx - client errors
+5xx - server error
+
+200 -> request was successful
+201 -> Created (Contains pointer to location of entity)
+202 -> Accepted
+204 -> request was fulfilled but no content sent back. Used when updating large entity
+
+400- Bad request
+
+{
+
+type: "https://example.net/validation-error",
+"title": "Your request parm didnt validate",
+"invalid-params":[
+   {
+       "name":"age",
+       "reason":"it must be a positive integer"
+   } 
+]
+}
+
+401-> Not authorised
+
+403-> Failed authorization
+
+Client Request -> 401 Unauth -> Authorise -> 403
+
+404 -> Used when specific entity was looked for not with query parameter
+
+500 - Internal server error -> something bad happened
+
+207 -> multi status
+
+APi types:
+----------
+1) OS api
+2) Library api
+3) Remote Api -> Both side smae platform is drawback
+4) Web api 
+
+
+
+Backward Compatibility
+If you’re using a query system like GraphQL, where requests must specify the desired fields, you might have a good idea of which fields are actively being used. But if your API is anything like the vast majority of third-party APIs in the wild, you most likely return all the relevant fields in your JSON payloads. And even if you were using a *QL framework, there’s always the possibility that developers will select all fields. In both of these cases, you have no visibility into which fields are being used—you know only that they’re all being requested.
+
+
+Resource Archetypes:
+====================
+When modeling an API’s resources, we can start with the some basic resource archetypes.
+Like design patterns, the resource archetypes help us consistently communicate the structures and behaviors 
+that are commonly found in REST API designs. A REST API is composed of four distinct resource archetypes: document, 
+collection, store, and controller.
+
+
+Each of these resource archetypes is described in the subsections that follow.
+
+DOCUMENT
+A document resource is a singular concept that is akin to an object instance or database record. A document’s state representation typically includes both fields with values and links to other related resources. With its fundamental field and link-based structure, the document type is the conceptual base archetype of the other resource archetypes. In other words, the three other resource archetypes can be viewed as specializations of the document archetype.
+
+Each URI below identifies a document resource:
+
+http://api.soccer.restapi.org/leagues/seattle
+http://api.soccer.restapi.org/leagues/seattle/teams/trebuchet
+http://api.soccer.restapi.org/leagues/seattle/teams/trebuchet/players/mike
+A document may have child resources that represent its specific subordinate concepts. With its ability to bring many different resource types together under a single parent, a document is a logical candidate for a REST API’s root resource, which is also known as the docroot. The example URI below identifies the docroot, which is the Soccer REST API’s advertised entry point:
+
+http://api.soccer.restapi.org
+COLLECTION
+A collection resource is a server-managed directory of resources. Clients may propose new resources to be added to a collection. However, it is up to the collection to choose to create a new resource, or not. A collection resource chooses what it wants to contain and also decides the URIs of each contained resource.
+
+Each URI below identifies a collection resource:
+
+http://api.soccer.restapi.org/leagues
+http://api.soccer.restapi.org/leagues/seattle/teams
+http://api.soccer.restapi.org/leagues/seattle/teams/trebuchet/players
+STORE
+A store is a client-managed resource repository. A store resource lets an API client put resources in, get them back out, and decide when to delete them. On their own, stores do not create new resources; therefore a store never generates new URIs. Instead, each stored resource has a URI that was chosen by a client when it was initially put into the store.
+
+The example interaction below shows a user (with ID 1234) of a client program using a fictional Soccer REST API to insert a document resource named alonso in his or her store of favorites:
+
+PUT /users/1234/favorites/alonso
+CONTROLLER
+A controller resource models a procedural concept. Controller resources are like executable functions, with parameters and return values; inputs and outputs.
+
+Like a traditional web application’s use of HTML forms, a REST API relies on controller resources to perform application-specific actions that cannot be logically mapped to one of the standard methods (create, retrieve, update, and delete, also known as CRUD).
+
+Controller names typically appear as the last segment in a URI path, with no child resources to follow them in the hierarchy. The example below shows a controller resource that allows a client to resend an alert to a user:
+
+POST /alerts/245743/resend
+
+Soap vs rest
+-----------
+XML-RCP/SOAP
+
+REST
+
+Specific SOAP clients had to be created for each programming language. Even though XML was universal, a new client would have to be coded to parse the WSDL to understand how the service worked.
+
+REST is completely technology-agnostic and doesn’t require special clients, only a programming language capable of connectivity through the chosen protocol (e.g., HTTP, FTP, etc.).
+
+The client needs to know everything about the service before initiating the interaction (thus the WSDL mentioned earlier).
+
+The client only needs to know the main root endpoint, and with the hypermedia provided on the response, self-discovery is possible.
+
+Because the service was used from within the client source code and called a specific function or method from within the server’s code, the coupling between those two systems was too big. A rewrite of the server code would probably lead to a rewrite on the client’s code.
+
+The interface is implementation-independent; the complete server-side code can be rewritten and the API’s interface will not have to be changed.
+
+
+REST api stuff:
+-----------------
+The main idea behind REST is that a distributed system, organized RESTfully, will improve in the following areas:
+
+Performance: The communication style proposed by REST is meant to be efficient and simple, allowing a performance boost on systems that adopt it.
+
+Scalability of component interaction: Any distributed system should be able to handle this aspect well enough, and the simple interaction proposed by REST greatly allows for this.
+
+Simplicity of interface: A simple interface allows for simpler interactions between systems, which in turn can grant benefits like the ones previously mentioned.
+
+Modifiability of components: The distributed nature of the system, and the separation of concerns proposed by REST (more on this in a bit), allows for components to be modified independently of each other at a minimum cost and risk.
+
+Portability: REST is technology and language agnostic, meaning that it can be implemented and consumed by any type of technology (there are some constraints that I’ll go over in a bit, but no specific technology is enforced).
+
+Reliability: The stateless constraint proposed by REST (more on this later) allows for the easier recovery of a system after failure.
+
+Visibility: Again, the stateless constraint proposed has the added benefit of improving visibility, because any monitoring system doesn’t need to look further than a single request message to determine the full state of said request (this will become clear once I talk about the constraints in a bit).
+
+From this list, some direct benefits can be extrapolated:
+
+A component-centric design allows you to make systems that are very fault tolerant. Having the failure of one component not affect the entire stability of the system is a great benefit for any system.
+
+Interconnecting components is quite easy, minimizing the risks when adding new features or scaling up or down.
+
+A system designed with REST in mind will be accessible to a wider audience, thanks to its portability (as described earlier).With a generic interface, the system can be used by a wider range of developers.
+
+In order to achieve these properties and benefits, a set of constraints were added to REST to help define a uniform connector interface.
+
+
+
+
+Choreography
+This refers to a style of interaction whereby services interact without the need for a central 
+coordinator (also known as orchestration engine). Instead, participants of a choreographed process consume 
+and react to events that are relevant and also produce events other participants (services) can be interested in.
+
+
+
+
+

@@ -1,0 +1,32 @@
+- The Redis database internally stores List as a linked list. This linked list has a head and tail. 
+Whenever we insert a new element, we can insert it either at the head or tail. The ‘head’ of the list is considered 
+as the left-most element of the list and the ‘tail’ is considered as right-most element of the list.
+
+
+
+- LPUSH key value… -> Adds value at head of lsit
+
+- LRANGE key start end
+
+LRANGE cars 0 -1
+
+- LPOP key -> The LPOP command is used to remove an element from the list. This command removes the element at the head, i.e., the left of the list.
+
+
+- rpush key value… -> RPUSH command is used to insert a value at the tail of the list. 
+
+- rpop key
+
+
+- LLEN key
+
+- LINDEX key index
+
+- LSET key index value
+
+- LPUSHX key value -> The lpushx command adds an element to the head of the list if the list exists.
+
+- linsert key before/after pivot value -> This command is useful if we need to insert an element before a particular element.
+
+
+

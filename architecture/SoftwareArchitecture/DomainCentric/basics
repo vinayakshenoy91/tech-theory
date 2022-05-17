@@ -1,4 +1,0 @@
-- Hexagonal architecture is domain centric architecture.
-- Onion architecture [Domain -> domain svc -> app svc]
-
-- Cons: REquires more thought on whihc classes lie where like in app vc layer or domainsvc 

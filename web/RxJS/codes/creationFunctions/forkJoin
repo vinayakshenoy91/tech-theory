@@ -1,0 +1,23 @@
+Forkjoin creation function:
+--------------------------
+- For forkjoin, all the subscription has to complete before it emits a value
+- Pass an array of obseravbles.
+- Once you subscribe, it will provide subscription to all input obseravbles.
+Used in case: Get all http response before proceed
+
+
+forkJoin([A,B]) //A, B are observables.
+
+A -> emit and complete
+B -> emit and complete
+
+Both will complete with individual subscription.
+Then finally the forkJoin will emit an array with [Aresponse, Bresponse]
+
+
+//It can be ajax or observable
+forkJoin([ajax1$,ajax2$]).subscribe((ajaxResponses)=> console.log(ajaxResponses));
+- Keep updating latest known values
+
+
+

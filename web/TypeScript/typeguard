@@ -1,0 +1,24 @@
+Type Guard:
+-----------
+1)  typeof -> can only test against string, number, boolean , symbol
+
+if(typeof x === 'string'){
+
+}
+
+if(typeof x === 'string'|'number'){
+
+}
+
+
+
+2) instanceof => if(device instanceof phone)
+
+3) User defined type guards:
+
+interface Vehicle { numberOfWheels: number;}
+
+function isVehicle(v:any):v is Vehicle{ //This is part is required
+    return (<Vehicle>v).numberOfWheels !==undefined;
+    //OR return layer.type === Enumtype.TEXT
+}

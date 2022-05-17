@@ -1,0 +1,593 @@
+- Lombok- springweb
+- Validation
+
+
+Commands:
+----------
+./mvnw -Dtest=ChallengeServiceTest test
+
+./mvnw spring-boot:run
+
+
+Lombok:
+-------
+import lombok.Value;
+@Value
+public class Challenge {
+    // Both factors
+    int factorA;
+    int factorB;
+}
+@Slf4j
+
+
+JUNIT + Mockito [Verify and assert if that call was made]
+@BeforeEach and @AfterEach for code that should be executed before and after each test, respectively.
+
+@Test for every method that represents a test we want to execute.
+
+@ExtendsWith at the class level to add JUnit 5 extensions. We will use this to add the Mockito extension and the Spring extension to our tests.
+
+@ExtendWith(MockitoExtension.class)
+public class MultiplicationServiceImplTest {
+    @Mock
+    private ChallengeAttemptRepository attemptRepository;
+    // [...] -> tests
+}
+
+import static org.mockito.Mockito.when;
+// ...
+when(attemptRepository.methodThatReturnsSomething())
+    .thenReturn(predefinedResponse);
+
+import static org.mockito.BDDMockito.given;
+// ...
+given(attemptRepository.methodThatReturnsSomething())
+    .willReturn(predefinedResponse);
+
+In some cases, we will also need to check that an expected call to a mocked class was invoked. With Mockito, we use verify() for that. See Listing 2-7.
+import static org.mockito.Mockito.verify;
+// ...
+verify(attemptRepository).save(attempt);
+
+BDD:
+
+@Test
+public void getRandomMultiplicationTest() throws Exception {
+    // given
+    given(challengeGeneratorService.randomChallenge())
+            .willReturn(new Challenge(70, 20));
+    // when
+    MockHttpServletResponse response = mvc.perform(
+            get("/multiplications/random")
+                    .accept(MediaType.APPLICATION_JSON))
+            .andReturn().getResponse();
+    // then
+    then(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+    then(response.getContentAsString())
+            .isEqualTo(json.write(new Challenge(70, 20)).getJson());
+}
+
+
+Complete JUNIT and mockito testing:
+-----------------------------------
+
+package microservices .book.multiplication.challenge;
+import java.util.Optional;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import microservices.book.multiplication.event.ChallengeSolvedEvent;
+import microservices.book.multiplication.event.EventDispatcher;
+import microservices.book.multiplication.user.User;
+import microservices.book.multiplication.user.UserRepository;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.BDDMockito.*;
+@ExtendWith(MockitoExtension.class)
+public class ChallengeServiceImplTest {
+  private ChallengeServiceImpl challengeServiceImpl;
+  @Mock
+  private ChallengeAttemptRepository attemptRepository;
+  @Mock
+  private UserRepository userRepository;
+  @Mock
+  private EventDispatcher eventDispatcher;
+  @BeforeEach
+  public void setUp() {
+    challengeServiceImpl = new ChallengeServiceImpl(attemptRepository,
+        userRepository, eventDispatcher);
+  }
+  @Test
+  public void checkCorrectAttemptTest() {
+    // given
+    long userId = 9L, attemptId = 1L;
+    User user = new User("john_doe");
+    User savedUser = new User(userId, "john_doe");
+    ChallengeAttemptDTO attemptDTO =
+        new ChallengeAttemptDTO(50, 60, "john_doe", 3000);
+    ChallengeAttempt attempt =
+        new ChallengeAttempt(null, savedUser, 50, 60, 3000, true);
+    ChallengeAttempt storedAttempt =
+        new ChallengeAttempt(attemptId, savedUser, 50, 60, 3000, true);
+    ChallengeSolvedEvent event = new ChallengeSolvedEvent(attemptId, true,
+        attempt.getFactorA(), attempt.getFactorB(), userId,
+        attempt.getUser().getAlias());
+    // user does not exist, should be created
+    given(userRepository.findByAlias("john_doe"))
+        .willReturn(Optional.empty());
+    given(userRepository.save(user))
+        .willReturn(savedUser);
+    given(attemptRepository.save(attempt))
+        .willReturn(storedAttempt);
+    // when
+    ChallengeAttempt resultAttempt =
+        challengeServiceImpl.checkAttempt(attemptDTO);
+    // then
+    then(resultAttempt.isCorrect()).isTrue();
+    verify(userRepository).save(user);
+    verify(attemptRepository).save(attempt);
+    verify(eventDispatcher).send(event);
+  }
+}
+
+AssertJ for assertions:
+------------------------
+ASSERTJ
+The standard way to verify expected results with JUnit 5 is using assertions.
+assertEquals("Hello, World!", actualGreeting);
+There are not only assertions for equality of all kinds of objects but also to verify true/false, null, execution before a timeout, throwing an exception, etc. You can find them all in the Assertions Javadoc (https://tpd.io/junit-assert-docs).
+
+Even though JUnit assertions are enough in most cases, they are not as easy to use and readable as the ones provided by AssertJ. This library implements a fluent way of writing assertions and provides extra functionality so you can write more concise tests.
+
+In its standard form, the previous example looks like this:
+assertThat(actualGreeting).isEqualTo("Hello, World!");
+However, as we mentioned in previous sections, we want to make use of a BDD language approach. Therefore, we will use the BDDAssertions class included in AssertJ. This class contains method equivalencies for all the assertThat cases, renamed as then.
+then(actualGreeting).isEqualTo("Hello, World!");
+In the book, we will mostly some basic assertions from AssertJ. If you’re interested in extending your knowledge about AssertJ, you can start with the official documentation page (https://tpd.io/assertj).
+
+Testing tech:
+--------------
+When testing specific slices or individual classes of your application, it’s better to use plain unit tests 
+(without Spring at all) or more fine-grained annotations like @WebMvcTest, focused on controller-layer tests. 
+
+The Spring Test libraries (included via Spring Boot Test starter) come with a SpringExtension so you can integrate Spring 
+in your JUnit 5 tests via the @ExtendWith annotation.
+
+The Spring Boot Test package introduces the @MockBean annotation that we can use to replace or add a bean in the Spring 
+context, in a similar way to how Mockito’s @Mock annotation can replace the behavior of a given class. This is helpful to 
+test the application layers separately so you don’t need to bring all your real class behaviors 
+in your Spring context together. We’ll see a practical example when testing our application controllers.
+
+
+Logging:
+---------
+- The default implementation is LogBack
+- SLF4J loggers are also supported. To use a logger, we create it via the LoggerFactory. 
+The only argument it needs is a name. By default, it is common to use the factory method that takes the class itself 
+and gets the logger name from it. See Listing 2-9.
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+class ChallengeServiceImpl {
+  private static final Logger log = LoggerFactory.getLogger(ChallengeServiceImpl.class);
+  public void dummyMethod() {
+    var name = "John";
+    log.info("Hello, {}!", name);
+  }
+------------Running app ------
+- mvnw spring-boot.run
+
+------Tomacat server ----
+
+For us, the relevant class that takes care of the embedded Tomcat server autoconfiguration is ServletWebServerFactoryConfiguration. See Listing 3-4 showing its most relevant code fragment, or see the complete source code available online (https://tpd.io/swsfc-source).
+@Configuration(proxyBeanMethods = false)
+class ServletWebServerFactoryConfiguration {
+    @Configuration(proxyBeanMethods = false)
+    @ConditionalOnClass({ Servlet.class, Tomcat.class, UpgradeProtocol.class })
+    @ConditionalOnMissingBean(value = ServletWebServerFactory.class, search = SearchStrategy.CURRENT)
+    static class EmbeddedTomcat {
+        @Bean
+        TomcatServletWebServerFactory tomcatServletWebServerFactory(
+                ObjectProvider<TomcatConnectorCustomizer> connectorCustomizers,
+                ObjectProvider<TomcatContextCustomizer> contextCustomizers,
+                ObjectProvider<TomcatProtocolHandlerCustomizer<?>> protocolHandlerCustomizers) {
+            TomcatServletWebServerFactory factory = new TomcatServletWebServerFactory();
+            factory.getTomcatConnectorCustomizers()
+                    .addAll(connectorCustomizers.orderedStream().collect(Collectors.toList()));
+            factory.getTomcatContextCustomizers()
+                    .addAll(contextCustomizers.orderedStream().collect(Collectors.toList()));
+            factory.getTomcatProtocolHandlerCustomizers()
+                    .addAll(protocolHandlerCustomizers.orderedStream().collect(Collectors.toList()));
+            return factory;
+        }
+    }
+    // ...
+}
+Listing 3-4ServletWebServerFactoryConfiguration Fragment
+This class defines some inner classes, one of them being EmbeddedTomcat. As you can see, that one is annotated with this:
+@ConditionalOnClass({ Servlet.class, Tomcat.class, UpgradeProtocol.class })
+Spring processes the @ConditionalOnClass annotation, which is used to load beans in the context if the linked class can be found in the classpath. In this case, the condition matches since we already saw how the Tomcat class got into our classpath via the starter hierarchy. Therefore, Spring loads the bean declared in EmbeddedTomcat, which turns out to be a TomcatServletWebServerFactory.
+
+That factory is contained inside Spring Boot’s core artifact (spring-boot, a dependency included in spring-boot-starter). It sets up a Tomcat embedded server with some default configuration.
+
+
+Create an interface:
+--------------------
+public interface ChallengeGeneratorService {
+  /**
+   * @return a randomly-generated challenge with factors between 11 and 99
+   */
+  Challenge randomChallenge();
+}
+
+package microservices.book.multiplication.challenge;
+import org.springframework.stereotype.Service;
+import java.util.Random;
+@Service
+public class ChallengeGeneratorServiceImpl implements ChallengeGeneratorService {
+    private final Random random;
+    ChallengeGeneratorServiceImpl() {
+        this.random = new Random();
+    }
+    protected ChallengeGeneratorServiceImpl(final Random random) {
+        this.random = random;
+    }
+    @Override
+    public Challenge randomChallenge() {
+        return null;
+    }
+}
+
+@Service
+public class ChallengeGeneratorServiceImpl implements ChallengeGeneratorService {
+    private final static int MINIMUM_FACTOR = 11;
+    private final static int MAXIMUM_FACTOR = 100;
+    // ...
+    private int next() {
+        return random.nextInt(MAXIMUM_FACTOR - MINIMUM_FACTOR) + MINIMUM_FACTOR;
+    }
+    @Override
+    public Challenge randomChallenge() {
+        return new Challenge(next(), next());
+    }
+}
+--------------
+
+
+package microservices.book.multiplication.challenge;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Spy;
+import org.mockito.junit.jupiter.MockitoExtension;
+import java.util.Random;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.BDDMockito.given;
+@ExtendWith(MockitoExtension.class)
+public class ChallengeGeneratorServiceTest {
+    private ChallengeGeneratorService challengeGeneratorService;
+    @Spy
+    private Random random;
+    @BeforeEach
+    public void setUp() {
+        challengeGeneratorService = new ChallengeGeneratorServiceImpl(random);
+    }
+    @Test
+    public void generateRandomFactorIsBetweenExpectedLimits() {
+        // 89 is max - min range
+        given(random.nextInt(89)).willReturn(20, 30);
+        // when we generate a challenge
+        Challenge challenge = challengeGeneratorService.randomChallenge();
+        // then the challenge contains factors as expected
+        then(challenge).isEqualTo(new Challenge(31, 41));
+    }
+}
+
+---DTO-----
+
+package microservices.book.multiplication.challenge;
+import lombok.Value;
+/**
+ * Attempt coming from the user
+ */
+@Value
+public class ChallengeAttemptDTO {
+    int factorA, factorB;
+    String userAlias;
+    int guess;
+}
+
+------ spy ---
+
+In this test, we need to replace the behavior of an object, not a class. We use @Spy to stub an object. The Mockito extension will help to create a Random instance using the empty constructor and stubbing it for us to override the behavior. This is the simplest way to get our test to work since the basic Java classes implementing random generators do not work on interfaces (which we could then simply mock instead of spy).
+
+
+--- How auto serilization works --------
+
+When covering how automatic configuration works in Spring Boot, we had a look at the example of the Tomcat embedded server, and we mentioned that there are many more autoconfiguration classes included as part of the spring-boot-autoconfigure dependency. Therefore, this other piece of magic taking care of serializing a Challenge into a proper JSON HTTP response should be no longer a mystery for you. In any case, let’s take a look at how this works since it’s a core concept of the web module in Spring Boot. Also, it’s quite common to customize this configuration in real life.
+
+A lot of important logic and defaults for the Spring Boot Web module live in the WebMvcAutoConfiguration class (see https://tpd.io/mvcauto-source). This class collects all available HTTP message converters in the context together for later use. See a fragment of this class in Listing 3-22.
+@Override
+public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
+    this.messageConvertersProvider
+            .ifAvailable((customConverters) -> converters.addAll(customConverters.getConverters()));
+}
+Listing 3-22A Fragment of WebMvcAutoConfiguration Class Provided by Spring Web
+The HttpMessageConverter interface (https://tpd.io/hmc-source) is included in the core spring-web artifact and defines what media types are supported by the converter, what classes can convert to and from, and the read and write methods to do conversions.
+
+Where are these converters coming from? More autoconfiguration classes. Spring Boot includes a JacksonHttpMessageConvertersConfiguration class (https://tpd.io/jhmcc-source) that has some logic to load a bean of type MappingJackson2HttpMessageConverter. This logic is conditional on the presence of the class ObjectMapper in the classpath. That one is a core class of the Jackson libraries, the most popular implementation of JSON serialization for Java. The ObjectMapper is included in the jackson-databind dependency. The class is in the classpath because its artifact is a dependency included in spring-boot-starter-json, which is itself included in the spring-boot-starter-web.
+
+The default ObjectMapper bean is configured in the class JacksonAutoConfiguration (https://tpd.io/jac-source). Everything there is set up in a flexible way. If we want to customize a specific feature, we don’t need to take into account this whole hierarchy. Normally, it’s just a matter of overriding default beans.
+
+---Convert to snake case ------------
+Normally, we would add this bean declaration into a separated class annotated with @Configuration, 
+For instance, if we want to change the JSON property naming to be snake-case instead of camel-case, we can declare a custom ObjectMapper in our app configuration that will be loaded instead of the default one. That’s what we do in Listing 3-23.
+@SpringBootApplication
+public class MultiplicationApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(MultiplicationApplication.class, args);
+    }
+    @Bean
+    public ObjectMapper objectMapper() {
+        var om = new ObjectMapper();
+        om.setPropertyNamingStrategy(PropertyNamingStrategy.SNAKE_CASE);
+        return om;
+    }
+}
+
+
+$ http  localhost:8080/challenges/random
+HTTP/1.1 200
+Connection: keep-alive
+Content-Type: application/json
+Date: Sun, 29 Mar 2020 10:05:00 GMT
+Keep-Alive: timeout=60
+Transfer-Encoding: chunked
+{
+    "factor_a": 39,
+    "factor_b": 36
+}
+
+As you see, it’s really easy to customize Spring Boot configuration by overriding beans. This specific case works because the default ObjectMapper is annotated with @ConditionalOnMissingBean, which makes Spring Boot load the bean only if there is no other bean of the same type defined in the context. Remember to remove this custom ObjectMapper since we’ll use just Spring Boot defaults for now.
+
+
+Testing controllers: TDD
+--------------------
+
+In Spring Boot, there are multiple ways of implementing a controller test:
+Without running the embedded server. We can use @SpringBootTest without parameters or, even better, @WebMvcTest to instruct Spring to selectively load only the required configuration instead of the whole application context. Then, we simulate requests with a dedicated tool included in the Spring Test module, MockMvc.
+
+Running the embedded server. In this case, we use @SpringBootTest with its webEnvironment parameter set to RANDOM_PORT or DEFINED_PORT. Then, we have to make real HTTP calls to the server. Spring Boot includes a class TestRestTemplate with some useful features to perform these test requests. This option is good when you want to test some web server configuration you may have customized (e.g., custom Tomcat configuration).
+
+The best option is usually the first one and choosing a fine-grained configuration with @WebMvcTest. We get all the configuration surrounding our controller without taking extra time to boot up the server for each test. If you want to get extra knowledge about all these different options, check out https://tpd.io/sb-test-guide.
+
+We could write a test for one valid request and an invalid one, as shown in Listing 3-26.
+package microservices.book.multiplication.challenge;
+import microservices.book.multiplication.user.User;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.json.AutoConfigureJsonTesters;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.json.JacksonTester;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
+import org.springframework.test.web.servlet.MockMvc;
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.BDDMockito.given;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+@ExtendWith(SpringExtension.class)
+@AutoConfigureJsonTesters
+@WebMvcTest(ChallengeAttemptController.class)
+class ChallengeAttemptControllerTest {
+    @MockBean
+    private ChallengeService challengeService;
+    @Autowired
+    private MockMvc mvc;
+    @Autowired
+    private JacksonTester<ChallengeAttemptDTO> jsonRequestAttempt;
+    @Autowired
+    private JacksonTester<ChallengeAttempt> jsonResultAttempt;
+    @Test
+    void postValidResult() throws Exception {
+        // given
+        User user = new User(1L, "john");
+        long attemptId = 5L;
+        ChallengeAttemptDTO attemptDTO = new ChallengeAttemptDTO(50, 70, "john", 3500);
+        ChallengeAttempt expectedResponse = new ChallengeAttempt(attemptId, user, 50, 70, 3500, true);
+        given(challengeService
+                .verifyAttempt(eq(attemptDTO)))
+                .willReturn(expectedResponse);
+        // when
+        MockHttpServletResponse response = mvc.perform(
+                post("/attempts").contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequestAttempt.write(attemptDTO).getJson()))
+                .andReturn().getResponse();
+        // then
+        then(response.getStatus()).isEqualTo(HttpStatus.OK.value());
+        then(response.getContentAsString()).isEqualTo(
+                jsonResultAttempt.write(
+                        expectedResponse
+                ).getJson());
+    }
+    @Test
+    void postInvalidResult() throws Exception {
+        // given an attempt with invalid input data
+        ChallengeAttemptDTO attemptDTO = new ChallengeAttemptDTO(2000, -70, "john", 1);
+        // when
+        MockHttpServletResponse response = mvc.perform(
+                post("/attempts").contentType(MediaType.APPLICATION_JSON)
+                        .content(jsonRequestAttempt.write(attemptDTO).getJson()))
+                .andReturn().getResponse();
+        // then
+        then(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    }
+}
+
+// then
+then(response.getStatus()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+
+Listing 3-26Testing the Expected ChallengeAttemptController Logic
+There are a few new annotations and helper classes in this code. Let’s review them one by one.
+@ExtendWith(SpringExtension.class) makes sure that our JUnit 5 test loads the extensions for Spring so we can use a test context.
+
+@AutoConfigureJsonTesters tells Spring to configure beans of type JacksonTester for some fields we declare in the test. In our case, we use @Autowired to inject two JacksonTester beans from the test context. Spring Boot, when instructed via this annotation, takes care of building these utility classes. A JacksonTester may be used to serialize and deserialize objects using the same configuration (i.e., ObjectMapper) as the app would do in runtime.
+
+@WebMvcTest, with the controller class as a parameter, makes Spring treat this as a presentation layer test. Thus, it’ll load only the relevant configuration around the controller: validation, serializers, security, error handlers, etc. (see https://tpd.io/test-autoconf for a full list of included auto-configuration classes).
+
+@MockBean comes with the Spring Boot Test module and helps you develop proper unit tests by allowing you to mock other layers and beans you’re not testing. In our case, we replace the service bean in the context by a mock. We set the expected return values within the test methods, using BDDMockito’s given().
+
+@Autowired might be familiar to you. It’s a basic annotation in Spring to make it inject (or wire) a bean in the context to the field. It used to be common in all classes using Spring, but since version 4.3, it can be omitted from fields if they are initialized in a constructor and the class has only one constructor.
+
+The MockMvc class is what we use in Spring to simulate requests to the presentation layer when we make a test that doesn’t load a real server. It’s provided by the test context so we can just inject it in our tes
+
+//Controller impl
+@Slf4j
+@RequiredArgsConstructor
+@RestController
+@RequestMapping("/attempts")
+class ChallengeAttemptController {
+    private final ChallengeService challengeService;
+    @PostMapping
+    ResponseEntity<ChallengeAttempt> postResult(@RequestBody ChallengeAttemptDTO challengeAttemptDTO) {
+        return ResponseEntity.ok(challengeService.verifyAttempt(challengeAttemptDTO));
+    }
+}
+
+-------------- POST mapping ---------
+
+If you run it before implementing our POST mapping in the controller, it fails with a NOT FOUND status code. With the implementation in place, it also fails. However, in this case, the result is even worse. See Listing 3-30.
+org.opentest4j.AssertionFailedError:
+Expecting:
+ <200>
+to be equal to:
+ <400>
+but was not.
+Listing 3-30Posting an Invalid Request Returns a 200 OK Status Code
+Our application is just accepting the invalid attempt and returning an OK status. This is wrong; we should not pass this attempt to the service layer but reject it in the presentation layer. To accomplish this, we’re going to use the Java Bean Validation API (https://tpd.io/bean-validation) integrated with Spring.
+
+In our DTO class, we add some Java Validation annotations to indicate what are valid inputs. See Listing 3-31. All these annotations are implemented in the jakarta.validation-api library, available in our classpath via spring-boot-starter-validation. This starter is included as part of the Spring Boot Web starter (spring-boot-starter-web).
+package microservices.book.multiplication.challenge;
+import lombok.Value;
+import javax.validation.constraints.*;
+/**
+ * Attempt coming from the user
+ */
+@Value
+public class ChallengeAttemptDTO {
+    @Min(1) @Max(99)
+    int factorA, factorB;
+    @NotBlank
+    String userAlias;
+    @Positive
+    int guess;
+}
+Listing 3-31Adding Validation Constraints to Our DTO Class
+There are a lot of available constraints within that package (https://tpd.io/constraints-source). We use @Min and @Max to define the range of allowed values for the multiplication factors, @NotBlank to make sure we always get an alias, and @Positive for the guess since we know we’re handling only positive results (we could also use a predefined range here).
+
+An important step to make these constraints work is to integrate them with Spring via the @Valid annotation in the controller’s method argument. See Listing 3-32. Only if we add this, Spring Boot will analyze the constraints and throw an exception if they don’t match.
+@PostMapping
+ResponseEntity<ChallengeAttempt> postResult(
+        @RequestBody @Valid ChallengeAttemptDTO challengeAttemptDTO) {
+    return ResponseEntity.ok(challengeService.verifyAttempt(challengeAttemptDTO));
+}
+Listing 3-32Using the @Valid Annotation to Validate Requests
+As you may have guessed, there is autoconfiguration to handle the errors and build a predefined response when the object is not valid. By default, the error handler constructs a response with a 400 BAD_REQUEST status code.
+
+Starting with Spring Boot version 2.3, the validation messages are no longer included in the error response by default. This might be confusing for the callers since they don’t know exactly what’s wrong with the request. The reason to not include them is that these messages could potentially expose information to a malicious API client. For our educational goal, we want to enable validation messages, so we’ll add two settings to our application.properties file. See Listing 3-33. These properties are listed in the official Spring Boot docs (https://tpd.io/server-props), and we’ll see what they do soon.
+server.error.include-message=always
+server.error.include-binding-errors=always
+Listing 3-33Adding Validation Logging Configuration to the application.properties File
+To verify all our validation configuration, let’s now run the test again. This time it’ll pass, and you’ll see some extra logs, as shown in Listing 3-34.
+[Field error in object 'challengeAttemptDTO' on field 'factorB': rejected value [-70];
+[...]
+[Field error in object 'challengeAttemptDTO' on field 'factorA': rejected value [2000];
+[...]
+Listing 3-34An Invalid Request Causes Now the Expected Result
+The controller handling REST API calls for users to send attempts is working now. If we start the application again, we can play with this new endpoint via the HTTPie command. First, we ask for a random challenge as before. Then, we post an attempt to solve it. See Listing 3-35.
+$ http -b :8080/challenges/random
+{
+    "factorA": 58,
+    "factorB": 92
+}
+$ http POST :8080/attempts factorA=58 factorB=92 userAlias=moises guess=5400
+HTTP/1.1 200
+Connection: keep-alive
+Content-Type: application/json
+Date: Fri, 03 Apr 2020 04:49:51 GMT
+Keep-Alive: timeout=60
+Transfer-Encoding: chunked
+{
+    "correct": false,
+    "factorA": 58,
+    "factorB": 92,
+    "id": null,
+    "resultAttempt": 5400,
+    "user": {
+        "alias": "moises",
+        "id": null
+    }
+}
+
+---- Error handling ------------
+
+The main reason is that all the binding errors (those caused by the validation constraints) are added to the error response. This is what we switched on with server.error.include-binding-errors=always. Besides, the root message field also gives the client an overall description of what went wrong. This description is omitted by default, but we enabled it with the property server.error.include-message=always.
+
+If this response goes to a user interface, you need to parse that JSON response in the front end, get the fields that are invalid, and maybe display the defaultMessage fields. Changing this default message is really simple since you can just override it with the constraint annotations. Let’s modify this annotation in ChallengeAttemptDTO and try again with the same invalid request. See Listing 3-37.
+@Positive(message = "How could you possibly get a negative result here? Try again.")
+int guess;
+Listing 3-37Changing the Validation Message
+What Spring Boot does in this case to handle the errors is to sneakily add a @Controller to your context: the BasicErrorController (see https://tpd.io/bec-source). This one uses the class DefaultErrorAttributes (https://tpd.io/dea-source) to compose the error response. If you want to dive into more details about how to customizing this behavior, you can have a look at https://tpd.io/cust-err-handling.
+
+
+-- Addressing cors -----------
+
+
+By default, your browser blocks requests that try to access resources in a different domain than the one in which your front end is located. This is to avoid that a malicious page in your browser has access to data in a different page, and it’s called the same-origin policy. In our case, we’re running both the front end and the back end in localhost, but they run on different ports, so they are considered different origins.
+
+There are multiple options to fix this. In our case, we’re going to enable cross-origin resource sharing (CORS), a security policy that can be enabled on the server side to allow our front end to work with our REST API from a different origin.
+
+Adding CORS Configuration to the Spring Boot App
+We go back to the back-end codebase and add a Spring Boot @Configuration class that will override some defaults. According to the reference documentation (https://tpd.io/spring-cors), we can implement the interface WebMvcConfigurer and override the method addCorsMapping to add a generic CORS configuration. To keep classes organized, we create a new package named configuration for this class. See Listing 4-12.
+package microservices.book.multiplication.configuration;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.CorsRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+@Configuration
+public class WebConfiguration implements WebMvcConfigurer {
+    @Override
+    public void addCorsMappings(final CorsRegistry registry) {
+        registry.addMapping("/**").allowedOrigins("http://localhost:3000");
+    }
+}
+Listing 4-12Adding the CORS Configuration to the Back-End Application
+This method works with an injected CorsRegistry instance that we can customize. We add a mapping allowing the front end’s origin to access any path, represented by /**. We could also omit the allowedOrigins part in this line. Then, all origins would be allowed instead of only http://localhost:3000.
+
+Remember that Spring Boot scans your packages looking for configuration classes. This is one of them, so this CORS configuration will be applied automatically the next time you start the application.
+
+An important remark about CORS, in general, is that you probably need it only for development purposes. If you deploy your application’s front end and back end to the same host, you won’t experience any issue, and you shouldn’t enable CORS to keep the security policies as strict as you can. When you deploy the back end and front end to different hosts, you should still be very selective in your CORS configuration and avoid adding complete access to all origins.
+
+
+
+---------Adding code to BE --------------
+
+What we need to do is to copy all the files inside the front end’s build folder to a folder named static inside the src/main/resources folder in the Multiplication codebase. See Figure 4-5. The default server configuration in Spring Boot adds some predefined locations for static web files, and this static folder in our classpath is one of them. These files will be mapped to the root context of the application, located at /.
+../images/458480_2_En_4_Chapter/458480_2_En_4_Fig5_HTML.jpg
+Figure 4-5Static resources in the project structure
+As usual, you could configure these resource locations and their mappings if you want. One of the places where you can fine-tune this is actually the same WebMvcConfigurer interface implementation that we used for the CORS registry configuration. Check the section Static Content in the Spring Boot reference documentation if you want to know more about configuring the web server to serve static pages (https://tpd.io/mvc-static).
+
+Then, we restart the multiplication application. This time it is important you run it via the command line (not through your IDE), using ./mvnw spring-boot:run. The reason is that IDEs might use the classpath differently while running the app, and you could get errors in that case (e.g., the page isn’t found).
+
+If we navigate to http://localhost:8080, the embedded Tomcat server in our Spring Boot application will try to find a default index.html page, which exists because we copied it from our React build. We have our React application now loaded from the same embedded server we use for the back-end side.
+
+
+
+
+
+

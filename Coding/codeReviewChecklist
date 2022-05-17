@@ -1,0 +1,479 @@
+Code Review Checklist
+The following are potential structure issues that should be checked during code review:
+1.	
+Does the actual implementation reflect the architecture?
+
+ 
+2.	
+Is the code easy to understand?
+
+ 
+3.	
+Is the code too long?
+
+ 
+4.	
+Is cohesion in place?
+
+ 
+5.	
+Is the code modular?
+
+ 
+6.	
+Are components cohesive?
+
+ 
+7.	
+Is the code loosely coupled?
+
+ 
+8.	
+Is the code reusable?
+
+ 
+9.	
+Is the code readable?
+
+ 
+10.	
+Is the code easy to maintain and test?
+
+ 
+11.	
+Are premature optimizations in place?
+
+ 
+12.	
+Is composition preferred?
+
+ 
+13.	
+Is inheritance properly used?
+
+ 
+14.	
+Is the flow easy to understand?
+
+ 
+15.	
+Are interactions between different components easy to catch?
+
+ 
+16.	
+Are conditional flows completely defined?
+
+ 
+17.	
+Is there any undefined behavior?
+
+ 
+18.	
+Are APIs consistent and as clean as the overall code?
+
+19.Check data structures.Evaluate it:
+Some indicators that can be used to evaluate which data structure is appropriate or not are
+- Data size
+- Does the data changes and how often?
+- Are search and sorting operation frequent?
+
+To pick and validate data structure, one of the approaches you can explore is to think about the 80% of operations that you need 
+to perform on a given  set of data and evaluate which data structure would be the most performant (runtime) data structure to use 
+in such context.
+
+
+20.Design smells
+-----------------
+
+The following lists the top eight design smells:
+1.	
+Cyclic dependencies: A cyclic dependency, also known as circular dependency, happens when two—or more—components depend on each other.
+
+A better approach in this case is to take a look at the class diagram. Inspect it to see if it behaves like a directed acyclic graph (DAG).
+
+Suggested refactoring: Bad design is oftentimes the mother of cyclic dependencies. So first things first
+1.	
+Rethink your design: The cyclic dependency might just be the result of violating the single responsibility principle (SRP) (explained in the following). Possibly, resolving the SRP violation will fix cyclic dependency as well.
+
+ 
+2.	
+Otherwise, if and only if the given modules are cohesive and short enough, a simple fix is to just merge the dependent modules together.
+
+ 
+3.	
+If merging is not possible without breaking other principles, consider defining and introducing interfaces to solve the issue.
+
+---
+ 
+2.	
+Feature density(Feature envy): This defect happens when a component implements more than a single functionality.
+
+Description: This defect happens when a component implements more than a single functionality. Specifically, we refer to feature density when such components have a lot of dependencies that are not clearly structured. Those dependencies are such that the calling component performs some duties (i.e., logical functionalities) that should be performed by the callee. This might be the case, for example, of an object depending on multiple other objects to perform its duties. However, instead of having structured dependencies, it uses and builds on top of them eventually performing functions that should have been implemented by the dependencies.
+
+Detection strategy: For manual code reviews, check that Single responsibility principle is ensured. Each class, method, or function should have a single logical goal to be achieved.
+
+The solution to this smell is simple—keep logic around a single responsibility and cut the fat out. Move out methods that clearly need to be elsewhere. If several methods need to be factored out, it might be the case of having them in their own little class.
+
+
+ 
+3.	
+Unstable dependency: It happens if a component depends on a less stable one.
+It happens if a component depends on a less stable one. This applies to any type of component (e.g., classes, methods), scenario (e.g., APIs, backend software), and type of defect in the code (e.g., design, technical debt, security).
+
+
+ 
+4.	
+Mashed components: As the opposite of the feature density defect, a mashed component is one that should logically be a single functionality, but is scattered on different places in the code.
+
+a mashed component is one that should logically be a single functionality, while scattered on different places on the code.
+
+
+
+ 
+5.	
+Ambiguous interface: Application programming interfaces (APIs) should be extensible and flexible, not unclear or ambiguous.
+
+ Rationale: A fairly common example of an ambiguous interface8 is when a component offers from a single entry point. This is, for example, the case where a class provides a single public method that allows for actually accessing the class behavior. In real-world scenario, it is like imagining a website that needs to offer login, logout, and password retrieval functionality, and all these features are modeled with a single general interface. When this smell arises, a review of the actual code is needed in order to have an understanding of what the affected interface is meant for. Another common case of ambiguity is when multiple (i.e., more than one) signatures are too similar (e.g., same method name but with slightly different parameters). What can happen is that under certain scenarios, both of them might be applied, causing ambiguity in which one should be used.
+
+ Rethink the provided interfaces and refactor the code accordingly. Disclaimer: the sooner the properly designed interfaces, the better. Neglecting to properly design interfaces might cause integration issues later on when this smell is found and changes are needed.
+
+
+6.	
+Mesh components: This is the case where components are heavily coupled, with a lot of dependencies and oftentimes without clear and well-defined patterns.
+
+Description: This is the case where components , are heavily coupled, with a lot of dependencies and oftentimes without clear and well-defined patterns.
+
+Rationale: This smell might be caused by the mashed components smell; however, it is not always the case. It is a more general smell and the root cause might simply be a lack of abstraction and design patterns.
+
+
+ 
+7.	
+First lady components (God component): This kind of component will do all the possible jobs by itself. It reaches such a growth that it becomes really expensive to maintain.
+
+Description: This kind of component will do all the possible work by itself. It reaches such a growth that it becomes really expensive to maintain. The first lady component puts the feature density smell to its extreme. However, while a feature dense component only attempts to build functionalities that are not part of its duties and still relying partially on other components, a first lady simply does not have dependencies to components that should abstract separate behavior. It simply implements them all.
+
+Rationale: This type of components is a conglomerate of independent behavior. It is similar to the feature density smell, but it is exponential in the lack of abstraction and of the negative impacts it has. As an immediate consequence of implementing multiple independent behaviors, the design of components that depend on a single logical functionality implemented by the first lady also becomes unclean, cascading to a heavily coupled overall design. Indeed, a single lady introduces possibly unneeded dependencies and well as a single point of failu
+ 
+
+Detection strategy: Easily detect and inspect classes, modules, and functions. Those with a big number of lines of code (LOC) might be good candidates for this type of smell. It is also as simple as reading package name, class name, and the methods implemented in such a class. Simply reading them helps in spotting any behavior that does not belong to the given abstraction.
+
+
+
+8.	
+That’s not my responsibility component or bossy component: At the opposite end of the first lady component, this component likes to delegate stuff that it doesn’t want to deal with to other components. The bossy component is not nice to have in code, and oftentimes it twists the knife when you have a mesh component issue.
+
+Description: At the opposite end of the first lady, this component likes to delegate stuff that it doesn’t want to deal with to other components. This component is not nice to have in code and oftentimes it twists the knife in the mesh components issue.
+
+
+Additions:
+-----------
+Code Review Checklist
+1.	
+Are cyclic dependencies present in the code?
+
+ 
+2.	
+Is the code feature dense? More than one feature per component is enough to have this smell.
+
+ 
+3.	
+Are the dependencies stable?
+
+ 
+4.	
+Does the code have mashed components?
+
+ 
+5.	
+Are APIs clearly defined?
+
+ 
+6.	
+Are mesh components present?
+
+ 
+7.	
+Are first lady components present?
+
+ 
+8.	
+Are bossy components present?
+
+ 
+9.	
+Does the class diagram behave like a DAG?
+
+ 
+10.	
+Does each and every class, method, or function have a single logical responsibility to be achieved?
+
+ 
+11.	
+Does the class diagram show highly coupled components?
+
+ 
+12.	
+Is there any function, method, or class with a big LOC number?
+
+13.
+Styleguides to be taken care.
+
+------------ More readings -----------------------------
+
+Footnotes
+1
+Ipek Ozkaya (2016). Strategic Management of Architectural Technical Debt. SEI Agile Blog. https://​insights.​sei.​cmu.​edu/​sei_​blog/​2012/​07/​strategic-management-of-architectural-technical-debt.​html
+
+ 
+2
+Ganesh, S. G., Sharma, T., & Suryanarayana, G. (2013). Towards a Principle-based Classification of Structural Design Smells. Journal of Object Technology, 12(2), 1-1.
+
+ 
+3
+D’Ambros, M., Bacchelli, A., & Lanza, M. (2010, July). On the impact of design flaws on software defects. In Quality Software (QSIC), 2010 10th International Conference on (pp. 23–31). IEEE.
+
+ 
+4
+W. Li and R. Shatnawi, An Empirical Study of the Bad Smells and Class Error Probability in the Post-Release Object-Oriented System Evolution, J. Syst. Softw., 80(7): pp. 1120–1128, 2007.
+
+ 
+5
+Arcan - Fontana, Francesca Arcelli, et al. “Arcan: A tool for architectural smells detection.” 2017 IEEE International Conf. on Software Architecture Workshops, ICSA Workshops 2017, Gothenburg, Sweden, April 5–7, 2017.
+
+ 
+6
+Tushar Sharma. (2017) [Designite-tools] (www.​designite-tools.​com/​designite/​does-your-architecture-smell/​).
+
+ 
+7
+Tushar Sharma. Does Your Architecture Smell? [Design Smells. Managing Technical Debt] (www.​designsmells.​com/​articles/​does-your-architecture-smell/​).
+
+ 
+8
+J. Garcia, D. Popescu, G. Edwards, N. Medvidovic (2009), “Toward a Catalogue of Architectural Bad Smells”. QoSA, pp. 146-162.
+
+ 
+9
+Tushar Sharma. (2017) [Designite-tools] (www.​designite-tools.​com/​designite/​does-your-architecture-smell/​).
+
+ 
+10
+Tushar Sharma. Does Your Architecture Smell? [Design Smells. Managing Technical Debt] (www.​designsmells.​com/​articles/​does-your-architecture-smell/​).
+
+
+Naming coventions:
+-------------------
+Further Reading
+If you want a laugh, check out “How To Write Unmaintainable Code” by Andrew Yurisich (https://github.com/Droogans/unmaintainable-code). It is a quick and nice reference on unmaintainable code. PEP8 (www.python.org/dev/peps/pep-0008/#naming-conventions) provides a comprehensive guide on Python guidelines for naming.
+
+Review Checklist
+1.	
+Are redundant parameters present in the class (might be the case of instance var instead)?
+
+ 
+2.	
+Does the code follow the naming conventions of the chosen language (e.g., CamelCase for Java)?
+
+ 
+3.	
+Are names of variable, methods, and classes meaningful?
+
+ 
+4.	
+Are names of variable, methods, and classes descriptive?
+
+ 
+5.	
+Are names consistent across the codebase?
+
+ 
+6.	
+Are names context oriented?
+
+ 
+7.	
+Are keywords used for variable naming?
+
+ 
+8.	
+Can you understand from the function/method/class/variable name what is it expected to perform?
+
+ 
+9.	
+Are too many parameters in place?
+
+ 
+10.	
+Are optional parameters adequately used?
+
+ 
+11.	
+Are modifiers used appropriately?
+
+ 
+12.	
+Are global variables in place? Are they actually needed?
+
+ 
+13.	
+Does the code contain magic numbers?
+
+ 
+14.	
+Is abstraction by parameterization achieved?
+
+ 
+15.	
+Is parameterization needed to remove redundancies?
+
+ 
+16.	
+Are generic types used when needed to improve reusability (Java)?
+
+ 
+17.	
+Is naming giving insights of a bossy component?
+
+ 
+18.	
+Are private methods called from the outside (Python)?
+
+ 
+19.	
+Are spacing conventions respected?
+
+ 
+Footnotes
+1
+www.python.org/dev/peps/pep-0008/#naming-conventions
+
+
+All about comments:
+------------------
+- Comments serve the purpose of specifying how the method/procedure performs its task.
+- Well-written code is not an excuse to avoid adding comments altogether.
+- A pre-condition is defined as a set of conditions that need to hold true when the method or function is called. A post-condition is a statement describing the condition after the method or function has performed its duties.\
+- Comments should clearly document the type of input(s) and output(s).
+- Explain using docstrings, -> Avoid inline comments.
+- Maintaining comments and documentation is an integrated part of writing code
+
+- Comments-Driven Development (CDD)
+Comments-driven development (CDD) is centered on writing plain text description of the code first and then the actual implementation. They help in brainstorming the solution, setting clear inputs and outputs, and describing the kind of functionality that is going to be implemented.
+
+Coding Conventions
+Some coding conventions like PEP8 (Python Software Foundation) for Python impose the presence of docstrings only for public modules, functions, classes, and methods. They remain optional for private or protected, where usually a comment after the function signature still describes the method.
+
+As soon as you become aware of the language you are going to use for your project, check coding conventions and stick with them.
+
+TakeawayWhen entering a new coding environment and switching programming language, always check and implement from the start the coding conventions provided by the given language.
+
+Generate docs:
+www.sphinx-doc.org/en/master/
+
+Above all, Clean Code by Martin C. Fowler is one of the best resources written on the topic. I highly suggest this book as a general reference for your studies on how to write quality code.
+
+PEP257 (www.python.org/dev/peps/pep-0257/), instead, provides detailed guidance on the use of docstrings for Python code.
+
+
+
+Checklist:
+
+Review Checklist
+1.	
+Are comments coherent with the function/method/class they describe?
+
+ 
+2.	
+Are comments complete?
+
+ 
+3.	
+Are pre- and post-conditions properly described?
+
+ 
+4.	
+Are exceptions and errors documented?
+
+ 
+5.	
+Are input and output clearly defined and documented?
+
+ 
+6.	
+Is it clear (or otherwise commented) the type(s) of the input(s)?
+
+ 
+7.	
+Is it clear (or otherwise commented) the type(s) of the outputs?
+
+ 
+8.	
+Are all the flows of a method described (including errors/exceptions)?
+
+ 
+9.	
+Are TODOs, FIX-ME, and similar comments still present in released code?
+
+ 
+10.	
+Too many inline comments, are they needed?
+
+ 
+11.	
+Are comments easy to maintain over time?
+
+ 
+12.	
+Are coding conventions enforced?
+
+ 
+13.	
+Are obvious comments avoided?
+
+ 
+14.	
+Are comments and documentation well maintained?
+
+ 
+15.	
+Are comments used to describe current code only?
+
+ 
+16.	
+Do comments and documentation contain typos?
+
+ 
+17.	
+Is the commenting style in line with language guidelines (e.g., PEP8 for Python)?
+
+ 
+CopyAdd HighlightAdd Note
+
+----------------
+
+
+Test this:
+----------
+Setting up a code review process.
+Core things:
+------------
+1) Apply style guide -> Ex google style guide. Create importable config file.
+ctrl+alt +L
+
+2) Commit process in IDE -> Reformat code, analyse code, Check TODO
+3) Automatic static code analysis -> Eslint, Sonarlint(java), Sonarqube, Sonar for FE -> Set this up this weekend.
+4) Have two reviewers-> One must know business logic
+5) Problem has more than 1 solution
+6) Dont let PR hang for days
+7) Make PR small -> raise smaller logical PRs -> one PR can have multiple commit
+Commit atomic self contained changes.
+8) Let ci build pass -> diff tool -> ask for review.
+9) Reply on all comments [Fixed/Done]
+10) If gap in effecient code, provide concrete example or let code get merged with a TODO and upskill later
+11) Lead by example refactoring task
+
+
+
+
+
+

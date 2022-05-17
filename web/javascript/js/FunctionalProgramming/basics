@@ -1,0 +1,46 @@
+- It is a declarative style of programming where it is heavily based on pure functions that avoid side effect and avoid sharing state.
+- Pure function -> Same imput will always provide the same output. You need to always accept argument, compute on that and return the result.
+- Side effect -> if function mutates a shared state or does some mutation
+
+Shared state is JS is:
+---------------------
+
+classes
+global variables
+closures
+variables passed by reference]
+
+
+
+Array.prototype functions:
+---------------------------
+
+1) forEach:
+------------
+
+[1,1,2].forEach((element,index,array)=>{
+
+})
+
+
+2) map: completely new array
+-------
+var x = [1,1,2].map((element,index,array)=>{
+ return element * 2;
+})
+
+
+3) reduce:
+=========
+
+[1,2,3].reduce((sum,item)=>{},0)
+
+4) filter:
+==========
+[1,2,3].filter((item)=>item>2);
+
+5) Fill an array:
+---------------
+new Array(10000).fill('nemo');
+
+let ... of .. [JS loop]

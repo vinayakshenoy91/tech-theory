@@ -1,0 +1,214 @@
+
+Spring Boot Logging API provides several features which help us to decouple our code
+
+We are using SFL4J facade for our logging thus we are decoupled from the underlying Logback API.
+By using it, we are free to replace Logback with any other logging API without changing our code base.
+
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+@Sl4j annotation
+
+ private final Logger log = LoggerFactory.getLogger(this.getClass());
+
+  log.info("Info log statement for LoggingDemoController");
+  log.warn("Warn log statement for LoggingDemoController");
+  log.error("Error log statement for LoggingDemoController");
+
+
+Log file setup:
+---------------
+logging.file =/work/demo/log/loggingdemocontroller.log
+//or
+logging.path= /work/demo/log
+
+logging.level.com.javadevjournal.rest= WARN
+
+syntax: ‘logging.level.*=LEVEL’
+
+
+logging.level.root=WARN
+logging.level.org.springframework.web=DEBUG
+logging.level.org.hibernate=ERROR
+
+logging.pattern.console= # Appender pattern for output to the console. Supported only with the default Logback setup.
+logging.pattern.file= # Appender pattern for output to a file. Supported only with the default Logback setup.
+
+# Logging pattern for the console
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+logging.pattern.file= "%d{yyyy-MM-dd } [%thread] %-5level %logger{36} - %msg%n"
+
+logging.file= # Log file name (for instance, `app.log`)
+
+
+Ex based on profiles:
+
+5.1 application-stage.properties
+logging.level.com.javadevjournal=DEBUG
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+ 
+
+5.2 application-production.properties
+logging.level.com.javadevjournal=WARN
+logging.pattern.console=%d{yyyy-MM-dd HH:mm:ss} - %msg%n
+
+
+Logback using external file:
+---------------------------
+You can put logback.xml or logback-spring.xml file in the root of your classpath it will be picked 
+up from there by Spring Boot. Please note that logback-spring.xml is preferred over the logback.xml file by Spring Boot.
+
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+    <logger name="com.javadevjournal.rest" level="WARN" additivity="false">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </logger>
+</configuration>
+
+If you want to get more understanding of the System properties which the LoggingSystem takes care of creating for us, 
+please have a look at base.xml file inside spring-boot jar and especially the following line 
+
+<property name="LOG_FILE" value="${LOG_FILE:-${LOG_PATH:-${LOG_TEMP:-${java.io.tmpdir:-/tmp}}}/spring.log}"/>
+
+Spring boot profiles in logging:
+---------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml" />
+    <springProfile name="dev">
+        <logger name="com.javadevjournal.rest" level="DEBUG" additivity="false">
+            <appender-ref ref="CONSOLE" />
+        </logger>>
+    </springProfile>
+    <springProfile name="production">
+        <logger name="com.javadevjournal.rest" level="WARN" additivity="false">
+            <appender-ref ref="FILE" />
+        </logger>
+    </springProfile>
+ </configuration>
+
+
+Including log4j
+---------------
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-web</artifactId>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter</artifactId>
+    <exclusions>
+        <exclusion>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-logging</artifactId>
+        </exclusion>
+    </exclusions>
+</dependency>
+<dependency>
+    <groupId>org.springframework.boot</groupId>
+    <artifactId>spring-boot-starter-log4j2</artifactId>
+</dependency>
+
+
+Why Log4j2?
+-----------
+Log4j2 gives several improvements to its predecessor which includes:
+
+Async Loggers.
+Java 8-style lambda support for lazy logging.
+Filtering.
+Plugin Architecture.
+Concurrency improvements.
+Supported APIs: SLF4J, Commons Logging, Log4j-1.x and java.util.logging.
+Automatically reload its configuration.
+Custom log levels.
+With so many features, it’s a natural intention to use Log4j 2 with Spring Boot application.
+
+Spring Boot provides following 4 options to configure Log4J2 for your application:
+
+XML based configuration (default configuration)
+JSON
+YAML
+Properties file
+It will automatically configure Log4J 2 if it find log4j2.xml or log4j2.json or 
+log4j2.properties or log4j2.yaml in the classpath.
+
+We will focus on the log4j2.xml file. Create a file with name log4j2.xml inside the src/main/resources directory. This is how our log4j2.xml file look like:
+
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="WARN" monitorInterval="30">
+    <Properties>
+        <Property name="PID">????</Property>
+        <Property name="LOG_PATTERN">%clr{%d{yyyy-MM-dd HH:mm:ss.SSS}}{faint} %clr{%5p} %clr{${sys:PID}}{magenta} %clr{---}{faint} %clr{[%15.15t]}{faint} %clr{%-40.40c{1.}}{cyan} %clr{:}{faint} %m%n%xwEx</Property>
+    </Properties>
+    <Appenders>
+        <Console name="Console" target="SYSTEM_OUT" follow="true">
+            <PatternLayout pattern="${LOG_PATTERN}"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Logger name="com.javadevjournal" level="debug"  additivity="false">
+            <AppenderRef ref="Console" />
+        </Logger>
+       <Root level="info">
+            <AppenderRef ref="Console"/>
+        </Root>
+    </Loggers>
+</Configuration>
+
+
+2.1 Log4J 2 Configuration Using Property File
+If you don’t like to use the log4j2.xml file, you can also add log4j2.properties in src/main/resources folder. This is how our properties file look like:
+
+status = error
+name = Log4j2Sample
+appenders = console
+
+appender.console.type = Console
+appender.console.name = STDOUT
+appender.console.layout.type = PatternLayout
+appender.console.layout.pattern = %d{yyyy-MM-dd HH:mm:ss} - %msg%n
+
+rootLogger.level = warn
+rootLogger.appenderRefs = stdout
+rootLogger.appenderRef.stdout.ref = STDOUT
+
+
+@RestController
+public class Log4J2Controller {
+
+    private static final Logger LOG = LogManager.getLogger(Log4J2Controller.class);
+
+    @GetMapping(value = "/greeting")
+    public String greeting() {
+
+        LOG.debug("Debugging log in our greeting method");
+        LOG.info("Info log in our greeting method");
+        LOG.warn("Warning log in our greeting method");
+        LOG.error("Error in our greeting method");
+        LOG.fatal("Damn! Fatal error. Please fix me.");
+        return "Hello!!!";
+    }
+}
+
+
+
+Log groups:
+----------
+6. Log Group
+it’s helpful to group related loggers together so it can configure them at the same time. Let’s take an example where we want to control the logging level for our application. Spring Boot allows you to define logging groups using property file:
+
+logging.group.*= # Log groups to quickly change multiple loggers at the same time
+Here is an example to for the reference:
+
+logging.group.javadevjournal=com.javadevjournal.controller, com.javadevjournal.service, com.javadevjournal.util
+#We are setting logging level for group using one line.
+logging.level.javadevjournal=TRACE
+For easy to use, Spring Boot provides following pre-defined groups:
+
+web – org.springframework.core.codec, org.springframework.http, org.springframework.web
+sql – org.springframework.core.codec, org.springframework.http, org.springframework.web
+

@@ -1,0 +1,31 @@
+Three modes defined by layout engines in web browsers:
+
+Quirks mode:
+------------
+- Strategy used by some web browsers to preserve backward compatibility  with web pages built for old browsers
+rather than solely complying with standard W3C  and IETF requirements in standard mode.
+
+- Almost standards -> Rendering matches full standard mode.Sliced image-in-table layouts are less likely 
+to collapse in browsers.
+
+- Full standards mode -> Behaviour described is the same as decribed by HTML and CSS spec.
+Most browsers are full standard mode.
+
+Note: Anything before the DOCTYPE like a comment or an XML declaration will trigger quirks mode in IE9 and later.
+
+async and defer attributes of script tag execute before the DOMContentLoaded event
+defer executes each script sequentially
+
+Content-Type: text/event-stream
+
+
+
+Max cache size set for chrome -> 300MB
+
+Image compression plugin -> Optimus WordPress plugin
+
+
+Hotlink protection -> Stopping other sites from displaying images
+
+ gzip compression help serve for better web optimization-> Compresses web pages, JavaScript and CSS
+

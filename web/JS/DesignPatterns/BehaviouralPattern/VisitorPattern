@@ -1,0 +1,53 @@
+- Usecase: Define a new operation on an entire class hierarchy
+- A component(visitor) that knows how to traverse  a data structure composed of (possible related) types.
+- Write all examples: https://tesco.udemy.com/course/design-patterns-javascript/learn/lecture/14402284#notes
+
+1) Intrusitive visitor using buffer: Create print method in each class and capture the values in a buffer and evaluate buffer.
+
+2) Reflective visitor:
+
+
+
+3) Classic visitor:
+
+In the respective expression class, write accept method
+
+accept(visitor){
+    visitor.visitNumber(this);
+}
+
+accept(visitor){
+    visitor.visitAddition(this);
+}
+
+
+class Visitor{
+    constructor(){
+        this.buffer=[];
+    }
+
+    visitNumber(e){
+
+    }
+
+    visitAddition(e){
+
+    }
+}
+
+
+class ExpressionPrinter extends Visitor{
+
+    constructor(){
+        super();
+    }
+
+    visitNumber(e){
+        this.buffer.push(e.value);
+    }
+
+    visitAddition(e){
+        e.left.accept(this);
+    }
+
+}

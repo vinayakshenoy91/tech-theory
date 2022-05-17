@@ -1,0 +1,28 @@
+- OS
+- game tree (chess and tic-tac-toe
+- Decision tree and boosting
+
+
+AVL Trees: ->  Here you make rotations if the tree is imbalanced.
+----------
+- Adelson, Velsky and Landis (AVL) in 1962
+- It is a balanced data structure and has a guaranteed O(logN) running time.
+- In AVL tree the heights of the two child subtrees of any node differ by atmost one.
+- Faster than red black trees because they are more rigidly balanced but need more work.
+- OS depends heavily on these DS
+- Every time during updation it is going to check if tree is imbalanced or not.
+- Average case === worst case == O(logN)
+- Height=max(left child's height,right child's height)+1
+- Height of a null node is -1 and hence that of a leaf node is 0
+- You need to always check the balance factor[(hleft-hright)>1]
+
+Red-black trees:
+---------------
+- They are faster to construct because they are not as balanced as AVL trees.
+
+
+
+
+BST:
+----
+- Keep height of tree at minimum h=logN to get O(logN) time complexity

@@ -1,0 +1,10 @@
+- Service for running adhic queries for exploration/visualtization without defining indexes;
+runs on seperate node and uses a diff query language.
+- Run adhoc queries in reasonabel time
+- Even when full scans, large joins or sorts are needed.
+- Create shallow copies of data for analysis
+
+Queries:
+--------
+CREATE DATASET hotels ON `travel-sample` WHERE `type`="hotel";
+CONNECT LINK Local;

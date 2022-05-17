@@ -1,0 +1,39 @@
+
+Effectively final:
+-----------------
+VARIABLES REFERENCED FROM THE LAMBDA BODY
+Lambda bodies are allowed to reference some variables from the surrounding code. The following code is legal:
+
+public class Crow {
+   private String color;
+   public void caw(String name) {
+      String volume = "loudly";
+      Consumer<String> consumer = s ->
+            System.out.println(name + " says "
+                  + volume + " that she is " + color);
+   }
+}
+This shows that lambda can access an instance variable, method parameter, or local variable under certain conditions. Instance variables (and class variables) are always allowed.
+
+Method parameters and local variables are allowed to be referenced if they are effectively final. This means that the value of a variable doesn’t change after it is set, regardless of whether it is explicitly marked as final. If you aren’t sure whether a variable is effectively final, add the final keyword. If the code would still compile, the variable is effectively final. You can think of it as if we had written this:
+
+public class Crow {
+   private String color;
+   public void caw(final String name) {
+      final String volume = "loudly";
+      Consumer<String> consumer = s ->
+         System.out.println(name + " says "
+            + volume + " that she is " + color);
+   }
+}
+
+
+Rules for accessing a variable from a lambda body inside a method:
+------------------------------------------------------------------
+
+Variable type	Rule
+Instance variable	Allowed
+Static variable	Allowed
+Local variable	Allowed if effectively final
+Method parameter	Allowed if effectively final
+Lambda parameter	Allowed

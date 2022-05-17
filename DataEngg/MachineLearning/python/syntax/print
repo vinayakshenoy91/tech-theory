@@ -1,0 +1,2 @@
+ print('Rank {}: {} and {}'.format(idx, girl_name, boy_name))
+ print(type(error))

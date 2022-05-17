@@ -1,0 +1,10 @@
+- Tool that allows you to build native cross-platform apps with one programming language and codebase.
+- SDK -> Compile your code to native machine code + ease of development.
+- Dart is focused on building frontend apps(Mobile and Web) and flutter is built on dart.
+
+
+export ANDROID_HOME=/Users/vinayak/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+export PATH=$PATH:$ANDROID_HOME/tools
+
+export PATH=$PATH:/Users/vinayak/Flutter/bin

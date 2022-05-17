@@ -1,0 +1,15 @@
+Classes:
+--------
+class Vehicle{
+
+    driver():void{
+
+    }
+}
+
+
+
+class Car extends Vehicle{
+
+    //You can override methods from vehicle
+}

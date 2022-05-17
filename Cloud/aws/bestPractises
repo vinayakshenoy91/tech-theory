@@ -1,0 +1,2 @@
+- AWS auotmation using EC2 recovery. Instance will boot up on separate physical host with same ip address, 
+mac address, metadata.

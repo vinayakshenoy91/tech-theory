@@ -1,0 +1,24 @@
+- Subdomain is a sub-part of your overall business domain.It is a single, logical domain model.
+Under DDD, subdomain should be impl as a clean bounded context.
+- This is a problem space.
+- Most optimal model is on subdomain per bounded context and one bounded context per subdomin.
+- When using DDD, a Bounded Context should align one-to-one (1:1) with a single Subdomain. That is, when using DDD, 
+if there is one Bounded Context, there is, as a goal, one Subdomain model in that Bounded Context. It may not always 
+be possible or practical to achieve, but where possible it is important to design in that way. 
+This will keep your Bounded Contexts clean and focused on the core strategic initiative.
+
+Types of subdomain:
+--------------------
+1) Core domain: This is where you are making a strategic investment in a single, well-defined domain model, 
+committing significant resources for carefully crafting your Ubiquitous Language in an explicit Bounded Context.
+This is very high on your organization’s list of projects because it will distinguish it from all competitors.
+
+2) Supporting Subdomain: This is a modeling situation that calls for custom development, 
+because an off-the-shelf solution doesn’t exist.
+You may want to consider outsourcing this kind of Bounded Context to avoid mistaking it for something strategically 
+distinguishing, and thus investing heavily in it. 
+This is still an important software model, because your Core Domain cannot be successful without it.
+
+3) Generic Subdomain: This kind of solution may be available for purchase off the shelf but may also be outsourced 
+or even developed in house by a team that doesn’t have  the kind of elite developers that you assign to your 
+Core Domain or even a lesser Supporting Subdomain

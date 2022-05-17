@@ -1,0 +1,57 @@
+What problems do coroutines solve?
+- Task taking long time block thread.
+- Main safety: allows to ensure that any suspend fn can be called from the main thread.
+
+- Coroutines manage to handle async code by applying callbacks logic in a way that it resembles
+sync code.
+
+- Coroutines run on main thread and then diverage when it enters suspend block.
+Once http call is complete, Get method is called.
+
+- Dispatcher.Default for CPU intensive calculation.
+
+Structured concurrency:
+-----------------------
+Combination of language features + best practises, when followed, help you keep track of all work running
+in coroutines.
+- Helps cancel work when no longer needed.
+- Keep track of work while running.
+- Signal error when coroutine fails.
+
+Coroutine scope:
+----------------
+Keep tracks of all your coroutines, even coroutines that are suspended
+and it can cancel all of the coroutines started in it.
+
+Starting coroutines:
+--------------------
+1) Launch: - builder will start a new coroutine.Fire and forget and no result to caller.
+2) Async: Builder will start a new coroutine and it allows you to return a result with a suspended function called await.
+
+Kotlin flow:
+------------
+Is an impelmentation of the reactive stream spec made on top of coroutines for kotlin.
+Callbacks replaced by suspend and resume:
+
+1) Suspend: 
+Pauses the execution of the current coroutine, saving all local variables.
+Acquire thread from Dispatches.io by ssuspending from main thread(Dispatchers.main). Makes request from new thread.
+
+
+2) Resume:
+Continue a suspended coroutine from the place it was paused.
+
+
+
+Coroutine Flow:
+---------------
+- Is an implementation of the Reactive Stream spec made on top of coroutines for Kotlin.
+
+getDocStream():Flow<List<Doc>>
+
+- Simpler API
+- Structured concurrency
+- Backpressure Handling
+- suspending execution
+- nullability support
+

@@ -1,0 +1,43 @@
+Assertions using chai:
+----------------------
+const expect = require('chai').expect;
+const chai = require('chai');
+const chaiiAsPromised = require('chai-as-promised');
+chai.use(chaiiAsPromised);
+
+
+expect(x).to.be.a('string','name');
+expect(x).to.include('string','name');
+expect(x).to.equal(2);
+
+//Chai promised [Use return or notify for promise]
+return expect(x).to.eventually.be.equal(4);
+return expect(x).to.be.fulfilled;
+return expect(x).to.be.rejected;
+OR
+done
+expect(x).to.eventually.be.equal(4).notify(done);
+
+# if multiple assertion then use:
+return calculateSquare(2).then(result=>{
+    expect(result).to.be.above(5);
+    expect(result).to.be.equal(5);
+})
+
+
+
+#adding timeout. Inside it, use:
+this.timeout(4000); //If generic for all case, put after describe
+
+
+npm install --save-dev chai mocha chai-as-promised
+
+test:"mocha" //Package json
+
+
+describe('', ()=>{
+    it('',(done)=>{
+
+     done(); //Put it inside callback along with expect
+    })
+})

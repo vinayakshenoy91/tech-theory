@@ -1,0 +1,37 @@
+In terms of how to measure success, different performance metrics could be measured against APIs produced by each API product team:
+
+Time to market: How long it takes from the moment a new requirement is accepted into the API product backlog to the moment it is released into production.
+Meantime time to repair (MTTR): This represents the average time it takes to fix a failed component. This metric is useful as it indicates how quickly the solution can recover from issues across the stack. A high MTTR means that it takes a long time to recover from issues. Therefore, in order to reduce this, investment in automation and resilient infrastructure should be undertaken.
+More information on MTTR can be found at the following link:
+https://en.wikipedia.org/wiki/Mean_time_to_repair
+Mean time to deploy (MTTD): This measures the average time it takes to successfully execute a production deployment. A low MTTD indicates that deployment to production can be done quickly and consistently, which, in turn, shows maturity in the deployment pipelines.
+Successful API calls: The average number of successful API calls processed per period of time.
+Average response times: Each API deployed in the platform should have an expected response time. For example, a given API may have an expected response time of 200 milliseconds. This KPI should therefore measure whether the overall response time for this API over a period of time has been above or below the 200 millisecond threshold.
+Availability: This measures the overall availability of an API over a period of time. This metric can't be higher than the availability of the underlaying platform; it can either match it or be lower.
+Customer success ratings: Users of the API should be asked to indicate how satisfied they are with the functionality offered and their experience in using it. For example, if customers are asked to score an API from one to five, with one being the lowest score, then a good API should consistently score above four.
+Whereas many other metrics can be defined, the preceding metrics typically are a good starting point. For more detailed information on success metrics in agile organizations, the following book is highly recommended:
+https://itrevolution.com/book/accelerate/
+The performance metrics listed (along with others) should be used as a basis for defining KPIs and SLAs. This is another important characteristic of an API product. For example, consumers of an API will normally have expectations about how an API performs, so defining KPIs and SLAs around successful API calls, average response times, and availability makes complete sense.
+
+The difference between KPIs and SLAs is that the former focuses on past performance (for example, how an API performed against individual SLAs and/or other metrics), whereas the latter defines future commitments, or, in other words, sets the expectations of API consumers about the performance of an API product (for example, expecting sub-second response times from API calls).
+
+However, not all KPIs have to be SLAs. For example, customer success rating makes sense as a KPI, but not as an SLA. Therefore, understanding the differences and similarities between KPIs and SLAs is also an important factor in the success of an API product.
+
+The following article provides more information on KPIs and SLAs:
+https://tinyurl.com/slavskpi
+
+
+
+Platform team:
+--------------
+
+In terms of how to measure success, many of the same performance metrics described for the API product team can also be applied to the platform itself. However, there are platform-centric metrics that won't apply to individual APIs:
+
+Platform availability: This measures the overall availability of the platform over a period of time, such as in a given year. For example, a platform that should be available 99.98% of the time should not experience more than 1h 45m of downtime over an entire year.
+The following site is a great tool for doing this sort of calculation:
+https://uptime.is
+Total number of APIs: The overall number of APIs deployed to production in a given period of time is a good indicator of how much the platform is being used. Ideally, the number of APIs should consistently grow over time.
+Total number of API calls: Related to the previous one, this KPI measures whether the total number of API calls is within the expected range in order for the platform to deliver value. The number of calls should increase over time, as this is also a good indicator that platform usage is also increasing.
+The roles and responsibilities within this team are as follows.
+
+

@@ -1,0 +1,207 @@
+Features of next js:
+---------------------
+- Next.js can manipulate the <head> tag of the site.This is great for SEO.
+- the router is built-in
+- Server side rendering + SEO
+- File based routing instead of code based routing
+
+
+Cons with React:
+----------------
+- No Router
+- On-page SEO is impossible:
+
+
+
+Server side rendering:
+----------------------
+- Server does the initial processing
+
+Installation:
+------------
+- npx create-next-app giphy-search-app
+- npm run dev
+
+
+
+Turn off static optimisation indicator:  (next.config.js)
+An icon that shows on the page if a page is being statically pre-rendered.
+----------------------------------------
+module.exports = {
+  devIndicators: {
+    autoPrerender: false,
+  },
+}
+
+Pre-rendering form for each pages:
+-----------------------------------
+The two types of pre-rendering are: Client-side rendering and Static generated pre-rendering
+
+Questions you need to ask yourself #
+Does my page require data?
+Will the data change and need to be updated each time the page is loaded?
+Will the data be used to create HTML that needs to be indexed by search engines?
+If the data does not need to be indexed by search engines, is there an alternative to server-side rendering the page?
+By asking these questions, you will determine the type of pre-rendering necessary for your page.
+
+
+
+Static generation:
+--------------------
+Static generation without data #
+If your page has no data blocking requirements, it will be statically generated.
+
+The HTML is generated at build time and will be reused on each request.
+
+The HTML will be cached on CDNs and allow the pages to be served to the client very quickly.
+
+These pages will display the Static Optimization Indicator when the application is running in development mode.
+
+Static generation with data #
+If your app requires data on a certain page, but that data will not change, then you can still use static generations.
+
+Through an async function called getStaticProps, you can tell Next.js that you need to get this data once, 
+but it will be the same every time the page is loaded.
+
+
+Development #
+When you are developing your app, using getStaticProps will fetch the data every time the page is loaded.
+
+Production #
+When Next.js creates the production version of your site, it will fetch the data required for the page based on using getStaticProps. 
+Essentially, it creates your pre-rendered HTML after the data requirement has been fulfilled at build time. Just like static 
+generation without data, 
+the static generation with data gets cached on CDNs, and the same is served to the client every time the page is loaded.
+
+
+Server side rendering:
+----------------------
+In order to make your site as fast as possible, it is recommended to use the previously mentioned static generated pages. However, this is not always possible. Perhaps you have a page that shows frequently updated data. For this scenario, you can use server-side rendering.
+
+Pages that get pre-rendered are identifiable by the use of getServerSideProps. This is the function we can implement to fetch data while also informing Next.js that this data will be changing. By using this function, you are instructing Next.js to use server-side rendering for your HTML.
+
+
+
+Statically generated page with data:
+-------------------------------------
+
+If you have a page that is going to use or display data from an API, but it does not necessarily 
+have to look for updated data every time the page loads, then you can statically generate a page with data.
+
+
+When you run a build on your application, the page is generated with data at that time. 
+The page is then served to users from a CDN.
+
+getStaticProps() #
+Below you will see the implementation of getStaticProps(). 
+You will use an async function because inside the getStaticProps() function you will use the reserved keyword await. 
+When data comes from an API it can take some time. It may be only a few milliseconds, but you need to wait for that 
+data to return before next can use it to process the page and generate the HTML.
+
+
+export async function getStaticProps() {
+  let catGiphys = await fetch('https://api.giphy.com/v1/gifs/search?q=cats&api_key=nPJNlVceWHERWCSDBW5XMo1p90l7l9ie&limit=10')
+  catGiphys = await catGiphys.json()
+  return {props: {catGiphys: catGiphys}}  
+}
+
+import Head from 'next/head'
+import {useEffect} from 'react'
+
+export default function Home(initialData) {
+
+  return (
+    <div className='container'>
+      <Head>
+        <title>Create Next App</title>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="/styles.css"/>
+      </Head>
+
+      <h1>Giphy Search App</h1>
+    </div>
+  )
+}
+
+export async function getStaticProps() {
+  let catGiphys = await fetch('https://api.giphy.com/v1/gifs/search?q=cats&api_key=nPJNlVceWHERWCSDBW5XMo1p90l7l9ie&limit=10')
+  catGiphys = await catGiphys.json()
+  return {props: {catGiphys: catGiphys}}  
+}
+
+you are going to use a React hook called useEffect. This hook runs after getStaticProps has returned its value, making 
+it perfect for you to log your initialData function parameter and see if it has the Giphy data that you were expecting.”
+
+
+
+event.preventDefault() -> Function that renders it
+
+
+Dynamic routes:
+--------------
+search/dogs
+
+search 
+   - [searchTerm].jsx
+
+Extracting route paraemter:
+
+import Head from 'next/head'
+
+export default function Search (){
+    return(
+        <>
+            <Head>
+                <title>Search</title>
+                <link rel="icon" href="/favicon.ico" />
+                <link rel="stylesheet" href="/styles.css"/>
+            </Head>
+            <h1>Search results for: </h1>
+        </>
+    )
+}
+import { useRouter } from 'next/router'
+
+const router = useRouter()
+
+{router.query.searchTerm}
+
+
+Server Side Rendered Page with Data:
+------------------------------------
+When a page needs the most current data, it cannot be statically generated. You can still have our HTML created on the server and sent to the client, which is what we call a server-side rendered page.
+
+Will the data change often?
+Is the most recent data important?
+Will the page use route parameters in order to determine which data it will retrieve?
+
+where the function name is getStaticProps. To convert this page to server-side rendering, 
+all you have to do is to change that to getServerSideProps.
+
+export async function getServerSideProps() {
+  let catGiphys = await fetch('https://api.giphy.com/v1/gifs/search?q=cats&api_key=nPJNlVceWHERWCSDBW5XMo1p90l7l9ie&limit=6')
+  catGiphys = await catGiphys.json()
+  return {props: {catGiphys: catGiphys}}  
+}
+
+
+Dynamic route details:
+
+export async function getServerSideProps(context) {
+  const searchTerm = context.query.searchTerm
+}
+
+
+export default function Search (initalData){
+    const router = useRouter()
+    return(
+        <>
+            <Head>
+                <title>Search</title>
+                <link rel="icon" href="/favicon.ico" />
+                <link rel="stylesheet" href="/styles.css"/>
+            </Head>
+            <h1>Search results for: {router.query.searchTerm}</h1>
+        </>
+    )
+}

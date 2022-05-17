@@ -1,0 +1,7 @@
+Docker commands:
+-----------------
+docker run <image name>
+docker run <image name> <command>
+
+//Check docker process
+docker ps

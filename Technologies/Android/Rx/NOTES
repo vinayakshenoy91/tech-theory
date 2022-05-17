@@ -1,0 +1,4 @@
+Reactive programming -> Consumer code blocks react to data as it comes in.
+
+ReactiveX -> Provide impl to various reactive concepts for diff programming language.
+reactivex.io

@@ -1,0 +1,21 @@
+- Depends on Number of txn, availability , amount of data to be stored
+
+million -> 10^6
+billion -> 10^9
+trillion -> 10^12
+
+1million/ day = 12/sec , 700/min, 4200/hr
+
+- Read/write heavy
+- Number of txn -> latency of system
+- Huge data transfer
+- Network bandwidth
+- Number of request and servers needed
+- LB handle so many request
+
+
+Latency: Time it takes for a certain ops to complete
+Throughput -> The numner of operations  that a system can handle properly per unit time.
+(Request per second /QPS)
+
+- throughput 

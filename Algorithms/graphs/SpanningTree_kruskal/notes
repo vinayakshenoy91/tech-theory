@@ -1,0 +1,7 @@
+- Disjoint sets are union-find data structure.
+- It is to keep track of a set of elements partitioned into a number of disjoint (non overlapping) subsets.
+- Three main ops, union, find and make sets.
+- Disjoint sets are impl as tree like structure.
+
+- In kruskal algo, it will be useful to see if we can decide in approx O(1) time whether two vertexes are in same set or not.
+- We can find cycles in graph with this DS in O(logN)

@@ -1,0 +1,15 @@
+Form fields:
+------------
+<label for="first">FirstName</label>
+<input id="first" type="text"/>
+
+OR
+
+<label>
+FirstName
+<input id="first" type="text"/>
+</label>
+
+
+//You can focus on this
+<div tabIndex="0" onkeyup="action()">clickMe</div>

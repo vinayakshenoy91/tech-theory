@@ -1,0 +1,10 @@
+- Securely connect VPC to AWS services: Does not traverse the internet
+- One way traffic establishing without peering
+- Does not require to require:
+ 1) Internet gateway
+ 2) NAT device
+ 3) Public IP address
+ 4) VPN connection
+
+
+ 

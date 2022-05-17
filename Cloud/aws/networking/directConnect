@@ -1,0 +1,18 @@
+- Dedicated consistent route to AWS
+- By pass internet provider
+- 1GBPS and 10GBPS connection
+- Can provision multipel connections
+
+Usecases:
+---------
+-Transferring large datasets
+- Real-time data feeds
+- Hybrid env -> Cloud and on premise
+
+How to connect to direct connect:
+--------------------------------
+- Direct connect locations (DCL) - Accessible via standard cross-connect
+- APN partners (extend current location to DCL)
+
+
+

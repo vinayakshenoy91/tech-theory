@@ -1,0 +1,14 @@
+- HMSET key field value
+
+- hgetall key
+
+- HGET key field
+
+- HEXISTS key field
+
+- hdel key field
+
+- HSETNX key field value
+
+Suppose we already have some fields in our hash, and we use the HSET command, which updates the value. 
+We can use the HSETNX command to fix this. This command will insert the field if it is not present. 

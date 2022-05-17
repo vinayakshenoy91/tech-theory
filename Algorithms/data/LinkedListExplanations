@@ -1,0 +1,47 @@
+Linked List is used for storing data.Successive elements are connected by pointers.
+Last element points to null
+Grow or shrink size during execution of program
+
+Main operation:
+---------------
+Traversing
+Insert
+Delete: Remove and return element from list
+
+
+Auxilary operation:
+--------------------
+
+Delete list to remove all elements in the list
+Count: Returns the number of elements in the list
+Find nth node from the end of the list
+
+
+Single linked list:
+-------------------
+
+Advtg:
+------
+
+- Expanded at constant time
+
+
+Disadvtg:
+---------
+- Access time
+- Spatial locality in memory
+
+
+Double linked list:
+-------------------
+You don't have to remember the previous node as you will already have a pointer to it
+
+
+Circular linked list:
+---------------------
+
+We do not have ends
+
+
+
+

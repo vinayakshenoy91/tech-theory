@@ -1,0 +1,39 @@
+- Java uses Quick sort to sort primitive types
+- Merge sort is used for reference types
+- Both has O(nlogn) complexity
+
+
+1) Arrays.sort(nums)
+
+2) Collections.sort(listname, Collections.reverseOrder());
+
+3) Books implements Comparable<Book>{
+    public int compareTo(Book o){
+        return this.authorName.compareTo(o.authorName);
+    }
+}
+
+//For integers
+Integer.compare(this.pages, o.pages);
+
+if(this.pages>o.pages) return +1;
+if(this.pages==o.pages) return 0;
+else return -1;
+
+
+4) Collections.sort(books, new BookComparator());
+//For reverse use:
+Collections.sort(books, new BookComparator().reversed());
+
+
+public class BookComparator implements Comparator<Book>{
+@Override
+public int compare(Book b1, Book b2){
+    return Integer.compare(b1.getNums(),b2.getNums());
+}
+}
+
+5) Sort with lambdas:
+
+Colletions.sort(people, Comparator.comparing(Person::getName).reversed());
+Colletions.sort(people, Comparator.comparing(Person::getName).thenComparing(Person::getAge).reversed());

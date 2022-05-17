@@ -1,0 +1,2 @@
+const [x,y]= [await promise1,await promise promise2];
+

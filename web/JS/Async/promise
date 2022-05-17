@@ -1,0 +1,36 @@
+Promise can be pending, fulfilled or rejected.
+
+new Promise((resolve, reject)=>{})
+
+
+Promisify any function in JS:
+-----------------------------
+.then
+.catch
+
+
+myPromise.then(undefined, onRejected) same as myPromise.catch(onRejected)
+
+Conver non-promise values to promise using:
+-- Promise.resolve(anyValue);
+
+
+Promise in parallel:-
+--------------------
+1) Promise.all
+
+Promise.all([promise1(),promse2()]).then(()=>{
+
+}).catch(()=>{
+
+})
+
+Promise.all([promise1().catch(err=>{return err}),promse2().catch(err=>{return err})]).then(()=>{
+
+}).catch(()=>{
+
+})
+
+2) Promise.race([a(),b(),c()]) -> Get only the first result.(first resolves or rejects is returned)
+
+

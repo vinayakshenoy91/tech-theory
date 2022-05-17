@@ -1,0 +1,50 @@
+- html has a start and end tag
+- Tags are way to markup the document that is friendly to user agents
+Markup describes the document.Doing this you are adding meaning to document.
+- Attributes -> Other related pieces of information
+- Element -> tags + attributes + contents
+- Specification -> A standard of precise requirements.
+- DOCTYPE - required for legacy reason. When omitted, browsers tend to use a diff rendering mode incompatible with some spec.
+<!DOCTYPE html>
+- <html lang="en"> -> html element is root of an HTML document. Giving lang attribute on root element gives the document's language.
+This aids speech synthesis tools to determine what pronounciations to use, translation tools to determine what rules to use and so forth.
+- metadata -> set of info that provides info about other data.
+head element represents collection of metadata.
+character set -> set of supported characters. UTF-8 covers almost everything in every language.
+<head>
+  <meta charset="UTF-8">
+  <title>hello</title>
+  <body>
+  <section>
+  <header></header> -> contains ection heading
+  <footer></footer>
+    <article>
+    <aside></aside> //Tangential content
+    </article>
+  </section>
+  </body>
+</head>
+
+- <article> -> Complete in itself
+- Note: looks at content and make a call on which tag to use.
+- Section -> does not make meaning on its own
+- Hypertext -> Text that references other text which the user agent enables the user to immediately access.
+- Protocol -> System of rules for two entities to communicate.
+- Hypertext Transfer Protocol -> set of rules for how two entities can transfer text between themselves.
+- Minification: Removing extra characters in document. VS code minifier extension -> Generates minified CSS
+
+Anchor:
+--------
+<a href="" target="_blank"></a> //Opens in a new tab
+
+
+Browser:
+-------
+A computer program that transforms an html document into a visual, interactive representation of the document of the user.
+
+Rendering engine: A computer program that transforms an HTML document into a visual, interactive representation of the 
+document of the user.
+
+Rendering engine consists of:
+
+a) Parser: Analyze text character by character.

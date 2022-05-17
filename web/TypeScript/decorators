@@ -1,0 +1,83 @@
+
+
+Decorators:
+------------
+
+"experimentalDecorators":true //Compiler option
+"emitDecoratorMetadata":true
+
+a) Class decorator:
+--------------------
+- Class constructor function is passed as a parameter
+export function sealed(name:string){
+   return function(target:Function):void{
+       console.log(`Sealing the constructor:${name}`);
+       Object.seal(target);
+       Object.seal(target.prototype);
+   }
+}
+
+
+@sealed('className') -> mark it in class
+
+-----------------------xxxxx-----------------
+
+b) Class decorator 2 :
+export function logger<TFunction extends Function>(target:TFunction):TFunction{
+    let newConstructor: Function = function(){
+        console.log('Creating new instance');
+        console.log(target);
+    }
+    newConstructor.prototype = Object.create(target.prototype);
+    newConstructor.prototype.constructor = target;
+    return <TFunction>newConstructor;
+}
+
+@logger
+
+----------------------xxxx-------------
+
+a) Property decorators: 
+- First param is either constructor function or class prototype.
+- Second param is the name of the decorated member.
+
+function MyPropertyDecorator(target:Object, propertyKey: string){
+    //do decorator stuff
+}
+
+b) Paraemter decorators:
+
+function MyPropertyDecorator(target:Object, propertyKey: string, parameterIndex: number){ //Ordinal index of decorated param
+
+
+    //do decorator stuff
+}
+
+
+c.0) Property descriptors:
+
+interface PropertyDescriptor{
+    configurable?: boolean;
+    enumerable?:boolean;
+    value?:any;
+    writable?:boolean;
+    get?():any;
+    set?(v:any):void;
+}
+
+
+c) Method and accessor decorators:
+
+function MyMethodDecorator(target:Object, propertyKey:string, descriptor:PropertyDescriptor ){
+
+descriptor.writable=false
+}
+
+
+
+Types of decorators:
+--------------------
+1) Action decorators: Perform action where they are defined
+2) Description decorators: Simply describe an item for future use by the project.
+
+

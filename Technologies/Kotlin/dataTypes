@@ -1,0 +1,16 @@
+String
+Chars -> Surrounded by single quotes
+var x = 30; 
+Note: 
+- We cannot change a variables types.
+- Variable names must be letter or underscore.
+
+
+
+val x= 30 //This value cannot be changed later
+
+String functions:
+------------------
+varname.length
+
+

@@ -1,0 +1,78 @@
+Parameterised test and Argument source:
+----------------------------------------
+
+@ParameterizedTest(name="Test #{index}: productId={0}")
+@ValueSource(strings=["1;e;mike;false;349",..])  //longs={1,2,3,4,5}
+void checkGivenPoints(@ConvertWith(FlightArgumentConverter.class)Flight flight){
+
+}
+
+@ParameterizedTest
+@ValueSource(longs={1,2,3,4,5})
+void checkGivenPoints(long x){
+
+}
+
+CSV:
+---
+
+@ParameterizedTest(name="weight={0}, height={1}")
+@CsvSource(value={"89,1.7","95,2"})
+void checkGivenPoints(Double codeWeight,Double codeHeight){
+
+}
+
+@ParameterizedTest
+@CsvSource({"1,200","2,150"})
+@CsvFileSource(resources="/flights_information.csv")
+
+
+@ParameterizedTest
+@CsvSource({"1,200","2,150"})
+@CsvFileSource(resources="/flights_information.csv", numLinesToSkip=1)
+
+
+Repeated Test:
+---------------
+Instead of @Test put @RepeatedTest(10)
+
+
+
+Enums:
+------
+
+@ParameterizedTest
+@EnumSource(EnumClassName.class)
+@EnumSource(value=EnumClassName.class, names={"BIG_LATTE,BIG_TEA"}, mode=EnumSource.Mode.EXCLUDE)
+//You can use regex also in names
+
+@ParameterizedTest
+@MethodSource("productIds")
+private static LongStream productIds(){
+  return LongStream.range(1,6);
+}
+//If more than two params passed to method
+static Stream<Arguments> productIdsCustomerPoints(){
+  return productIds().mapToObj(productId -> Arguments.of(productId, 100*productId));
+}
+
+In junit4:
+----------
+
+@RunWith(Parameterized.class)
+
+String input;
+String expectedOutput;
+
+public className(String input, String expectedOutput){
+    this.input=input;
+    this.expectedOutput=expectedOutput;
+}
+
+//Use inpout and output in test
+
+@Parameters
+public static Collection<String[]> testConditions(){
+    String expectedOutputs[][]={{"AACD","CD"},{"ACD","CD"}};
+    return Arrays.asList(expectedOuputs)
+}

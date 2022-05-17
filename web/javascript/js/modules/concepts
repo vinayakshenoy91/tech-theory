@@ -1,0 +1,82 @@
+- protecting things from global scope
+- Modules are created using import/export 
+- Modules are singletons
+- Properties are bound
+- exports are static
+- One module per file
+- IIFE is not required once import /export  is used
+
+
+
+In browser, when you are using import/export use modules as types in script tag:
+
+<script src="js/app.js" type="module"/>
+
+
+Types of exports:
+-----------------
+- Default exports: You dont have to give the same name as that of the module.
+=================
+export default xyz;
+
+export {xyz as default, test,ppp}
+
+import test from './test';
+
+- Named exports:
+==================
+export { sessionTemplate, errorMessage as errMsgs }
+export function xyz(){}
+
+export a = ()=>{}
+
+import { session } from './xyz';
+import * as template from './xyz'
+
+- Aggregating modules:
+====================
+In one file write all:
+
+export {sessionTemplate} from './template.js'
+
+- For both default and named use:
+
+import getSession, * as sessionRepo from './xyz'
+- Note: Default exports have one restriction, however; export default is not permitted in front of the keywords const and 
+let while export without default is allowed. In short, inlining of default exports is permitted for functions and classes, 
+but not for variables and constants. You may explicitly export variables and constants as default. 
+that’s because default can’t be followed by const or let. But it can be declared first and then used as export default xyz;
+
+reexport all exported references, except default, from temperature:
+export​ * ​from​ ​'./temperature'​; //For named exports
+export​ { Thermostat ​as​ Thermo, ​default​ ​as​ ​default​ } ​from​ ​'./temperature'​;
+
+
+Instead of reexporting another modules default as your own module’s default,
+ you can use any exported reference from another module as your default, like so:
+export​ { Thermostat ​as​ Thermo, f2c ​as​ ​default​ } ​from​ ​'./temperature'​;
+
+Here the function f2c, which is a named export and not a default export in temperature, is reexported from this module as its own default. 
+In the same vein, your module can reexport the default from another module with a different name:
+
+​ 	​export​ { Thermostat ​as​ Thermo, ​default​ ​as​ uom } ​from​ ​'./temperature'​;
+The function unitsOfMeasures exported as default from temperature is now reexported as uom. This technique, renaming a default from another module, 
+is useful when a module reexports multiple modules and wants to make the defaults from more than one module available to the user.
+
+
+import both named and default exports:
+
+​ import​ uom, { celsiusToKelvin, FREEZING_POINT ​as​ brrr } ​from​ ​'./temperature'​;
+
+A wildcard brings over all exports from the specified module, except the default export. If you don’t want the default export to feel left out of the party, do it a favor and send an invite, like so:
+
+​ 	​import​ uom, * ​as​ heat ​from​ ​'./temperature'​;
+While the exported references from the temperature module can be accessed by reaching into the namespace heat, the default export of that module can be accessed using the given uom name.
+
+
+importing for side effects:
+=============================
+ import 'some-side-effect-causing-module'
+
+
+

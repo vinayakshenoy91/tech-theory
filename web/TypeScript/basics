@@ -1,0 +1,249 @@
+- TypeScript is a superset of the JavaScript language that 
+focuses on producing safe and predictable code that can be executed by any JavaScript runtime.
+
+
+Why TS?
+- Type checkign at compile time is way better than thing crashing or behaving unexpectedly at runtime.
+- Large codebases stay maintainable as you know how to guardrail on how your code can be used
+- Avoid mispel and autocomplete
+- Assumes types on its own if done right
+- Disipline in the code
+
+TS -> TS compiler -> JS
+- TS enforces the rule to call super when we override a constructor in a child class
+- From 3.8 TS supports ecamspcript fields
+
+- Type defainition or type declaration files are typescript wrappers for js libraries.
+Filename ends with .d.ts
+
+- If you want type definitions of certain libraries, go to DefinitelyTyped repos.They will be with name @types/
+
+npm install --save-dev typescript or use -g
+tsc --init
+
+tsc app.ts
+
+Some inbuilt methods:
+---------------------
+- Getting the type of a variable: typeof user;
+
+//If installed TS globally, use:
+tsc app.ts
+
+
+Polymorphic this type:
+---------------------
+A polymorphic this type represents a type that is the subtype of the containing class or interface.
+
+Type assertion:
+---------------
+Using Type Assertions
+A type assertion tells the TypeScript compiler to treat a value as a specific type, known as type narrowing. 
+
+function calculateTax(amount: number, format: boolean): string | number {
+    const calcAmount = amount * 1.2;
+    return format ? `$${calcAmount.toFixed(2)}` : calcAmount;
+}
+let taxNumber = calculateTax(100, false) as number;
+let taxString = calculateTax(100, true) as string;
+console.log(`Number Value: ${taxNumber.toFixed(2)}`);
+console.log(`String Value: ${taxString.charAt(0)}`);
+
+In most situations, you should review the data types and the type assertion and correct the problem by expanding the type union or asserting to a different type. However, you can force the assertion and override the compiler’s warning by first asserting to any and then to the type you require, 
+
+let taxBoolean = calculateTax(100, false) as any as boolean;
+
+
+
+
+NEVER type:
+----------
+TypeScript provides the never type for situations where a type guard has dealt with all of the possible types for a value. In Listing 7-27, for example, the switch statement is a type guard for the number and string types, which are the only types that will be returned in the string | number union from the function. Once all the possible types have been handled, the compiler will only allow a value to be assigned to the never type
+
+function calculateTax(amount: number, format: boolean): string | number {
+    const calcAmount = amount * 1.2;
+    return format ? `$${calcAmount.toFixed(2)}` : calcAmount;
+}
+let taxValue = calculateTax(100, false);
+switch (typeof taxValue) {
+    case "number":
+        console.log(`Number Value: ${taxValue.toFixed(2)}`);
+        break;
+    case "string":
+        console.log(`String Value: ${taxValue.charAt(0)}`);
+        break;
+    default:
+        let value: never = taxValue;
+        console.log(`Unexpected type for value: ${value}`);
+}
+
+Something has gone wrong if execution reaches the default clause of the switch statement, and TypeScript provides the never type to ensure you can’t accidentally use a value once type guards have been used to exhaustively narrow a value to all of its possible types.
+
+Unknown type:
+-------------
+
+TypeScript also supports the unknown type, which is a safer alternative to any. An unknown value can be assigned only any or itself unless a type assertion or type guard is used. 
+
+An unknown value can’t be assigned to another type without a type assertion, so the compiler produces the following error when it compiles the code:
+
+
+--
+
+function calculateTax(amount: number, format: boolean): string | number {
+    const calcAmount = amount * 1.2;
+    return format ? `$${calcAmount.toFixed(2)}` : calcAmount;
+}
+let taxValue = calculateTax(100, false);
+switch (typeof taxValue) {
+    case "number":
+        console.log(`Number Value: ${taxValue.toFixed(2)}`);
+        break;
+    case "string":
+        console.log(`String Value: ${taxValue.charAt(0)}`);
+        break;
+    default:
+        let value: never = taxValue;
+        console.log(`Unexpected type for value: ${value}`);
+}
+let newResult: unknown = calculateTax(200, false);
+let myNumber: number = newResult as number;
+console.log(`Number value: ${myNumber.toFixed(2)}`);
+
+Unlike the earlier example, the unknown value is really a number, so the code doesn’t generate a runtime error and produces the following output when executed:
+Number Value: 120.00
+Number value: 240.00
+
+Using Nullable Types:
+----------------------
+
+Under normal circumstances, the compiler will report an error if a value of one type is assigned to a variable of a different type, but the compiler remains silent because it allows null and undefined to be treated as values for all types.
+
+There is a hole in the TypeScript static type system: the JavaScript null and undefined types. The null type can be assigned only the null value and is used to represent something that doesn’t exist or is invalid. The undefined type can be assigned only the undefined value and is used when a variable has been defined but not yet assigned a value.
+
+The problem is that, by default, TypeScript treats null and undefined as legal values for all types. The reason for this is convenience because a lot of existing JavaScript code that may be required for integration into an application uses these values as part of its normal operation, 
+
+
+RESTRICTING NULLABLE ASSIGNMENTS:
+----------------------------------
+The use of null and undefined can be restricted by enabling the strictNullChecks compiler setting, 
+
+{
+    "compilerOptions": {
+        "target": "es2018",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "declaration": true,
+        "noImplicitAny": true,
+        "strictNullChecks": true
+    }
+}
+
+
+REMOVING NULL FROM A UNION WITH AN ASSERTION:
+---------------------------------------------
+
+Remember that unions present the intersection of the API of each individual type. The null and undefined values don’t present any properties or methods, which mean that values for nullable type unions can’t be used directly, even if the non-null types have an intersection of useful properties or methods (of which there are examples in later chapters). A non-null assertion tells the compiler that a value isn’t null, which removes null from the type union and allows the intersection of the other types to be used, 
+
+
+function calculateTax(amount: number, format: boolean): string | number | null {
+    if (amount === 0) {
+        return null;
+    }
+    const calcAmount = amount * 1.2;
+    return format ? `$${calcAmount.toFixed(2)}` : calcAmount;
+}
+
+let taxValue: string | number = calculateTax(100, false)!;
+
+REMOVING NULL FROM A UNION WITH A TYPE GUARD:
+---------------------------------------------
+function calculateTax(amount: number, format: boolean): string | number | null {
+    if (amount === 0) {
+        return null;
+    }
+    const calcAmount = amount * 1.2;
+    return format ? `$${calcAmount.toFixed(2)}` : calcAmount;
+}
+let taxValue: string | number | null = calculateTax(100, false);
+if (taxValue !== null) {
+    let nonNullTaxValue: string | number = taxValue;
+    switch (typeof taxValue) {
+        case "number":
+            console.log(`Number Value: ${taxValue.toFixed(2)}`);
+            break;
+        case "string":
+            console.log(`String Value: ${taxValue.charAt(0)}`);
+            break;
+    }
+} else {
+    console.log("Value is not a string or a number");
+}
+Listing 7-35.Removing null Values with a Type Guard in the index.ts File in the src Folder
+The compiler knows that the test for null values means that the value can be treated as the non-nullable string | number union type with the if code block. (The compiler also knows that taxValue can be null only in the else code block.) The code in Listing 7-35 produces this output when it is compiled and executed:
+Number Value: 120.00
+
+Definitive assignment assertion:
+-------------------------------
+function calculateTax(amount: number, format: boolean): string | number | null {
+    if (amount === 0) {
+        return null;
+    }
+    const calcAmount = amount * 1.2;
+    return format ? `$${calcAmount.toFixed(2)}` : calcAmount;
+}
+let taxValue: string | number | null;
+eval("taxValue = calculateTax(100, false)");
+if (taxValue !== null) {
+    let nonNullTaxValue: string | number = taxValue;
+    switch (typeof taxValue) {
+        case "number":
+            console.log(`Number Value: ${taxValue.toFixed(2)}`);
+            break;
+        case "string":
+            console.log(`String Value: ${taxValue.charAt(0)}`);
+            break;
+    }
+} else {
+    console.log("Value is not a string or a number");
+}
+Listing 7-36.Using an Unassigned Variable in the index.ts File in the src Folder
+The eval function accepts a string and executes it as a code statement. The TypeScript compiler isn’t able to determine the effect of the eval function and doesn’t realize that it assigns a value to taxValue. When the code is compiled, the compiler reports the following errors:
+src/index.ts(12,5): error TS2454: Variable 'taxValue' is used before being assigned.
+src/index.ts(13,9): error TS2322: Type 'string | number | null' is not assignable to type 'string | number'.
+  Type 'null' is not assignable to type 'string | number'.
+src/index.ts(13,44): error TS2454: Variable 'taxValue' is used before being assigned.
+src/index.ts(14,20): error TS2454: Variable 'taxValue' is used before being assigned.
+The definitive assignment assertion tells TypeScript that a value will be assigned before the variable is used, as shown in Listing 7-37.
+function calculateTax(amount: number, format: boolean): string | number | null {
+    if (amount === 0) {
+        return null;
+    }
+    const calcAmount = amount * 1.2;
+    return format ? `$${calcAmount.toFixed(2)}` : calcAmount;
+}
+let taxValue!: string | number | null;
+eval("taxValue = calculateTax(100, false)");
+if (taxValue !== null) {
+    let nonNullTaxValue: string | number = taxValue;
+    switch (typeof taxValue) {
+        case "number":
+            console.log(`Number Value: ${taxValue.toFixed(2)}`);
+            break;
+        case "string":
+            console.log(`String Value: ${taxValue.charAt(0)}`);
+            break;
+    }
+} else {
+    console.log("Value is not a string or a number");
+}
+
+
+The definitive assignment assertion is a ! character, but it is applied after the name when the variable is defined, unlike the non-null assertion that is applied in expressions. Just as with the other assertions, you are responsible for ensuring that a value really is assigned. You may encounter a runtime error if you use an assertion but don’t perform an assignment. The assertion in Listing 7-37 allows the code to be compiled, which produces the following output when it is executed:
+Number Value: 120.00
+
+
+
+
+
+
+

@@ -1,0 +1,20 @@
+one microservice can manage one or more aggregates, but we don’t want one aggregate to be managed by more than one microservice.
+
+Advtges are:
+------------
+1) Separation of concerns
+2) Engg is easier
+3) Deployments are easier
+
+
+What to do when mucroservices come up?
+
+Contracts
+Router
+Simply Deployments
+Communication -> Request-response or messaging queue or batch processing
+Logging
+Single source of truth
+Condense business responsibilities to separate place.
+
+

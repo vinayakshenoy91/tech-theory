@@ -1,0 +1,5 @@
+Commit Log
+Kafka can serve as a kind of external commit-log for a distributed system. 
+The log helps replicate data between nodes and acts as a re-syncing mechanism for failed nodes to restore their data. 
+The log compaction feature in Kafka helps support this usage. 
+In this usage Kafka is similar to Apache BookKeeper project.

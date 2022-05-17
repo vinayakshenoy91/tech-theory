@@ -1,0 +1,91 @@
+Sorting
+--------
+1) Space used:
+   a) In place: Do not require ay space for sorting.[Bubble sort.]
+   b) Out of place: Require extra space [Merge sort]
+
+2) Stability:
+   a) Stable: If a sorting algo after sorting the contents does not change the sequence of similar content in which they appear.[Insertion sort]
+   b) Unstable: Same as stable but sequence changes. [Quick sort]
+
+
+Non decreasing => increasing and can contain equal elements.
+
+
+Sorting algos:
+--------------
+1) Bubble sort:
+----------------
+- [Time Complexity : O(n^2), Space complexity: O(1)]
+- Sinking sort.
+- Compare each pair of adjacent items and swap them if they are in wrong order.
+
+Usecase:
+- Used when input is almost sorted
+- Space is a concern
+- Easy to implement
+- Don't use where time matters
+
+2) Selection sort:
+--------------------
+- [Time Complexity : O(n^2), Space complexity: O(1)]
+- We repeatedly find the min element and move it to the sorted part of the array to make unsorted part sorted.
+
+Usecase:
+- Insufficient memory
+- Easy to impl
+- When time is concern
+
+
+3) Insertion sort:
+-------------------
+- Divide array into two parts.Take first element from unsorted array and find its correct position in sorted array.
+- Repeat until unsorted array is empty.
+
+Usecase:
+--------
+- Insufficient memory
+- When we have continuous inflow of numbers and we wanted to keep them sorted.
+- Avoid when time is a concern
+
+
+Non-comparision based sorting algo: O(N)
+------------------------------------
+- bucket sort
+- radix sort
+
+
+Bubble, insertion, selection -> O(N^2)
+Merge and quick -> O(NlogN)
+
+
+Stable sorting algos (insertion sort and merge sort) -> It maintains the relative order of items with equal values (keys)
+Mainly significant when sorting based on multiple column.
+Unstable sorting algos (quicksort) -> It does not maintain relative order of items
+
+
+Adaptive sorting algo:
+----------------------
+- Change the behaviour based on info available at runtime.
+- It takes advantage of existing local order in its input.
+- Heap and merge sort do not take advantage of presorted sequences.
+- Insertion and shell sort are adapative algos.
+
+
+- Algo is in-place if it does not need additional memory and hence has O(1) memory complexity
+
+
+Bogo sort:
+-----------
+- it is called shotgun sort or permutation sort.
+- O(N!) -> Run time complexity.
+
+2 variants:
+- Deterministic algo: Enumerates all possible permutations until it finds the sorted order.
+- Randomized algo: Algo randomly generates the permutations of the input until it finds the sorted order
+and still has O(N!) running time.
+
+
+- It is ineffecient for classical computers but gives O(1) running time in quantum computers
+because of quantum entanglement, we can search for every possible permutations simultaneously.
+

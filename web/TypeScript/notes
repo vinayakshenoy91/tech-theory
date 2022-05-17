@@ -1,0 +1,100 @@
+Note:
+-----
+About:
+------
+- Language, compiler and language server.
+- Linter and static analysis tool
+
+What it helps in?
+- Duck typed language prevent
+- Formal contracts
+- JS errors reduced at runtime.
+
+
+Setup:
+-----
+tsc --version
+volta
+yarn add -D typescript@next
+yarn add -D typescript@latest
+
+Concepts:
+---------
+Optional chaining:
+x.address?.test
+
+Nullish coalescing
+------------------
+
+class Foo{
+    #name:string;
+
+    constructor(rawName?:string){
+        this.#name=rawName??'(no name)'      //Don;t mess ?? for ||  as 0 and '' does not evaluate to falsy in ?? case
+    }
+
+    log(){
+        this.#name
+    }
+}
+
+Tuple types: VVIP for input data
+------------
+type Address = [streetNumer:number, city:string];
+
+function pritnAdress(...address:Address){}
+
+Templating:
+-----------
+type Corner = `${'top'|'bottom'}-${'left'|'right'}` //Gives bacl all combination
+
+
+Recursive types alias:
+-----------------------
+type JSONValue = string| number|boolean|null|JSONArray|JSONObject;
+
+interface JSONObject{
+    [k:string]:JSONValue;
+}
+
+interface JSONArray extends Array<JSONValue>{}
+
+
+From 4.1 onwards. type JSONValue = string| number|boolean|null|JSONValue[]|{[k:string:JSONValue;}
+
+
+ts-ignore:  @ts-expect-error  -> Something should not work and is expected to throw error.
+
+
+Try catch:
+----------
+function isError(err:any):err is Error{
+    return err instanceof Error;
+}
+
+
+try{
+
+}catch(err:unknown){
+    if(isError(err)){
+        console.log(err.stack); 
+    }else{
+     console.log(err);
+    }
+}
+
+//Use below in test case
+function assertiIsError(err:any):asserts err is Error{
+    if(!(err instanceof Error)) throw new Error(`Not an error: ${err}`);
+}
+
+try{
+
+}catch(err:unknown){
+    assertIsError(err);
+    console.log(err.stack); 
+}
+
+Import only types:
+------------------
+import type {useAsyncDataEffect } from '../src/utils/api';

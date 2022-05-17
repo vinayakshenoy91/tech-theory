@@ -1,0 +1,25 @@
+- Redis supports a very basic security system to protect the connection between the client and the server via a plain-text password. 
+To secure Redis, the password should be set in the config file.
+
+- Redis only supports basic security mechanisms. Anyone who knows the password can access the data in Redis. 
+It is not possible to have users with different permission levels in Redis.
+
+Check if password enabled:
+--------------------------
+config get requirepass
+
+config set requirepass password //Configure password if not done
+
+auth password //Authenticate next time 
+
+
+
+Renaming a command:
+-------------------
+Here are the steps to rename a command:
+
+1.Add the following command to the redis.conf file.
+rename-command flushall purgeall
+
+2.Run the redis-server.exe, followed by the filename of your config file.
+redis-server.exe redis.conf

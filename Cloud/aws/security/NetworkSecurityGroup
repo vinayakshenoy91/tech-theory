@@ -1,0 +1,32 @@
+Block public ip:
+------------------
+1) 1st line of defence is NACL -> Deny rule
+2) Subset of ip allow in SG
+3) Firewall software in Ec2
+4) ALB sec group -> Ec2 shuld allow SG of ALB
+- NLB does not do connection termination. So no SG.
+- Use WAF for ip filtering at ALB level. I tis isntalledon ALB with bunch of rules
+- At cloud front level use, cloud front geo restriction or WAF IP address filtering. NACL not helpful here.
+- NACL sits at subnet level.It is stateless (Both inbound and outbound apply). Can only refer CIDR. New rules on NACL are all denial rules.
+
+SG:
+----
+- Virtaul firewall for EC2
+- SG belongs to a VPC. same Sg for both subnets
+- Allow rules
+- Stateful : return traffic explicitly allowed
+- Applies to all instance within subnet
+- Assign multiple SG to an instance.
+- Source/Dest can be SG id or ip address
+- /128 for single ipv6 address
+- /32 for single IPV4
+- SG from peered VPC can be referenced as an allowed source/destination
+SG A inbound source SG B
+- ::/0 -> IPV6
+
+NACL
+----
+- Operates at subnet level
+- Allow and deny rules
+- Rules processed in numeric order
+- Stateless: Return traffic must be explicitly allowed.

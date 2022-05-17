@@ -1,0 +1,111 @@
+What a container orchestrator does?
+
+- Automatic scheduling,
+- Configuration
+- supervision and failure handling
+- Abstract hardware infra and exposes DC as gigantic computational resource.
+- Automated scaling and deployment of containerised apps
+- Containers offer light weight design of process and isolation of OS
+- VM needs to be patched, upgraded and maintained.
+
+
+Namespace:
+----------
+- Used by linux and windows 2016 OS
+- Offer isolation
+- Filesystem, network interfaces, process ids, user ids belong to a single namespace.
+- Process will see resource that are inside the same namespace
+
+Namespace kinds:
+---------------
+- mnt
+- pid
+- net -. whihc net interface the app running inside the process sees.
+Each container uses its own net namespace and this sees its own set of network interfaces.
+- ipc
+- UTS -> What hostname and domian name the process running inside the namespace sees.
+- user
+
+cgroups:
+-------
+- Limit amount of system resources a container can consume.
+- linux kername feature that limits resource usage of a process (or group of processes)
+This a process cannot access more that config amount of cpu,mem and bw
+
+Docker:
+------
+- platform for packaging,distributing and running apps.
+- Image contains file system and path to the app executable when you run the image.
+- Registry is used to store and share images.
+- Running container is a process running on the host running Docker but uts completely isolated from
+both the host and all processes running on it.
+
+k8s:
+----
+- software system that allows you to manage and deploy containerised app.
+
+k8s cluster node types:
+----------------------
+- Master nodes -> hosts the control plane
+Worker nodes -> run actual apps.
+
+
+kubectl get pods --all-namespaces
+
+k8s Namespaces:
+---------------
+- Quotas and limits around resource usage and have an impact on DNS names that k8s creates internal to clusters
+- No namespace  specified, it takes it as default ns
+
+ACI:
+----
+ACI -> Run jenkins using this, no need to maintain one.
+ACI provides infinite container based scale.
+k8s provides prchestrator capabilitise. 
+ACI connector for k8s brings them together
+
+
+Azure Web app for containers: (Explore more)
+------------------------------
+- Built in autoscaling and LB and cicd with github, docker and acr. App service creates association with selected repo,
+apps can be updated each time when source code changes.
+
+Azure batch service:
+--------------------
+- cloud scale job scheduleing and compute management.
+
+
+
+Az commands: //Get commands srikanth provided
+------------
+az account show
+az configure --defaults group=aks-rg1
+az aks get-credentials --name aksdemo1
+
+
+kubectl expose deployment myapp --type=LoadBalancer --port=80 --target-port=80
+kubectl scale deployment myapp --replicas=3
+
+
+//Show max pods in node pools
+az aks nodepool show --cluster-name aksdemo1 --name agentpool --query "maxPods" //or --query "[count, provisioning state]"
+
+kubectl get pods --namespace kube-system | Measure
+
+//Scale node
+az aks scale --resource-group aks-rg1 --name aksdemo1 --node-count 2 --no-wait
+
+
+//rollout
+kubectl rollout history deployment/myapp
+kubectl rollout undo deployment/myapp
+
+
+//To give aks nodes access to registry used
+registry -> IAM -> Role (Reader) -> system assigned (aks cluster name) or service principal
+
+
+//Push command acr registry
+az acr login --name myappacr01
+docker push tag
+

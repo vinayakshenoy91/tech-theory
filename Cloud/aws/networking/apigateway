@@ -1,0 +1,20 @@
+- Support http/rest and websockets
+- Handle 100000 concurrent api calls
+- Defaine resource in API -> path and method
+- API gateway can be deployed in AWS region,Private VPC, CloudFront network
+- API gateway send traffic to lambda, instances, container, aws svc, pulbic/private endpoints.
+- Monitoring provided
+- Amazon cognito for authentication and auth.
+- AWS IAM can be used-> sigv4 provided
+- Lambda authroiser using OAuth, SAML  or JWT
+- Throttling -> Max request per sec
+- Burst -> max concurrent request
+- if bucket empty, 429 -> too many request error.
+- API key for client tracking , method levela and quota for time period rate and burst limits.
+- API stages -> run multiple version of api at same time (dev, test, prod)
+- Canary for a particular stage.
+- Define mocks in resources to facilitate client dev.
+
+
+
+

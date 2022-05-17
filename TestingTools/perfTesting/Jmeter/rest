@@ -1,0 +1,43 @@
+1) jmeter -n -t [jmx file] -l [results file] -e -o [Path to web report folder]
+2) Import Result.jtl in excel document . Results file named as results.jtl
+3) Use blazemeter tool -> Taurus framework
+4) For dashboard report use: jmeter -g jtlname/csvname -o foldername
+
+Run on a distributed architecture:
+-----------------------------------
+//Do this in slave
+1) jmeter.properties
+server.rmi.ssl.disable=true //Uncomment this
+2) run jmeter-server -> slave machine
+3) Get the ip address
+
+//Do this in master jmeter property
+1) jmeter.properties
+server.rmi.ssl.disable=true //Uncomment this
+remote_hosts=host1,host2
+
+2) start jmeter
+From gui mode -> run -> click on start from this slave address
+
+
+
+Controllers:
+------------
+- Folder/container where you store all your request
+
+1) Transaction controller: Multiple operation as 1 txn
+2) Interleave controller: On request from interleave, one outside sampler(like log controller)
+Keep multiple controllers under this and only one sampler from one of it will be picked in order from top to bottom.
+3) Simple controller:
+4) Module controller:
+5) Runtime controller: Put rigoprous load on particular api
+6) Random controller: Randomly pick one of it children.
+7) If controller: Run only if condition satisfied."${store}"=="1"
+
+Variable:
+---------
+- For global variable, put it in test plan user defined variable and refer it in various tests as ${store}
+
+
+Timers in jmeter:
+----------------

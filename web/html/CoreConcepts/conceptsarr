@@ -1,0 +1,157 @@
+What is HTML5?
+----------------
+HTML5 introduces some new features including:
+
+Adding new parsing rules to enhance flexibility.
+Adding New attributes.
+Allow offline editing.
+Support (Web SQL)
+Support Protocol and MIME handler registration. These features can be used to change the way of user interaction with documents.
+
+
+W3C & WHATWG:
+-----------
+The World Wide Web Consortium (W3C) is a community of developers working towards setting global standards for development.
+
+WHATWG is short for Web Hypertext Application Technology Working Group. It was created during a W3C workshop by Apple, Mozilla and Opera Software in 2004. 
+WHATWG is a community of developers focused on setting HTML standards to improve on user needs.
+
+HTML Element:
+-------------
+- This is an instance of a tag 
+
+HTML tag:
+---------
+An HTML tag tells the browser about how to render the HTML we page in a certain defined format. 
+HTML uses angular brackets, < and >, to enclose the tags, and the symbol / for closing the tag, and 
+can be used for many reasons like:
+
+changing the appearance of text,
+showing a graphic,
+linking to another web page.
+
+attributes in HTML:
+------------------
+All HTML elements can have attributes that give added information about an element.
+
+media tags introduced by HTML5:
+--------------------------------
+The new media element tags introduced by HTML5 are listed below:
+
+<audio>: Used for multimedia like sounds, audio streams, or music, embed audio content without the requirement of 
+any additional plug-in like the flash player.
+<video>: Used for video content like video streams or movie clips, embed video content, etc.
+<source>: Used for multiple media resources in media elements, such as audio, video, picture, etc.
+<embed>: Used for an external applications or embedded content (a plug-in).
+<track>: Used for adding subtitles or other files containing text in video or audio elements as the respective media 
+play on a web page.
+
+
+Semantic HTML:
+--------------
+Semantic HTML provides meaning to the web page as opposed to just presentation. A <p> tag, for example, indicates that 
+the enclosed text is a paragraph. This is both semantic and presentational as we as humans know what paragraphs are, and 
+the browsers know how to display them.
+
+On the other hand, tags such as <b> and <i> are not semantic markup. They only tell the browser how the text should look 
+like (bold or italic), and do not give any additional meaning to the markup. In semantic HTML, 
+these are replaced by <strong> for strong text and <em> for emphasized text respectively.
+
+Storage in html5:
+-----------------
+In HTML5, data can be stored in two ways : session storage local storage
+
+1) Session Storage: The data or details from only the current browsing session of the user are stored. 
+Once the user closes the browser, the storage data gets removed automatically.
+
+2) Local Storage: The data stays safe and does not get cleared automatically when the user closes the browser. 
+The data instead needs to be deleted manually in order to remove it from storage.
+
+
+iframe and its disadvantages:
+-----------------------------
+The <iframe> tag is used to specify a browsing context that is nested, or, in other words, an inline frame. 
+The <iframe> tag allows outside documents to be inserted in the main HTML document with great ease. 
+A common example of usage of inline frames is in online advertising, where the contents of the iframe can be an ad from a third party.
+
+iframes introduce security risks. When an iframe is added to a page, the website becomes vulnerable to cross-site attacks.
+
+Misc notes:
+----------
+-  Search engines use the anchor tag to decide the subject matter of the destination URL.
+
+
+Heading:
+-------
+h1-h6
+
+
+Here is a list of page structure elements in HTML5:
+-----------------------------------------------------
+
+<header> - Used to define header for a document or a section
+<nav> - Used to define container for navigation links
+<section> - Used to define a section inside a document
+<article> - Used to tag an independent self-contained article
+<aside> - Defines the content separately (just like a sidebar)
+<footer> - Used for tagging a footer inside a document or a section
+<details> - Used to define any additional details
+<summary> - Used to define a heading inside the <details> element
+<figure> - This tag represents a piece of self-contained flow content. It is mostly used as a separate self-contained content 
+unit as a reference to the main flow of the document.
+
+
+HTML apis are:
+---------------
+Media API
+Data Transfer API
+Application Cache API
+User Interaction
+History API
+Constraint Validation API
+Command API
+Text Track API
+HTML Web Workers
+HTML Drag and Drop
+HTML Application Cache
+HTML Local Storage
+HTML Geolocation
+
+
+
+What are the different types of <!DOCTYPE> available in HTML5?
+--------------------------------------------------------------
+
+In HTML5, the Doctype declaration is only needed to enable a standard mode for documents 
+that are written with the HTML5 syntax. Hence, the Doctype for HTML5 is case insensitive and relatively simple.
+
+<!DOCTYPE html> ->  it instructs the web browser about the version and type of HTML being used in building the web document.
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" 
+"http://www.w3.org/TR/html4/strict.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Frameset//EN" "http://www.w3.org/TR/html4/frameset.dtd">
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+
+
+There are three types of DOCTYPES, as mentioned below:
+------------------------------------------------------
+Strict Doctype
+Frameset Doctype
+Transitional Doctype
+
+What must you be wary of when developing multilingual sites?
+--------------------------------------------------------------
+There are many aspects to pay attention to while designing a multilingual site. Basic things include setting the default 
+language, using Unicode encoding, being aware of standard font sizes and text direction, 
+using the ‘lang’ attribute, as well as being aware of language word length (which may affect layout).
+
+Lists:
+-------
+<ul>
+<li></li>
+<li></li>
+</ul>
+
+Link:
+-----
+<a href="/xyz"></a>

@@ -1,0 +1,143 @@
+Thread:
+-------
+- Set of instruction
+- It is a light weight subprocess, the smallest unit of processing.
+- It is required for responsiveness and perf.
+- The files, data(heap), code are shared. Stack and instruction pointer are specific to each thread.
+Stack -> Region in memeory where local variables are stored and passed to functions.
+Instruction pointer -> address of the next instruction to execute.
+- Thread is at OS level and JVM leverages the service given by OS
+
+Attributes of a thread:
+-----------------------
+ID: This attribute stores a unique identifier for each thread.
+Name: This attribute stores the name of the thread.
+If you don't specify a name for a thread, JVM automatically assigns it one in this format: Thread-XX, where XX is a number. 
+Priority: This attribute stores the priority of the Thread objects. In Java 9, threads can have priority between
+1 and 10, where 1 is the lowest priority and 10 is the highest. It's not recommended that you change the 
+priority of the threads. It's only a hint to the underlying 
+operating system and it doesn't guarantee anything, but it's a possibility that you can use if you want.
+Status: This attribute stores the status of a thread. In Java, a thread can be present in one of the six 
+states defined in the Thread.State enumeration: NEW, RUNNABLE, BLOCKED, WAITING, TIMED_WAITING, or TERMINATED. 
+
+Thread state:
+-------------
+New
+Runnable -> When start method called.
+Terminated
+
+Blocked -> waiting at entrace of sync block.
+Waiting -> parked using a wait call.
+Time_waiting -> slee(timeout) or wait(timeout)
+
+Thread t = ..
+Thread.State state = t.getState(); //Gives an enum
+
+NEW: The thread has been created and it has not yet started
+RUNNABLE: The thread is being executed in the JVM
+BLOCKED: The thread is blocked and it is waiting for a monitor
+WAITING: The thread is waiting for another thread
+TIMED_WAITING: The thread is waiting for another thread with a specified waiting time
+TERMINATED: The thread has finished its execution
+
+
+Features of multithreading:
+---------------------------
+- multithreading than multiprocessing because threads use a shared memory area
+- and context-switching between the threads takes less time than process.
+- Too many threads leads to Thrashing where processor spend more time in management than rela productive work.
+- Thread consume less resource than process. Context switch between threads in same process is cheaper than threads between process.
+
+Thread scheduling operation:
+----------------------------
+- OS divides times into epochs and schedules part of each thread in them.
+- Dynamic priority = static priority + bonus[Can be negative].
+bonus is adjusted by OS in every epoch for each thread.
+- OS give pref to intractive threads.It also gives preference to threads that did not complete
+int he last epochs or did not get enough time to run to prevent starvation.
+
+prefer multithread:
+- create and destroy thred faster
+- data is shared.
+- short context switches.
+
+Prefer multiprocess:
+- security and stability of higher importance.
+- Task are unrelated.
+
+
+Multitasking:
+--------------
+Multitasking is a process of executing multiple tasks simultaneously. 
+We use multitasking to utilize the CPU. Multitasking can be achieved in two ways:
+
+1) Process-based Multitasking (Multiprocessing):
+--------------------------------------------------
+Each process has an address in memory. In other words, each process allocates a separate memory area.
+A process is heavyweight.
+Cost of communication between the process is high.
+Switching from one process to another requires some time for saving and loading registers, memory maps, updating lists, etc.
+
+2) Thread-based Multitasking (Multithreading):
+-----------------------------------------------
+Threads share the same address space.
+A thread is lightweight.
+
+- A process can be made of multiple threads. OS can have multiple process.
+Only one thread can run in a process.
+
+
+
+
+Java thread methods:
+---------------------
+void	start()	It is used to start the execution of the thread.
+2)	void	run()	It is used to do an action for a thread.
+3)	static void	sleep()	It sleeps a thread for the specified amount of time.
+4)	static Thread	currentThread()	It returns a reference to the currently executing thread object.
+5)	void	join()	It waits for a thread to die.
+6)	int	getPriority()	It returns the priority of the thread.
+7)	void	setPriority()	It changes the priority of the thread.
+8)	String	getName()	It returns the name of the thread.
+9)	void	setName()	It changes the name of the thread.
+10)	long	getId()	It returns the id of the thread.
+11)	boolean	isAlive()	It tests if the thread is alive.
+12)	static void	yield()	It causes the currently executing thread object to pause and allow other threads to execute temporarily.
+13)	void	suspend()	It is used to suspend the thread.
+14)	void	resume()	It is used to resume the suspended thread.
+15)	void	stop()	It is used to stop the thread.
+16)	void	destroy()	It is used to destroy the thread group and all of its subgroups.
+17)	boolean	isDaemon()	It tests if the thread is a daemon thread.
+18)	void	setDaemon()	It marks the thread as daemon or user thread.
+19)	void	interrupt()	It interrupts the thread.
+20)	boolean	isinterrupted()	It tests whether the thread has been interrupted.
+21)	static boolean	interrupted()	It tests whether the current thread has been interrupted.
+22)	static int	activeCount()	It returns the number of active threads in the current thread's thread group.
+23)	void	checkAccess()	It determines if the currently running thread has permission to modify the thread.
+24)	static boolean	holdLock()	It returns true if and only if the current thread holds the monitor lock on the specified object.
+25)	static void	dumpStack()	It is used to print a stack trace of the current thread to the standard error stream.
+26)	StackTraceElement[]	getStackTrace()	It returns an array of stack trace elements representing the stack dump of the thread.
+27)	static int	enumerate()	It is used to copy every active thread's thread group and its subgroup into the specified array.
+28)	Thread.State	getState()	It is used to return the state of the thread.
+29)	ThreadGroup	getThreadGroup()	It is used to return the thread group to which this thread belongs
+30)	String	toString()	It is used to return a string representation of this thread, including the thread's name, priority, and thread group.
+31)	void	notify()	It is used to give the notification for only one thread which is waiting for a particular object.
+32)	void	notifyAll()	It is used to give the notification to all waiting threads of a particular object.
+33)	void	setContextClassLoader()	It sets the context ClassLoader for the Thread.
+34)	ClassLoader	getContextClassLoader()	It returns the context ClassLoader for the thread.
+35)	static Thread.UncaughtExceptionHandler	getDefaultUncaughtExceptionHandler()	It returns the default handler invoked when a thread abruptly terminates due to an uncaught exception.
+36)	static void	setDefaultUncaughtExceptionHandler()	It sets the default handler invoked when a thread abruptly terminates due to an uncaught exception.
+
+
+Race conditon:
+---------------
+Two diff threads are trying to read and write the same variable at the same time.
+
+
+Note:
+------
+- Join immediately releases the key
+
+
+Notes:
+------

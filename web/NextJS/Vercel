@@ -1,0 +1,34 @@
+Vercel / Netlify
+-----------------
+
+is a service that you can deploy 30+ Jamstack frameworks to. In my opinion, Next.js is the most popular amongst all 30.
+
+After working with Next.js, it was easy for me to get on board with deploying my first Next.js site to Vercel. Vercel has a free tier of service, which allows you to try it out without any risk. After my first deploy, I realized that Vercel is much more than just hosting. It has built-in CI/CD, environment variables, a global CDN (Edge Network), and more. These are all things I needed for apps I was building.
+
+
+
+
+Jamstack #
+Vercel is a service for hosting Jamstack sites. If you are anything like me, then you will need to know more about what Jamstack is.
+
+About #
+Jamstack is an architecture designed to make the web faster, more secure, and easier to scale. It builds on many of the tools and workflows which developers love, and which bring maximum productivity.
+
+The core principles of pre-rendering and decoupling enable sites and applications to be delivered with greater confidence and resilience than ever before.
+
+Want to learn more? Check out these links:
+
+https://jamstack.org/why-jamstack/
+https://jamstack.org/what-is-jamstack/
+
+
+Edge network (CDN) #
+One of the features of Jamstack applications is that many pages are created at build time. These can be stored on Content Delivery Networks (CDN). These CDN servers are usually placed throughout the world so that if your application gets requested from different places, the CDN server nearest to the request can serve your page to the client. Vercel calls their CDN the Edge Network.
+
+Also, Next.js has some pages that are not created at build time. Because these pages have to be created for every request, they do not get stored on the CDN.
+
+The goal of a CDN is to speed up applications.
+
+You can learn more about Vercel’s Edge Network here: https://vercel.com/docs/edge-network/overview
+
+

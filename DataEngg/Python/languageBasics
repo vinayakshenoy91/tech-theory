@@ -1,0 +1,186 @@
+https://docs.python.org/3/library/
+
+Variables:
+---------
+
+- cannot start with any other special characters other than _ 
+- Variable names cannot start with numbers
+- boolean -> True, False
+- Types: int , float, bool, str
+- str(1) -> String concatenation
+- int('1') -> String to int casting
+
+Misc:
+-----
+print(a,b)
+print(number, end=' ') -> print in smae line with tab
+print(number, end='x') -> print a character in place of space or tab while printing
+type(a) -> Get type of variable.
+x=input()  -> x=int(x) -> Taking input from console.
+
+Operators:
+----------
+% -> modulo
+/ -> division 
+// -> Floor division [Gives quotient but ignores decimal value and floors it]
+** -> Exponent 
+== -> Equal to
+!= -> Not equal
+Logical -> and, or, not
+
+Conditional statements:
+-----------------------
+1)
+if x>10:
+   a="10"
+else:
+   b=5
+
+2)
+if -> elif x==0: ->else
+
+
+Loops:
+-----
+1) For loop:
+for i in range(1000):
+for i in range(1,5):
+for i in range(1,10,2):
+for char in "hello":
+
+2) While loop: //only when you have a stopping criteria
+while grade != 'A':
+
+3) break
+
+4) continue
+
+5) pass is a null operation - when it is executed nothing happens. It tells program to disregard that condition and 
+to run the program as usual.
+
+
+Datatypes:
+----------
+1) List: Ordered collection with elements separated by comma and enclosed within square brackets.
+It can have mixture of data types.
+
+Last element index is -1.
+
+listname=[1,2,3]
+
+listname.append(4)
+listname.extend([5,6])
+listname.remove(2)
+del listname[3]
+listname[::2] -> slice list with step2
+listname[2:5:2] -> From 2-5 with step 2
+listname[::-1] -> reverse a list 
+len(listname)
+sorted(listname, reverse=True) -> reverse a list
+
+
+2) Tuple: ordered collection of element.It is immutable. Once created, you cannot change anything in tuple.
+
+my_tuple=('A','B','C')
+my_tuple.index('E');
+my_tuple.count('E');
+del my_tuple[0]
+
+3) Set:
+
+- unordered collection of elements
+- Has unique elements
+
+set ={1,'A','B'}
+
+set1.add('o');
+
+set1.discard('x') -> Does not throw exception if element not present
+set1.remove('x') -> Throws exception if element not present
+
+
+set1.intersection(set2)  and if you want set to be mutated with intersection result, then use set1.intersection_update(set2)
+set1.union(set2)
+
+isdisjoint
+issubset
+issuperset
+union
+
+set1.update(set2) //Combine 2 set
+
+4) Dictionary:
+- Key can be of any data type
+- unordered data structure.
+{x:1}
+
+del dict2['Ramesh']
+dictname.keys()
+dictname.items()
+dictname.update({'h':1,'y':2})
+OR
+dictname.update([('pincode':123),('name':'raj')])
+
+dict1==dict2 => comparing temp nums
+
+for key,value in mydict.items():
+   print(key,value)
+
+sorted(m_dict.items())
+
+Aggregate functions:
+--------------------
+sum(listname)
+
+
+Strings:
+========
+string="hello"
+len(x)
+x[0]
+x[::-1] -> reverse a string
+x.count('a')
+x.find('hello') //give index -> does not Return error if index not found, return -1
+x.index('hello') -> Return error if index not found
+x.startswith('a')
+x.endswith('a')
+x.upper()
+x.islower()
+x.isupper()
+x.isnumeric()
+x.isalpha()
+x.replace('x','y')
+x.split('');
+x.isalnum()
+
+
+Function:
+---------
+def area_circle(r=12):
+    area=3.14*r*r;
+    return area;
+
+
+math_functions(small_number=4,16) //Mapping the input value
+
+def function_name(*args): //This is a tuple -> type(x)
+    for i in args:
+      print(i)
+
+def function_name(**kwargs):
+   for key,value in kwargs.items():
+        print(key,value)
+
+name ="x"
+
+def my_function():
+    global name          //If you do not specify global here, it will create a new name variable within function whose scope is limited to that function
+    name="Variable outside function"
+    return name
+
+
+Lambda:
+------
+var = lambda a:a+20
+lambda a,b: a+b
+list(filter(lambda x: (x%5==0), original_list))

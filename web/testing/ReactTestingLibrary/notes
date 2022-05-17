@@ -1,0 +1,179 @@
+- Test the software the way users use.
+- Find elements by accessbiility markers and not test ids
+- RTL provides virtual DOM access
+- RTL creates virtual DOM and provides utilities to access the DOM
+
+Types of test:
+-------------
+- Unit
+- Integration test -> Multiple components
+- Functional testing - Behaviour. RTL encourages functional test
+Close to how users interact with software.Robust tests.
+- UAT/E2E -> use actual browser and server (Cypress, selenium)
+
+About RTL
+---------
+- render creates a virtual DOM
+- access virtual dom via screen global
+
+import {render, screen, waitFor, fireEvent } from '@testing-library/react';
+
+jest-dom -> DOM based  matchers, sec/setupTests.js it before each test makes matchers available.
+
+
+getByText -> non interactive element
+getByRole -> screen.getByRole('link',{name:'text'}) //Use roles over text
+
+
+Installation:
+--------------
+npm install --save-dev @testing-library/react
+npm install --save-dev @testing-library/user-event -> React Testing Library called user-event provides more advanced DOM event simulation.
+npm install --save-dev @testing-library/jest-dom
+OR
+Useful matcher functions for the DOM are contained in a jest-dom library. 
+These can be imported for use in any test file using the Jest setupFilesAfterEnv configuration setting.
+jest-setup.js -> import "@testing-library/jest-dom";
+
+Put in package.json:
+
+{
+  ...,
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/jest-setup.js"
+    ]
+  }
+}
+
+https://jestjs.io/docs/configuration
+
+Mocking css & images:
+---------------------
+{
+  ...,
+  "jest": {
+    ...,
+    "moduleNameMapper": {
+      "\\.(css|less)$": "<rootDir>/__mocks__/styleMock.js".
+       "\\.(jpg|jpeg|png|gif)$": "<rootDir>/__mocks__/fileMock.js" //Mocking images
+    }
+  }
+}
+styleMock.js
+module.exports = {};
+
+fileMock.js
+export default "test-file-stub";
+
+
+Methods:
+--------
+import { render, screen, fireEvent,userEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
+userEvent.click(saveButton);
+
+const div = screen.getByText("test");
+expect(div.textContent).toBe("test");
+expect(div).toBeInTheDocument();
+
+Debug:
+-----
+test("Should render correct message when message prop passed", () => {
+  const { container } = render(<ErrorMessage message="test" />);
+  screen.debug(container); OR screen.debug(container, 50);
+  ...
+});
+
+//Whole dom:
+screen.debug();
+
+RTL queries;
+-----------
+expect(screen.getAllByText("Loading ...")).toHaveLength(2);
+expect(await screen.getByText("Herman Vandervort")).toBeInTheDocument();
+
+getBy vs findBy
+The problem with the failing test is that getBy doesn’t wait or retry if the element isn’t found.
+Another variant called findBy does wait and retry the test if the element isn’t found. 
+
+The findBy function eventually returns the matched element if found within a certain amount of time. 
+If the timeout is exceeded before the element is found, an error is raised. An error is also raised if more 
+than a single element is found.
+
+Change the test to use the findBy variant so that it passes.
+
+expect(await screen.findByText("Herman Vandervort")).toBeInTheDocument();
+expect(
+  await screen.findByText("Herman Vandervort", undefined, {
+    timeout: 5000,
+  })
+).toBeInTheDocument();
+expect(
+    await screen.findAllByText("Herman Vandervort", undefined, {
+      timeout: 5000,
+    })
+  ).toHaveLength(2);
+
+the queryBy variant doesn’t raise an error if the element isn’t found. Instead, it returns null. 
+We can therefore use queryBy to check that elements don’t exist in the DOM.
+
+await screen.findByLabelText("First name");
+expect(await screen.findByLabelText("First name")).toHaveValue("Herman");
+expect(await screen.findByPlaceholderText("Enter first name")).toHaveValue(
+    "Herman"
+  );
+expect(await screen.findByDisplayValue("Herman")).toBeInTheDocument();
+
+<input
+    ...
+    data-testid="firstName"
+/>
+expect(await screen.findByTestId("firstName")).toHaveValue("Herman");
+
+For loading indicator, use: 
+----------------------------
+await screen.findByText("Herman Vandervort");
+expect(screen.queryByText("Loading ...")).not.toBeInTheDocument();
+
+Fetching images:
+----------------
+expect(screen.getByAltText("cross")).toBeInTheDocument();
+expect(screen.getByTitle("cross")).toBeInTheDocument();
+expect(screen.getByRole("img", { name: "cross" })).toBeInTheDocument();
+
+Firing events:
+--------------
+There is a fireEvent function in React Testing Library that can be used to simulate events.
+fireEvent(saveButton, new MouseEvent("click"));
+
+Using user-event: //Use this
+-----------------
+npm install --save-dev @testing-library/user-event
+import userEvent from "@testing-library/user-event";
+userEvent.click(saveButton);
+userEvent.type(screen.getByLabelText("Name"), "test");
+userEvent.selectOptions(screen.getByLabelText("Department"), "support");
+  userEvent.selectOptions(screen.getByLabelText("Department"), [
+    screen.getByText("Support"),
+    screen.getByText("Finance"),
+  ]);
+expect(await screen.findByText("Successfully saved")).toBeInTheDocument();
+
+File upload testing:
+--------------------
+const file = new File(["test"], "test.txt", { type: "plain/text" });
+Testing multiple files -> const files = [
+  new File(["test1"], "test1.txt", { type: "plain/text" }),
+  new File(["test2"], "test2.txt", { type: "plain/text" }),
+];
+userEvent.upload(screen.getByLabelText("Attachment"), file);
+
+Hovering on an element:
+-----------------------
+  userEvent.hover(screen.getByText("View"));
+
+  expect(await screen.findByText("Bill Peters")).toBeInTheDocument();
+
+  userEvent.unhover(screen.getByText("View"));
+  expect(screen.queryByText("Bill Peters")).not.toBeInTheDocument();

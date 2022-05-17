@@ -1,0 +1,19 @@
+- Easy interface for complicated system
+
+
+public class SortManager{
+
+ private Algorithm bubbleSort;
+ private Algorithm quickSort;
+
+ public SortManager(bubbleSort,quickSort){
+      this.bubbleSort=bubbleSort;
+      this.quickSort=quickSort;
+ }
+
+
+ public void doBubbleSort(){
+     this.bubbleSort=bubbleSort;
+ }
+
+}

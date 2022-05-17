@@ -1,0 +1,3 @@
+- Software entities( Class, modules, function, etc) should be open for extension and closed for modification.
+- Majorly used interface.--->> VVIP
+- For example of shape, implements various shapes from shape interface that has a method of paint.

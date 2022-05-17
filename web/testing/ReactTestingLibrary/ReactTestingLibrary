@@ -1,0 +1,112 @@
+Reference library:
+------------------
+- This given deep skeleton unlike shallow of enzyme
+- RTL focus on user interaction and enzyme focus on internals of react.
+- RTL encourages more integration tests than unit tests
+
+Imports:
+-------
+import React from 'react';
+import {render, screen, waitFor, fireEvent } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import App from '../App';
+import {mocked} from 'ts-jest/utils'
+
+
+
+jest.mock('./getUser');//Mocking api action
+const mockGetUser = mocked(getUser, true); //true is for deep mocking incase of nested functions
+
+describe ('', ()=>{
+     beforeEach(async ()=>{
+        render(<App/>); //Implicit assertion where we don't put any expect statement
+        await waitFor(()=>expect(mockGetUser).toHaveBeenCalled())
+     })
+
+    test('should ...', ()=>{
+      fetching:
+      ---------
+      screen.debug();
+      screen.getByText("Input:")//This should be enough, no expect needed
+      screen.getByLabelText("Input:");
+      screen.getByPlaceholderText("Input:");
+      screen.getAllByText(/Input/);
+      screen.getAllByRole(/Input/).length).toEqual(2);
+      screen.getByRole('textbox'); //Get by aria-label elements, some implict roles already attached to dom elements
+      const x = screen.queryByRole('xyz').toBeNull(); //When element iz not found, it will not throw an error
+
+      Assertion:
+      ----------
+      expect(screen.getByText("Input:")).toBeInTheDocument();//For text regex use:/put text here/
+      expect(value).toBeDefined();//Usually used for value ina  variable
+      expect(value).toEqual();//Usually used for value ina  variable
+      expect(await screen.findByText(`Username: ${name}`)).toBeInTheDocument();//Find by is used in async scenarios
+      expect(element.textContext).toBe('Hello');
+      expect(array).toHaveLength(7);
+      
+      DOM matchers:
+      -------------
+      toBeVisible()
+      toBeChecked()
+    })
+})
+
+//Mock tests
+describe('',()=>{
+     beforeEach(()=>{
+      mockGetUser.mockClear();
+     });
+
+    test('',()=>{
+        mockGetUser.mockImplementationOnce(()=> Promise.resolve({data}))
+        render(<App/>);
+        await waitFor(()=> expect(mockGetUser).toHaveBeenCalledTimes(1));
+    })
+})
+
+
+
+//User event is more accurate than fire event. Instead of fireEvent use below:
+-------------------------------------------------------------------------------
+
+describe('explain', async()=>{
+    const onChange = jest.fn();
+    render(<CustomInput onChange = {onChange} value={value}>Input</CustomInput>);
+    await userEvent.type(screen.getByRole('textbox'),'David');
+    expect(onChange).toHaveBeenCalledTimes(5);
+})
+
+
+Simulating user interaction using fire event: [Covers components testing]
+---------------------------------------------
+
+describe('description', ()=>{
+    test('', async()=>{
+         render(<App/>);
+         await waitFor(()=>expect(mockGetUser).toJHAveBeenCalled());
+         //Handle change event on text box
+         fireEvent.change(screen.getByRole('textbox'),{
+             target:{value:'David'},
+         })
+         expect(screen.getByText(/You typed: David/));
+    })
+})
+
+
+
+
+Mocking axios:-
+--------------
+jest.mock('axios');
+const mockedAxios = axios as jest.Mocked<typeof axios>;
+mockedAxios.get.mockResolvedValueOnce({data: {abilites}});
+render(<App/>)
+await userEvent.type(screen.getByRole('textbox'),'David');
+await userEvent.click(screen.getByRole('Button'));
+const returnedAbilities = await screen.findAllByRole('listitem');
+expect(returnedAbilities).toHaveLength(2);
+
+//error
+mockedAxios.get.mockRejectedValueOnce(new Error());
+const message = await screen.findByText(/Something went wrong/);
+expect(message).toBeInTheDocument();

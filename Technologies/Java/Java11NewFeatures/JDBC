@@ -1,0 +1,4 @@
+- Driver manger loads drivers
+- Driver provides implementations of JDBC interfaces.
+- These classes know how to talk to this specific database.
+

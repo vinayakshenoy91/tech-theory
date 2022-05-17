@@ -1,0 +1,28 @@
+Dependencies:
+-------------
+- Nanobuffer
+- body-parser
+- express
+- morgan
+
+
+type:module -> Make your code ES6
+
+requestAnimationFrame 
+----------------------
+- Provided by browser. When user unfocus, it pasuses the request to be sent to server.
+
+let timeToMakeNextRequest=0;
+async function rafTimer(time){
+    if(timeToMakeNextRequest <=time){
+        await getNewMsgs();
+        timeToMakeNextRequest=time+INTERVAL; //+failedTries*BACKOFF -> if failure and Backoff required
+    }
+    requestAnimationFrame(rafTimer);
+}
+
+requestAnimationFrame(rafTimer);
+
+
+Retry using exponential backoff:
+-------------------------------

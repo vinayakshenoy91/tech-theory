@@ -1,0 +1,38 @@
+- Separate construction of a complex object from its representation so that smae construction process
+can create different representation
+- Isolate the construction of a complex object from its representation.
+- Algo of creating a complex object should be independent of the parts that make up the object and 
+how they are assembled.
+- The construction process must allow different representations for the object that's constructed.
+- Person constructor is private and can be accessed from the Builder.
+- Note you can create diff builder like ChildBuilder and AdultBuilder
+
+Ex in JDK:
+----------
+- java.lang.StringBuilder#append() (unsync)
+- java.lang.StringBuffer#append()(sync)
+- All impl of java.lang.Appendable
+
+
+new Person.Builder("Hello").build();
+
+
+public static class Builder {
+  
+   private Person person;
+
+   public Builder(String name){
+      person = nwe Person();    
+      person.name=name;
+   }
+
+   public Builder setPlace(String place){
+       person.place=place;
+       return this;
+   }
+
+   public Person build(){
+       return person;
+   }
+
+}

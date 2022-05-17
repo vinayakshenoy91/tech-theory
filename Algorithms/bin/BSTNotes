@@ -1,0 +1,103 @@
+
+About tree: No cycles.
+-----------
+- Tree is acyclic undirected graph
+- Every node has one and only one parent.
+- Hierarchical relationship
+- Singleton tree has only one node in it
+- Connection between one node to another is called and Edge.
+- Path -> Starting from one node and reaching destination via multiple node.
+
+
+Binary tree:
+-----------
+- Every node has 0,1,2 children
+- Children are referred to as left child and right child.
+- In practise, we use binary search tree.
+- Complete tree: Every level except last level is completely filled. All childs should be towards left.
+- Full binary tree -> Every tree should have two children.
+- Binary tree is a family of DS (BST, Heap tree, AVL, red black trees, syntax tree)
+
+
+Binary search tree: [Work all action well in a sorted data]
+-------------------
+- Every node in the tree can have atmost 2 children -> left and right
+- Can perform insertions, deletions and retrievals in O(logn) time for average case and O(N) in worst case
+- Left child has less value than parent.
+- right child has larger value than its parent.
+- Everything to left of root is less and everything to right is more. So binary search possible.
+- Easy to find max value by going  to left or right,
+- When build tree keep it balanced as much as possible.
+
+Height of BST:
+--------------
+- Height of a tree is the number of edges on the longest downward path
+between root and leaf node.
+- It is the number of layers the tree contains.
+- h layer has 2^(h-1) nodes
+- h = O(logN)
+- If the tree is imbalanced so the h=longN relation is no more valid and then the operations running time
+is no more O(logN)
+
+Removing a node from BST:
+-------------------------
+1) Removing leaf node
+2) Removing node with a single child
+- Notify parent that left of right child has changed.
+3) Removing a node with two children
+- Successor -> smallest item in right subtree
+- Predecessor -> largest item in left subtree
+- So swap node with predecessor and remove the leaf node.
+
+Tree traversal:
+----------------
+- Visiting every node exactly once.
+
+1) Pre-order traversal:
+------------------------
+- root -> left subtree -> right subtree
+
+2) Post-order traversal
+-------------------------
+- left -> right -> root
+
+
+3) Inorder traversal: Get things in sorted order [It is a recursive approach]
+----------------------
+left-> root -> right
+
+
+
+
+
+
+JDK offering:
+-------------
+TreeMap<k,v> -> Red black tree based navigable map implementation
+For sync call,
+SortedMap m = Collection.synchroinizedSortedMap(new TreeMap());
+[Go through all the methods]
+
+TreeSet is an implementation based in tree map
+//When to use what DS
+
+Full binary tree -> each node has atleast two children or no children
+Perfect binary tree -> All non leaf node located at same depth has two children
+Complete binary tree -> all levels are filled except last level.
+Balanced binary tree -> all leaf nodes are located at same distance from root node.
+
+Binary tree with array:
+------------------------
+left child=2x
+right child=2x+1
+
+DFS:
+-----
+Preorder - root-> left -> right
+Inorder - Left -> root -> right
+Post order - Left -> right-> root
+
+
+BFS:
+-----
+Level order traversal

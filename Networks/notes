@@ -1,0 +1,53 @@
+Browser -> makes DNS query -> IP address of a machine
+
+Source ip in the http request will be used to send the response
+
+- 192.168.x.y -> private machine
+
+- Machine has 0 to 65535 ports
+0-1023 -> reserved as system ports
+
+22 -> secure shell
+53 -> DNS lookup
+80-> http
+443-> https
+
+
+DNS:
+----
+- Entities and protocols involved in the translation from domain names to ip addresses.
+
+IP:
+---
+- Internet protocol. How machine to machine comm should happen inthe world
+
+TCP:
+---
+- Network protocol built on top of IP
+- Allows for ordered, reliable data delivery between machines over the public Internet by creating a connection.
+- Implemented in kernel whihc exposes sockets to applications that they can use to stream data hrough an open connection
+
+HTTP:
+-----
+- Implemented on top of TCP
+Contains host, port , method , headers , body
+We have request-response pattern here and forget about underlying things,
+
+IP packet = ip header[Source address, dest address , other info related to network] + payload 
+They are only 2^16 bytes -> 0.66MB
+
+
+TCP packet =  ip header[Source address, dest address , other info related to network] + TCP header [Ordering] + payload 
+
+First interaction happens through TCP handshake and connection is established.
+If timeout or message sent from one of them that TCP connection is going to close/end.
+
+An HTTP header that does not relate to the content of the message is a response header. A request-header is used to provide information about requests or responses. The Entity-header field defines meta-information about the body. The general syntax for all the header fields is msg-header=field-name “:” [field-value]
+
+The General-header field is for both response and request.
+
+
+For passing additional information about the request we use request-header fields. These are also requested modifiers. There are several request-header fields like Accept-Encoding, Expect, Accept-Charset, Accept-Language, Form, Host, Authorization, If-Match, Proxy-Authorization, Range, User-Agent, TE, Referer, If-Unmodified-Since, If-Range.
+
+
+For passing additional information about the response that can’t be placed in Status-Line, we use response-header fields. Some of the fields are Age, Accept-Ranges, Location, ETag, WWW-Authenticate, Vary, Server, Retry-After.

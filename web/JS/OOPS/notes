@@ -1,0 +1,307 @@
+- {} -> This is a object literal syntax 
+- New will create an empty object, "this" will point to that object (Usually this points to window object) and finally return this.
+- Objects create using factory function (just return object, no new keyword) or using constructor function(use new and this)
+- Every object has a constructor property  and that references the function that was used to create an object.
+- When we create let x = {} -> this will be converted to let x = new Object();
+
+Inner working:
+
+const Circle1= new Function('radius',`
+this.radius=radius;
+this.draw=function(){}
+`);
+
+const circle = new Circle1(1);
+
+
+Call:
+-----
+Circle.call({}) //this in Circle function witll refer to empty object which is the first arg
+
+Circle.call({}, 1)  === new Circle(1);
+
+Apply:
+-----
+Circle.apply({},[1,2,3,4]);
+
+Value types:
+------------
+Number
+String
+Boolean
+Symbol
+undefined
+null
+
+Reference Types:
+----------------
+Object, Function, Array 
+
+
+delete circle['location']
+
+
+for(let key in object)  //Iterate thorugh object type
+
+
+typeof  circle[key] !== 'function'
+
+if('radius' in circle){
+
+}
+
+// Object.define  //Refering duration variable in prototype function
+function Circle(){
+    let duration , startTime=0;
+    Object.defineProperty(this, 'duration', {
+        get: function(){
+            return duration;
+        }
+        set:function(){
+            defaultLocation=value; //exposing setter
+        }
+    })
+}
+
+Inheritance:
+-------------
+- Classical
+- Prototypical -> Walking up the prototype chain to find the target member
+
+
+let objectBase = Object.getPrototypeOf(x);
+
+Object.getOwnPropertyDescriptor(objectBase,'toString');
+
+Object.defineProperty(person, 'name',{
+    configurable:false, //Name property cannot be deleted
+    writable:false, //Value cant be changed
+    enumerable:false, //Should not log it as part of keys
+});
+
+myArray -> arrayBase -> objectBase
+
+Object.prototype is same as Object.__proto__
+
+Array.prototype refers arraybase 
+
+
+Note:
+Object.keys() -> Return only prototype memebers
+for(let key in c1) -> Gets instance and prototype members
+
+c1.hasOwnProperty('radius');
+
+Avoid modifying built in objects
+
+Inheritance of circle from shape: (Do both the below steps always)
+----------------------------------
+Circle.prototype = Object.create(Shape.prototype); //Earlier it was Circle.prototype=Object.create(Object.prototype);
+Circle.prototype.constructor = Circle;
+
+Circle.prototype.x=function(){  //If you want to override a methoid from parent, do this after following above two steps
+ Shape.prototype.x.call(this); //Call the parent method also
+}
+
+Shape.call(this,color); //Call this while creating circle using  new incase if it is inherited.
+
+Mixins:  Achieve composition over inheritance
+--------
+Object.assign({},canEat,canWalk);
+Object.assign(Person.prototype,canEat,canWalk);
+
+
+HTML:
+-----
+new HTMLSelectElement([1,2,3]);
+new HtmlImageElement();
+
+Classes: Executed by default in strict mode
+---------
+
+class Circle{
+    constructor(radius){
+        this.radius=radius;
+        this.move= function(){};
+    }
+
+
+    static x(){
+
+    }
+}
+
+
+//Function declaration Hoisted
+function sayHello(){}
+
+//function expression- Not Hoisted
+const x = function(){}
+
+c.draw() -> method call
+draw() -> fucntion call. Htere this points to window object. Uisng 'use strict' makes this undefined.
+
+Impl private properties:
+-------------------------
+1) Using symbols:
+
+const _radius=Symbol();
+const _draw=Symbol();
+class Circle{
+    constructor(){
+        this[_radius]=radius;
+        super(color);
+    }
+
+    [_draw](){
+
+    }
+
+    get radius(){
+
+    }
+
+    set radius(x){
+        
+    }
+}
+
+c.radius -> since you used get radius
+
+Modules:
+-------
+- Import and export modules and reused when required
+- import {sum as total, cube}; export { sum as total, cube}; change the name to total
+- If while importing some modules are not used, then they are removed as part of tree shaking
+- module has hoisting
+- Default export means there will be one module per file.
+One function or class is exported.
+- Named exports are explicit whereas with default exports you decide the name.
+
+- In ES5 -> There was not concept of modules
+
+
+//Module formats are: ES5
+1) AMD -> Async module definition. Used in browser apps
+2) CommonJS -> used in node -> (Recommended for node)
+3) UMD -> Universal module defn -> Browser and Node
+
+//Module formats are: ES6 -> YOu have import and export statements
+ES6 modules -> Native JS module -> (Recommeded for Browser)
+
+When import export used with raw js -> 
+
+<script type="module">
+impport {calc} from './calc.js'
+calc();
+</script>
+
+
+-----
+
+this qn: Ans 10,2
+
+length = 10;
+function func() {
+	console.log(this.length);
+}
+
+var obj = {
+  length: 5,
+  thisFunc: function(func) {
+    func();
+    arguments[0]();
+  }
+};
+
+obj.thisFunc(func, 3);
+
+
+classical inheritance?
+ Instances inherit from class
+ Sub-class relationships are created
+
+
+ prototypal inheritance?
+
+ Inherit directly from other objects
+ Can be instantiated via Object.create
+ Instances can be composed of different objects
+
+
+ Inheritance in correct sense:
+ -----------------------------
+ function Human(name, age) {
+    this.name = name;
+    this.age = age;
+};
+
+function Man(name,age) {
+    Human.call(this, name, age);
+};
+
+Man.prototype = Object.create(Human.prototype);
+Man.prototype.constructor = Man;
+
+function check(){
+    var obj = new Man("Tommy Tan",20);
+    console.log(obj.name) 
+    console.log(obj instanceof Human) 
+}
+
+HOCs: Higher-Order functions accept functions as parameters or return a function as an output.
+-----
+SetTimeout, map , reduce.
+
+Currying:
+---------
+Currying transforms a function into a sequence of nesting functions. Basically, it converts a function from this:
+It involves taking a function with multiple arguments and returning a sequence of nested functions, each taking a single argument, 
+eventually resolving to a value.
+
+
+Curryign example:
+----------------
+function multiply(a, b, c) {
+    return a*b*c;
+}
+
+let curried = currying(multiply);
+curried(2)(3)(4) //24
+curried(2,3)(4) //24
+
+
+function currying(func) {
+   return (a,b,c)=>{ 
+       if(b===undefined){
+           return (b,c)=>{
+             if(c===undefined){
+                 return (c)=>{
+                     return a*b*c;
+                 }
+             }
+             return a*b*c;
+           }
+       }else{
+             if(c===undefined){
+                 return (c)=>{
+                     return a*b*c;
+                 }
+             }
+             return a*b*c;
+       }
+   }
+}
+
+function currying(func) {
+    function curriedfunc(...args) {
+        if(args.length >= func.length) {
+            return func(...args);
+        } else {
+            return function(...next) {
+                return curriedfunc(...args,...next);
+            }
+        }
+    }
+    return curriedfunc;
+}

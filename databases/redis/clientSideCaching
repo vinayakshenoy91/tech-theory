@@ -1,0 +1,33 @@
+What is client side caching #
+When the client requires data, they ask the Redis server to provide the data. Each back and forth from the server results in some bandwidth consumption, and it takes some time to get the result. It is possible to cache the result of the most frequently used keys on the client side. This drastically improves the performance of the application, as it does not need to send requests to the database
+
+Challenges in client side caching #
+The biggest challenge faced in caching the data on the client side is how to invalidate the data. Suppose we have cached some data on the client side, and it is changed on the server. The client will keep referring to the stale data present in its cache. There should be some mechanism to invalidate the data on the client’s cache if it is changed on the server. There are two mechanisms to deal for this situation:
+
+A TTL (time to live) can be set for each key that is cached on the client-side. After a certain time period has elapsed, the key will be automatically removed from the cache, and the client will need to refer to the database to get the value. Although this is a simple solution, it can only be used in those situations where the data is changed frequently. If the data is a few minutes old, then it does not matter. If the application is data sensitive and data is changing frequently, then this technique is not useful.
+Another method is to use the PUB/SUB model of Redis to send invalidate messages to the client. Whenever a key is changed. the server will send invalidate messages to the clients. This will inform the clients that the key has been changed, and it should be deleted from the cache. The problem with this approach is that the server will need to send the message to all clients every time a key is changed, which can be very costly from the bandwidth point of view.
+
+
+
+Client-Side caching in Redis #
+Redis provides support for client-side caching, called tracking. There are two different approaches that can be used:
+
+1) Default mode #
+In the first approach, the server stores the information regarding which key is stored by which client. By doing this, if a key is changed, the server sends the message to only those clients who have cached that key. Although this saves a lot of bandwidth, it consumes some memory on the server side. The client needs to enable the tracking as it is not enabled by default.
+
+Here are the steps for this approach:
+
+The client sends a read request to the server.
+The server checks if this client has enabled tracking. If yes, then the server maintains the record of the key that this client requested in a table called the Invalidation Table.
+When the key is changed or expires, the server sends the invalidate message to all clients that have requested this key.
+There is a limit to the number of records the table can maintain. If the table is full, the server deletes some mapping and sends an invalidation message to the clients.
+
+
+2) Broadcasting mode #
+In the second approach, the server does not need to keep track of the keys cached by the clients. The clients subscribe to key prefixes and will receive a notification message every time a key matching such prefix is touched. If the client does not specify any prefix, the invalidation message is received for each and every key. This approach saves a lot of memory on the server-side but can result in more bandwidth usage.
+
+Here are the steps to this approach:
+
+The client enables the broadcasting mode using the BCAST option.
+The server uses a Prefixes Table, where each prefix is associated with a list of clients.
+Every time a key matching any of the prefixes is modified, all clients subscribed to such prefix will receive the invalidation message.

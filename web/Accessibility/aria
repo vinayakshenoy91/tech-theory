@@ -1,0 +1,16 @@
+- Additive to html spec
+
+1) If you do not have label tag for certain element use:
+
+<div aria-label="Interactive div">Hello</div>
+
+2) What element does:
+
+<div aria-role="button">clickMe</div>
+
+
+Other aria:
+-----------
+aria-labelledby
+aria-describedBy
+aria-live="assertive"//polite(will announce then next idles), off -> UPdate something live

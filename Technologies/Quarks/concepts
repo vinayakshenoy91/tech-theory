@@ -1,0 +1,32 @@
+REPO: https://oreil.ly/zqbWB
+
+Quarkus is a full stack, Kubernetes-native Java framework made for Java virtual machines (JVMs) and native compilation, 
+optimizing Java specifically for containers and 
+enabling it to become an effective platform for serverless, cloud, and Kubernetes environments.
+
+It also provides the correct information to GraalVM (a universal virtual machine for running apps written in several 
+languages, 
+including Java and JavaScript) for a native compilation of your application.
+
+mvn io.quarkus:quarkus-maven-plugin:2.1.4.Final:create \
+  -DprojectGroupId=com.redhat.cloudnative \
+  -DprojectArtifactId=inventory-quarkus \
+  -DprojectVersion=1.0.0-SNAPSHOT \
+  -DclassName="com.redhat.cloudnative.InventoryResource" \
+  -Dextensions="quarkus-resteasy,quarkus-resteasy-jsonb,↳
+  quarkus-hibernate-orm-panache,quarkus-jdbc-h2"
+
+
+https://code.quarkus.io.
+
+
+Running in dev mode: quarkus:dev
+
+
+
+
+By extending PanacheEntity, we’re using the active record persistence pattern instead of a Data Access Obect (DAO). 
+This means that all persistence methods are blended with our own Entity
+
+- only one instance of the resource is created and not one per request. 
+You can configure this using the different Scoped annotations (ApplicationScoped, RequestScoped, etc).

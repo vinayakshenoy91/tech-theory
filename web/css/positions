@@ -1,0 +1,8 @@
+Absolute and relative:
+-----------------------
+img{
+    max-wifth:100%;
+    height:auto;
+}
+
+Make parent as relative.

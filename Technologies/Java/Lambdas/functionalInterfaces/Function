@@ -1,0 +1,25 @@
+- Used for transformations like doing some actions
+
+Function<String, String> = ()-> {}
+
+@FunctionalInterface 
+public interface Function<T,R> {
+     R apply(T t);
+}
+
+Function composition:
+
+Function<T,R> x = f1.andThen(f2); //It composes and provides back function
+
+Exmaple:
+-------
+Function<? super Integer,? super Integer> squareFunction=x-> x*x;
+
+Method references:
+------------------
+Function<String,String> stopwordRemover = Indexer::removeStopwords;
+doc= stopwordRemover.apply(doc) 
+type cane be:
+Classname::staticMethod
+ClassName::instanceMethod //Used in case of bi-fucntion
+objectRef::instanceMethod

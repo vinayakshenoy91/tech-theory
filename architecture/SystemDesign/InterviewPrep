@@ -1,0 +1,8 @@
+- Whether it is LLD or HLD
+- On what part of requirement/ functionality they are interested in.
+- Ask about NFR/scale - If small scale build it simple.
+  - Throughput, datasize.
+- Time your components well
+- Ask if it is going in right direction and other possbile questions.
+
+

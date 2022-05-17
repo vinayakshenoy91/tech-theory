@@ -1,0 +1,7 @@
+- N chess queens on NxN chessboard so no two queens threaten each other.
+- O(NxN) states that is O(N!) running time with brute force.
+- We can use backtracking and eliminate bad states but still result will be O(2^N)
+- If position of queen is not right, then you backtrack to that queen and then move the next queen.
+We have to step back to the previous column and increment the position of the queen there.
+You sometimes may have to backtrack to first position.
+If partial candidate A cannot be c

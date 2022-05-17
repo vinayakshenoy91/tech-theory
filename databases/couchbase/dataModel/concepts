@@ -1,0 +1,46 @@
+Good data model is one that plans for the present and anticipates the needs of the future to the best of 
+the user's ability. There is no wrong wya to model data.
+
+- Process of planning the document structure based on application object model and data access patterns.
+- Document and implement app data requirements
+- Understanding data semantics of an app
+- Representing data structures based on business reqt.
+- Exploring data oriented strcutures of the app.
+
+- SLA should dictate your needs
+- Anticipate access patterns
+- Doc size
+- Atomicity
+- Speed of access
+- Document complexity
+
+
+
+Phases:
+------
+1) Conceptual: Data entities and relationships
+2) Logical: Diagramming of domian objects and how they should be structured. Usually completed by architect or data modeler
+3) Physical: Draft JSON documents with Java Domain Object in mind.
+
+Placement of domain objects in documents:
+------------------------------- ----------
+1) Partially atomic -> Updates on one do not impact other.
+2) Fully atomic independent -> Updates do not affect anything.
+3) Fully atomic -> Updates must be done together.
+
+
+Keys : Natural or surrogate key
+
+- Embedded document: All related entities in one document.Reads outnumber writes, optimise for speed of access
+You are comfortable with the risk of inconsistent data across multiple copies.
+
+-  Referred documents: Contains partial or full ids of related entities. Data consistency is priority.
+Cache usage needs to be as efficient as possible. Embedded version may become complex and less managable.
+
+Relations:
+-----------
+1:1 Embedded or referred: Single join vs partial embedding
+1:many referred
+1:many Embedded : Mobile power preservation requires low traffic
+
+Single join vs partial embedding

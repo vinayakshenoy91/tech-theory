@@ -1,0 +1,91 @@
+Features:
+---------
+- Cloud based SMB or NFS file share.
+- Clients use port 445
+- Azure site to site VPN or express route in these scenarios
+- Supported in GPv1, GPv2, File storage accounts.
+- VMs can map/mount onto a file share and acessed via SMB(Server message block protocol).
+Thus you cannot access the files using the browser.
+- A quota of so many GBs has to be set for fileshare.
+- Create a fileshare and mount it on any VM using the connection string.
+
+
+
+
+Requirement:
+------------
+- Perforamnce
+- Sizing
+- Redundancy
+
+Azure file share options:
+-------------------------
+1) General  purpose v2:
+- 5 TB default. Upto 100TB upon request.
+- Perf tier standard
+- Hot, Cool, Txn optimised.
+- Replication : LRS,GRS, ZRS, GZRS
+
+2) General  purpose v1: [More of a legacy]
+- 5 TB default. Upto 100TB upon request.
+- Perf tier standard
+- Replication : LRS,GRS
+
+3) File storage:
+- 100TB default
+- premium
+- Replication : LRS,ZRS(small subset of regions)
+
+
+Steps to create AFS:
+---------------------
+1) Create storage account
+2) Select the connection string to connect from local client. Run powershell and paste connection code
+cd z:\ -> Change directory
+
+new-item -ItemType  File -Name "filename.html"
+
+Using azure cli:
+----------------
+az storage share create  --account-name "account-name" --account-key 'account-key' --name 'name' --quota sizeInGB
+az storage file upload --account-name "account-name" --account-key 'account-key' --share-name 'name' --source 'xyz.html' --path "webpages/webpage001.html"
+
+
+Access tiers:
+--------------
+- Hot
+- Cool
+- Txn optimised
+
+Auth:
+-----
+1) Approach 1:
+--------------
+- Using azure active directory domain svc
+- Provide identity based access for hybrid env.
+- Allows granular share-level and file-level permissions
+
+2) Approach 2: Using storage account keys or shared access signature:
+----------------------------------------------------------
+
+
+Azure file sync:
+---------------
+- On premise caching solution in windows server
+- Replicate data between on-premise DC and azure
+- Integrates with azure fs
+- Made up of 3 management components:
+  1) Cloud endpoint (azure fiel share)
+  2) Server endpoint
+  3) Sync group - Multiple server endpoint with one cloud endpoint
+- Deploying azure file sync:
+  1) Deploy the storage sync service
+  2) Create a sync group and cloud endpoint
+  3) Install the azure file sync agent on windows servers
+  4) Register your server with storage sync service
+  5) Create a server endpoint and wait for sync
+
+
+- Azure file sync -> create 
+
+

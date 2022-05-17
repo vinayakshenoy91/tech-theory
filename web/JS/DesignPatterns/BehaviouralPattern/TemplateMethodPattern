@@ -1,0 +1,8 @@
+- Algo composed into commona nd specific parts using inheritance.
+- Inheritors override those methods.
+
+Template method: Allows us to define the skeleton of the algorithm, with concrete implementations 
+defined in subclasses.
+
+https://tesco.udemy.com/course/design-patterns-javascript/learn/lecture/14402248#notes
+

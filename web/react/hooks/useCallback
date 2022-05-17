@@ -1,0 +1,22 @@
+- This is used for functions
+- This caches a function.Also cache(react's internal storage) an object
+- They will be referred from same place in the memory
+
+- For handler, use a function: 
+
+//Basically in the handler of a component created out of map. It will re-render everything if callback not used.
+ //It will bacially execute everyones handler. Along with callback, use React.memo on the component what is inside the map.
+
+Usage:
+------
+
+1)
+ useCallback(()=>{
+
+ },[]) //Empty array is used as all are closures. Any value required for closure should be passed via this.
+- When value in the array changes. We recreate that function and store it.
+
+
+2) const speakerDetail = React.memo(({})=>{}) //Returns cached version
+
+- Use react memo with useCallback as well

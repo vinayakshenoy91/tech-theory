@@ -1,0 +1,42 @@
+- final  variable means a constant
+
+- - final methods cannot be overriden. Use super.land()  to access super class methods and use super(param) incase of 
+constructor in subclass.
+
+- final on class means that class cannot be inherited
+
+
+CONSTRUCTORS AND FINAL FIELDS
+As you might recall from Chapter 7, final static variables must be assigned a value exactly once. You saw this happen in the line of the declaration and in a static initializer. Instance variables marked final follow similar rules. They can be assigned values in the line in which they are declared or in an instance initializer.
+
+
+public class MouseHouse {
+   private final int volume;
+   private final String name = "The Mouse House";
+   {
+      volume = 10;
+   }
+}
+Like other final variables, once the value is assigned, it cannot be changed. There is one more place they can be assigned a value—the constructor. The constructor is part of the initialization process, so it is allowed to assign final instance variables in it. For the exam, you need to know one important rule. By the time the constructor completes, all final instance variables must be assigned a value. Let’s try this out in an example:
+
+public class MouseHouse {
+   private final int volume;
+   private final String type;
+   public MouseHouse() {
+      this.volume = 10;
+      type = "happy";
+   }
+}
+In our MouseHouse implementation, the values for volume and type are assigned in the constructor. Remember that the this keyword is optional since the instance variables are part of the class declaration, and there are no constructor parameters with the same name.
+
+Unlike local final variables, which are not required to have a value unless they are actually used, final instance variables must be assigned a value. Default values are not used for these variables. If they are not assigned a value in the line where they are declared or in an instance initializer, then they must be assigned a value in the constructor declaration. 
+
+
+WHY MARK A METHOD AS FINAL?
+Although marking methods as final prevents them from being overridden, it does have advantages in practice. For example, you’d mark a method as final when you’re defining a parent class and want to guarantee certain behavior of a method in the parent class, regardless of which child is invoking the method.
+
+In the previous example with Bird, the author of the parent class may want to ensure the method hasFeathers() always returns true, regardless of the child class instance on which it is invoked. The author is confident that there is no example of a Bird in which feathers are not present.
+
+The reason methods are not commonly marked as final in practice, though, is that it may be difficult for the author of a parent class method to consider all of the possible ways her child class may be used. For example, although all adult birds have feathers, a baby chick doesn’t; therefore, if you have an instance of a Bird that is a chick, it would not have feathers. For this reason, the final modifier is often used when the author of the parent class wants to guarantee certain behavior at the cost of limiting polymorphism.
+
+

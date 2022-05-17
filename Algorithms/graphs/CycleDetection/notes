@@ -1,0 +1,10 @@
+- find cycles in directed G(V,E) graph.
+- We want to find cycles when we try to detect arbitrage opportunities on the FOREX
+- arbitrage trading involves the buying and selling of different currency pairs to exploit any
+pricing ineffeciencies.
+
+- To avoid cycles, OS uses resource allocation graph (RAG) to avoid any cycles.
+
+- Backward edges always indicates cycles.
+- Backwards edge (u,v) edge points from a node u to one of its v ancestors.
+- O(v+e) -> Time complexity with DFS

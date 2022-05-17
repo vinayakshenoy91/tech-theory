@@ -1,0 +1,71 @@
+Persistant strategy:
+---------------------
+1) RDB persistence(snapshotting):
+----------------------------------
+In RDB(Redis Database) persistence, snapshots of the data are stored in a disk in a dump.rdb file. The interval for snapshotting is defined in the configuration file. The default configuration present in the redis.conf file is:
+
+save 900 1
+save 300 10
+
+save 60 10000
+
+In the example above, the behavior will be to save data as follows:
+
+After 900 sec (15 min), if at least 1 key changed
+After 300 sec (5 min), if at least 10 keys changed
+After 60 sec, if at least 10000 keys changed
+If the load is too high and a lot of data is being stored, Redis will take a backup every minute. If the load is medium, the backup will be taken after every five minutes and so on.
+
+
+- A user can also save the data in an rdb file using the SAVE command. This command blocks the Redis server, so it should be avoided. 
+Instead, the BGSAVE command, which creates a child process for snapshotting, should be used.
+
+Disbaling snapshotting:
+Snapshotting can be disabled by deleting all save directives in the redis.conf file and then restarting the Redis server.
+
+Configuration options in RDB #
+There are a few directives available in the redis.conf file that help us configure how data is persisted.
+
+- rdbcompression: If the value of this directive is true, Redis uses LZF compression. By default, this value is true, but, if you want to save some CPU cycles in the child process, then you can make it false.
+- rdbchecksum: If the value of this directive is yes, a CRC64 checksum is placed at the end of the file. This makes the format more resistant to corruption, but there is a performance hit to pay (around 10%) when saving and loading RDB files, so you can disable it for maximum performance. RDB files created with checksum disabled have a checksum of zero, which will tell the loading code to skip the check.
+- stop-writes-on-bgsave-error: If this option is true, Redis will stop accepting writes if the latest background save failed. If the background saving process starts working again, Redis will automatically allow writes again. The default value is true. It is advised not to change it to false because if there are some issues in saving the data on the disk that the user must know about it.
+- dbfilename: This option is used to specify the .rdb filename. The default value is dump.rdb
+
+Performance impact of snapshotting #
+Redis creates a child process to write data to the disk. If some data is changed while the child process is 
+writing the data to the disk, the child process needs to make a copy of that data as well. This can be time-consuming, 
+and if the data set is large, it may force Redis to stop serving clients for anywhere between a millisecond to a second. 
+
+
+Note:
+-----
+The AOF method is far better in terms of performance.
+
+2) Append-only file (AOF) persistence #:
+------------------------------------------
+When AOF is enabled, every write operation received by the server is logged into a file. 
+When the Redis is restarted, all the commands in the AOF file are run again, and the entire dataset is created.
+After a while, this file can get really big, since it contains the entire history of every key. To tackle this problem, 
+Redis rewrites that file every once in a while to keep it as small as possible. 
+So, instead of storing the entire history of a key, it starts with the latest state of that key.
+
+Even though Redis sends the new command to be appended to the file, the OS usually keeps these commands in a buffer 
+and flushes that buffer every X number of seconds. This means that if there is a power failure while the commands 
+are in the buffer, you may lose some data. Redis forces a buffer flush every second so that you don’t lose anything. 
+We can also configure Redis to force flush on every single command, but that makes Redis’s responses per 
+command very slow.
+
+Configuration options in AOF #
+- appendonly: This directive is used to enable the AOF option in Redis. By default, the value is false. To enable AOF, change this valueto true and restart the server.
+
+- appendfilename: This specifies the AOF filename. The default value is appendonly.aof
+
+- appendfsync: There is an fsync() call in the operating system, that tells the OS to flush data from the buffer to the disk. The fsync may happen every second or every ten seconds. It is upto the OS. Redis can control this time through the appendfsync directive. It has three options:
+
+no: Let the OS decide when to flush.
+always: Flush on every write. This makes Redis slow, but it is the safest option.
+everysec- Flush every second.
+
+- no-appendfsync-on-rewrite: When the AOF fsync policy is set to always or everysec, and a background saving process is performing a lot of I/O against the disk, Redis may block the fsync() call for too long. If this option is true, fsync() will not be called in the main process while a BGSAVE or BGREWRITEAOF is in progress. This means, that while another child is saving, the durability of Redis is the same as appendfsync none.
+- auto-aof-rewrite-percentage: This directive specifies when an automatic rewrite of an AOF file should happen. If the value of this property is 20, Redis will automatically rewrite the log file by implicitly executing the BGREWRITEAOF command when the AOF size grows by 20 percent. The default value is 100.
+- auto-aof-rewrite-min-size: This is the minimum size for AOF to be rewritten. This prevents AOF rewrites until the specified minimum size is reached, even if the specified auto-aof-rewrite-percentage value is exceeded. The default value is 67,108,864 bytes

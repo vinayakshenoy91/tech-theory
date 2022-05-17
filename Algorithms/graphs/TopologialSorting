@@ -1,0 +1,30 @@
+- Topological ordering of a directed graph is a linear ordering of its vertices such that
+for every directed edge uv from vertex u to v , u comes before v in the ordering
+
+- Vertices represent task and edges may represent constraints that one task must be performed before another
+
+- Topological ordering is just a valid sequence of task
+
+- We can use topological ordering only if the graph has no directed cycles.(DAG)
+
+- Any DAG has atleast one topological order
+
+- Has linear time complexity
+
+- Hamiltonian path: It is a path in an undirected  or directed graph that visits each vertex exactly once.
+
+- If hamiltonian path exists, the topological sort order is unique, no other order respects the edges of the path.
+ Conversly, if a topological sort does not form a Hamiltonian path, the DAG will have two or more valid topological orderings.
+ 
+ - Finding hamiltonian path is NP complete problem, but we can decide whether such a path exist in linear time.
+ 
+ 
+- In topological sorting, we need to find a vertex with no incoming edges + keep repeating it over and over again.
+Going to tell us what order we need to do things.
+ 
+
+ Applications:
+ --------------
+ - Dependency management -> Maven, Ant
+ - At universities -> Constructing syllabus and curriculam.
+ 

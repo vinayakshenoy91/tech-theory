@@ -1,0 +1,63 @@
+-  Spring Cloud Stream provides a streaming abstraction over messaging, based on the publish and subscribe integration pattern. Spring Cloud Stream currently comes with built-in support for Apache Kafka and RabbitMQ. 
+- A number of separate projects exist that provide integration with other popular messaging systems. See https://github.com/spring-cloud?q=binder for more details.
+
+- Binder: A binder provides the actual integration with a specific messaging system, similar to what a 
+JDBC driver does for a specific type of database. 
+
+
+To implement a publisher, we only need to implement the java.util.function.Supplier functional interface as a 
+Spring Bean. For example, the following is a publisher that publishes messages as a String:
+
+@Bean
+public Supplier<String> myPublisher() {
+   return () -> new Date().toString();
+}
+
+
+A subscriber is implemented as a Spring Bean implementing the java.util.function.Consumer functional interface. 
+For example, the following is a subscriber that consumes messages as Strings:
+
+@Bean
+public Consumer<String> mySubscriber() {
+   return s -> System.out.println("ML RECEIVED: " + s);
+}
+
+
+
+It is also possible to define a Spring Bean that processes messages, meaning that it both consumes and publishes messages. This can be done by implementing the java.util.function.Function functional interface. For example, a Spring Bean that consumes incoming messages and publishes a new message after some processing (both messages are Strings in this example):
+
+@Bean
+public Function<String, String> myProcessor() {
+   return s -> "ML PROCESSED: " + s;
+}
+
+
+To make Spring Cloud Stream aware of these functions we need to declare them using the spring.cloud.function.definition configuration property. For example, for the three functions defined previously, this would look as follows:
+
+spring.cloud.function:
+  definition: myPublisher;myProcessor;mySubscriber
+
+
+Finally, we need to tell Spring Cloud Stream what destination to use for each function. To connect our three functions so that our processor consumes messages from our publisher and our subscriber consumes messages from the processor, we can supply the following configuration:
+
+spring.cloud.stream.bindings:
+  myPublisher-out-0:
+    destination: myProcessor-in
+  myProcessor-in-0:
+    destination: myProcessor-in
+  myProcessor-out-0:
+    destination: myProcessor-out
+  mySubscriber-in-0:
+    destination: myProcessor-out
+
+
+In cases where the Supplier should be triggered by an external event instead of using a timer, the StreamBridge helper class can be used. For example, if a message should be published to the processor when a REST API, sampleCreateAPI, is called, the code could look like the following:
+
+@Autowired
+private StreamBridge streamBridge;
+
+@PostMapping
+void sampleCreateAPI(@RequestBody String body) {
+  streamBridge.send("myProcessor-in-0", body);
+}
+

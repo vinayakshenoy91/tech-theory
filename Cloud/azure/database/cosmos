@@ -1,0 +1,81 @@
+Cosmos DB:
+----------
+- Fully managed nosql DB
+- Fast response time
+- HA and scalable.
+- Auto updates and patching
+- Use any api that you want, sql api, mongo api,Gremlin api( Graph DB), cassandra api, table api.
+
+How are the charges calculated?
+--------------------------------
+- Charged based on throughput and storage on an hourly basis.
+- Based on throughput, right amount of CPU,IOPS and memory willl be assigned.
+- Provision throughput at container level or DB level.
+- Cost to read 1kb os 1Request Unit(RU)
+
+About partition key:
+----------------------
+- Partition key is used to group the data effectively. Partition is more like indexing here.
+You can’t change the partition key for a container. Hence, ensure to create a new container , 
+copy the items to the new container and then delete the older container.
+
+Replication and failover:
+--------------------------
+- You can replicte data globally and have multi region read and write. 
+However, the data integratiy needs to be ensured. Also, failover is available from primary to secondary.
+- For failover , the secondary servers need to be in a separate region than the primary servers.
+
+Portal works:
+-------------
+- You can have multiple cosmos DB account for diff apis
+- Data explorer -> Container(new container) -> Allocate all details -> Do full screen and add items in the container.
+- Default consistency -> set consistency.
+
+
+Commands:
+----------
+select * from c.orders;
+SELECT o.Orderid, o.Course FROM o IN Course.Orders where o.Course='DP-900'
+
+
+
+Consistency:
+------------
+1) Strong consistency -> Get consistency byt lose perf
+2) Eventual consistency -> Win on perf but lose on consistency.
+3) Bounded staleness -> Here reads can lag behind the writes by atmost "K" versions of an item
+or by "T" time intervals.
+4) Session -> Reads can be guranteed for same session.
+5) consistent prefix -> There is a delay in the reads of the most recent data but you will never see
+out of order writes.
+
+Graph query commands using gremlin api:
+---------------------------------------
+Lab - Azure Cosmos DB - Graph API - Resources
+The following can be used as a reference for the previous chapter
+
+1. Adding the vertices
+
+g.addV('person').property('id','emp01').property('name','UserA').property('city','Chicago')
+
+g.addV('person').property('id','emp02').property('name','UserB').property('city','Chicago')
+
+g.addV('person').property('id','emp03').property('name','UserC').property('city','New York')
+
+g.addV('department').property('id','DepartmentA').property('city','Chicago')
+
+g.addV('department').property('id','DepartmentB').property('city','Chicago')
+
+
+
+2.  Adding the edges
+
+g.V('emp01').addE('Manages').to(g.V('emp02'))
+
+g.V('emp01').addE('Manages').to(g.V('emp03'))
+
+g.V('emp02').addE('In').to(g.V('DepartmentA'))
+
+g.V('emp03').addE('In').to(g.V('DepartmentB'))
+
+

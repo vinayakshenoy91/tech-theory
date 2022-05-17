@@ -1,0 +1,84 @@
+"use strict"
+var obj1 = {};
+Object.defineProperty(obj1, 'x', { value: 42, writable: false });
+obj1.x = 9;
+
+Object.freeze():
+-------------------     
+One way is to freeze an object using the Object.freeze() method. 
+It prevents the existing properties from getting modified when all properties and methods become read-only.
+
+Object.seal():
+-------------
+we can seal the object using the Object.seal() method. It prevents the addition and deletion of properties. 
+However, it does not stop properties from getting modified; that is done by Object.freeze().
+
+'use strict'
+
+Object.defineProperty(person,'age',{
+value:28,
+writable:false,
+enumerable:true,
+configurable:false
+})
+
+
+
+Object.freeze(obj); //Freeze properties of object and not like const whioch only looks at first level
+
+
+Object.assign():
+---------------
+Object.assign({}, copyObj);
+OR
+const func = (key, value, object) => ({
+  ...object,
+  [key] : value
+});
+
+OR
+
+{...girl,info:{...girl.info}} //This is for nested objects.
+
+OR
+
+//Deep cloning
+const newGirl = JSON.parse(JSON.stringify(girl));
+
+JSON.stringify() converts the girl object into a JSON string. 
+Next, JSON.parse() takes the JSON string and returns an object that contains the parsed JSON.
+
+A downside to this approach is that you won’t be able to use this on functions as they have no equivalent in the JSON format. 
+Similarly, any property with an undefined value will be ignored by JSON.stringify().
+
+In order to avoid this issue, you can use reliable libraries that provide functions that deep clone objects. 
+An example is the lodash library that provides the cloneDeep function for this purpose.
+
+
+Object.create:
+---------------
+
+//Check is prtotype of
+function isPrototype(){
+  var obj1 = {x: 1};
+  var obj2 = Object.create(obj1)
+  console.log(
+	obj1.isPrototypeOf(obj2)       
+);
+} 
+isPrototype()
+Object.create takes an object as a parameter (obj1 in our case) and returns an object whose prototype property points to this object (obj1).
+
+obj2-> obj1->{}->null
+
+
+*** Remember this function prototype thing:
+
+function Cat (name) {
+  this.name = name
+}
+Cat.prototype.meow = function () {
+  console.log(this.name + ' says meow')
+}
+
+

@@ -1,0 +1,172 @@
+In es5 we have: 
+const person = {
+  name: "Alberto",
+  greet: function(){
+    console.log("Hello");
+  },
+}
+
+and in Es6:
+  const person = {
+    name: "Alberto",
+    greet(){
+      console.log("Hello");
+    },
+  }
+
+and create objects like this:
+const person = {
+  name,
+  surname,
+  age,
+  nationality,
+}
+
+and modify properties like:
+
+const name = "myname";
+const person = {
+  [name]:"Alberto",
+};
+console.log(person.myname);
+// Alberto  
+
+
+Object literals created using:
+-------------------------------
+An object literal can be created:
+
+using the figure brackets {...} in the declaration.
+
+using the new keyword.
+
+based on an existing object by using the create() method.
+
+Implementing get keyword:
+-------------------------
+var employee = {
+  
+  name: 'Joe',
+  age: 28,
+  designation: 'developer',
+  //function returning designation of the employee
+  get display() {
+    return this.designation //using this to refer to the "employee" object
+  }
+}
+//this will display the designation
+console.log(employee.display)
+
+set keyword:
+-------------
+var employee = {
+  
+  name: 'Joe',
+  age: 28,
+  designation: 'developer',
+  //function setting designation of the employee
+  set setDesignation(desig) {
+    this.designation = desig //using this to refer to the "employee" object
+  }
+}
+console.log("designation originally is:",employee.designation)
+employee.setDesignation = 'engineer'
+console.log("new designation is:",employee.designation)
+
+- The delete operator has no effect on an object’s function property.
+
+constructor:
+------------
+function Employee(_name,_age,_designation) {
+   this.name = _name,
+   this.age = _age,
+   this.designation = _designation,
+  //function to display name of the Employee
+  this.displayName = function() {
+    console.log("Name is:", this.name)
+  }
+}
+
+
+Prototype:
+----------
+_proto_:
+This is known as the [[Prototype]] property of that object. 
+It is a hidden property that is present inside every object created from a constructor function.
+
+Any object instance created from a constructor function has a hidden property.
+
+This hidden property is called the [[Prototype]] property of the object.
+
+Just like objects whenever a constructor function is initialized, it also gets a [[Prototype]] property assigned to it.
+
+The [[Prototype]] property of a constructor function is an object itself containing further properties hence,
+ it is also known as a Prototype Object.
+
+At this point, you should know that the [[Prototype]] property of an object instance, employeeObj in our case, 
+always points to the Prototype Object of the 
+constructor function from which it was created, EmployeeConstructor in our case.
+
+The prototype property in Prototype Object points to null
+
+//accessing the prototype property of "Employee"
+EmployeeConstructor.prototype
+
+
+The Prototype Object for EmployeeConstructor consists of two further properties:
+
+- The constructor which points back to the EmployeeConstructor constructor function.
+- The __proto__ 
+
+
+ConstructorFunctionName.prototype.constructor
+ConstructorFunctionName.prototype.PropertyName = PropertyValue
+
+
+
+Protect properties inside the object: [Privacuy of the properites]
+-------------------------------------
+
+//constructor function called Employee
+function Employee(name, age, designation){
+  var _name = name
+  var _age = age
+  var _designation = designation
+  //defining the get function
+  this.getName = function() {
+    return _name
+  }
+  this.getDesignation = function() {
+    return _designation
+  }
+  //defining the set function
+  this.setDesignation = function(desig) {
+    _designation = desig
+  }
+}
+var employeeObj = new Employee('Joe',20,'Chef')
+//calling the getName function
+console.log("Name of the employee is:", employeeObj.getName())
+//calling the setDesignation function
+employeeObj.setDesignation('Developer')
+//calling the getDesignation function
+console.log("New designation is:",employeeObj.getDesignation())
+
+- All the objects created from a constructor function contain all the properties in it
+
+
+Object.prototype always points to another object or null.
+
+
+- The __proto__ property is used as a setter/getter for the [[Prototype]] property.
+
+
+
+
+//Below one is a object literal
+var Person = {
+ name :"Amy",
+ age:28
+}
+
+Teacher.__proto__ = Person //Setting prototype of object literal

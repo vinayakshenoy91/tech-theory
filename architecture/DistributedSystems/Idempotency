@@ -1,0 +1,3 @@
+POST is idempotent
+PUT and DELETE are not idempotent
+

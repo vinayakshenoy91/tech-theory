@@ -1,0 +1,59 @@
+- Unordered  and no repeated values and are ADT
+- Set<Person> madMen = new HashSet<Person>();
+- HashSet and linked hashset uses arrays and hash functions under the hood and load factor needs to be considered.
+- Worst case running time for HashSet and linked hashset is O(logN) and they can store null keys
+
+
+Sets implemented using:
+-----------------------
+HashSet - 1D array and hash fn
+LinkedHashSet - 1D array and hash fn
+TreeSet - Red black tree impl
+
+
+HashSet:
+-------
+- 1D array and hash fn
+- Deal with scalar values
+- hashCode function transforms the input into an array index.
+
+//initial capacity is 16
+Set<String> set = new HashSet<>();
+set.add("x");
+set.remove("x");
+
+set1.retainAll(set2);
+set1.containsAll(set2);
+set1.removeAll(set2);
+
+Note: When collision the complexity comes to O(logn), it is stored in red-black tree(Balanced BST) [Earlier it was linked list]
+
+LinkedHashSet: 
+-------------
+- Cannot store null keys
+- Maintains the insertion order
+- doubly linked list connecting the items inorde to maintain order
+- It needs more memory than hashsets
+
+Set<String> set = new LinkedHashSet<>();
+
+
+TreeSet:  Memory friendly
+--------
+- Uses balanced binary search tree. No collision but running time is O(logN) + maintains order
+- Sorted DS -> this is done using red black tree.
+- It is not sync and underlying is red black tree that gives log time complexity for all ops
+
+first() -> Get smallest item
+last() -> last item
+
+Set<Integer> set = new TreeSet<>(Comparator.reverseOrder());
+set.add(12);
+set.add(4);
+
+//Creating subset
+//O(logN)
+SortedSet<Integer> set = new TreeSet<>();
+Set<Integer> subSet = set.subSet(1,5); -> Falling in this range, remember, these are not index but range of values
+Set<Integer> subSet = set.tailSet(5); //All values greater than 5 
+Set<Integer> subSet = set.headSet(5); //value smaller than 5

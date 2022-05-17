@@ -1,0 +1,12 @@
+There are some of the capabilities expected of a service registry:
+
+Resource registration: Refers to the ability to register a service/API endpoint in the service registry by calling a registry's management REST API.
+Resource discovery: Refers to the ability to dynamically discover what services are registered in the registry, including their status and active endpoints. This capability is critical to implementing application-based client load balancing.
+K/V storage: A key-value store is collections of arbitrary name/value pairs (entries) that can be accessed at runtime by API proxies or load balancers.
+K/V replication: The ability to replicate the key-value store across different instances of a service registry. This is specifically important not just for highly available deployments, but also deployments whereby service endpoints exist in multiple geographies and thus a registry must be deployed in multiple data centers.
+Resource health-check: The ability to allow services to provide continuous status checks and the ability for service consumers to query the status of services and their endpoints.
+Secret vault: The capability to securely store and access secrets. A secret is anything that requires tightly controlled access, such as API keys, passwords, and certificates, among others. The vault provides a unified interface to any secret, while providing tight access control and recording a detailed audit log. Note that a secret vault can be (and typically is) considered a capability in its own right.
+Service registries have become very common as a fundamental and internal component of modern infrastructures. For example, Apache Kafka uses Apache Zookeeper as its internal registry. Kubernetes makes use of ETCD as its internal registry.
+There are many popular open source registries (such as the ones earlier mentioned) and commercial options too, such as HashiCorp's Consul.
+
+

@@ -1,0 +1,16 @@
+- Special type of binary tree.
+- A complete binray tree.
+- Max heap: Every parent is greater than children
+- Min heap: Every parent is less than or equal to its children.
+- Min and max value will always be in the root -> USP of heap
+- Heapify -> Process to convert binary tree into heap.
+
+
+- Read priority queue docs
+
+- UsePriorityBlockingQueue for sync as priority queue is not sync.
+- Priority queue stores minimum at the top
+
+
+- You can pass a comparator. As long as it has comparable interface, pq will work.
+

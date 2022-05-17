@@ -1,0 +1,167 @@
+Numeric Promotion and Casting
+Last but not least, switch statements support numeric promotion that does not require an explicit cast. For example, see if you can understand why only two of these case statements compile:
+
+short size = 4;
+final int small = 15;
+final int big = 1_000_000;
+switch(size) {
+   case small:
+   case 1+2 :
+   case big:  // DOES NOT COMPILE
+}
+As you may recall from our discussion of numeric promotion and casting in Chapter 3, the compiler can easily cast small from int to short at compile-time because the value 15 is small enough to fit inside a short. This would not be permitted if small was not a compile-time constant. Likewise, it can convert the expression 1+2 from int to short at compile-time. On the other hand, 1_000_000 is too large to fit inside of short without an explicit cast, so the last case statement does not compile.
+
+
+-----------
+
+
+We now present a large switch statement, not unlike what you could see on the exam, with numerous broken case statements. See if you can figure out why certain case statements compile and others do not.
+
+private int getSortOrder(String firstName, final String lastName) {
+   String middleName = "Patricia";
+   final String suffix = "JR";
+   int id = 0;
+   switch(firstName) {
+      case "Test":
+         return 52;
+      case middleName:  // DOES NOT COMPILE
+         id = 5;
+         break;
+      case suffix:
+         id = 0;
+         break;
+      case lastName:    // DOES NOT COMPILE
+         id = 8;
+         break;
+      case 5:           // DOES NOT COMPILE
+         id = 7;
+         break;
+      case 'J':         // DOES NOT COMPILE
+         id = 10;
+         break;
+      case java.time.DayOfWeek.SUNDAY:  // DOES NOT COMPILE
+         id=15;
+         break;
+   }
+   return id;
+}
+The first case statement, "Test", compiles without issue since it is a String literal and is a good example of how a return statement, like a break statement, can be used to exit the switch statement early. The second case statement does not compile because middleName is not a constant value, despite having a known value at this particular line of execution. If a final modifier was added to the declaration of middleName, this case statement would have compiled. The third case statement compiles without issue because suffix is a final constant variable.
+
+In the fourth case statement, despite lastName being final, it is not constant as it is passed to the function; therefore, this line does not compile as well. Finally, the last three case statements do not compile because none of them has a matching type of String, the last one being an enum value.
+
+Break statement':
+------------------
+THE BREAK STATEMENT
+As you saw when working with switch statements, a break statement transfers the flow of control out to the enclosing statement. The same holds true for a break statement that appears inside of a while, do/while, or for loop, as it will end the loop early, as shown in Figure 4.8.
+
+The figure shows the structure of a break statement.
+FIGURE 4.8 The structure of a break statement
+
+Notice in Figure 4.8 that the break statement can take an optional label parameter. Without a label parameter, the break statement will terminate the nearest inner loop it is currently in the process of executing. The optional label parameter allows us to break out of a higher-level outer loop. In the following example, we search for the first (x,y) array index position of a number within an unsorted two-dimensional array:
+
+
+public class FindInMatrix {
+   public static void main(String[] args) {
+      int[][] list = {{1,13},{5,2},{2,2}};
+      int searchValue = 2;
+      int positionX = -1;
+      int positionY = -1;
+ 
+      PARENT_LOOP: for(int i=0; i<list.length; i++) {
+         for(int j=0; j<list[i].length; j++) {
+            if(list[i][j]==searchValue) {
+               positionX = i;
+               positionY = j;
+               break PARENT_LOOP;
+            }
+         }
+      }
+      if(positionX==-1 || positionY==-1) {
+         System.out.println("Value "+searchValue+" not found");
+      } else {
+         System.out.println("Value "+searchValue+" found at: " +
+            "("+positionX+","+positionY+")");
+      }
+   }
+}
+When executed, this code will output the following:
+
+Value 2 found at: (1,1)
+In particular, take a look at the statement break PARENT_LOOP. This statement will break out of the entire loop structure as soon as the first matching value is found. Now, imagine what would happen if we replaced the body of the inner loop with the following:
+
+            if(list[i][j]==searchValue) {
+               positionX = i;
+               positionY = j;
+               break;
+            }
+How would this change our flow, and would the output change? Instead of exiting when the first matching value is found, the program will now only exit the inner loop when the condition is met. In other words, the structure will now find the first matching value of the last inner loop to contain the value, resulting in the following output:
+
+Value 2 found at: (2,0)
+Finally, what if we removed the break altogether?
+
+            if(list[i][j]==searchValue) {
+               positionX = i;
+               positionY = j;
+            }
+In this case, the code will search for the last value in the entire structure that has the matching value. The output will look like this:
+
+Value 2 found at: (2,1)
+You can see from this example that using a label on a break statement in a nested loop, or not using the break statement at all, can cause the loop structure to behave quite differently.
+
+
+THE CONTINUE STATEMENT
+Let’s now extend our discussion of advanced loop control with the continue statement, a statement that causes flow to finish the execution of the current loop, as shown in Figure 4.9.
+
+The figure shows the structure of a continue statement.
+FIGURE 4.9 The structure of a continue statement
+
+You may notice the syntax of the continue statement mirrors that of the break statement. In fact, the statements are identical in how they are used, but with different results. While the break statement transfers control to the enclosing statement, the continue statement transfers control to the boolean expression that determines if the loop should continue. In other words, it ends the current iteration of the loop. Also, like the break statement, the continue statement is applied to the nearest inner loop under execution using optional label statements to override this behavior.
+
+Let’s take a look at an example. Imagine we have a zookeeper who is supposed to clean the first leopard in each of four stables but skip stable b entirely.
+
+1: public class CleaningSchedule {
+2:    public static void main(String[] args) {
+3:       CLEANING: for(char stables = 'a'; stables<='d'; stables++) {
+4:          for(int leopard = 1; leopard<4; leopard++) {
+5:             if(stables=='b' || leopard==2) {
+6:                continue CLEANING;
+7:             }
+8:             System.out.println("Cleaning: "+stables+","+leopard);
+9: } } } }
+With the structure as defined, the loop will return control to the parent loop any time the first value is b or the second value is 2. On the first, third, and fourth executions of the outer loop, the inner loop prints a statement exactly once and then exits on the next inner loop when leopard is 2. On the second execution of the outer loop, the inner loop immediately exits without printing anything since b is encountered right away. The following is printed:
+
+Cleaning: a,1
+Cleaning: c,1
+Cleaning: d,1
+Now, imagine we removed the CLEANING label in the continue statement so that control is returned to the inner loop instead of the outer. Line 6 becomes the following:
+
+6:                continue;
+This corresponds to the zookeeper skipping all leopards except those labeled 2 or in stable b. The output would then be the following:
+
+Cleaning: a,1
+Cleaning: a,3
+Cleaning: c,1
+Cleaning: c,3
+Cleaning: d,1
+Cleaning: d,3
+Finally, if we remove the continue statement and associated if statement altogether by removing lines 5–7, we arrive at a structure that outputs all the values, such as this:
+
+Cleaning: a,1
+Cleaning: a,2
+Cleaning: a,3
+Cleaning: b,1
+Cleaning: b,2
+Cleaning: b,3
+Cleaning: c,1
+Cleaning: c,2
+Cleaning: c,3
+Cleaning: d,1
+Cleaning: d,2
+Cleaning: d,3
+
+
+
+- Switch does not allow continue statement.
+
+
+

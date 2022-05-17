@@ -1,0 +1,12 @@
+function debounce(fn, time){
+    let setTimeoutId;
+    return function(){
+        if(setTimeoutId){
+            clearTimeout(setTimeoutId);  //return; incase of throttle
+        }
+        setTimeoutId=setTimeout(()=>{
+             fn.apply(this, arguments);
+             setTimeoutId=null;
+        }, time)
+    }
+}

@@ -1,0 +1,38 @@
+Pull
+
+This means pulling the code from a specific branch in a code repository, which could be a source control system, such as Git (for example, GitHub, Gitlab, or Bitbucket), or even older repositories such as Subversion (SVN) and Concurrent Versions System (CVS).
+
+Inspect
+
+This means inspecting the code and its dependencies in search of potential errors and/or vulnerabilities. This can be done with tools such as Sonarqube (sonarqube.org), Coverity (scan.coverity.com), or Fortify (microfocus.com).
+
+Build and package
+
+This involves compiling and packaging the code, along with its dependencies, into a release package, tagged with its respective version. For example, in the case of Java, this typically involves using tools such as Maven (maven.apache.org) or Gradle (gradle.org) to generate .jar files.
+
+This task also involves the publishing of a generated released artifact into a repository manager such as Nexus (sonatype.com/nexus-repository-oss) and/or Artifactory (jfrog.com/artifactory), along with generating and tagging Docker containers and pushing them into a container registry (for example, hub.docker.com or internal ones).
+
+
+
+
+Quality assurance (QA)
+
+This consists of deploying the released artifacts into a QA environment with the objective of conducting a series of tests, such as:
+
+Interface testing: This is verifying that an interface matches its interface definition. For example, in the case of REST APIs, this can be done with tools such as Dredd (dredd.org) and Swagger Inspector (inspector.swagger.io).
+Note that in the case of GraphQL and gRPC, this step is not typically required as their IDL is closely coupled with the service implementation. However, in the future, as API-design tools emerge for these architectural styles, new tools may arise that conduct such tasks.
+Functional testing: This is completed by making a series of pre-defined API calls to verify that the API behaves as expected. This can be done using tools such as Postman (getpostman.com), API Fortress (apifortress.com), or ReadyAPI (smartbear.com/product/ready-api/overview).
+
+Note that although the above tools are better suited for REST, they could potentially also be used for GraphQL by testing different HTTP POST calls with the previously generated payloads. Alternatively, tools such as the apollo-server- testing package could be used (apollographql.com/docs/apollo-server/features/testing). For gRPC, refer to the following URL for tools: https://github.com/grpc-ecosystem/awesome-grpc.
+
+Performance testing: 
+
+
+This is carried out by simulating a large number of concurrent calls to ensure that the API can handle the expected throughput. In the case of REST and GraphQL, tools such as Apache benchmark (httpd.apache.org/docs/2.4/programs/ab.html), Fortio (github.com/fortio/fortio), and JMeter (jmeter.apache.org) can be used to simulate a large number of HTTP 1.1 calls. For gRPC, as long as the tools support HTTP/2 then, in theory, they too could be used (for example, Fortio supports HTTP/2 and gRPC). However, for more tools, refer to https://github.com/grpc-ecosystem/awesome-grpc.
+
+
+Security testing: 
+
+This is typically a complex task as it involves testing an interface against common threads, such as the ones defined in the OWASP Top 10 project (www.owasp.org/index.php/Category:OWASP_Top_Ten_Project). The tools to be used for this type of testing heavily depend on the API architectural style and what type of vulnerability tests are executed. In many cases, it requires custom scripts and the use of frameworks such as Metasploit (metasploit.com).
+
+

@@ -1,0 +1,6 @@
+- Subtype should have super type property so that subsitition while assignment does not break
+Or replace with specific obj does not change.
+
+- Type S must fulfill all the properties that the program requires of T.
+
+

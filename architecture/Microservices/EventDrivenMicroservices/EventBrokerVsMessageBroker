@@ -1,0 +1,41 @@
+Message brokers have a long history and have been used in large-scale message-oriented middleware architectures 
+by numerous organizations. Message brokers enable systems to communicate across a network through publish/subscribe message queues. Producers write messages to a queue, while a consumer consumes these messages and processes them accordingly. Messages are then acknowledged as consumed and deleted either immediately or shortly thereafter. Message brokers are designed to handle a different type of problem than event brokers.
+
+Event brokers, on the other hand, are designed around providing an ordered log of facts. Event brokers meet two very specific needs 
+that are not satisfied by the message broker. For one, the message broker provides only queues of messages, where the consumption of the message is handled on a per-queue basis. Applications that share consumption from a queue will each receive only a subset of the records. This makes it impossible to correctly communicate state via events, since each consumer is unable to obtain a full copy of all events. Unlike the message broker, the event broker maintains a single ledger of records and manages individual access via indices, so each independent consumer can access all required events. Additionally, a message broker deletes events after acknowledgment, whereas an event broker retains them for as long as the organization needs. The deletion of the event after consumption makes a message broker insufficient for 
+providing the indefinitely stored, globally accessible, replayable, single source of truth for all applications.
+
+Event brokers enable an immutable, append-only log of facts that preserves the state of event ordering. The consumer can pick 
+up and reprocess from anywhere in the log at any time. 
+This pattern is essential for enabling event-driven microservices, but it is not available with message brokers.
+
+commonly available event brokers use an append-only immutable log.
+Events are appended at the end of the log and given an autoincrementing index ID
+Consumers of the data use a reference to the index ID to access data. Events can then be consumed 
+as either an event stream or a queue, depending on the needs of the business and the available functionality 
+of the event broker.
+
+
+Consuming as an event stream:
+-----------------------------
+Each consumer is responsible for updating its own pointers to previously read indices within the event stream. This index,
+known as the offset, is the measurement of the current event from the beginning of the event stream. 
+Offsets permit multiple consumers to consume and track their progress independently of one another,
+
+
+Consumer group:
+--------------
+The consumer group allows for multiple consumers to be viewed as the same logical entity and can be leveraged for horizontal 
+scaling of message consumption.
+A new consumer joins the consumer group, causing a redistribution of event stream partition assignments. 
+
+Consuming as a queue:
+---------------------
+In queue-based consumption, each event is consumed by one and only one microservice instance. Upon being consumed, 
+that event is marked as “consumed” by the event broker and is no longer provided to any other consumer. Partition counts do not matter when consuming as a queue, as any number of consumer instances can be used for consumption.
+
+WARNING
+Event order is not maintained when processing from a queue. Parallel consumers consume and process events out of order, while a single consumer may fail to process an event, return it to the queue for processing at a later date, and move on to the next event.
+
+Queues are not supported by all event brokers. For instance, Apache Pulsar currently supports queues while Apache Kafka does not.
+

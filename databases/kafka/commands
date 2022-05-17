@@ -1,0 +1,16 @@
+Create topic:
+--------------
+kafka-topics --zookeeper 127.0.0.1:2181 --topic many-reps --create --partitions 6 --replication-factor 3
+
+Describe topic:
+---------------
+kafka-topics --zookeeper 127.0.0.1:2181 --topic many-reps
+
+Kafka console producer:
+----------------------
+kafka-console-producer --broker-list 127.0.0.1:9092,127.0.0.1:9093,127.0.0.1:9094 --topic many-reps
+
+Kakfa console consumer:
+-----------------------
+kafka-console-consumer --bootstrap-server 127.0.0.1:9093 --topic many-reps --from-beginning
+

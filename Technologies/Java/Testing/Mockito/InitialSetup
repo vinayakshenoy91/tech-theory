@@ -1,0 +1,154 @@
+//https://github.com/in28minutes/MockitoTutorialForBeginners
+
+- whatTest_whatdoesitdo_whatIsTheResult
+
+Pom:
+----
+org.mockito
+mockito.all
+
+
+
+Imports:
+-------
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+
+Annotations:
+-----------
+At run with: @RunWith(MockitoJunitRunner.class)
+
+@ExtendWith(MockitoExtension.class)
+You need: @RunWith(MockitoJunitRunner.class) on the class
+
+@Rule //If you are using multiple runners. Prefer rules over RunWith
+public MockitoRule mockitoRule= MockitoJunit.rule(); //If you put this no need to put @RunWith(MockitoJunitRunner.class)
+
+ 
+
+@InjectMocks
+ServiceImpl serviceImpl;  //Class which you are testing
+
+@mock
+Service service; //Service which you are calling in that class
+OR
+Service svc=mock(Service.class);
+
+
+@Spy  //Keep the impl of other method as is/expose it as  is. Only for specified one, you  create dummmy/mock/override impl
+private  Database database 
+OR Also call when(mock.method()).thenCallRealMethod()
+
+@Captor
+ArgumentCaptor<BackgroundCheckResults>x;
+
+Important constructs:
+-----------------------
+when(svc.methodName()).thenReturn(new int[]{1,2,3});
+
+verify(todoServiceMock).deleteTodo("param");
+verify(todoServiceMock,never()).deleteTodo("param");
+verify(todoServiceMock,times(1)).deleteTodo("param");
+verify(todoServiceMock,atLeast(5)).deleteTodo("param");
+verify(todoServiceMock,atLeastOnce()).deleteTodo("param");
+
+//Used rarely
+verifYNoMoreInteractions(ignorestubs(servicename));
+
+//Exceptions
+.thenThrow(new IOExceptions())
+doThrow(new RuntimeException()).when(eventPublisher).notify(accountId) //Used when exception from void
+doReturn(true).when(instance).method(x,y,z);
+
+Stubbing: Hard coding the method as well
+----------
+stub(productDO.getAllProducts(anyInt())).toReturn(products);
+
+
+Argument Matcher:
+-----------------
+when(x.get(anyInt()))
+
+
+Argument Captors:
+-----------------
+verify(repo).save(x.capture())
+assertThat(x.getValue(),"Hello")
+assertThat(x.getAllValue(),is("Hello"));
+
+
+
+BDD styles:
+-----------
+given(svc.methodName()).thenReturn(new int[]{1,2,3});
+then(todoServiceMock).should().deleteTodo("param");
+then(todoServiceMock).should(times(2)).deleteTodo("param");
+then(todoServiceMock).should(never()).deleteTodo("param");
+then(class/obj).shouldHaveNoMoreInteractions();
+BDDMOckito.given().willReturn()
+
+
+Hamcrest matchers:
+-------------------
+hamcrest-library
+scope-> test
+assertThat(x, hasSize(4));
+assertThat(x, hasItems(4,10));
+assertThat(x, everyItem(greaterThan(90));
+assertThat(x, everyItem(lessThan(90));
+assertThat(x, arrayWithSize(90));
+assertThat(x, arrayContaining(90));
+assertThat(x, arrayContainingInAnyOrder(90,91));
+
+Methods:
+--------
+- With stub you get verification implicitly
+- Verification means you do not care about return value and hence you dont stub
+- Argument captors to be used only for verification
+Why does Mockito not allow stubbing final & private methods?  
+- 
+
+Drawbacks:
+----------
+Mockito cannot mock static methods such as LocalDate.now()
+Solution:
+1) Powermock
+2) Using java clock class
+
+private Clock clock;
+LocalDate.now(clock), LocalDateTime.now(clock)
+
+Instant fixedTime = LocalDate.of(2019,7,4).atStartOfDay(ZoneId.systemDefault()).toInstant();
+Clock clock = Clock.fixed(fixedTime, ZoneId.systemDefault());
+
+In assert, use: assertEquals(LocalDateTime.ofInstant(fixedTime, ZoneOffset.systemDefault()),getDate());
+
+Power mock:
+-----------
+Dependencies:
+-----------
+- powermock-api-mockito
+  scope-> test
+  powermock-module-junit4
+
+
+@RunWith(PowerMockRunner.class)
+@PrepareForTest({UtilityClass.class})
+
+PowerMockito.mockStatic(UtilityClass.class)
+when(Utility.staticMethod(anyLong())).thenReturn(30);
+
+PowerMockito.verifyStatic();
+Utility.staticMethod(6);
+
+//Invoke private method
+long result=Whitebox.invokeMethod(object,"methodName")
+
+//Mokcing constructor
+when(mockList.size()).thenReturn(5);
+
+PiwerMockito.whenNew(ArrayList.class).withAnyArguments().
+thenReturn(mockList)
+
+int size = systemUnderTest.methodUsingAnArrayListConstructor();

@@ -1,0 +1,211 @@
+YAML file:
+-----------
+docker-compose.yml
+
+version: '3.x'
+services:
+    app: 
+      container_name: nodeapp
+      image: nodeapp
+      build:
+        context: .
+        dockerfile: node.dockerfile
+      ports:
+        - "3000":"3000"
+      networks: 
+         - nodeapp-network
+      depends_on:
+         - mongodb
+
+     db:
+      networks: 
+         - nodeapp-network
+
+networks:
+   container_name: mongodb
+   image: mongodb
+   nodeapp-network:
+      driver: bridge
+
+docker-compose build
+
+docker-compose up
+
+docker-compose down
+
+
+--------------
+
+version: '3'
+services:
+  db:
+    image: arungupta/couchbase
+    deploy:
+      replicas: 1
+    ports:
+      - 8091:8091
+      - 8092:8092
+      - 8093:8093
+      - 8094:8094
+      - 11210:11210
+
+
+	
+docker-compose up -d
+docker-compose down
+
+http://localhost:8091 -> Administrator/password
+
+
+//Dockerfile - couchbase/server:community-5.1.1 , couchbase/server:enterprise-5.1.2
+
+FROM couchbase
+
+COPY configure.sh /opt/couchbase
+
+CMD ["/opt/couchbase/configure.sh"]
+
+
+//Configure.sh
+
+set -m
+
+/entrypoint.sh couchbase-server &
+
+sleep 15
+
+curl -v -X POST http://127.0.0.1:8091/pools/default -d memoryQuota=512 -d indexMemoryQuota=512
+
+curl -v http://127.0.0.1:8091/node/controller/setupServices -d services=kv%2cn1ql%2Cindex
+
+curl -v http://127.0.0.1:8091/settings/web -d port=8091 -d username=$COUCHBASE_ADMINISTRATOR_USERNAME -d password=$COUCHBASE_ADMINISTRATOR_PASSWORD
+
+curl -i -u $COUCHBASE_ADMINISTRATOR_USERNAME:$COUCHBASE_ADMINISTRATOR_PASSWORD -X POST http://127.0.0.1:8091/settings/indexes -d 'storageMode=memory_optimized'
+
+curl -v -u $COUCHBASE_ADMINISTRATOR_USERNAME:$COUCHBASE_ADMINISTRATOR_PASSWORD -X POST http://127.0.0.1:8091/pools/default/buckets -d name=$COUCHBASE_BUCKET -d bucketType=couchbase -d ramQuotaMB=128 -d authType=sasl -d saslPassword=$COUCHBASE_BUCKET_PASSWORD
+
+sleep 15
+
+curl -v http://$COUCHBASE_ADMINISTRATOR_USERNAME:$COUCHBASE_ADMINISTRATOR_PASSWORD@127.0.0.1:8093/query/service -d "statement=CREATE PRIMARY INDEX ON `$COUCHBASE_BUCKET`"
+
+fg 1
+
+
+
+//Commands
+docker build -t couchbase-custom /path/to/directory/with/dockerfile
+
+
+docker run -d \
+-p 8091-8093:8091-8093 \
+-e COUCHBASE_ADMINISTRATOR_USERNAME=Administrator \
+-e COUCHBASE_ADMINISTRATOR_PASSWORD=password \
+-e COUCHBASE_BUCKET=default \
+-e COUCHBASE_BUCKET_PASSWORD= \
+--network="docker_default" \
+--name couchbase \
+couchbase-custom
+
+
+Compose file:
+version: '2'
+
+services:
+    couchbase:
+        image: couchbase-custom
+        ports:
+            - 8091:8091
+            - 8092:8092
+            - 8093:8093
+        environment:
+            - COUCHBASE_ADMINISTRATOR_USERNAME=Administrator
+            - COUCHBASE_ADMINISTRATOR_PASSWORD=password
+            - COUCHBASE_BUCKET=default
+            - COUCHBASE_BUCKET_PASSWORD=
+
+    nodejs:
+        image: nodejs-custom
+        ports:
+            - 3000:3000
+        environment:
+            - COUCHBASE_HOST=couchbase
+            - COUCHBASE_BUCKET=default
+            - COUCHBASE_BUCKET_PASSWORD=
+            - APPLICATION_PORT=3000
+        restart: always
+
+
+
+
+docker-compose run -d --service-ports --name couchbase couchbase
+docker-compose up -d
+
+
+
+--------
+
+
+version: "3"
+services:
+  mountebank:
+    container_name: mountebank
+    image: jkris/mountebank:latest
+    volumes:
+    - ./imposters:/imposters
+    ports:
+    - 2525:2525
+    - 8090:8090
+    command: --configfile /imposters/imposters.ejs --allowInjection
+
+    docker-compose up -d
+
+    curl -X GET http://localhost:8090/api/v1/rest/series/search
+
+
+//If developing from scratch
+FROM alpine:3.11
+
+ENV MOUNTEBANK_VERSION=2.2.1
+
+RUN apk add --update nodejs-lts && \
+    apk add --update npm
+RUN npm install -g mountebank@${MOUNTEBANK_VERSION} --production
+
+EXPOSE 2525
+ENTRYPOINT ["mb"]
+CMD ["start"]
+
+---------
+
+  mongodb:
+    image: mongo:4.4.2
+    mem_limit: 512m
+    ports:
+      - "27017:27017"
+    command: mongod
+    healthcheck:
+      test: "mongo --eval 'db.stats().ok'"
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+  mysql:
+    image: mysql:5.7.32
+    mem_limit: 512m
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=rootpwd
+      - MYSQL_DATABASE=review-db
+      - MYSQL_USER=user
+      - MYSQL_PASSWORD=pwd
+    healthcheck:
+      test: "/usr/bin/mysql --user=user --password=pwd --execute \"SHOW DATABASES;\""
+      interval: 5s
+      timeout: 2s
+      retries: 60
+
+----
+  depends_on:
+  mongodb:
+    condition: service_healthy

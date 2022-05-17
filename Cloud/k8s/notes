@@ -1,0 +1,12 @@
+K8s services:
+-----------
+- ClusterIP -> Default and available only withing cluter
+- NodePort -> port is reserved on each node. Accessible outside cluster
+- LoadBalancer -> NodePort + external LB -> LB to the ports
+
+
+Envoy:
+------
+- It is a proxy. Proxy usually handles cross cutting concerns like TLS, Auth, RETRY
+- Envoy acts like a sidecar next to container in a pod.
+- Request will go to container via Envoy.

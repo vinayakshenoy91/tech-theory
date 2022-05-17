@@ -1,0 +1,117 @@
+Web business objectives:
+------------------------
+- Awareness
+- Retention
+- Conversion
+- Competition
+
+Always follow:
+--------------
+- Make features, perforamance , security and quality from beginning
+- Monitor perf always
+- Monitor features and how it affects performance.
+- Make sure it works on major browsers
+
+Setting goals:
+--------------
+- Who are the users?
+- What device do they have?
+- How long will they wait?
+- How fast would impress?
+- How anxious they are? Put some psychology in it
+- performancebudget.io -> Very good size to check performance budgets
+
+
+what when 3rd party pixel services are added and they mnake you page slow?
+- Check bounce rate and session times - VVIP
+- Revenue per day and number of checkouts
+- Session time should go up
+- Bounce rates shoudl go down
+
+
+Outsourcing performance metrics:
+---------------------------------
+- https://requestmetrics.com/
+
+explore apis:
+-------------
+- web.perforamnce in MDN
+
+perforamance.getEntries()
+perforamance.getEntriesByType()
+perforamance.getEntriesByName()
+
+//Explore through git og gardner and create his package to measure performance.
+Look for unload event and send the data to server
+
+For long term perf metrics - Home grow web performance yourself or opt for newmetrics.com
+
+Notes: 
+------
+https://gist.githubusercontent.com/liveTVchannels/b85d22f1cb9e2316100d079037245c3c/raw/dd5cfc7c326b7368f80a1d07c6c8a649dca0b13b/performance.conf
+
+
+
+1) lazyloading:
+
+lazysizes -> Library
+
+or
+
+//Browser support in progress
+<img src="image.png" loading="lazy" alt="Lazyloaded image" width="200" height="200">
+
+2) Optimise images:
+
+When you are using images as design elements, backgrounds and such simply run them through something like ImageOptim or JPEGMini.
+I've been using the FREE Mac app of ImageOptim for years and it works like a charm.
+
+//For svg use:
+As far as SVG goes I use another free and awesome service called SVG Nano. It's just like ImageOptim but for SVGs and 
+the results are astonishing. You can have a Full HD illustration cut down to like 10KB which is great.
+
+3) Minify and compress:
+
+ You can manually minimize the CSS/JS via tools like this: https://minifycode.com/ or https://www.minifier.org/. 
+ Ideally you should include minification in your build process either via Webpack or some other tool.
+
+4) Preconnect:
+Preconnect is a relatively modern type of link element that became popular with HTML5 and HTTP2. The idea behind it is super simple but very effective. By adding one or more preconnect tags to the <head> element of your website you tell browsers that, down the line, you will eventually download something from that domain. Browsers can initiate a connection and essentially prepare whatever they need to instantly download something from that domain. This as you can imagine can speed things up for you - especially if you are downloading fonts, images and JS. Using preconnect could not be simpler. Before you call on any CSS and JS in your <head> element add one of these:
+
+<link rel="preconnect" href="https://domain.com/" crossorigin>
+And that's it. Later on if you're downloading something from domain.com like an image or JS or CSS it will be faster because the browser is already ready for it. To give you an idea here are top 3 most common preconnect scenarios:
+
+<link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin>
+<link rel="preconnect" href="https://www.google-analytics.com/" crossorigin>
+<link rel="dns-prefetch" href="https://yourid.cloudfront.net">
+
+5) Using CDN:
+Today with cloud providers like AWS, Azure and CloudFlare using a CDN couldn't be easier and it has a big performance impact! A CDN or a Content Distribution Network simply takes time files you upload (CSS/JS/images) and stores them across multiple different servers in various parts of the world. So let's say you have a visitor from India and your server is in the Us. If you are using a CDN for your assets then that CDN will serve those assets from a server in India rather than the US one. This will reduce latency and load times but also enable parallel resource downloading since the files are downloaded from a different domain. Another great thing about CDNs is that they are already optimized for performance. Everything we had to do to tweak our server earlier is already done for us 🤟🏻 If you are worried about pricing - don't be. Using a CDN nowadays is super affordable especially for the impact it has on performance.
+
+6) Basics
+Do you really need another library to tell time with JS?
+
+7) Optimize your server
+
+The first thing is to make sure that you are running on HTTP2. It's not that complicated to install it in case your hosting provider isn't running on that by default. HTTP2 is much faster than HTTP1. It's also much newer so it has a lot more features that deal with a lot of performance issues that HTTP1 had. One of the biggest things that HTTP2 can do is download resources in parallel. Coupled with other features HTTP2 makes a huge difference and you should find a way to get your website on it.
+
+Writing good, semantic, meaningful HTML helps the browser render faster but also it saves time on paint events, style recalculations and similar. Another benefit of writing good structured HTML is the on site SEO aspect of it. Google and other engines love when you make their job easier and use tags that have meaning. It also helps anyone else reading your source to better understand what you tried to do, what is what and similar. So just use HTML as sir Tim wanted you to.
+
+Another small but interesting tip is to minimize the amount of white space and empty lines also helps with performance. You can even do this automatically by using server side plugins mod_pagespeed for Apache and Ngix. Of course if you are using a back-end programming language which compiles your HTML into views, like Laravel, then there are packages for that like HTMLMin and others.
+
+8) Uisng CSS;
+
+Another important practice you can apply is writing better and more optimized CSS. Yes - that is a thing. You can also do your website an injustice if you write sloppy and bad CSS. So let's just name a few things you can do to write better CSS:
+
+the less lines of CSS you can write - the better
+the shorter your selectors are - the better
+run all the animations on the GPU vs the CPU
+stop supporting ancient browsers
+use shorthand properties when you can
+don't overwrite - learn browser defaults and framework resets
+separate media queries into its own files
+don't bloat your code with third party addons/plugins that you don't understand
+The sooner you start practicing these things the faster you will see results. The best thing about this is you can directly edit CSS rules in a browser and test in literary seconds. So get to it.
+
+
+

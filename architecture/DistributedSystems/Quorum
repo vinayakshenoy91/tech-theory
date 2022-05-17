@@ -1,0 +1,14 @@
+- A quorum is the minimum number of servers on which a distributed operation needs to be performed successfully 
+before declaring the operation’s overall success.
+
+- Quorum enforces the consistency requirement needed for distributed operations.
+
+- Value of quorum : N/2 + 1
+
+- Quorum is achieved when nodes follow the below protocol: R + W > N, where:
+NN = nodes in the quorum group
+WW = minimum write nodes
+RR = minimum read nodes
+
+- Best performance (throughput/availability) when 1 < r < w < n1<r<w<n, because reads are 
+more frequent than writes in most applications

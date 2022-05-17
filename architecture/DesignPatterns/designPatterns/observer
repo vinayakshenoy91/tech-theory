@@ -1,0 +1,92 @@
+Defn:
+------
+- define a one-to-many dependency between objects so that when 
+one object changes state, all its dependents are notified and updated automatically
+
+- The use of observers is a general-purpose technique for managing a program’s responses to events. 
+
+- An object can maintain a list of observers and notify them when a notable event occurs.
+
+What is required?
+-----------------
+I find
+
+•   Different kinds of objects—There is a list of objects that need to be notified of a change in state. These objects tend to belong to different classes.
+
+•   Different interfaces—Because they belong to different classes, they tend to have different interfaces.
+
+In most situations, I want the observers to be responsible for knowing what they are to watch for and I want the subject to be free from knowing which observers depend on it. To do this, I need to have a way for the observers to register themselves with the subject. Because all of the observers are of the same type, I must add two methods to the subject:
+
+•   attach(Observer)—adds the given observer to its list of observers
+
+•   detach(Observer)—removes the given observer from its list of observers
+
+Now that the Subject has its Observers registered, it is a simple matter for the Subject to notify the 
+Observers when the event occurs. To do this, each Observer implements a method called update.
+
+The Subject implements a notify method that goes through its list of Observers and calls 
+this update method for each of them. The update method should contain the code to handle the event.
+
+Code:
+-----
+https://learning.oreilly.com/library/view/design-patterns-explained/0321247140/ch18.html
+
+
+Misc:
+-----
+The Observer pattern is so useful that Java contains an implementation of it in its packages. The Observable class and the Observer interface make up the pattern. The Observable class plays the role of the subject in the Gang of Four’s description of the pattern. Instead of the methods attach, detach, and notify, Java uses addObserver, deleteObserver, and notifyObservers, respectively (Java also uses update). Java also gives you a few more methods to make life easier.*
+
+*. See http://java.sun.com/j2se/1.3/docs/api/index.html for information on the Java API for Observer and Observable.
+
+
+When to use observers?
+------------------------
+- When the dependencies are fixed (or virtually so), adding an Observer pattern probably just adds complexity.
+- Where more dependencies can be added, then use observer. Like when customer is added, notify using x, y,z
+If the list of objects that need to be notified of an event changes, or is somehow conditional, 
+the Observer pattern has greater value. 
+- These changes can occur either because the requirements are changing or because the list of objects that need to be 
+notified are changing. The Observer pattern can also prove useful if the system is run under different 
+conditions or by different customers, each having a different list of required observers.
+- An observer may only need to handle certain cases of an event. The Brick and Mortar case was an example. In such situations, 
+the observer must filter out extra notifications.
+Extraneous notifications can be eliminated by shifting the responsibility for filtering out these notifications to 
+the Subject. The best way to do this is for the Subject to use a Strategy pattern to test whether notification should occur. 
+Each observer gives the Subject the correct strategy to use when it registers.
+
+- Sometimes, Subjects will call the observers’ update method, passing along information. This can save the need for 
+callbacks from the observers to the Subject. However, it is often the case that different observers have different 
+information requirements. In this case, a Strategy pattern can again be used. This time, the Strategy object is used 
+for calling the observers’ update procedure. 
+Again, the observers must supply the Subject with the appropriate Strategy object to use.
+
+The Observer Pattern: Key Features
+
+Intent
+
+Define a one-to-many dependency between objects so that when one object changes state, all its dependents are notified and updated automatically.
+
+Problem
+
+You need to notify a varying list of objects that an event has occurred.
+
+Solution
+
+Observers delegate the responsibility for monitoring for an event to a central object: the Subject.
+
+Participants and collaborators
+
+The Subject knows its Observers because the Observers register with it. The Subject must notify the Observers when the event in question occurs. The Observers are responsible both for registering with the Subject and for getting the information from the Subject when notified.
+
+Consequences
+
+Subjects may tell Observers about events they do not need to know if some Observers are interested in only a subset of events (See “Field Notes: Using the Observer Pattern” on page 325). Extra communication may be required if Subjects notify Observers which then go back and request additional information.
+
+Implementation
+
+Have objects (Observers) that want to know when an event happens attach themselves to another object (Subject) that is watching for the event to occur or that triggers the event itself.
+
+When the event occurs, the Subject tells the Observers that it has occurred.
+
+The Adapter pattern is sometimes needed to be able to implement the Observer interface for all of the Observer-type objects.
+

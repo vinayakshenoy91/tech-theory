@@ -1,0 +1,19 @@
+Call stack, Event loop and Event table:
+
+As you know, the call stack stores all your running JavaScript code. The interpreter reads the code line-by-line, 
+pushes each statement into the call stack one-by-one, and pops them once they execute. However, if the statement is asynchronous, 
+sit is removed from the call stack and forwarded to the event table. 
+This table is responsible for moving the asynchronous code to the event queue after a specified time. Here the statement waits for execution.
+
+As you know, the call stack stores all your running JavaScript code. The interpreter reads the code line-by-line, pushes each statement 
+sinto the call stack one-by-one, and pops them once they execute. However, if the statement is asynchronous, it is removed from the call 
+stack and forwarded to the event table. This table is responsible 
+for moving the asynchronous code to the event queue after a specified time. Here the statement waits for execution.
+
+The event loop has the task of checking both the call stack and the task queue continuously. 
+When it sees that the call stack is done executing all the commands and is empty,
+it pops the commands from the task queue and pushes them into the call stack for execution.
+
+Call stack keeps track of function calls whereas task queue handles the Web Apis callbacks
+
+

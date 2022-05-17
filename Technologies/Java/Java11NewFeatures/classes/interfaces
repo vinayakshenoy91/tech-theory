@@ -1,0 +1,170 @@
+- It is a reference type  that can contain method signatures, default methods, static methods, nested types and constants
+
+- Interface methods are abstract and public by default.
+
+interface Engine {
+
+    int TEMP= 50; //Constants
+
+   void start();
+   void stop();
+
+   default String healthCheck(){
+        return "OK";
+   }
+
+   static boolean canStart(int outsideTemp){
+       //logic
+   }
+}
+
+Engine.TEMP //Accessing it
+
+
+Default method:
+---------------
+
+A method defined in an interface that has an implementation. They allow interfaces to evolve but don't force changes to classes
+that implement those interfaces. Can be overriden by class that implement the interface.
+
+
+
+Function interface:
+------------------
+- Contains single abstract method and exposes SRP
+- Can have multiple default or static methods
+
+@FunctionalInterface
+public interface EventHandler{
+    void handle();
+}
+
+
+An interface is an abstract data type are that declares a list of abstract methods that any class implementing the interface 
+must provide. An interface can also include constant variables. 
+Both abstract methods and constant variables included with an interface are implicitly assumed to be public.
+
+
+
+
+Interface:
+---------
+public abstract  interface CanBurrow{
+   
+    public abstract  Float getSpeed(int age);
+    public static final int MINIMUM_DEPTH = 2;
+
+}
+
+One aspect of an interface declaration that differs from an abstract class is that it contains implicit modifiers. An implicit modifier is a modifier that the compiler automatically adds to a class, interface, method, or variable declaration. For example, an interface is always considered to be abstract, even if it is not marked so.
+
+
+The following list includes the implicit modifiers for interfaces that you need to know for the exam:
+
+Interfaces are assumed to be abstract.
+Interface variables are assumed to be public, static, and final.
+Interface methods without a body are assumed to be abstract and public.
+
+
+If you said public, then you are correct! When working with class members, omitting the access modifier indicates default (package-private) access. When working with interface members, though, the lack of access modifier always indicates public access.
+
+
+Inteface and abstract class diff:
+----------------------------------
+
+INHERITING AN INTERFACE
+An interface can be inherited in one of three ways.
+
+An interface can extend another interface.
+A class can implement an interface.
+A class can extend another class whose ancestor implements an interface.
+
+
+Cases 1:
+------
+What if the duplicate methods have the same signature but different return types? In that case, 
+you need to review the rules for overriding methods. Let’s try an example:
+
+interface Dances {
+   String swingArms();
+}
+interface EatsFish {
+   CharSequence swingArms();
+}
+ 
+public class Penguin implements Dances, EatsFish {
+   public String swingArms() {
+      return "swing!";
+   }
+}
+In this example, the Penguin class compiles. The Dances version of the swingArms() method is trivially overridden in the Penguin class, as the declaration in Dances and Penguin have the same method declarations. The EatsFish version of swingArms() is also overridden as String and CharSequence are covariant return types.
+
+Case 2:
+-------
+With interfaces, there are limitations to what the compiler can validate. For example, does the following program compile?
+
+1: interface Canine {}
+2: class Dog implements Canine {}
+3: class Wolf implements Canine {}
+4:
+5: public class BadCasts {
+6:    public static void main(String[] args) {
+7:       Canine canine = new Wolf();
+8:       Canine badDog = (Dog)canine;
+9:    } }
+In this program, a Wolf object is created and then assigned to a Canine reference type on line 7. Because of polymorphism, Java cannot be sure which specific class type the canine instance on line 8 is. Therefore, it allows the invalid cast to the Dog reference type, even though Dog and Wolf are not related. The code compiles but throws a ClassCastException at runtime.
+
+This limitation aside, the compiler can enforce one rule around interface casting. The compiler does not allow a cast from an interface reference to an object reference if the object type does not implement the interface. For example, the following change to line 8 causes the program to fail to compile:
+
+8:       Object badDog = (String)canine;  // DOES NOT COMPILE
+Since String does not implement Canine, the compiler recognizes that this cast is not possible.
+
+
+Case 3:
+-------
+With interfaces, the compiler has limited ability to enforce this rule because even though a reference type may not implement an interface, one of its subclasses could. For example, the following does compile:
+
+Number tickets = 5;
+if(tickets instanceof List) {}
+Even though Number does not inherit List, it’s possible the tickets variable may be a reference to a subclass of Number that does inherit List. As an example, the tickets variable could be assigned to an instance of the following MyNumber class (assuming all inherited methods were implemented):
+
+public class MyNumber extends Number implements List
+That said, the compiler can check for unrelated interfaces if the reference is a class that is marked final.
+
+Integer tickets = 6;
+if(tickets instanceof List) {}  // DOES NOT COMPILE
+The compiler rejects this code because the Integer class is marked final and does not inherit List. Therefore, it is not possible to create a subclass of Integer that inherits the List interface.
+
+
+
+INTERFACE RULES
+We summarize the interface rules in this part of the chapter in the following list. If you compare the list to our list of rules for an abstract class definition, the first four rules are similar.
+
+Interface Definition Rules  Interfaces cannot be instantiated.
+All top-level types, including interfaces, cannot be marked protected or private.
+Interfaces are assumed to be abstract and cannot be marked final.
+Interfaces may include zero or more abstract methods.
+An interface can extend any number of interfaces.
+An interface reference may be cast to any reference that inherits the interface, although this may produce an exception at runtime if the classes aren’t related.
+The compiler will only report an unrelated type error for an instanceof operation with an interface on the right side if the reference on the left side is a final class that does not inherit the interface.
+An interface method with a body must be marked default, private, static, or private static (covered when studying for the 1Z0-816 exam).
+The following are the five rules for abstract methods defined in interfaces.
+
+Abstract Interface Method Rules
+
+Abstract methods can be defined only in abstract classes or interfaces.
+Abstract methods cannot be declared private or final.
+Abstract methods must not provide a method body/implementation in the abstract class in which is it declared.
+Implementing an abstract method in a subclass follows the same rules for overriding a method, including covariant return types, exception declarations, etc.
+Interface methods without a body are assumed to be abstract and public.
+Notice anything? The first four rules for abstract methods, whether they be defined in abstract classes or interfaces, are exactly the same! The only new rule you need to learn for interfaces is the last one.
+
+Finally, there are two rules to remember for interface variables.
+
+Interface Variables Rules
+
+Interface variables are assumed to be public, static, and final.
+Because interface variables are marked final, they must be initialized with a value when they are declared.
+It may be helpful to think of an interface as a specialized kind of abstract class, since it shares many of the same properties and rules as an abstract class. The primary differences between the two are that interfaces include implicit modifiers, do not contain constructors, do not participate in the instance initialization process, and support multiple inheritance.
+
+

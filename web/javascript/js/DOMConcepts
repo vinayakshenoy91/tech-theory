@@ -1,0 +1,492 @@
+- The Document Object Model (DOM) allows you to access elements of a web page and enable interaction 
+with the page by adding and removing elements, changing the order, content and attributes of elements, and even altering how they are styled.
+
+- JavaScript has a global object, window, and everything runs under it. It holds all the global variables, functions, locations, etc. document is also a property of the window object.
+
+The following will return true.
+
+window.document === document //true
+document represents the DOM, which is the object representation of an HTML document. It has various methods defined on it, such as getElementById, which does not exist for the window object.
+
+- It represents an HTML document as a network of connected nodes that form a tree-like structure.
+
+
+document.querSelector("button");
+document.getElementById(id)
+document.getElementsByTagName("p"):The following function will also return an array-like object with all the elements that match the tag name you place in the argument:
+
+var todoItems = document.querySelectorAll('#todos > li'); //could store all of the list’s items in a variable using
+
+
+Creating element using document object:
+
+var h1 = document.createElement('h1');
+h1.innerHTML = "A new HTML element!";
+
+var content = document.querySelector('#content');
+content.appendChild(h1);
+
+Removing element:
+
+var content = document.querySelector('#content');
+var contentParagraph = document.querySelector('#content > p');
+
+var oldElement = content.removeChild(contentParagraph);
+console.log(oldElement.innerHTML);
+
+Element.getAttributeNames() #
+Use the Element.getAttributeNames() function to get an array containing the names of the HTML element’s attributes.
+var input = document.querySelector('input[type=text]');
+
+console.log("input attributes:", input.getAttributeNames());
+
+Element.setAttribute(name, value) + Element.removeAttribute(name) #
+You can change the value of an attribute using the setAttribute() function. Additionally, 
+you can remove attributes using the removeAttribute() function.
+
+
+var h1 = document.querySelector('h1');
+var input = document.querySelector('input[type=text]');
+
+input.setAttribute('type', "checkbox");
+input.removeAttribute('placeholder');
+
+
+
+Event listeners:
+----------------
+the variable button stores an element node object that represents the HTML button
+var button = document.querySelector('button');
+
+Overriding values#
+
+var randomColor = function(){
+  var rvalue = function() {
+  	return Math.round(Math.random()*255); 
+  }
+
+ 	return 'rgb(' + rvalue() + "," + rvalue() + "," + rvalue() + ")";
+}
+
+// get button element from DOM
+var button = document.querySelector('button');
+
+// create event listener to change background color on button click
+button.onclick = function(){
+	this.style.backgroundColor = randomColor();
+}
+
+More listeners:
+
+ondblclick: occurs when an element is double clicked
+onmouseenter: occurs when the mouse pointer moves onto an element
+onmouseleave: occurs when the mouse pointer moves away from an element
+
+Keyboard Events: Events related to keypresses on the user’s keyboard
+onkeypress: occurs when a key is pressed on the user’s keyboard
+onkeydown: occurs when a user is pressing down on a key
+onkeyup: occurs when a user releases a key press
+
+Form Events: Events related to interactions with form elements, such as <input>
+onfocus: occurs when focus is placed on an <input> field
+onchange: occurs when an <input>'s value is changed (useful for radio or checkbox type inputs)
+oninput: occurs when a user provides input to an element (useful for text type inputs or <textarea> elements)
+
+Example:#
+
+var checkStatus = document.getElementById('checkStatus');
+var checkbox = document.getElementById('checkbox');
+
+checkbox.onchange = function(){ 
+  if(this.checked) { 
+    checkStatus.innerHTML = "Checked";
+  } else {
+ 		checkStatus.innerHTML = "Not Checked";
+  }
+}
+
+
+Programmatically styling with classes using Element.classList #
+Although it is perfectly valid to modify styles with Element.style, what if you want to modify multiple CSS properties?
+
+For instance, let’s say we want to highlight an element when we click it by changing both the background-color and color. 
+Using Element.style, the code would look something like this:
+
+
+Programmatically styling with classes using Element.classList #
+Although it is perfectly valid to modify styles with Element.style, what if you want to modify multiple CSS properties?
+
+For instance, let’s say we want to highlight an element when we click it by changing both the background-color and color. Using Element.style, the code would look something like this:
+
+We could also toggle the “highlight” behavior using Element.classList.toggle(class):
+
+var h1 = document.querySelector('h1');
+
+h1.onclick = function(){
+  this.classList.toggle('highlight');
+}Additionally, you can use Element.classList.remove(class) to remove a class and Element.classList.contains(class) to check if the element has a certain class value associated with it. To replace one class with another, use Element.classList.replace(oldClass, newClass).
+
+
+
+DOM: API that treats HTML and XML documents as tree structures with nodes
+The DOM is constructed in the browser as the page loads.document.getElementById() is used to select a node in DOM
+
+getElementById
+
+getElementsByName
+
+getElementsByTagName
+
+getElementsByTagNameNS
+
+getElementsByClassName
+
+querySelector
+
+querySelectorAll
+
+DOM (Document Object Model) is an API that stores your HTML/XML documents in the form of a tree with nodes. It has different levels:
+
+Core DOM: the standard model used for all structured documents
+
+XML DOM: the standard model used for all XML documents
+
+HTML DOM: the standard model used for all HTML documents
+The DOM is constructed as the page loads; after that, the scripts that want to access the nodes can run,
+
+It is designed to be independent of any particular language; this allows the document representation to be accessible from a consistent API. 
+
+
+JavaScript has a global object, window, and everything runs under it. It holds all the global variables, functions, locations, etc. 
+document is also a property of the window object.
+
+
+Feature detection determines if a feature exists in a specific browser or not. These can be HTML features or JavaScript methods. 
+
+Feature inference assumes that if a feature is available in one browser, it is available in all other browsers as well.
+
+An attribute is written in the HTML document. The HTML tags may have attributes, e.g., the tag input has the attributes type, value, name, etc.
+
+When the HTML document is parsed and converted to a DOM object model, these attributes are converted to DOM properties. DOM nodes are JavaScript objects; hence, properties can be defined on them. 
+
+id, type, and value are all standard attributes of the input tag.
+
+input.id  //input
+input.type  //text
+input.value  //Hello
+body.type //undefined
+
+DOM properties can be modified; it is the HTML attributes that can never be changed.
+
+function hideShow() {
+  var ele = document.getElementById("hideDiv");
+  if (ele.style.display === "none") {
+    ele.style.display = "block";
+  } else {
+    ele.style.display = "none";
+  }
+}   
+
+
+An interviewer might ask you the difference between using innerHTML and appendChild.
+
+With innerHTML we do the following to add an element:
+
+document.getElementById("list").innerHTML = '<li>Names</li>'
+Here we are adding a list item to another list. innerHTML takes the parent node and removes all its children;
+ it replaces them with the node created by parsing the HTML in the given string <li>Names</li>. Hence it causes 
+ a complete rebuild of the content of the parent node.
+
+Let’s see how appendChild works:
+
+var list = document.getElementById("list")
+var elm = document.createElement('li');
+elm.appendChild(document.createTextNode('Names'));
+list.appendChild(elm)
+While using appendChild we create a new element and insert it as a new node at the end of the target node; hence, 
+it does not cause a complete rebuild of the DOM. It does not require any parsing of any HTML string either.
+
+You can mention to the interviewer the situations in which they should be used — for example, using appendChild 
+for appending elements and innerHTML where you need to replace the content of an element.
+
+
+//isChild():
+
+function isChild(parent, child){
+ 
+  while(child.parentNode){ 
+    if(child.parentNode == parent)
+      return true;
+    else
+      child = child.parentNode
+  }
+  return false
+}
+
+
+-----https://www.w3.org/TR/REC-DOM-Level-1/introduction.html
+
+The Document Object Model ( DOM) is an application programming interface (API) for both HTML and XML applications. This defines the logical document structure, and how to access and modify a document.
+The DOM is an API that treats HTML and XML documents as tree structures with nodes.The DOM is constructed in the browser as the page loads.
+It is a language independnet api
+Programmers can build documents using the Document Object Model, navigate their structure, and add, alter, or remove elements and content. Using the Document Object Model, something contained in an HTML or XML document may be read, modified, removed, or added.
+
+The HTML DOM defines all HTML elements’ objects and properties, and the methods (interface) to access them.
+
+
+The browser extension to the DOM uses the following web UI objects syntax:
+
+Browser.BrowserChild(page_titile).html_class(object_tag)
+page_title – title of the web page, defined by the HTML title tag.
+
+object_tag – label of the HTML element. How an HTML element is labeled depends on the type of HTML element.
+
+
+The HTML markup layout includes a hierarchy of elements in the HTML DOM view, which is represented in a tree format. It consists of a 
+root node and child nodes, which have a tree of syntax and a semantic tree.
+
+The structure consists of a document that is the root element, <html>, from where the tree starts.
+
+It consists of sub-elements like <head> and <body> and other text and attributes written in the HTML format.
+
+
+The HTML5 DOM provides methods to simplify tasks for web developers, and the methods are as follows:
+
+x.getElementById(id) – gets the element associated with a specified id.
+x.getElementsByTagName(name) – gets all the elements using the tag name that is associated with it.
+x.getElementsByClassName(name) – gets all the elements using the tag name that is associated with it.
+x.getElementsByName("name attribute value");
+x.querySelectorAll("p.intro") – gets all the elements using the tag name that is associated with it.
+x.appendChild(node) – inserts a child node to x and appends the child node at the end of the tree.
+x.removeChild(node) – removes a child node from x and removes it from the tree area as well.
+
+The HTML DOM is used to add, remove, and change the elements of HTML. DOM considers the entire element in an HTML document as a node and it treats all of them using the same standards.
+
+The document is being given in the document node and all the elements of the HTML are present in the element node.
+The text used in the HTML elements is for the text nodes and allows the further use of properties.
+HTML usually consists of the attribute and it is stored in the attribute node that allows easy modification of the properties.
+
+
+The DOM is known as document object model is divided into three different parts or levels:
+
+Core DOM is used for the standard model for all the structures and the structured documents.
+
+XML DOM is used as a standard model for the XML documents that can be different according to the different requirements.
+
+HTML DOM is used to have a standard model used for the HTML documents having the properties and functions.
+
+
+Node tree in DOM:
+------------------
+Using the HTML DOM, we can represent a node tree structure of all nodes present in an HTML document.
+
+All nodes in an HTML document are related to each other in a node tree structure and using this node tree structure; 
+we can access every node of the HTML document.
+
+In the tree structure, we start from the root node i.e., the <html> element, and go down to the lowest level nodes of the tree. 
+An example of sub-elements is that of <head> and <body> and other text and attributes written in the HTML format.
+
+
+Node properties in DOM:
+-----------------------
+nodeName: provides information on the attribute node and other nodes. nodeName is in read-only format, 
+and it is the parameter that acts as a tag name.
+
+nodeValue: specifies the value of each node. The node value can be elementwise, or it can be text wise. Another 
+node’s value can also be provided.
+
+nodeType: returns the type of the node used. nodeType is in the read-only format.
+
+
+The Node tree consists of a root node, child nodes, and siblings with a defined relationship.
+
+Every sub-node of a given node is called a child node, and the node given is, in effect, the parent of the child.
+
+Sibling nodes are nodes under the same parent node at the same Hierarchical level. Nodes higher than a given node are ancestors of 
+the same branch, and those below it are descendants.
+
+The root node is the topmost node, and through this node, other nodes and elements can be accessed.
+
+Every node in the tree, apart from the root node, will have exactly one parent node. A parent node can have many children nodes.
+
+
+commonly used properties and methods of the HTML DOM:
+-----------------------------------------------------
+
+Properties and methods help us to define the HTML DOM programming interface.
+
+Properties of HTML DOM. Let e be a node object or an HTML element.
+
+e.innerHTML : returns the inner text value of e.
+
+e.nodeName : returns the name of e.
+
+e.nodeValue : returns the value of e.
+
+e.parentNode: returns the parent node of e.
+
+e.childNodes: returns the child node of e.
+
+e.attributes: returns the attribute nodes of e.
+
+Methods that we use in the HTML DOM.
+
+e.getElementById(id) : gets the element with a specified id in an HTML document.
+
+e.getElementsByTagName(name) : gets all elements with a specified tag name in an HTML document.
+
+e.appendChild(node): inserts a child node to e or increases the number of child nodes of e.
+
+e.removeChild(node) : removes a child node from e in an HTML DOM.
+
+Various methods can be used to access DOM elements such as:
+
+getElementById
+
+getElementsByName
+
+getElementsByTagName
+
+getElementsByTagNameNS
+
+getElementsByClassName
+
+querySelector
+
+querySelectorAll
+
+Some problems:
+-------------
+<html>
+<body>
+
+<h1 id="heading">Educative - Interactive Courses</h1>
+<p id="para">e-learning</p>
+
+<script>
+document.getElementById("para").innerHTML = document.getElementById("heading").childNodes[0].nodeValue;
+</script>
+
+</body>
+</html>
+
+----
+
+
+<html>
+<body>
+
+<h1 id="heading">Educative - Interactive Courses</h1>
+<p id="para"></p>
+
+<script>
+document.getElementById("para").innerHTML = document.getElementById("heading").firstChild.nodeValue;
+</script>
+
+</body>
+</html>
+
+-----
+
+<html>
+<body>
+
+<h1 id="heading">Educative - Interactive Courses</h1>
+<p id="para"></p>
+
+<script>
+document.getElementById("para").innerHTML = document.getElementById("heading").innerHTML;
+</script>
+
+</body>
+</html>
+
+------
+Script 2 shows the content of the entire HTML document
+Script 1 shows only the content of the <body> tag
+<!-- Script 1-->
+<script>
+alert(document.body.innerHTML);
+</script>
+
+<!-- Script 2-->
+<script>
+alert(document.documentElement.innerHTML);
+</script>
+
+nodeName -> Name of node
+The nodeName of an element node is the same as the tag name.
+The nodeName of an attribute node is the attribute name.
+The nodeName always contains the uppercase tag name of an HTML element.
+
+The nodeValue of an attribute node is the attribute value.
+
+The nodeType property is read only. It returns the type of a node.
+
+---
+
+DOM (Document Object Model) is an API that stores your HTML/XML documents in the form of a tree with nodes. It has different levels:
+
+Core DOM: the standard model used for all structured documents
+
+XML DOM: the standard model used for all XML documents
+
+HTML DOM: the standard model used for all HTML documents
+
+
+
+
+Feature Detection: verifies if a feature works in a specific browser
+
+Feature Inference: assumes a feature exists in other browsers if it exists in one of them
+
+Attribute is written in html and property is in DOM objects.
+
+
+User-Agent:
+accesses information of the browser environment you are using. This applies neither to feature detection nor feature inference; it is the definition of the User-Agent. When you visit a browser, it sends a user-agent string to the host; this string contains information about the browser environment you are navigating.
+
+
+Accessing and modifying DOM:
+----------------------------
+var classred = document.getElementsByClassName("red");
+// console.log(classred.length)
+for(var i = 0; i < classred.length; i++){
+  classred[i].style.color = "blue";
+}
+
+Creating a list:
+----------------
+var ul = document.createElement('ul');
+var li1 = document.createElement('li');
+li1.innerHTML = "list element 1";
+var li2 = document.createElement('li');
+li2.innerHTML = "list element 2";
+var li3 = document.createElement('li');
+li3.innerHTML = "list element 3";
+
+var content = document.querySelector('body');
+content.appendChild(ul);
+var content1 = document.querySelector('ul');
+content1.appendChild(li1);
+content1.appendChild(li2);
+content1.appendChild(li3);
+
+
+Roman nums for list;
+-------------------
+var input = document.querySelector('ol');
+input.setAttribute('type', "I");
+
+Appending text on button click:
+
+var button = document.querySelector('button');
+button.onclick = function() {
+    var p = document.createElement('p');
+    p.innerHTML = "Clicked!";
+
+    var content = document.querySelector('body');
+    content.appendChild(p);
+
+    this.style.color="yello" -> Change button color on click
+}

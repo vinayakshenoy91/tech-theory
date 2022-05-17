@@ -1,0 +1,48 @@
+DP:
+---
+It is an algo for solving an optimisation problem by breaking it down into simpler subproblems and utilizing the fact that the optimal solution
+to the overall problem depends upon the optimal solution to its sub-problems.
+
+- Avoid recalculating smae problem over and over again. It uses extra memory to store the subresults.
+
+Ex:
+- Bellman ford
+
+
+Used for:
+1) Optimal substructure problem -> Optimal solution can be constructed from optimal solution of its subproblems.
+--------------------------------
+If any problem's overall optimal solution can be constructed from the optimal solutions of its subproblem
+then this problem has optimal substructure.
+
+Fib(n)=Fib(n-1)+Fib(n-2)
+
+2) Overlapping subproblem:
+---------------------------
+Subproblems are smaller versions of the original problem.Any problem has overlapping sub-problems if finding its solution
+involves solving the same subproblem multiple times.
+
+---
+Note: If problem for the above  1 and 2 criteria is met, the problem can be solved using dynamic programming
+---
+
+A) Top down by memoization:
+
+Solve the bigger problem by recursively finding the solution to smaller subproblems.Store result of already solved problem.
+This is called memoization.
+
+B) Bottom up with Tabulation:  Here we avoid recursion
+
+Subproblems first calculated -> done by filling table -> Based on table result, the solution to top problem is then computed.
+
+
+
+Top down vs Bottom top approach:
+--------------------------------
+Easyness -> Topdown is easy, bottom up  is diff to come up with solution
+Runtime -> Top down: Slow | Bottom up -> fast
+Space effeciency -> stack used in top down | stack not used in bottom top
+When to use -> Need a quick solution | Need an efficient solution
+
+
+

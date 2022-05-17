@@ -1,0 +1,46 @@
+Splunk documentation:--
+-----------------------
+https://docs.splunk.com/Documentation/Splunk
+- https://docs.splunk.com/Documentation/Splunk/latest/AdvancedDev/ModAlertsIntro
+- https://docs.splunk.com/Documentation/Splunk/latest/Data/Usingforwardingagents
+- https://splunkbase.splunk.com/
+- Splunk dataset addons -> https://splunkbase.splunk.com/app/3245/
+- https://docs.splunk.com/Documentation/Splunk/latest/Knowledge/ConfigureKVstorelookups
+- https://docs.splunk.com/Documentation/Splunk/latest/Knowledge/Configureexternallookups
+- https://splunkbase.splunk.com/apps/#/order/relevance/search/alert%2520actions
+- https://docs.splunk.com/Documentation/Splunk/latest/Alert/Setupalertactions
+- http://docs.splunk.com/Documentation/Splunk/latest/AdvancedDev/CustomVizDevOverview
+http://docs.splunk.com/Documentation/CIM/latest/User/Overview
+http://docs.splunk.com/Documentation/CIM/latest/User/Howtousethesereferencetables
+https://splunkbase.splunk.com/app/1621/
+http://docs.splunk.com/Documentation/Splunk/latest/SearchReference/Transaction
+http://docs.splunk.com/Documentation/Splunk/latest/Knowledge/Developnamingconventionsforknowledgeobjecttitles
+http://docs.splunk.com/Documentation/Splunk/latest/Knowledge/AboutSplunkregularexpressions
+
+
+
+Installation:
+-------------
+
+1) Linux:
+
+download splunk .tgz package or wget
+tar xvzf splunk.tgz -C /opt
+cd /opt/splunk/bin
+
+./splunk start --accept-license
+./splunk stop
+./splunk restart
+./splunk help
+
+set username and pwd
+
+2) Windows: Download a gui
+
+
+3) For OSX: use .dmg
+Applications/splunk/bin
+
+
+
+

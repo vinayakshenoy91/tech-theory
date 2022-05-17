@@ -1,0 +1,37 @@
+G=(V,E)
+V= {v1,v2,v3,v4,v5}
+E={(v1,v2),(v1,v3),(v2,v4),(v3,v4)}
+
+- Directed graph
+indegree  //Number of edges coming to it
+outdegree //Number of edges going out of it
+
+Sum of indegree= |E| ==> number of edges
+Sum of outdegree= |E| ==> number of edges
+
+Max number of edges = |v|*(|v|-1)
+
+- Undirected graph: 
+ degree = number of edges conneted to it
+ sum of degree =2 * |E|
+ Max number of edges = |v|*(|v|-1)/2
+ 
+ - Walk(Sometimes path): v1,v2,v4,v2
+ - Path(Sometimes simple path: v1,v2,v4 | no repetition of vertices allowed
+ - Cyclic: There exists a walk that begins and ends with same vertex.
+ - Acyclic graph: Donot containa cycle.
+ - DAG: Directed Acyclic Graph (Huge advantages)
+ - Weighted graph: Weights assigned to edges.
+ 
+ 
+ Graph representations:
+ -----------------------
+ 1) Adjacency list
+ 
+ 
+ 
+ 
+ 2) Adjacency matrix 
+ - Size of matrix v x v
+ - mat[i][j]={1 if there is an edge, 0 otherwise}
+ - For undirected graph its always a symmetric matrix

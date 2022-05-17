@@ -1,9 +1,16 @@
+- Have docker installed from dockerhub
+
+- https://docs.couchbase.com/server/6.5/install/get-started.html
+
+
+
+
+
+
+which docker -> Location
+
 - Download couchbase server 
-
-
 OR
-
-
 Docker installation: 
 > docker --version
 > docker run
@@ -20,6 +27,7 @@ docker inspect cbNode2 -> Get Ip address
 
 docker stop cbNode3
 
+docker container ls -a
 
 
 Cluster creation:
@@ -40,3 +48,37 @@ Cluster creation:
 - Once server added, click on rebalance
 - You can also add host via CLI or REST API
 
+2) Install CB on docker:
+
+docker run -d --name couchbasedb -p 8091-8096:8091-8096 -p 11210-11211:11210-11211 couchbase
+
+
+Setup in public cloud:
+-----------------------
+- Start with 3 node cluster of EC2
+-> Copy public DNS
+- Ssh to target EC2
+- rpm installation.
+sudo rpm --install couchbase-server...rpm
+- Copy DNS with localhost
+- New cluster and cluster pwd and uname.
+- Set memory quota
+- Click on servers and observe the server allocated.
+- For further servers, click on add to existing cluster from UI
+- Paste the public DNS of already existing node.
+- Rebalance to add cluster
+
+Configuring CB:
+----------------
+COnfig task are:
+- Name cluster and validate path
+- Decide mem allocation
+- Load docs on bucket
+
+
+Importing large datasets: [Testing a CB import]
+-------------------------
+cbimport json -c couchbase://127.0.0.1 -u username -p password -b couchmusic -f sample -d file://couchmusic-countries.zip -t 2
+
+In docker: docker cp couchmusic.zip couchmusic:/tmp
+docker exec -t couchmusic /bin/bash

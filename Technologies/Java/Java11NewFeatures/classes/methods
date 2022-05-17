@@ -1,0 +1,15 @@
+- Field shadowing : A parameter can have same name as the field of a class.[Usually seen being used in constructors]
+
+
+- Arbitrary number of args:
+
+public void printRoute(String... points){
+    for(String  point: points){
+        System.out.println(point);
+    }
+}
+
+
+Why is this used?
+- this is used to access instance field/ avoid shadowing. this.x = x;
+- Explicit constructor call.Call one constructor from another. this(x).

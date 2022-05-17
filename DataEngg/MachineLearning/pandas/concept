@@ -1,0 +1,8 @@
+- Used for working with tabular data
+
+It can:
+- Loading tabular data from diff sources
+- Search for particular rows or columns
+- Calculate aggregate statistics
+- Combine data from multiple sources
+

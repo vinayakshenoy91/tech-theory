@@ -1,0 +1,166 @@
+- Interfaces are a fundamental abstraction mechanism necessary to connect elements together.
+- All elements interact with some actors
+- an interface is more than what is provided by an element; an interface also includes what is required by an element.
+- Resource syntax. The syntax is the resource’s signature, which includes any information that another program will 
+need to write a syntactically correct program that uses the resource
+- Three techniques can be used to change an interface: deprecation, versioning, and extension.
+One technique when deprecating an interface is to introduce an error code signifying that this interface is to be deprecated 
+at (specific date) or that this interface has been deprecated.
+- Adding resources to an interface implies a commitment to maintain those resources as part of the interface for as 
+long as the element will be in use.
+- The reliability of your architecture is affected when the interface contract between elements is broken.
+
+Some additional design principles for interfaces are highlighted here:
+----------------------------------------------------------------------
+
+Principle of least surprise. Interfaces should behave consistently with the actor’s expectations. 
+Names play a role here: An aptly named resource gives actors a good hint about what the resource can be used for.
+
+Small interfaces principle. If two elements need to interact, have them exchange as little information as possible.
+
+Uniform access principle. Avoid leaking implementation details through the interface. A resource should be accessible 
+to its actors in the same way regardless of how they are implemented. An actor should be unaware, for example, whether a value is returned from a cache, from a computation, or from a fresh fetch of the value from some external source.
+
+Don’t repeat yourself principle. Interfaces should offer a set of composable primitives as opposed to many redundant 
+ways to achieve the same goal.
+
+Things to take care of:
+
+- you should establish and follow conventions on how resources are named, 
+- how API parameters are ordered, 
+- and how errors should be handled.
+
+Interface concepts:
+-------------------
+1) Interface Scope
+The scope of an interface defines the collection of resources directly available to the actors.
+
+A common pattern for constraining and mediating access to resources of an element or a group of elements is to establish a gateway element. A gateway—often called a message gateway—translates actor requests into requests to the target element’s (or elements’) resources, and so becomes an actor for the target element or elements.
+
+The granularity of resources provided by an element may be different than an actor needs. A gateway can translate between elements and actors.
+
+Actors may need access to, or be restricted to, specific subsets of the resources.
+
+The specifics of the resources—their number, protocol, type, location, and 
+properties—may change over time, and the gateway can provide a more stable interface.
+
+
+B) Interaction Styles
+
+Interfaces are meant to be connected together so that different elements can communicate (transfer data)
+and coordinate (transfer control).
+
+Many different interaction styles exist, but we will focus on two of the most widely used: RPC and REST.
+
+1) Remote Procedure Call (RPC). RPC is modeled on procedure calls in imperative languages, except that the called procedure is 
+located elsewhere on a network. The programmer codes the procedure call as if a local procedure were being called 
+(with some syntactic variation); the call is then translated into a message sent to a remote element where the actual procedure is invoked. 
+Finally, the results are sent back as a message to the calling element.
+
+RPC dates from the 1980s and has undergone many modifications since its inception. The early versions of this protocol were synchronous, 
+with the parameters of the message being sent as text. The most recent RPC version, called gRPC, transfers parameters in binary, 
+is asynchronous, and supports authentication, bidirectional streaming and flow control, blocking or nonblocking bindings, 
+and cancellation and timeouts. gRPC uses HTTP 2.0 for transport.
+
+2) Representational State Transfer (REST). REST is a protocol for web services. It grew out of the original protocol used when the World Wide Web was introduced. REST comprises a set of six constraints imposed on the interactions between elements:
+
+Uniform interface. All interactions use the same form (typically HTTP). Resources on the providing side of the interface are specified via URIs (Uniform Resource Identifiers). Naming conventions should be consistent and, in general, the principle of least surprise should be followed.
+
+Client-server. The actors are clients and the resource providers are servers using the client-server pattern.
+
+Stateless. All client-server interactions are stateless. That is, the client should not assume that the server has retained any information about the client’s last request. In consequence, interactions such as authorization are encoded into a token and the token is passed with each request.
+
+Cacheable. Caching is applied to resources when applicable. Caching can be implemented on the server side or the client side.
+
+Tiered system architecture. The “server” can be broken into multiple independent elements, which may be deployed independently. For example, the business logic and the database can be deployed independently.
+
+Code on demand (optional). It is possible for the server to provide code to the client to be executed. JavaScript is an example.
+
+
+
+C) Representation and Structure of Exchanged Data
+- Every interface provides the opportunity to abstract the internal data representation, which is typically built using programming language data types (e.g., objects, arrays, collections), into a different one—that is, 
+a representation more suitable for being exchanged across different programming language implementations and sent across the network. 
+Converting from the internal to the external representation is termed “serialization,” “marshaling,” or “translation.”
+
+This decision is based on the following concerns:
+
+Expressiveness. Can the representation serialize arbitrary data structures? Is it optimized for trees of objects? Does it need to carry text written in different languages?
+
+Interoperability. Does the representation used by the interface match what its actors expect and know how to parse? A standard representation (such as JSON, described later in this section) will make it easy for actors to transform the bits transmitted across the network into internal data structures. Does the interface implement a standard?
+
+Performance. Does the chosen representation allow efficient usage of the available communication bandwidth? What is the algorithmic complexity of parsing the representation to read its content into the internal element representation? How much time is spent preparing the messages before they can be sent out? What is the monetary cost of the required bandwidth?
+
+Implicit coupling. What are the assumptions shared by the actors and elements that could lead to errors and data loss when decoding messages?
+
+Transparency. Is it possible to intercept the exchanged messages and easily observe their content? This is a double-edged sword. On the one hand, if self-describing messages help developers more easily debug message payloads and eavesdroppers more readily intercept and interpret their content. On the other hand, binary representations, particularly encrypted ones, require special debugging tools, but are more secure.
+
+
+The most common programming-language–independent data representation styles can be divided between textual 
+(e.g., XML or JSON) and binary (e.g., protocol buffers)
+
+XML pros and cons:
+-----------------
+
+One strength of XML is that a document annotated using this language can be checked to validate that it conforms to a schema. This prevents faults caused by malformed documents and eliminates the need for some kinds of error checking by the code that reads and processes the document. The tradeoff is that parsing the document and validating it are relatively expensive in terms of processing and memory. A document must be read completely before it can be validated and may require multiple read passes to unmarshal. This requirement, coupled with XML’s verbosity, can result in unacceptable runtime performance and bandwidth consumption
+
+
+JSON pros:
+---------
+Compared to XML, however, JSON is significantly less verbose, as field names occur only once. Using a name/value representation instead of start and end tags, JSON documents can be parsed as they are read.
+
+Protocol Buffers:
+----------------
+Protocol Buffers use data types that are close to programming-language data types, making serialization and deserialization efficient. 
+
+Protocol Buffer messages have a schema that defines a valid structure, and that schema can specify both required and optional elements and nested elements.
+
+Protocol Buffers are a binary format, so they are extremely compact and use memory and network bandwidth resources quite efficiently. 
+In this respect, Protocol Buffers harken back to a much earlier binary representation called Abstract Syntax Notation One (ASN.1), 
+which originated in the early 1980s when network bandwidth was a precious resource and no bit could be wasted.
+
+You specify your message schema in a proto file, which is then compiled by a language-specific protocol buffer compiler. The procedures generated by the compilers will be used by an actor to serialize and by an element to deserialize the data.
+
+Each element then uses the Protocol Buffer compiler specific to its language. Although Protocol Buffers can be used for any data-structuring purpose, they are mostly employed as part of the gRPC protocol.
+
+Protocol Buffers are specified using an interface description language. Since they are compiled by language-specific compilers, the specification is necessary to ensure correct behavior of the interface. It also acts as documentation for the interfaces. Placing the interface specification in a database allows for searching it to see how values propagate through the various elements.
+
+
+D) Error handling:
+------------------
+Actors need to know whether the element is working correctly, whether their interaction is successful and whether an error has occurred. Strategies to do so include the following:
+
+Failed operations may throw an exception.
+
+Operations may return a status indicator with predefined codes, which would need to be tested to detect erroneous outcomes.
+
+Properties may be used to store data indicating whether the latest operation was successful or not, or whether stateful elements are in an erroneous state.
+
+Error events such as a timeout may be triggered for failed asynchronous interactions.
+
+The error log may be read by connecting to a specific output data stream.
+
+
+Common sources of errors (which the interface should handle gracefully) include the following:
+--------------------------
+
+Incorrect, invalid, or illegal information was sent to the interface—for example, calling an operation with a null value parameter that should not be null. Associating an error condition with the resource is the prudent thing to do.
+
+The element is in the wrong state for handling the request. The element may have entered the improper state as a result of a previous action or the lack of a previous action on the part of the same or another actor. Examples of the latter include invoking an operation or reading a property before the element’s initialization has completed, and writing to a storage device that has been taken offline by the system’s human operator.
+
+A hardware or software error occurred that prevented the element from successfully executing. Processor failures, failure of the network to respond, and inability to allocate more memory are examples of this kind of error condition.
+
+The element is not configured correctly. For example, its database connection string refers to the wrong database server.
+
+Indicating the source of the error helps the system choose the appropriate correction and recovery strategy. Temporary errors with idempotent operations can be dealt with by waiting and retrying. Errors due to invalid input require fixing the bad requests and resending them. Missing dependencies should be reinstalled before reattempting to use the interface.
+
+
+
+
+
+
+
+
+
+
+

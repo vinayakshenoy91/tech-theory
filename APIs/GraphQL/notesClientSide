@@ -1,0 +1,36 @@
+Query in playground:
+---------------------
+{
+    me{
+        email
+    }
+}
+
+query AllCharacters($page:Int){
+    character(page:$page){
+        email
+    }
+}
+
+
+//aliasing:
+query AllCharacters($page:Int){
+    result: character(page:$page){
+        fullemail:email
+    }
+}
+
+
+mutation createCustomer(){
+    createCharacter(){
+
+    }
+}
+
+Apollo client:
+--------------
+- Encapsulates HTTP logic used to interact with a GraphQL API
+- Doubles as  a client side state mgmt alternative.
+- If your graphql api is also an apollo server, provides some extra features.
+- It is framework independent
+- Offers plug apporach for extending capabilities

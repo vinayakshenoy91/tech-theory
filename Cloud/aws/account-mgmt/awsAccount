@@ -1,0 +1,26 @@
+- Least privilege access
+
+Step while starting on aws:
+----------------------------
+- Create separate accounts for dev and prod
+- create admin IAM user with MFA for both accounts.
+
+Long term cred are:
+------------------
+- Username and pwd
+- AccessKeys : Two parts: Access Key ID and Secret Access Keys
+
+My security cred -> create access keys
+- You canhave only 2 set of access keys for a particular  identity.
+
+Download aws-cli //use version 2
+
+In command line, type aws and then press enter 
+
+aws --version
+
+//Configure cred:
+aws configure --profile iamadmin-general //Named profile for various accounts
+
+region type: us-east-1
+

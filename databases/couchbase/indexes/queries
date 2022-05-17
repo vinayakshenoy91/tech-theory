@@ -1,0 +1,145 @@
+SELECT * FROM system:indexes; //get all indexes.
+SELECT * FROM system:indexes WHERE name="#primary"; /get all indexes.
+SELECT * FROM system:indexes WHERE is_primary=true AND state="online; //Select on primary index.
+ 
+SELECT * FROM  `bucket-name` WHERE META().id="cyz";
+
+SELECT * from `bucket_name` LIMIT 1; //Select query
+SELECT DISTINCT type from `bucket_name`;
+
+SELECT type, COUNT(*) AS typecount
+from `basket_name` GROUP BY type.
+
+Queries using primary index: Query plan in UI shows us if index was used.
+-----------------------------
+SELECT * FROM `travel-sample` where META().id="key_name" AND city="Padfield";
+Note: Check the plan tab while executing the query to check 
+
+1) Creating primary index:
+------------------------
+CREATE PRIMARY INDEX  ON `travel-sample`;
+CREATE PRIMARY INDEX  `travel-sample-primary` ON `travel-sample` USING GSI;
+CREATE PRIMARY INDEX  `travel-sample-primary` ON `travel-sample` USING GSI WITH {"defer_build:TRUE"};
+
+Deferred: Create all at once but build it separately. Build it now. Best if multiple indexes are created.
+
+
+Create index -> build index.
+
+BUILD INDEX
+- System catalogue holds the database metadata contained in namespace called system
+
+System keyspaces:
+----------------
+system:datastores
+system:namespaces
+system:keyspaces
+system:indexes
+system:dual
+system:active_requests
+
+SELECT 10*3 FROm system:dual; //Used to evaluate expression
+
+2) Secondary Index creation:
+----------------
+CREATE INDEX idx_name ON `bucketname`(fieldname1, field2) WHERE jsonType="player" USING GSI WITH {"defer_build":FALSE};
+CREATE INDEX `idx_name` ON `bucket_name`(uuid) WHERE experience > 1000 USING GSI  WITH {"nodes":["127.0.0.1:8091"]};
+
+- Secondary index do not store null values.So queries selected based on null field do not benefit from indexes.
+- Skip index hint can be provided to avoid use of index.
+- If Composite index is not present, then multiple indexes are used to execute the query.
+
+
+
+3) Composite index: [Check if index can be put on the where clause]
+-------------------
+CREATE INDEX `travel_type` ON `travel-sample`(`type`) WITH {"defer_build":true};
+BUILD INDEX ON `travel-sample`("travel-type") USING GSI;
+
+Query: SELECT name from `travel-sample` WHERE type="airline";
+
+- If there are two or more fields then intersection of index scan takes place. Which ever has less record, that will be picked.
+
+SELECT rt.sourceairport, rt.edstinationairport,rt.airlineid FROM `travel-sample` rt JOIN `travel-sample` al
+ON rt.airlineid=META(al).id;
+
+Composite index that contains more than one fields:
+
+CREATE INDEX travel_idx ON `travel-sample`(type, free_breakfast, free_internet);
+
+
+
+4) Covering index:
+-------------------
+An index that includes all actual field values specified in a query. Then index is called a covering index and the query 
+is referred to as a covered query
+If index includes all fields in query Q, couchbase need not access actual data at all.
+Index service alone suffices and data service is not involved during querying.
+
+Use for expression and aggregates and set operators: UNION/INTERSECT/EXCEPT
+sub Queries
+SELECT in INSERT statements.
+Arrays in WHERE clause.
+Collection operators: FIRST, ARRAY, ANY, EVERY, ANY AND EVERY
+
+SELECT airportname, city FROM `travel-sample` WHERE type="airport" AND airportname LIKE "%B%";
+
+CREATE INDEX `idx_name` ON `bucket`(airportname,id,city) WHERE (type="airport") USING GSI;
+
+5) Partial indexes:
+--------------------
+An index that includes some but not all actual field values specified in a query.
+So a fetch from disk is performed unlike covering index where no fetch is performed.
+
+Used in partitioning large indexes.Simulating index range partitioning.
+
+
+
+6) Functional Index:
+---------------------
+An index that includes a functopn or expression in the index definition; handy in apps 
+such as searching a mix of upper- and lower-case strings.
+
+SELECT * FROM `tablename` WHERE ARRAY_LENGTH(reviews[*].author)>=3;
+
+CREATE INDEX index_name on `tablename`(ARRAY_LENGTH(reviews[*].author)>=3);
+
+
+7) Array index:
+--------------
+An index meant for optimizing access to a particular array or field that may be buried deep 
+within a complex hierarchy of fields, objects and arrays in JSON.
+
+Check state of index using: online/offline
+---------------------------
+SELECT * FROM system:indexes WHERE name="#primary";
+
+If state is deferred, then you can build it using:
+--------------------------------------------------
+BUILD INDEX ON `gamesim-sample`(`gamesim-sample-index3`) USING GSI;
+
+DELETE INDEX:
+------------
+DROP INDEX `gamesim-sample`.idx_gamesim1;
+
+Misc index:
+-----------
+CREATE INDEX idx_hotel ON `travel-sample`(name,city,country) WHERE (`type`="hotel");
+Index selected is mainly driven by what is presetn in where clause.
+
+
+Index partitioning:
+-------------------
+CREATE INDEX idx_name ON `travel-sample`(city,name,id)
+PARTITION BY HASH (META().id) WITH {"num_partition":16};
+//WITH {"nodes":["192.168.1.18:8091"]};
+
+
+CREATE INDEX `activity_type` ON `vehiclechecks`(`type`) WHERE (`type` = "activity")
+
+
+Tradeoff:
+-------
+Index expedite queries
+
+Index consume memory, disk space and CPU resources.

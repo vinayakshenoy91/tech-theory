@@ -1,0 +1,142 @@
+- They represent colleciton of events which are async.It is differernt from Promise.all that they handle and arbitrary number of events 
+and Promise can track one thing are a time.
+- We need to unwrap observable to access value it contaissn using 'subscribe'. The function passed into subscribe is called everytime 
+observable emits a value.
+- Observables only run when when they know someone's listening to the data they are emitting.
+
+let myObs$ = clickOnButton(myButton);
+
+myObs$.subscribe((clickEvent)=>console.log("button was clicked"))
+
+
+
+Class using observable:
+----------------------
+​import​ { Observable } ​from​ ​'rxjs'​;
+
+​let​ tenthSecond$ = ​new​ Observable(observer => {
+
+- Observer is any object that has the following methods:
+1) next(someItem) -> Calle dto pass latest value to observable stream. observer.next(counter) -> here the .next method on onserver is how 
+an observable announces to the subscriber that it has new value available for consumption.
+2) error(someError) -> Called when sometthing goes wrong.
+3) complete() -> once the data source has no more information to pass.
+
+
+- If there are multiple subscribers, each subscriber gets their own instance of constructor.So has their own cleanup function.
+Setup and teardown object is at one place.
+
+- Common functions like "interval" is shipped with rxjs
+
+- Operator: An operator is a tool provided by RxJS that allows you to manipulate the data in the observable as it streams through.
+
+import {interval} from 'rxjs';
+import { exmpleOperator } from 'rxjs/operators';
+
+interval(100).pipe(exampleOperator())
+
+import { map } from 'rxjs/operators';
+
+Using map: let newOnservable$ = oldOnservable$.pipe(map(someFn));
+
+- A call to .subscribe returns a subscription.
+
+let aSubscription = someNewObservable$.subscribe(console.log);
+aSubscription.unsubscribe();
+
+
+
+Best practise:
+---------------
+
+aSubscription.add(bSubscription);
+aSubscription.add(cSubscription);
+aSubscription.unsubscribe();
+
+
+OF operator:
+--------------
+
+The of constructor allows for easy creation of an observable out of a known data source. It takes any number of arguments 
+and returns an observable containing each argument as a separate event. The following example logs the three strings passed in 
+as separate events.
+
+​ 	​import​ { ​of​ } ​from​ ​'rxjs'​;
+​ 	
+​ 	​of​(​'hello'​, ​'world'​, ​'!'​)
+​ 	.subscribe(console.log);
+The of constructor can be handy when you try to learn a new operator; it’s the simplest way to create an observable of arbitrary data. 
+For instance, if you’re struggling with the map operator, it may be elucidating to pass a few strings through to see what gets logged.
+
+​ 	​import​ { ​of​ } ​from​ ​'rxjs'​;
+​ 	
+​ 	​of​(​'foo'​, ​'bar'​, ​'baz'​)
+​ 	.pipe(
+​ 	  map(word => word.split(​''​))
+​ 	)
+​ 	.subscribe(console.log);
+Beyond learning RxJS, the of constructor is used when testing observables, as it allows you to pass in precise data during unit testing.
+
+
+THE TAKE OPERATOR:
+------------------
+Earlier in this chapter, you took a look at takeUntil, which continued taking events until 
+the passed-in observable emitted a value. The take operator is related to that, but it simplifies things.
+It’s passed a single integer argument, and takes that many events from the observable before it unsubscribes.
+
+​ 	​import​ { interval } ​from​ ​'rxjs'​;
+​ 	​import​ { take } ​from​ ​'rxjs/operators'​;
+​ 	
+​ 	​// interval is an infinite observable​
+​ 	interval(1000)
+​ 	.pipe(
+​ 	  ​// take transforms that into an observable of only three items​
+​ 	  take(3)
+​ 	)
+​ 	​// Logs 0, 1, 2 as separate events and then completes​
+​ 	.subscribe(console.log);
+take is useful when you only want the first slice of an observable’s data. In practical terms, this helps in situations where
+you only want to be notified on the first click on a button, but don’t care about subsequent clicks. Another example is a trivia 
+game where only the first three players to submit an answer get the points.
+
+​ 	answer$
+​ 	.pipe(
+​ 	  filter(isAnswerCorrect),
+​ 	  take(3)
+​ 	)
+​ 	.subscribe(updateScore);
+It’s also helpful to use the take operator in combination with interval when debugging as an easy way to create a finite, 
+asynchronous stream
+
+
+THE DELAY OPERATOR:
+-------------------
+The delay operator is passed an integer argument and delays all events coming through the observable chain by that many milliseconds. This example logs 1, 2, and 3 one second after the code is executed.
+
+​ 	​of​(1,2,3)
+​ 	.pipe(
+​ 	  delay(1000)
+​ 	)
+​ 	.subscribe(console.log);
+Like the other two tools here, delay helps you manipulate your experimental streams to play with observables and their operators. The delay operator is also helpful when connecting multiple streams together (this example uses merge, an operator/constructor combo you’ll learn about in Chapter 2, ​Manipulating Streams​).
+
+​ 	​import​ { ​of​, merge } ​from​ ​'rxjs'​;
+​ 	​import​ { delay } ​from​ ​'rxjs/operators'​;
+​ 	
+​ 	​let​ oneSecond$ = ​of​(​'one'​).pipe(delay(1000));
+​ 	​let​ twoSecond$ = ​of​(​'two'​).pipe(delay(2000));
+​ 	​let​ threeSecond$ = ​of​(​'three'​).pipe(delay(3000));
+​ 	​let​ fourSecond$ = ​of​(​'four'​).pipe(delay(4000));
+​ 	
+​ 	merge(
+​ 	  oneSecond$,
+​ 	  twoSecond$,
+​ 	  threeSecond$,
+​ 	  fourSecond$
+​ 	)
+​ 	.subscribe(console.log);
+
+
+
+
+

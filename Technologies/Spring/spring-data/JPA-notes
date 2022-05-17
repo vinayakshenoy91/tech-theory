@@ -1,0 +1,42 @@
+ORM: Map java class to database table.
+
+JPA providers:
+---------------
+Hibernate implements JPA api by following the spec.
+Spring data JPA is another provider.
+
+- Two thing: Create EmployeeRepository that extends crud reposiroty and Create a domain obj and map it to table.
+
+Ex:
+---
+1) 
+Product
+ProductRepository
+Configure Data source connection info
+-------
+@Entity
+@Table
+public class Product{
+
+    @Id
+    private int id;
+    private String name;
+    @Column(name="description")
+    private String desc;
+
+}
+
+2)
+public interface ProductRepository extends CrudRepository<Product,Integer>{
+
+}
+
+
+3) DB configs: in application.properties
+
+spring.datasource.url=jdbc:mysql://localhost:3306/mydb
+spring.datasource.username=root
+spring.datasource.password=test
+spring.jpa.show-sql=true
+
+

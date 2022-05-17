@@ -1,0 +1,173 @@
+Two packages -> Android test & Unit test
+
+HILT:
+----
+- DI -> All the dependencies are injected to dependent classes.Helps in maintainability and testability.
+
+- DI library for android created by google that reduces the boiler plate of 
+going manual DI in your project.
+- HILT provides container for every class and managing lifecycle.
+- Built on top of dagger. Much easier impl.
+
+- dependencies{
+    classpath: "com.google.dagger:hilt-android-gradle-plugin:2.28-alpha"
+    kapt 'com.google.dagger:hilt-android-compiler:2.28-alpha'
+}
+
+- plugins{
+    id "kotlin-kapt"
+    id "dagger.hilt.android.plugin"
+}
+
+
+android{
+     testOptions{
+         unitTests.returnDefautlValue=true
+     }
+}
+
+
+
+class x{
+    @get:Rule
+    var rule = InstantTaskExecutorRule();
+
+    @Before
+    fun setupRxSchedulers(){
+        var immediate = object: Scheduler(){
+              override fun createWorker():Worker{
+                  return ExecutorScheduler.ExecutorWorker(Executor{it.run()}, true)
+              }
+        }
+
+        RxJavaPlugins.setInitNewThreadSchedulerHandler{ schduler -> immediate}
+        RxAndroidPlugins.setInitNewThreadSchedulerHandler
+    }
+}
+
+//Tests under android test:
+---------------------------
+
+
+
+
+
+
+//Test under unit tests:
+-------------------------
+class EngineTest{
+
+  private val engine = Engine(2000,189);
+ 
+  @Test
+  function engineTurnsOn(){
+       assertEquals(expected, actual);
+  }
+
+
+}
+
+Mockito:
+-------
+verify(objectname, time(1)).turnOn();
+val engine:Engine=mock();
+
+Service Test:
+-------------
+
+https://tesco.udemy.com/course/android-11-tdd-masterclass/learn/lecture/22974484#announcements
+
+class PlaylistDetailsServiceShould:BaseUnitTest(){
+
+lateinit var service: PlayListDetailsSvc;
+private val api:PlayDetailsAPI=mock();
+
+@get:Rule
+var coroutineTestRule = MainCoroutineScopeRule();
+
+init{
+    whenever(test.on()).thenReturn(flow{
+        emit(25);
+    })
+}
+
+@Test
+fun fetch()=runBlockingTest{
+    service.fetchPlaylistDetails(id).single();
+    verify(api,times(1)).fetch();
+
+}
+
+@Test
+func x()=runBlockingTest{
+    whenever(api.fetch(id)).thenReturn(play);
+}
+
+@Test
+func exceptionTests()=runBlockingTest{
+    coroutineTestRule.advanceTimeBy(6000)
+    
+    whenever(api.fetch(id)).thenThrow(RuntimeException("Error"));
+
+    assertEquals("Error",service.fetchPlaylistDetails(id).single().exceptionOrNull()?.message);
+
+}
+
+}
+
+
+Code:
+-----
+suspend fun fetchDocs(){
+
+
+    //If you want to explicitly run any compute on disaptcher.io itself post the fetch.
+    withContext(Dispatchers.IO){
+        show(result)
+    }
+
+}
+
+
+fun turnOn(){
+    CoroutineScope(Dispatcher.Main).launch{
+        e.fetchDocs();
+    }
+}
+
+---------------------- Flow ------------
+suspend fun fetchDocs():Flow<Int>{
+    return flow{
+        delay(2000)
+        emit(temp)
+    }.catch{
+        emit(Result.failure(RuntimeException("Something went wrong")))
+    }
+}
+
+fun turnOn(){
+    CoroutineScope(Dispatcher.Main).launch{
+        e.turnOn().collect{
+           t->  Log.d("Course",""Collected logs);
+        }
+        e.fetchDocs();
+    }
+}
+
+
+runBlocking{
+    whenever(repo.get()).thenReturn({
+        flow{
+            emit(exception);
+        }
+    });
+}
+
+runBlocking{
+    whenever(repo.get()).thenReturn({
+        flow{
+            emit(Result.success(playlists));
+        }
+    });
+}
+

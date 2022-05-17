@@ -1,0 +1,58 @@
+Inner class is a class associated with instance of its outer class
+
+Local class is defined withing a block of code usually within a method
+
+Developers often define a member inner class inside another class if the relationship between the two classes is very close. For example, a Zoo sells tickets for its patrons; therefore, it may want to manage the lifecycle of the Ticket object.
+
+
+
+We can expand this to include an interface.
+
+public class Zoo {
+   private interface Paper {}
+   public class Ticket implements Paper {}
+}
+While top-level classes and interfaces can only be set with public or package-private access, member inner classes do not have the same restriction. A member inner class can be declared with all of the same access modifiers as a class member, such as public, protected, default (package-private), or private.
+
+A member inner class can contain many of the same methods and variables as a top-level class. 
+
+
+public class Zoo {
+   private interface Paper {
+      public String getId();
+   }
+   public class Ticket implements Paper {
+      private String serialNumber;
+      public String getId() { return serialNumber;}
+   }
+}
+
+USING A MEMBER INNER CLASS
+One of the ways a member inner class can be used is by calling it in the outer class. Continuing with our previous example, let’s define a method in Zoo that makes use of the member inner class with a new sellTicket() method.
+
+public class Zoo {
+   private interface Paper {
+      public String getId();
+   }
+   public class Ticket implements Paper {
+      private String serialNumber;
+      public String getId() { return serialNumber; }
+   }
+   public Ticket sellTicket(String serialNumber) {
+      var t = new Ticket();
+      t.serialNumber = serialNumber;
+      return t;
+   }
+}
+
+The advantage of using a member inner class in this example is that the Zoo class completely manages the lifecycle of the Ticket class.
+
+public class Zoo {
+   ...
+   public static void main(String... unused) {
+      var z = new Zoo();
+      var t = z.sellTicket("12345");
+      System.out.println(t.getId()+" Ticket sold!");
+   }
+}
+

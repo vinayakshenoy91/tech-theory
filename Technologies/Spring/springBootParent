@@ -1,0 +1,94 @@
+Spring Boot starter parent is a convenient and easy way for dependency management. With each release, Spring Boot provides a curated list of dependencies that it supports.
+
+<parent>
+	<groupId>org.springframework.boot</groupId>
+	<artifactId>spring-boot-starter-parent</artifactId>
+	<version>2.1.1.RELEASE</version>
+</parent>
+
+
+By setting the spring-boot-starter-parentas the parent, you are automatically adding following features to you Spring Boot application:
+
+Dependency management – Spring Boot automatically takes care of the version for you.
+Sensible Defaults
+Default Java version
+Source encoding
+Resource filtering etc.
+Plugin management
+
+
+<properties>
+   <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+   <java.version>1.8</java.version>
+   <resource.delimiter>@</resource.delimiter>
+   <maven.compiler.source>${java.version}</maven.compiler.source>
+   <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+   <maven.compiler.target>${java.version}</maven.compiler.target>
+</properties>
+
+
+
+1.2 Spring Boot Dependencies
+The Spring Boot dependencies manage the list of the dependencies as part of the dependencies management system.This is how it look like:
+
+<properties>
+	<activemq.version>5.15.7</activemq.version>
+	<antlr2.version>2.7.7</antlr2.version>
+	<appengine-sdk.version>1.9.67</appengine-sdk.version>
+	<artemis.version>2.6.3</artemis.version>
+	<aspectj.version>1.9.2</aspectj.version>
+	<assertj.version>3.11.1</assertj.version>
+	<atomikos.version>4.0.6</atomikos.version>
+	<bitronix.version>2.1.4</bitronix.version>
+	<build-helper-maven-plugin.version>3.0.0</build-helper-maven-plugin.version>
+	<byte-buddy.version>1.9.3</byte-buddy.version>
+	<caffeine.version>2.6.2</caffeine.version>
+	<cassandra-driver.version>3.6.0</cassandra-driver.version>
+	<!-- List of other dependencies -->
+</properties>
+<dependencyManagement>
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot</artifactId>
+			<version>2.1.0.RELEASE</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-actuator</artifactId>
+			<version>2.1.0.RELEASE</version>
+		</dependency>
+		<!-- other list -->
+	</dependencies>
+</dependencyManagement>
+
+
+2. Spring Boot Without Parent
+Spring Boot starter parent takes care of a number of things for us and it is highly recommended to inherit this in your pom.xml file. There are a few use cases where you may not like to inherit the spring-boot-starter-parent POM. To handle such use case, Spring Boot provides the flexibility to still use the dependency management without inheriting it.
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <!-- Import dependency management from Spring Boot -->
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-dependencies</artifactId>
+            <version>2.1.1.RELEASE</version>
+            <type>pom</type>
+            <scope>import</scope>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+We are using a scope=import for this. Once this configuration is in place, we can start adding Spring dependencies as per our requirement. This is how we can add dependencies:
+
+<dependencyManagement>
+    <dependencies>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+            <!-- if we need to override the version -->
+            <version>2.1.1.RELEASE</version>
+        </dependency>
+    </dependencies>
+</dependencyManagement>
+The version tag is optional. This is useful if we want to use a different version for a certain dependency than the one managed by Boot.
+

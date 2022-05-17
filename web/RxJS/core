@@ -1,0 +1,119 @@
+0) Stream:
+===========
+- Data can come at various points of time.
+
+
+
+
+1) Observable: Values can be emitted at any point of time.
+===============
+- Special object wih some callback stored inside
+- Based around single call back function
+- Once executed it can emit notifications [next, error, complete].
+
+- Observables are like arrays because they represent a collection of events but are also like promises as they’re asynchronous: 
+each event in the collection arrives at some indeterminate point in the future.
+This is distinct from a collection of promises (like Promise.all) as an observable can handle an arbitrary number of events, 
+and a promise can only track one thing.
+
+- let myObs$ = clicksOnButton(myButton); 
+$ -> This is a convention in the Rx world that indicates that the variable in question is observable.
+
+///////// CODE- VVIP ///////////// [Observable -> subscription -> observer]
+
+import {Observable} from 'rxjs';
+
+const myObs$= new Observable<string>(subscriber=>{
+    subscriber.next("Hello");
+    subscriber.next("Bye");
+})
+
+const observer = {
+    next: value => console.log(value);
+}
+
+const subscription=myObs$.subscribe(observer);
+
+setTimeout(()=>{
+  subscription.unsubscribe();
+},2000)
+
+When next notification emitted by observable, next is emitted and handled by observer
+- Observer is wrappecd  in subscription object to provide interface guarantees like notification not sent after subscription is closed,
+etc
+- Logic of observable will be run independently for each new subscription.
+
+///////////////////////////
+
+Subscribe:
+----------
+- The observable unwrapping method is called subscribe. 
+The function passed into subscribe is called every time the observable emits a value.
+
+Syntax:
+--------
+------Code------
+let myObs$ = clicksOnButton(myButton);
+myObs$ 
+.subscribe(clickEvent => console.log('The button was clicked!')); 
+
+errorObservable$.subscribe({
+    next: value => console.log(value),
+    error: err => console.log('Error when saving:', err.message)
+    complete: ()=> console.log("Completed");
+})
+-----------------
+- by calling subscribe, we made myObs$  run code and emit some values.
+
+
+Note: One thing to note here is that observables under RxJS are lazy. This means that if there’s no subscribe call on myObs$, 
+no click event handler is created. 
+Observables only run when they know someone’s listening to the data they’re emitting.
+
+import { interval, fromEvent } from 'rxjs';
+
+- This .next method on the observer is how an observable announces to the subscriber that it has a new 
+value available for consumption.
+
+.unsubscribe():
+---------------
+- Calling unsubscribe on observable to stop receiving notification.
+
+Notification types:
+===================
+- next -> 0 to many
+- error -> 0..1
+- complete -> 0..1
+
+
+Types of Observables:
+=====================
+1) Cold observable: Unicast | New subscriber -> new data.  Set of values, HTTP requests, Timer/Interval, Subjects
+- Each subscription value diff from other subscription
+- Produces the dats inside
+
+
+2) Hot observable: Multicast , DOM events
+- All subscription share same source. Each when you subscribe, it will give the same subscription.
+Same click is passed to all subscription.
+- You can subscribe at later point of time and you will get the same response.
+- All subscribers - common data
+ 
+
+Each time we subscribe, an Observable created using the `fromEvent` function uses things like addEventListener to 
+connect to an already existing event source. This means that for each subscription a new connection to the same external 
+source will be made, so all Subscriptions will in fact have the same source of emissions. This is what describes this 
+Observable as hot.
+
+
+Note: After the Observable completes the Subscription ends, so there is no need to unsubscribe.
+Either wait for it to complete or unsubscribe if you want to terminate before it completes.
+Except interval which is not going to stop and you have ti compulsarily unsubscribe.
+
+
+
+
+
+
+
+

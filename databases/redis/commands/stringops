@@ -1,0 +1,47 @@
+Setting a value:
+----------------
+SET key value
+
+Getting a value:
+---------------
+GET key
+
+
+Expire key after certain seconds:
+-----------------------------
+SETEX key seconds value
+
+OR
+
+SET google 400 EX 20
+
+Expire key after certain ms:
+----------------------------
+
+PSETEX key milliseconds value
+
+OR
+
+SET key value PX milliseconds
+
+
+Dont want to set if already present:
+--------------------------------
+
+SETNX key value
+
+OR
+
+SET key value NX
+
+Length of value:
+----------------
+STRLEN key
+
+Set multiple records in single command:
+---------------------------------------
+MSET key1 value1 key2 value2
+
+Get value of multiple keys:
+---------------------------
+MGET key1 key2

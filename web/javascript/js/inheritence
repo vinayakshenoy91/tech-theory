@@ -1,0 +1,47 @@
+function Dog(name,breed){
+    Pet.call(this,name);
+    this.breed=breed;
+}
+
+Dog.prototype=Object.create(Pet.prototype);
+
+
+
+class Dog extends Pet{
+
+    constructor(name,breed){
+        super(name);
+        this.breed=breed;
+    }
+}
+
+//instanceOf
+
+-  instanceOf is used to check the inheritance.
+
+console.log(Object.prototype instanceof Object)//false
+instanceof searches the entire prototype chain to see if any constructor in the chain is equal to the given class. This way, 
+it also takes inheritance into account.
+
+The line Object.prototype instanceof Object basically asks if Object.prototype inherits from Object. It does not. 
+For any expression:
+
+x instanceof y 
+It tests whether y.prototype is in the prototype chain of x. In our case, it is not in the chain because 
+it is the start of the chain itself. Hence, the answer is false.
+
+
+function Func() {}
+Func.prototype = Object.create(null);
+console.log((new Func()) instanceof Object); //False
+-----------
+function check(){
+    var tempFunc = function () {}
+    tempFunc.prototype = Array.prototype
+    return new tempFunc instanceof Array;  //true
+}
+console.log(check()); 
+
+Because the object instance of Array will check if Array.prototype is present in the prototype chain of the object. It is not. 
+Hence, it returns false.
+All we need to do is modify the code so that the new object becomes an instance of the array. 

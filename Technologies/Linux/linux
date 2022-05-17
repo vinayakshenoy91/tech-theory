@@ -1,0 +1,17 @@
+kill -SIGSTOP $(pgrep httpd)  //Pause a process
+kill -SIGCONT $(pgrep java)   //Continue a process
+kill -SIGTERM $(pgrep httpd)  //stop a running process, soft stop/kill to clean up resources
+kill -SIGKILL $(pgrep httpd)  //Forceful kill or kill -9 processid
+
+iptables -t nat -S DOCKER
+
+
+df -h
+
+Linux host that uses Linux namespaces to provide isolation between different containers, in terms of their use of global system resources such as users, processes, filesystems, and networking. Linux control groups (also known as cgroups) are used to limit the amount of CPU and memory that a container is allowed to consume.
+
+
+
+a lightweight form of virtual machines has evolved. It mixes the best of traditional virtual machines and containers, providing virtual machines with a footprint and startup time similar to containers and with the same level of secure isolation provided by traditional virtual machines. Some examples are Amazon Firecracker and Microsoft Windows Subsystem for Linux v2 (WSL2). For more information, see https://firecracker-microvm.github.io and https://docs.microsoft.com/en-us/windows/wsl/.
+
+

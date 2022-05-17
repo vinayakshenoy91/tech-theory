@@ -1,0 +1,2 @@
+npm install -g @aws-amplify/cli@0.1.38
+amplify configure

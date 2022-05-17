@@ -1,0 +1,25 @@
+- Supports: DOM EventTarget, Node.js EventEmitter,jQuery Events
+const triggerButton = document.querySelector('button#trigger');
+
+const x = fromEvent(triggerButton,'click').subscribe(event=> console.log(event));
+
+setTimeout(()=>{
+x.unsubscribe();
+},5000);
+
+
+fromEvent using pure observable:
+
+
+//Always provide tear down logic using memory leaks
+const triggerClick$= new Observable<MouseEvent>(subscriber=>{
+    const clickHandlerFn=event=>{
+        console.log('Event callback executed');
+        subsceriber.next(event);
+    }
+
+    triggerButton.addEventListener('click',clickHandlerFn);
+    return ()=>{
+        triggerButton.removeEventListener('click',clickHandlerFn);
+    }
+})

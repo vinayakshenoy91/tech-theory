@@ -1,0 +1,25 @@
+- API gateway follows a software arch pattern called API composition
+- Consolidate all security, authorization and authentication in a single place.
+- Request routing [Aggregation]
+- Static content and response caching
+- Monitoring and alerting
+- Protocol translation
+
+
+API Gateway Solutions
+Open Source API Gateways
+Netflix Zuul
+Zuul is a free and open-source application gateway written in Java that provides capabilities for dynamic routing, monitoring, resiliency, security, and more.
+
+Cloud-Based API Gateways
+Amazon API Gateway
+Amazon API Gateway is a fully managed service that makes it easy for developers to create, publish, maintain, monitor, and secure APIs at any scale. Supports RESTful APIs and WebSocket APIs (bi-directional communication between client and server).
+
+Google Cloud Platform API Gateway
+Google Cloud Platform API Gateway enables you to provide secure access to your services through a well-defined REST API that is consistent across all of your services, regardless of service implementation. For full documentation follow this link.
+
+Microsoft Azure API Management
+API Management helps organizations publish APIs to external, partner, and internal developers to unlock the potential of their data and services.
+
+
+

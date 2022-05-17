@@ -1,0 +1,30 @@
+Collection vs Collections??
+
+- Collection is an interface whereas Collections is a utility class in java.
+- A Collection interface provides the standard functionality of a data structure to List, Set, and Queue. However, 
+the Collections class provides the utility methods that can be used to search, sort, and synchronize collection elements.
+
+
+- All collection can be derived from java.util.Collection interface.
+- toArray() can transform any Collectioninto a 1D array
+- The collection interface extends the java.lang.iterable interface and that is why we can use for-each loop.
+
+
+
+Misc methods:
+-------------
+List<Integer> nums = new ArrayList<>():
+
+Collections.reverse(nums); //Reverses order of insertion
+
+Collections.min(x);
+Collections.max(x);
+
+Collections.shuffle(nums);
+
+Collections.rotate(nums,1);
+
+Collections.replaceAll(nums, 1,10);
+
+Collections.unmodifiableList(nums); //Map and set versions are also presentx`
+

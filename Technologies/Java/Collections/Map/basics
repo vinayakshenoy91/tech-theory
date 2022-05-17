@@ -1,0 +1,29 @@
+- Associative arrays (Maps or dict) are abstract data types
+- Do not support sorting as they are unordered
+
+
+Hashtables
+----------
+- Effecient storing of key and value pairs so that
+- Hash function defines the relationship between keys and array indexes.
+- In hash function,use modulo for integers and ascci value for strings.
+- Collision occurs when the h(x) has function maps two keys to the same array slot 
+
+1) Chaining -> Hash function puts all items in same bucket.
+2) Open addressing
+- Linear and quadratic probing: We try k , k+1 untilwe find an empty bucket.
+- Linear not best as there will be clusters in the underlying array
+&  Better cache performance than other approaches.
+
+- Quadratic probing will not have clusters and no cache advantage.
+3) Rehashing
+
+- Load factor -> actual items/total buckets
+load factor > 0.75 -> java resize the hash table.
+For python, load factor is 0.66
+
+-> problem is that hash values are depending on the size  of underlying array DS.
+So all items in old hash table has to be inserted into the new one with the hash function.
+
+-> it takes O(N) linear running time - So dynamic sized has table inappropriate for real time apps.
+

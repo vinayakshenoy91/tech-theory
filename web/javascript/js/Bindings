@@ -1,0 +1,65 @@
+test is fn & obj is object
+
+test.call(obj);
+test.apply(obj);
+
+
+Hard binding:
+-------------
+
+
+callMeLater(test.bind(obj)); //It passes a reference, it doesn't call the function, with this keyword set to object
+//used where the argument passed is a function which is used as a callback
+
+
+
+I started this section by redefining a function in the arrow syntax and showing that it behaved differently, producing undefined in its output. Here is the object and its function:
+...
+let hat = {
+    name: "Hat",
+    _price: 100,
+    priceIncTax: 100 * 1.2,
+    set price(newPrice) {
+        this._price = newPrice;
+        this.priceIncTax = this._price * 1.2;
+    },
+    get price() {
+        return this._price;
+    },
+    writeDetails: () =>
+        console.log(`${this.name}: ${this.price}, ${this.priceIncTax}`)
+};
+...
+The behavior changed because arrow functions don’t have their own this value and the arrow function isn’t enclosed by a regular function that can provide one. To resolve the issue and be sure that the results will be consistent, I must return to a regular function and use the bind method to fix the this value, as shown in Listing 3-36.
+let hat = {
+    name: "Hat",
+    _price: 100,
+    priceIncTax: 100 * 1.2,
+    set price(newPrice) {
+        this._price = newPrice;
+        this.priceIncTax = this._price * 1.2;
+    },
+    get price() {
+        return this._price;
+    },
+    writeDetails() {
+         console.log(`${this.name}: ${this.price}, ${this.priceIncTax}`);
+    }
+};
+let boots = {
+    name: "Boots",
+    price: "100",
+    get priceIncTax() {
+        return Number(this.price) * 1.2;
+    }
+}
+hat.writeDetails = hat.writeDetails.bind(hat);
+hat.writeDetails();
+hat.price = 120;
+hat.writeDetails();
+console.log(`Boots: ${boots.price}, ${boots.priceIncTax}`);
+boots.price = "120";
+console.log(`Boots: ${boots.price}, ${boots.priceIncTax}`);
+Listing 3-36.Resolving the Function Problem in the index.js File in the primer Folder
+With these changes, the value of this for the writeDetails method will be its enclosing object, regardless of how it is invoked.
+

@@ -1,0 +1,12 @@
+Processing categories:
+1) Batch Processing
+- Easy to impl, high availability, better effeciency, higher fault tolerance.
+- Drawback is long delay between incoming data and result from the processing job
+
+2) Real time processing:
+- Put message in queue and process it as and when it comes
+
+
+Below usecase requires both:
+- Anomaluy detection
+- log analysis

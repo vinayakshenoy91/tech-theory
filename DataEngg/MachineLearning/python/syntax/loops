@@ -1,0 +1,2 @@
+for cookie in cookies:
+   print(cookie)

@@ -1,0 +1,177 @@
+There are a few things you should do before letting Next.js optimize your images.
+
+Use jpg images unless transparency is a factor, otherwise use png.
+Programs like Photoshop can make images into a smaller file size at the cost of quality. Try making your images as small as possible without a noticeable difference to quality.
+Use the correct image size. If your image will be displayed not larger than 700px at any time on the site then your image does not need to be larger than that.
+
+
+Next.js automatic image optimization #:
+----------------------------------------
+A new compression created and maintained by Google is WebP. WebP is a modern image format that provides superior lossless and 
+lossy compression for images on the web. Using WebP, webmasters and web developers can create smaller, richer images that make 
+the web faster. WebP lossy images are 25-34% smaller than comparable JPEG images at equivalent SSIM quality index.
+
+Next.js can handle the conversion of all your images into WebP for you automatically. There is a little configuration involved, 
+but it is well worth it.
+
+At the root of your application, you will create a file named next.config.js.
+
+// next.config.js
+const withPlugins = require('next-compose-plugins');
+const optimizedImages = require('next-optimized-images');
+
+module.exports = withPlugins([
+  [optimizedImages, {
+    // these are the default values so you don't have to provide them if they are good enough for your use-case.
+    // but you can overwrite them here with any valid value you want.
+    inlineImageLimit: 8192,
+    imagesFolder: 'images',
+    imagesName: '[name]-[hash].[ext]',
+    handleImages: ['jpeg', 'png', 'svg', 'webp', 'gif'],
+    removeOriginalExtension: false,
+    optimizeImages: true,
+    optimizeImagesInDev: false,
+    mozjpeg: {
+      quality: 80,
+    },
+    optipng: {
+      optimizationLevel: 3,
+    },
+    responsive: {
+      adapter: require('responsive-loader/sharp')
+    },
+    pngquant: false,
+    gifsicle: {
+      interlaced: true,
+      optimizationLevel: 3,
+    },
+    svgo: {
+      // enable/disable svgo plugins here
+    },
+    webp: {
+      preset: 'default',
+      quality: 75,
+    },
+  }],
+]);
+
+Also install, 
+npm install next-compose-plugins next-optimized-images next-images imagemin-optipng imagemin-svgo svg-sprite-loader webp-loader lqip-loader responsive-loader jimp image-trace-loader
+
+
+More details visit: https://github.com/cyrilwanner/next-optimized-images
+
+
+
+What images can be optimized #
+-------------------------------
+Images that are served from your application are great examples of what can be optimized. Right now, however, you do not have any. Let’s fix that.
+
+In the public folder, you will add a logo.png file.
+
+
+import Image from 'next/image'
+
+      <div className="logo-container">
+        <Image
+            src="/logo.png"
+            alt="logo"
+            unsized
+        />
+      </div>
+
+      .logo-container{
+    max-width: 500px;
+    margin: auto;
+    padding: 40px 0px
+}
+
+import Head from 'next/head'
+import Link from 'next/link'
+import Image from 'next/image'
+import {useEffect, useState} from 'react'
+import Footer from '../components/Footer'
+
+
+export default function Home(initialData) {
+  const [formInputs, setFormInputs] = useState()
+  const [searchTerm, setSearchTerm] = useState('cats')
+  const [searchResults, setSearchResults] = useState([])
+
+  useEffect(()=>{
+    setSearchResults(initialData.catGiphys.data)
+  }, [initialData])
+
+  const handleInputs = (event) => {
+    let {name, value} = event.target
+    setFormInputs({ ...formInputs, [name]: value });
+  }
+
+  const search = async (event) => {
+    event.preventDefault()
+    let giphys = await fetch(`https://api.giphy.com/v1/gifs/search?q=${formInputs.searchTerm}&api_key=nPJNlVceWHERWCSDBW5XMo1p90l7l9ie&limit=6`)
+    giphys = await giphys.json()
+    setSearchResults(giphys.data)
+    setSearchTerm(formInputs.searchTerm)
+  }
+
+  return (
+    <>
+    <div className='container'>
+      <Head>
+        <title>Giphy Search App</title>
+        <meta name="description" content="Love giphys? We do too. Use our advanced giphy search to find the perfect giphy for any occasion"></meta>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="/styles.css"/>
+      </Head>
+
+      <div className="logo-container">
+        <Image
+            src="/logo.png"
+            alt="logo"
+            unsized
+        />
+      </div>
+     
+
+      <form onSubmit={search}>
+        <input name="searchTerm" onChange={handleInputs} type="text" required />
+        <button>Search</button>
+      </form>
+
+      <h1>Search results for: {searchTerm}</h1>
+
+      <p>Share this search with others:
+        
+      <Link
+            href="/search/[pid]"
+            as={`/search/${searchTerm}`}>
+              <a> 
+                {`http://localhost:3000/search/${searchTerm}`}
+              </a>
+      </Link>
+     
+        </p>
+
+      <div className="giphy-search-results-grid">
+        {searchResults.map((each, index) => {
+          return(
+            <div key={index}>
+              <h3>{each.title}</h3>
+              <img src={each.images.original.url} alt={each.title}/>
+            </div>
+          )
+        })}
+      </div>
+      
+    </div>
+    <Footer />
+    </>
+  )
+}
+
+export async function getStaticProps() {
+  let catGiphys = await fetch('https://api.giphy.com/v1/gifs/search?q=cats&api_key=nPJNlVceWHERWCSDBW5XMo1p90l7l9ie&limit=6')
+  catGiphys = await catGiphys.json()
+  return {props: {catGiphys: catGiphys}}  
+}

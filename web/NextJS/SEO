@@ -1,0 +1,48 @@
+There are two main categories of SEO: On-page SEO and off-page SEO:
+
+On-page SEO is often referred to as making your site or application
+search engine friendly. Next.js can help you with this type of SEO.
+
+Off-page SEO includes creating backlinks to your site or creating a 
+social media presence which Next.js can not help you with.
+
+With Next.js, you can have all the information pre-loaded so the search engine robot sees all the information.
+
+- A pages title and meta description are important factors for your users and search engines to know what content is on the page.
+
+
+Sample title and meta tag:
+-------------------------
+      <Head>
+        <title>Giphy Search App</title>
+        <meta name="description" content="This is an example of a meta description. This will often show up in search results."></meta>
+        <link rel="icon" href="/favicon.ico" />
+        <link rel="stylesheet" href="/styles.css"/>
+      </Head>
+
+
+Adding dynamism:
+----------------
+Dynamic title and meta description #
+Do you remember the search page you set up to take the URL parameter and do a search using the giphy API with that value? Well, that is a perfect page to create a dynamic title and meta description for.
+
+First, you can take the URL parameter and create the title of the page. Secondly, you can take the title from each giphy search result and by looping through each one, you can also grab the title. This will enable you to create a really cool meta description based on actual data!
+
+Dynamic title #
+The title is going to be pretty easy. In your [searchTerm].jsx page, you will extract the URL parameter and inject it into the <title> element.
+
+If you were to visit the page http://localhost:3000/search/space, you can now see that the search term is also in the tab of the page.
+
+            <Head>
+                <title>Search results for: {router.query.searchTerm}</title>
+                <link rel="icon" href="/favicon.ico" />
+                <link rel="stylesheet" href="/styles.css"/>
+            </Head>
+
+Dynamic description:
+            <Head>
+                <title>Search results for: {router.query.searchTerm}</title>
+                <meta name="description" content={initialData.giphys.map((each, index) => each.title + ' ')}></meta>
+                <link rel="icon" href="/favicon.ico" />
+                <link rel="stylesheet" href="/styles.css"/>
+            </Head>

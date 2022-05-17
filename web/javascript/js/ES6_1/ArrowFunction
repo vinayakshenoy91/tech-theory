@@ -1,0 +1,82 @@
+You need to be careful when using arrow functions in conjunction with the this keyword, as they behave differently from normal functions.
+When you use an arrow function, the this keyword is inherited from the parent scope.
+
+ALWAYS INHERITED FROM PARENT SCOPE
+
+
+Use case:
+Managing asynchronous code
+Array manipulation
+
+- Cannot be used as constructor.Inherits the value of this from its enclosing scope
+An arrow function does not have its own new.target property so it cannot be used as a constructor function. 
+It cannot be called by new as there is no internal method [[Construct]] that allows it. They don’t have any prototype property either.
+
+- Arrow functions bind the context statically hence, they should not be used if this is bound dynamically.
+
+Arrow functions should not be used to create object methods since they would 
+create problems if you attempt to subclass/use this object as a prototype.
+
+- In JavaScript, arrow functions do not bind their own this, 
+meaning they inherit the one from the parent scope; this is also known as lexical scoping.
+The this keyword works differently in arrow functions. None of the functions call, bind, or apply can change its value, 
+so it remains the same as when the function was first called.
+
+
+Example:
+--------
+document.addEventListener("DOMContentLoaded", function () {
+  const box = document.querySelector(".box");
+// listen for a click event
+box.addEventListener("click", function() {
+  // toggle the class opening on the div
+  this.classList.toggle("opening");
+  setInterval(function(){
+    // try to toggle again the class
+    this.classList.toggle("opening");
+    },500);
+});
+});
+
+The problem in this case is that the first this is bound to the const box but the second one, inside the setTimeout,
+will be set to the Window object, throwing this error:
+
+Uncaught TypeError: cannot read property "toggle" of undefined
+
+
+Another difference between arrow functions and normal functions is the access to the arguments object. The arguments object is an array-like
+object that we can access from inside functions and contains the values of the arguments passed to that function.
+
+
+function example(){
+  console.log(arguments[0])
+}
+
+example(1,2,3);
+// 1
+
+Similarly to what we saw with the this keyword, arrow functions inherit the value of the arguments object from their parent scope.
+
+Use like this:
+const showWinner = (...args) => {
+  const winner = args[0];
+  console.log(`${winner} was the winner`)
+}
+showWinner("Usain Bolt", "Justin Gatlin", "Asafa Powell" )
+// "Usain Bolt was the winner"      
+
+Take czre:;
+const person = {
+  age: 10,
+  grow: () => {
+    this.age++;
+  },
+}
+person.grow();
+ 
+console.log(person.age);//Still o/p is 10
+
+
+As arrow function do not rebind this so it makes it easier for developers to debug the code and prevent any errors caused by making use of this within callbacks.
+
+

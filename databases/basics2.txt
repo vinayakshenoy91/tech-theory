@@ -1,0 +1,47 @@
+databasesstar.com -> databasestar.com/data-modeling-tools -> subscribe this for a month
+
+Rules:
+-----
+1) Make sure details are defintely true or false.
+2) Data model remains for long and should be designed carefully
+3) Lucid chart for entities -> Draw ER diagram
+4) Identify nouns and convert
+5) Normalize DB - Put design in standard format.
+Why Normalize? -> Eliminate inconsistencies, Remove duplicate info, Improve perf.
+
+1st Normal form:
+------------------
+1) Each set of columns must uniquely identify a row.
+2) A combination of all columns must be unique.
+3) See what columsn can be used to uniquely identify a record if not create a new primary key column
+
+2nd normal form:
+----------------
+- Should fulfil the requirements of first normal form + each non-key attributes must be functionally 
+dependent on the primary key.
+- Foreign key -> used to link two tables together. It is a primary key in another table.
+
+1) Define relationships
+2) Types of relationships are:
+a) one to many
+b) one to one
+c) Many to many -> stored in a join table
+d) Self relationship -> relationship that where a table joins to itself.Two record in one table.
+
+
+3rd normal form:
+----------------
+1) Fulfil the requirement of 2nd normal form and has not transitive dependencies.
+2) Colum A> Column B > Column C So Column A > Column C -> These kinds should be removed.
+
+
+
+Design considerations:
+----------------------
+1) Datatypes and precision
+2) Data integrity to make sure data is complete and accurate.
+[null, not null, data range]
+3) Use camelCase or underscore.
+table_id
+4) Lookup table and auditing
+5) Auditing table -> created_by, updated_date, created_date, created_by

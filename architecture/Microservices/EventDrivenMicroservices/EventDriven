@@ -1,0 +1,5 @@
+Compaction:
+-----------
+Compaction is performed by the event broker to reduce the size of its internal logs by retaining only the most recent event 
+for a given key. Older events of the same key will be deleted, and the remaining events compacted down into a new and smaller 
+set of files.The event stream offsets are maintained such that no changes are required by the consumers

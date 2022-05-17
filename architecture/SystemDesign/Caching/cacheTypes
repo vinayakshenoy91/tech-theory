@@ -1,0 +1,29 @@
+Embedded Cache:
+---------------
+
+
+
+Client server cache: shared caches | standalone caches
+---------------------
+clients -> cache -> DB
+
+Distributed cache:
+-----------------
+- Low latency high volume
+
+
+Managed cache on cloud : Like amazon elastic cache.
+
+Reverse proxy cache
+
+
+Caching within pod (Sidecar cache)
+
+
+Considerations:
+----------------
+- Lifetime  of cached data
+- Cache eviction
+- Consistency
+- Priming the cache
+

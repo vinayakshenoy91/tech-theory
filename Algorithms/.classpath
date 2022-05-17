@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
+	<classpathentry kind="src" path="src"/>
+	<classpathentry kind="src" path="graphs"/>
+	<classpathentry kind="src" path="mediumDifficulty"/>
+	<classpathentry kind="src" path="leetcode"/>
+	<classpathentry kind="src" path="backtracking"/>
+	<classpathentry kind="src" path="dbqueries"/>
+	<classpathentry kind="src" path="dynamicprogramming"/>
+	<classpathentry kind="src" path="greedy"/>
+	<classpathentry kind="src" path="hashing"/>
+	<classpathentry kind="src" path="linkedlist"/>
+	<classpathentry kind="src" path="heap"/>
+	<classpathentry kind="src" path="LRUCache"/>
+	<classpathentry kind="src" path="Sorting"/>
+	<classpathentry kind="src" path="Stack"/>
+	<classpathentry kind="src" path="Tree"/>
+	<classpathentry kind="src" path="Tries"/>
+	<classpathentry kind="src" path="queue"/>
+	<classpathentry kind="src" path="searching"/>
+	<classpathentry kind="src" path="strings"/>
+	<classpathentry kind="src" path="array"/>
+	<classpathentry kind="src" path="concurrency"/>
+	<classpathentry kind="src" path="data"/>
+	<classpathentry kind="src" path="date"/>
+	<classpathentry kind="output" path="bin"/>
+</classpath>

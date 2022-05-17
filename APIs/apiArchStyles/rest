@@ -1,0 +1,42 @@
+ REST is a resource-centric architectural style that makes use of URIs and HTTP verbs (for example, GET, PUT, POST, DELETE, and PATCH) in order to perform actions against a given (unique) resource.
+
+ This is in contrast to RPC-based protocols, such as SOAP, gRPC, and even GraphQL, where the action is explicit in the payload of the message.
+
+
+ constraints as they appeared in the dissertation:
+
+ 1) Client-server
+
+ 2) Stateless
+
+ 3)Cache
+
+This means that client applications are allowed (or are supposed to) cache API responses, which are marked as cacheable 
+in the HTTP (cache-control) header. This constraint can result in considerable performance gains, as not every user action 
+has to translate into an API call. Common API responses that don't often change could be cached by the client.
+
+4) Uniform interface:
+
+REST is defined by four interface constraints: identification of resources; manipulation of resources through representations; self-descriptive messages; and, hypermedia as the engine of application state (HATEOAS)."
+This constraint sets REST apart from the RPC-inspired API approaches and introduces four very important concepts:
+
+Identification of resources: In practice, this means making use of HTTP URIs in order to uniquely identify and access uniform resources (for example, https://mydomain.com/api/orders). The use of the term uniform is deliberate, as it indicates that resource interfaces should be standardized and should not reflect the underlying implementation of the resource. In other words, a uniform interface abstracts and decouples a client from the server implementation (for example, a microservice), thus also allowing a server implementation to evolve without changing an interface.
+Manipulation of resources through representations: This means making use of HTTP verbs, such as POST, PUT, PATCH, or even DELETE, to create, update/amend, and even delete resources. It also implies that a client application should hold enough information that such manipulation can occur.
+Self-descriptive messages: This means that every message generated either by a client or server should have enough information for any processing to occur.
+HATEOAS: This is one of the pillars of REST APIs and yet another example of the influence of HTTP and the web on the architectural style. Hypermedia is an extension of the hypertext concept (the H in HTTP), which basically means cross-referencing associated sections of text and graphics within a digitally displayed text, for example, a HTML page rendered in a browser using hyperlinks. Hypermedia, however, expands the concept by also encompassing other media types such as video and audio. Putting hypermedia into the context of HATEOAS, it means that payloads contained within API responses should, when applicable, also include the URIs of related resources. The main benefit of HATEOAS is that it allows client applications accessing a resource to also access (or be aware of) related resources without prior knowledge of their existence. Simply put, this is like browsing a web page and navigating through the site by just clicking on different links. HATEOAS enables a similar experience but in the context of APIs.
+
+
+5) Layered interface:
+
+This constraint introduces the notion of abstraction in the REST architectural style. Briefly discussed earlier, it allows, for example, a client to be unaware of the implementation details of a server resource (which could well be a legacy system) by accessing it via uniform interfaces.
+
+Putting the concept into practice, the uniform interface could be, for example, an API exposed via an API gateway, whereas the implementation details reside within a service that the API gateway routes to.
+
+However, the concept goes beyond that, as the APIs in the API gateway and in the service could both be REST-based, meaning there could be multiple layers of abstraction in the end-to-end architecture.
+
+
+
+6) Code on demand:
+ code-on-demand talks about accessing a resource that when parsed on the client-side (for example, a browser) actually contains 
+ code that can be executed by the client itself. 
+ This means that a server resource is also able to delegate some of the processing logic to the client.

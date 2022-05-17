@@ -2,9 +2,27 @@ http 1.1:
 --------
 - New TCP connection is first established
 - Headers are passed in plain text
+- Works on top of TCP
+- Multiple TCP connection and reuse them
+
 
 http 2:
 --------
 - Interleave multiple request response in same connection
 - logical breaking connection to multiple streams.
 - headers are compressed
+- One single TCP connection for sending multiple parallel request -> this is multiplexing
+- This is a binary protocol
+- Here you have to send data via HEADERS frmae and DATA frame
+- Header compression ,ie, send only changed info.
+- Flow control is present  -> Sender will not send too much info when receiver cannot handle it.
+We can send it as straming request/response.
+- It has multiplexing
+
+
+There are basically three main features of the HTTP protocol:
+
+HTTP is media independent,
+HTTP is connectionless, and
+HTTP is stateless also.
+The browser initiates an HTTP request, and then a client disconnects from the server.

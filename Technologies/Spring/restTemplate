@@ -1,0 +1,35 @@
+
+@Bean
+RestTemplate restTemplate() {
+   return new RestTemplate();
+}
+------
+
+public Product getProduct(int productId) {
+ String url = productServiceUrl + productId;
+ Product product = restTemplate.getForObject(url, Product.class);
+ return product;
+}
+
+public List<Recommendation> getRecommendations(int productId) {
+    String url = recommendationServiceUrl + productId;
+    List<Recommendation> recommendations = 
+    restTemplate.exchange(url, GET, null, new 
+    ParameterizedTypeReference<List<Recommendation>>() 
+    {}).getBody();
+    return recommendations;
+}
+
+public List<Review> getReviews(int productId) {
+    String url = reviewServiceUrl + productId;
+    List<Review> reviews = restTemplate.exchange(url, GET, null,
+    new ParameterizedTypeReference<List<Review>>() {}).getBody();
+    return reviews;
+}
+
+
+Note:
+
+For the calls to getRecommendations() and getReviews(), a more advanced method, exchange(), has to be used. The reason for this is the automatic mapping from a JSON response to a model class that RestTemplate performs. The getRecommendations() and getReviews() methods expect a generic list in the responses, that is, List<Recommendation> and List<Review>. Since generics don't hold any type of information at runtime, we can't specify that the methods expect a generic list in their responses. Instead, we can use a helper class from the Spring Framework, ParameterizedTypeReference, that is designed to resolve this problem by holding the type information at runtime. This means that RestTemplate can figure out what class to map the JSON responses to. To utilize this helper class, we have to use the more involved exchange() method instead of the simpler getForObject() method on RestTemplate.
+
+

@@ -1,0 +1,225 @@
+What conventional react uses:
+-----------------------------
+import * as PropTypes from 'prop-types';
+
+const functionName = ()=>{
+
+}
+
+functionName.propTypes = {
+    name: Proptypes.string
+}
+
+
+Types:
+-----
+- event:React.ChangeEvent<HTMLInputElement> //On change
+- - event:React.MouseEvent //On click
+
+- interface CustomInputProps{
+    children: React.ReactNode;
+    value: string;
+    onChange(event:React.ChangeEvent<HTMLInputElement>):void;
+}
+
+- Promise<User>
+- React.useState<typename[]>([]);
+- React.ComponentProps<typeof objectname> //Ised for component names
+- type Colors = Uppercase<typeof colors[number]>; //BLUE | GREEN|RED
+
+
+//TS 4 version onwards
+type LawName= 'a'|'b'
+type StringsName='c|d'
+
+type Alignment = `${LawName}-${StringsName}` //Creates multiple combination of them
+
+General:
+---------
+ type x = {
+    i:string;
+    count:number;
+    enabled:boolean;
+    p:string[];
+    status: "loading"|"error"|"success"
+    items:{x:string;title:string;}[];
+    t?:number //Optional props
+ }
+
+ type dict ={
+     [keyL:number]:string;
+ }
+
+ type ContrivedExampleProps = {
+     onHover:()=>void;
+     onChange:(id:number)=>void;  
+     onClick(event:React.MouseEvent<HTMLButtonElement>):void;
+
+ }
+
+Incase that props is a react component:
+
+- React.ReactNode //Children is a string, React component, HTML element
+- ChangeEvent<HTMLInputElement> //For events e
+- React.FormEvent<HTMLFormElement>
+
+
+All inline styles are part of React.css properties. How to pass css styles:
+
+- {children:React.ReactNode, style?: React.CSSProperties}
+
+
+Naming : isHidden, toggleHidden
+
+
+Typing class based components:
+------------------------------
+
+class Counter extends Component<MyProps,MyState>{
+    state:CounterState={
+       count:0
+    }
+   //this.props
+
+   increment = ()=>{
+       this.setState(({count})=>({count:count+1}))
+   }
+}
+
+-> In the dom everything  is a string. So even if its a number we need to convert it to DOM. So you need to coerce
++event.target.value => coerce to number
+
+VVIP => Right way of modifying state is 
+
+setState(({count})=>count+1) //Right way of doing it
+
+Working with reducers:
+--------------------
+ type ReducerActions = {type: "RESET" | "ADD",payload:number }
+
+
+React.Dispatch<ReducerActions>
+
+
+Note: Optional becomes an antipattern, instead look for whihc should have param and whihc should not have param. 
+Split them to separate types and then use OR condition
+
+Context api
+-----------
+- Theming -> 1 use case of context api
+
+interface x extends y {
+    dispatch: React.Dispatch<AdjustmentAction>
+}
+
+
+- Put x as TypeName -> ou are takingover the control from compiler that you know waht is happpening better
+
+//Edge case that is pending -> Providing a defautl value using closure
+
+Components interface: //Pass props as a components that adhers to the interface
+--------------------
+
+interface propsname extends React.HTMLProps<HTMLInputElement>{
+
+}
+
+export interface ColorAdjustmentProps{
+    Adjustment: React.ComponentType<propsname>
+}
+
+
+//
+
+Building design systems tips: limiting props pattern #Pattern1
+-============================
+
+type ButtpnProps = {
+    children:string;
+    primary?:boolean;
+    secondary?:boolean;
+}
+
+type PrimaryButtonProps =ButtonProps & {primary:boolean, secondary?:never} //If primary then secondary cannot be entered. 
+If secondary then promary cannot be added as props
+
+const Button = ({children, primary=false,secondary=false,destructive=false}:ButtonProps)=>{
+   const classNames=createClassNames({primary,secondary});
+   return <button className={className}>{children}</button>;
+}
+
+
+<Button primary secondary>xyz</Button>
+
+
+#Pattern2
+Polymorphic components pattern: Beautiful pattern where We have generic element with same className/component name
+------------------------------
+- Button used as both button and hyperlink
+
+type ButtpnOwnProps<E extends React.ElementType = React.ElementType> = {
+    children:string;
+    primary?:boolean;
+    secondary?:boolean;
+    as?:E;
+}
+
+type ButtpnOwnProps<E extends React.ElementType> =   ButtpnOwnProps<E> & 
+Omit<React.ComponentProps<E>,keyof ButtonOwnProps> //VVIP
+
+
+const defaultElement='button';
+function Button<E extends React.ElementType = typeOf defaultElement>({children, primary=false,secondary=false,destructive=false,as}:ButtonProps<E>)=>{
+   const classNames=createClassNames({primary,secondary});
+   
+   const Tagname = as || defaultElement
+   
+   return <Tagname className={className}>{children}</Tagname>;
+}
+
+<Button primary as="a" href="/">xyz</Button>
+
+#Pattern 3 -> FunctionOverloading
+
+function asyncAdd(a:number, b:number):Promise<number>
+function asyncAdd(a:number, b:number, fn:callback):void
+
+
+Utilities: Used in tables to make sure heading is same as that of the keys passed to table object
+---------
+type ObjectType={
+    first:1;
+    second:2;
+}
+
+type Result = keyof ObjectType; //"first"|"second"
+type Values = Obj[keyof Obj];
+
+Omit<UserModel,'accountId'> //Eliminating a key
+
+WARNING: 
+- Intersection in primitive will provide output that are common to both.
+- Intersection in object will provide an object output combining both properties
+
+Conditional ternaries:  Very much used utilities
+---------------------
+tyep Wrap<T> = T extends {length:number}?[T]:T
+typeIsAssignable<A,B> =A extends B ? true:false;
+type Exclude <T,U>=T extends U? never:T; //used when you say i need all value except 1
+Omit<UserModel,'accountId'>
+
+
+HOC:
+----
+- function withCharacter<T>(Component:React.ComponentType<T>){
+    retrurn (props:T)=>{
+
+    }
+}
+
+- function withCharacter<T>(Component:React.ComponentType<T>){
+    retrurn (props:Omit<T,keyof WithCharacterProps>)=>{
+
+      return <Component {...(props as T)} user={currentUser}/>
+    }
+}

@@ -1,0 +1,29 @@
+- Graphs are made up of nodes (vertices) and connected by edges (Links)
+
+1) Undirected graph:
+--------------------
+- Set of vertices and edges where edges are bidirectional
+- (u,v) identical to (v,u)
+
+
+2) Directed graph:
+--------------------
+- Edges have direction
+
+
+3) Trees: 
+---------
+It is an undirected graph where two vertices are connected by exactly one path
+
+4) Forest: 
+---------
+It is an undirected graph, all of whose components are trees
+(disjoint union of trees)
+
+5) Directed Acyclic Graph: 
+---------------------------
+It is a finite directed graph with no directed cycles
+
+6) Complete graphs:
+--------------------
+- In complete graphs, every single pair of vertices(nodes) are connected.

@@ -1,0 +1,76 @@
+- LB happening at layer 4 wrto networking -> Route traffic based on ip address and port
+- LB happening layer 7 of app layer -> Route traffic based on header.
+- DNS LB -> Used in layer of url to ip translation.
+
+
+LB algos? server selection stratrgy:
+
+- round robin
+- Weighted round robin
+- random selection
+- perf based selection [base perf metrics,fastest response time, least amount of traffic]
+- IP based routing -> Hashing clinet id [REquest from specifici client redirected to server]
+- Path based routing
+
+
+
+Open Source Software Load Balancing Solutions
+HAProxy
+HAProxy is a free and open-source, reliable, high performance TCP/HTTP load balancer.
+It is particularly suited for very high traffic web sites, and powers a significant portion of the world's most visited ones. It is considered the de-facto standard open-source load balancer, and is  shipped with most mainstream Linux distributions.
+HAProxy supports most Unix style operating systems.
+
+NGINX
+NGINX is a free, open-source, high-performance HTTP server and reverse proxy (load balancer). It is known for its high performance, stability, rich feature set and simple configuration.
+For a full tutorial on how to install, configure and use NGINX follow this link.
+
+
+
+Cloud Based Load Balancing Solutions
+AWS - Elastic Load Balancing (ELB)
+Amazon ELB is a highly scalable load balancing solution.
+
+It is an ideal solution for running on AWS, and integrates seamlessly with all of AWS services.
+
+It can operate on 4 different modes:
+
+Application (Layer 7) Load Balancer - Ideal for advanced load balancing of HTTP and HTTPS traffic
+
+Network (Layer 4) Load Balancer - Ideal for load balancing of both TCP and UDP traffic
+
+Gateway Load Balancer - Ideal for deploying, scaling, and managing your third-party virtual appliances.
+
+Classic Load Balancer (Layer 4 and 7) - Ideal for routing traffic to EC2 instances.
+
+For the full documentation on Amazon ELB and its autoscaling policies follow this link
+
+GCP - Cloud Load Balancing
+Google Cloud Platform Load Balancer is Google's, highly scalable and robust load balancing solution.
+
+"Cloud Load Balancing allows you to put your resources behind a single IP address that is externally accessible or internal to your Virtual Private Cloud (VPC) network".
+
+Some of the load balancer types available as part of the GCP Cloud Load Balancing are:
+
+External HTTP(S) Load Balancer - Externally facing HTTP(s) (Layer 7) load balancer which enables you to run and scale your services behind an internal IP address.
+
+Internal HTTP(S) Load Balancer - Internal Layer 7 load balancer that enables you to run and scale your services behind an internal IP address.
+
+External TCP/UDP Network Load Balancer - Externally facing TCP/UDP (Layer 4) load balancer
+
+Internal TCP/UDP Load Balancer - Internally facing TCP/UDP (Layer 4) load balancer
+
+Microsoft Azure Load Balancer
+Microsoft Azure load balancing solution provides 3 different types of load balancer:
+
+Standard Load Balancer - Public and internal Layer 4 load balancer
+
+Gateway Load Balancer - High performance and high availability load balancer for third-party Network Virtual Appliances.
+
+Basic Load Balancer - Ideal for small scale application
+
+GSLB Solutions
+Amazon Route 53 - Amazon Route 53 is a highly available and scalable cloud Domain Name System (DNS) web service.
+
+Google Cloud Platform Load Balancer & Cloud DNS - Reliable, resilient, low-latency DNS serving from Google's worldwide network with everything you need to register, manage, and serve your domains.
+
+Azure Traffic Manager - DNS-based load balancing

@@ -1,3 +1,8 @@
+- Reducer is a function that takes actiona nd previous state as parameter and returns new state.
+
+Usecases:
+- Use this if there is a uniform state change or state changing in a certain way or multiple ways
+
 Why not useState and store object?
 - Tricky to update one property
 - Need to send state as an argument,ame sure other property is not cloberred.
@@ -10,8 +15,8 @@ dispatch will pass state automatically to reducer.
 
 
 
-
-function reducer(statem, action){
+1) Create a reducer
+function reducer(state, action){
     const {type, payload} = action;
 
     switch(action.type){
@@ -19,13 +24,13 @@ function reducer(statem, action){
         default: 
             throw new Error('invalid action type')
     }
-
-
-
 }
--------
 
 
+2) Use that reducer
 const [state, dispatch] = React.useReducer(reducer, {secretWord:null})
 
+3) Send a dispatch function
 const setSecretWord = (secretWord)=> dispatch({type:"setSecretWord",payload:secretWord})
+
+Object.assign({},state,{s:'x'})

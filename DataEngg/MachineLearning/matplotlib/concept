@@ -1,0 +1,39 @@
+from matplotlib import pyplot as plt
+
+//Always
+plt.plot(x_values, y_values,label="hotel")
+plt.legend(color="green")
+plt.show()
+
+//If you want to plot two plots on same frame
+plt.plot(data1.x_values, data1.y_values)
+plt.show()
+plt.plot(data2.x_values, data2.y_values, label="hotel") //This is a legend
+plt.legend()
+plt.show()
+
+//Texts to plot. For colors, web colors are accepted.
+plt.xlabel("Letter")
+plt.ylabel("Frequency")
+plt.title("Heading", fontsize=20, color="read", linewidth=1, linestyle="-", marker="x")//"--", marker=d,s,o,*,h
+plt.text(xcord,ycoord,"Text")
+
+//Style
+plt.style.use('ggplot')
+plt,style.use('default')
+plt.style.use('seaborn')
+
+
+//Scatter plot
+plt.scatter(x,y, alpha=0.1) //Makes each marker transparent
+
+//Bar chart
+plt.bar(x,y)
+plt.barh(x,y, yerr=error_column) //Horizontal bar chart , usually the std deviation: the standard deviation of the hours worked
+plt.bar(df.preinct, df.cat, bottom=df.dog, label="x")//Stacked bar chart
+
+//Histogram
+- Number of thigs in each bins
+plt.hist(dataset)//Defaults to 10 bins
+plt.hist(dataset, bins=nbins, range=(xmin,xmax))//Accept bins
+plt.hist(dataset,density=True) //Normalize histogram , same proportion even if sample sizes are small

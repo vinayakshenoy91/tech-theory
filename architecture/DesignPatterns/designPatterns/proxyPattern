@@ -1,0 +1,56 @@
+- Proxy is a stand in for a real object. It is a surrogate or placeholder for another object to control access to it.
+- Use the Proxy Pattern to create a representative object that controls access to another object, which may be remote, 
+expensive to create, or in need of securing.
+- As we know, a remote proxy controls access to a remote object.
+- A virtual proxy controls access to a resource that is expensive to create.
+- A protection proxy controls access to a resource based on access rights.
+- Object A -> Proxy -> Remote Object 
+- Remote proxy is one implementation general proxy pattern.
+- The above Object A and proxy lies in local heap
+- Java RMI(Remote method invocation) gives us a way to find objects in a remote JVM and allows us to invoke their methods.
+
+Making a remote service:
+
+1) Make a Remote Interface which will have methods that client can call and both proxy/stub and actual service will implement this.
+
+java.rmi.Remote
+
+public interface MyRemote extends Remote{}
+
+
+
+2) Remote implementation  by real service.
+3) RMI registry -> Where the Client goes to get the proxy.
+4) Remote service -> Service impl class instantiates an instance of the service and registers it with the RMI registry.
+Registering it makes the service available for clients.
+
+Remote proxy;
+------------
+With the Remote Proxy, the proxy acts as a local representative for an object that lives in a different JVM. A method call on the proxy results in the call being transferred over the wire and invoked remotely, and the result being returned back to the proxy and then to the Client.
+
+
+
+Virtual proxy:
+---------------
+
+The Virtual Proxy acts as a representative for an object that may be expensive to create. The Virtual Proxy often defers the creation of the object until it is needed; the Virtual Proxy also acts as a surrogate for the object before and while it is being created. After that, the proxy delegates requests directly to the RealSubject.
+
+Usecase:
+You might create a menu of the album titles and then retrieve the images from an online service like Amazon.com. If you’re using Swing, you might create an Icon and ask it to load the image from the network. The only problem is, depending on the network load and the bandwidth of your connection, retrieving an album cover might take a little time, so your application should display something while you’re waiting for the image to load. We also don’t want to hang up the entire application while it’s waiting on the image. Once the image is loaded, the message should go away and you should see the image.
+
+How ImageProxy is going to work:
+ImageProxy first creates an ImageIcon and starts loading it from a network URL.
+
+While the bytes of the image are being retrieved, ImageProxy displays “Loading album cover, please wait...”.
+
+When the image is fully loaded, ImageProxy delegates all method calls to the image icon, including paintIcon(), getIconWidth(), and getIconHeight().
+
+If the user requests a new image, we’ll create a new proxy and start the process over.
+
+
+
+
+
+Protection Proxy:
+----------------
+ Protection Proxy may allow or disallow a client access to particular methods in an object based on the role of the client. In this way a Protection Proxy may only provide a partial interface to a client, which is quite similar to some Adapters.

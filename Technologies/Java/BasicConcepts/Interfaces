@@ -1,0 +1,135 @@
+Interface:
+----------
+- implicitly public
+- values in are constant fields-> public static final 
+- Interface can extend anotehr using extends keyword
+
+
+
+- Some other code might be using it and that code will break. So rely on interfaces.
+- Contract that method signature and variables will not change.
+- ITelephone -> interface name
+
+
+Syntax:
+------
+public interface ITelephone{
+  public void powerOn();
+  public void dial(int phoneNumber);
+}
+
+
+Rules of interfaces:
+---------------------
+- Every field declaration is implicitly public, static, final; Supports only public constant fields
+- Every method is implicitly public if no access modifier is declared
+- Every method is implicitly abstract if not declared private, default or static.
+An interface only supports concrets methods when they are declared private, default or static.
+All methods in an interface are by defautl public and abstract when there is no body declared.
+- Default method can only be used with public access modifier.
+- You cannot use sync or final keywords with the default method declaration.
+
+Note: One interesting limitation on default methods is that you cannot declare a default method
+that would override any of java.lang.Objects public methods. Ex: toString -> You cannot put it as default in the interface.
+
+Note: If method in superclass chain has a method declaration, then that method  will be used over 
+method declared with same signature in interface
+
+Note: JVM will choose a default method having same name in more specific interface than less specific interface.
+If you want to call higher method then use:
+
+
+new IntefaceName(){
+  public void  abstractMethod(){
+
+  }
+}.methodName();
+
+Note: If there are two diff interfaces implemented by a class, the to class method with same default method present 
+in both iterfaces in implemented class, we need to use: IClassName.super.methodName() 
+
+Note: You can use private static method with implementation in interface.
+
+Syntax:
+------
+public inteface Defaultable{
+
+ String abstractValue = "XYZ";
+ void abstractMethod();
+
+ default void defaultNotAbstractMethod(){
+   System.out.println("Testing default");
+ }
+}
+
+
+class ImplementingClass implements Defaultable{
+   public void abstractMethod(){
+     System.out.println("Test");
+   }   
+}
+
+class DefaultClass{
+
+  public static void main(String[] args){
+    DefaultClass dc = new DefaultClass();
+    dc.callAbstractMethod(new ImplementingClass());
+    dc.callAbstractMethod(()-> System.out.printlnt("Test")); //You can pass a consumer as well.
+  }
+
+  public void callAbstractMethod(Defaultable d){
+     d.abstractMethod();
+  }
+
+}
+
+Example class: Lambdas can have functional interfaces with only one abstract method.
+ 
+
+
+
+
+
+
+1) Comparable Interface:
+------------------------
+- Negative value: Current is ordered first
+- Postitive value: Received is ordered first.
+- zero: Current and received are equal
+
+class Passenger implements Comparable<Passenger>{
+
+ @Override
+ public int compareTo(Passenger p{
+     int returnValue = p.memberLevel- memberLevel;
+     return value
+ }
+}
+
+Passenger[] p = {};
+User; Arrays.sort(Passengers);
+
+
+
+2) Multiple interfaces: No limits
+----------------------------------
+public class Flight implements Comparable<Flight, Iterable<Passenger>{
+  private List<Passenger> p = new ArrayList<Passenger>():
+  public Iterator<Passenger> iterator(){
+      return p.iterator();
+  }
+}
+
+Flight x = new Flight();
+for(Passenger p:x){  //x here will return iterable obj
+
+}
+
+
+3) Default method impl:
+-----------------------
+public interface MathProcessing{
+  default String getFormattedOutput(){
+    return null;
+  }
+}

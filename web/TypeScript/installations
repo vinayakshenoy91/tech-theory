@@ -1,0 +1,355 @@
+Command:
+--------
+npx ts-node database.ts
+
+npm install --save-dev typescript@3.5.1
+npm install --save-dev tsc-watch@2.1.2
+
+To configure the TypeScript compiler, add a file called tsconfig.json to the types folder with the content shown in Listing 7-3.
+{
+    "compilerOptions": {
+        "target": "es2018",
+        "outDir": "./dist",
+        "rootDir": "./src",
+        "noImplicitAny": true,
+        "strictNullChecks": true,
+        noUnusedParameters //option is enabled, the compiler will warn you if a function defines parameters that it doesn’t use,
+        "noImplicitReturns":true,
+        "supressExcessPropertyErrors":true
+
+    }
+}
+
+{
+  "name": "types",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "tsc-watch --onsuccess \"node dist/index.js\""
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "tsc-watch": "^2.1.2",
+    "typescript": "^3.5.1"
+  }
+}
+
+
+1) Types:
+---------
+boolean
+number
+string
+null 
+undefined
+symbol
+object
+void
+TypeScript includes the type called unknown. We can use this type to describe a value which we don't know.
+let data: unknown = getSomeDataFromSomeAPICall();
+
+A workaround for asserting a value to be of type which doesn't overlap with the value's actual type is to assert 
+that the value is unknown first: saveUser(<User>(<unknown>{ helloWorld: '' })). 
+But, do your best to avoid this workaround, because it simply makes your code unsafe.
+
+
+Diff between unkown and any:
+
+1) TS forces you to determine the type of the unknown value before you can work with it:
+
+anyValue.helloWorld(); // No error.
+unknownValue.helloWorld(); // you'll get a TS error.
+
+2) You cannot assign unknown to anything but itself or any, while you can assign any to anything:
+
+let anyValue: any = 1;
+let unknownValue: unknown = 1;
+ 
+let str: string;
+ 
+str = anyValue; // No error.
+str = unknownValue; // you'll get a TS error.
+
+Arrays: string[] OR Array<string>
+
+Tuples:
+--------
+let tuple: [string, number]= ['A',1]
+
+
+
+
+//Enum -
+enum Color{
+    Red,
+    Green,
+    Blue
+}
+
+OR
+
+enum Color{ 
+    Red=2,
+    Green=1,
+    Blue=5
+} //Color[5], this prints Blue. But you cannot reverse-lookup a value ina  strings enum
+
+// OR checks
+str: string | null
+
+//Type assertion
+e.currentTarget as HTMLInputElement
+
+Interfaces:
+-----------
+- If both interfaces are of same shape, one can be assigned to another
+
+interface Profile{
+    readonly name:string;
+    age?:number;  //making property optional
+}
+
+// Using index signature:
+interface A{
+    [key:string]:number;
+}
+
+// Call signature:
+interface Sum {
+    (a:number,b:number):number;
+    name:string;
+    doWork: ()=> void;
+
+    deposit(amount:number):void;
+}
+
+//Extends
+interface child extends Parent, Parent2{
+
+}
+
+
+//Interface for map:
+inteface  AccountInfo<TRouteNumber, TBankNumber>{
+    routingNumber: TRouteNumber,
+    bankNumber: TBankNumber
+}
+
+
+
+Function:
+---------
+type myFn = (a:number, b:number)=>number;
+
+function sum(a:number, b?:number) : number{
+    rturn a + (b||0)
+}
+
+
+Classes:
+---------
+- Class memebers are public by default
+
+//Automatic properties
+class Person{
+    constructor(public firstName:string, public lastname:string){ //No property and mapping inside constructor is required
+
+    }
+}
+
+
+
+class Robot{
+    name:string; //Access modifiers can be private public or protected
+    private readonly m:string; //can be assigned a value only in constructor
+
+    private _age: number;
+    #name:string;  # -> private as part of ecmascript addition
+
+    constructor(name:string){
+        this.name=name;
+    }
+
+    askName(){
+
+    }
+}
+
+OR
+
+class Robot{
+
+    static colors = ['blue'];
+
+
+    constructor(protected _name:string){
+    }
+
+    askName(){
+
+    }
+
+    set name(value:string){
+        this._name=value;
+    }
+
+    get name(){
+        return this._name;
+    }
+
+    static isColorAvailable(color:string){
+        return Robot.colors.includes()
+    }
+}
+
+class FlyingRobot extends Robot{ 
+    constructor(name:string){
+        super(name);
+    }
+}
+
+
+//Polymorphic this:
+
+class LibraryBook{
+    Checkout():this{
+
+        return this;
+    }
+
+    Checkin():this{
+         return this;
+    }
+}
+
+// If you are overriding constructor in child, always user super. If there is no change in constructor
+and you are just adding methods, then don't add constructor, just start with writing methods
+
+
+//Abstract class: Can define concrete member  as well as abstract memebers. can be used as type as well
+
+abstract class BankAccount{
+
+  abstract accounType:AccountType
+
+}
+
+Union types:
+------------
+id: string | number
+
+- Specify several valid types for a value.
+
+
+Intersection types:
+--------------------
+
+- Contain all members of several types
+
+id: string & number
+
+
+Mixin:
+-------
+- Used to create a large class from multiple smaller classes.
+https://app.pluralsight.com/course-player?clipId=267c3321-bc76-4d3c-9eec-30d5580cc835
+
+
+
+String literal type and Type alias:
+--------------------
+- let empCat: 'Manager' | 'Non-manager'='Non-manager';
+
+type cat = 'Manager' | 'Non-manager'='Non-manager';
+
+Declaration merging:
+--------------------
+- Compiler merges two  separate declarations declared with same name into a single definition
+
+
+
+
+
+Symbols: Low priority
+--------
+
+//Used as enum
+let mySynbol = Symbol('first_symbol');
+
+let myObject = {
+    [mySymbol]:'value of symbol key' 
+}
+
+//Used as computed property
+
+https://app.pluralsight.com/course-player?clipId=9b28666a-95b3-4a96-922e-669dc775228f
+
+
+Generics:
+==========
+- Reusable code that works with multiple types
+- Can be functions, classes or interfaces
+
+export class Shelf<T>{
+   
+   _items:T[] = [];
+
+   addItemCatalog(newItem:T){
+
+   }
+
+   removeOldItemFromCatalog(oldItem:T){
+
+   }
+
+}
+
+let bookShelf:Shelf<Book> = new Shelf<Book>();
+
+
+//Generic function
+
+function checkOut<T>(item:T):T{
+    availableItem: T = getItemFromDB(item);
+    if(availableItem){
+
+    }
+    return item;
+}
+
+checkout<Book>(someBook);
+
+// Generic function with multiple items
+
+function checkOut<T, V>(item:T, customer: V):T{
+    availableItem: T = getItemFromDB(item);
+    activeCustomer: V = getCustomerFromDB(customer);
+    if(availableItem){
+
+    }
+    return item;
+}
+
+checkout<Book, Student>(someBook);
+
+
+//Type constraints: Constraining classes implementing certain kind of interface.
+
+function checkOut<T extends MeetingResource>(item:T):T{
+    availableItem: T = getItemFromDB(item);
+    if(availableItem){
+
+    }
+    return item;
+}
+
+
+//Generic interface
+
+export interface  LibraryCollection<T>{
+    _items:T[];
+    addItemToCatalog(newItem:T):void;
+}

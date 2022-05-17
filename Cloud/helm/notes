@@ -1,0 +1,52 @@
+- Manage and update multiple k8s config
+- Deploy many configs as a SINGLE application
+- Parameterize for multiple env support.
+- It is a package manager for "k8s". Looks each of them as part of big package.
+
+https://helm.sh/docs/
+
+Commands:
+--------
+helm install wordpress
+helm upgrade wordpress
+helm rollback wordpress
+helm uninstall wordpress
+
+Installing helm:
+---------------
+sudo snap install helm --classic
+helm version -> Checking the helm version
+helm get --help
+
+
+Readymade charts:
+----------------
+helm install wordpress
+
+
+Concepts:
+---------
+- New revisions are created when you upgrade. When you rollback, 
+it is taken to old config but revision number is incremented to next number.
+Current chart is compared with previous chart to make a rollback decision.
+
+- In helm 3, it does a 3-way strategic merge patch.
+It looks at the old chart and then at the live state and then upgrades. Hence anything added is preseved.
+
+Commands:
+----------
+- Install helm client
+
+helm create msname
+- Dependent charts -> put in charts folder
+
+git checkout gh-pages
+
+helm package ticekt-store
+
+mv x.tgz docs
+
+helm repo index docs --url github url repo
+
+helm repo add store repo_url
+

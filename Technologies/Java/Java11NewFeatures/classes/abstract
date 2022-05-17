@@ -1,0 +1,82 @@
+- Java does not permit a class or method to be marked both abstract and final. 
+
+- If you remember the rules for overriding a method, the subclass cannot reduce the visibility of the parent method, sing(). 
+Because the method is declared protected in the parent class, it must be marked as protected or public in the child class. 
+Even with abstract methods, the rules for overriding methods must be followed.
+Due to this below code will not compile:
+
+- A static method cannot be overridden. It is defined as belonging to the class, not an instance of the class. If a static method 
+cannot be overridden, then it follows that it also cannot be marked abstract since it can never be implemented.
+
+
+public abstract class Whale {
+   protected abstract void sing();
+}
+ 
+public class HumpbackWhale extends Whale {
+   private void sing() {  // DOES NOT COMPILE
+      System.out.println("Humpback whale is singing");
+   }
+}
+
+------
+
+public abstract class Aircraft{
+
+
+   public  final void takeoff(){
+       this.checkSystems();
+       this.getClearence();
+       this.implementCustomActions();
+   }
+
+   protected abstract void checkSystems();
+
+   protected abstract void getClearance();
+
+   protected abstract void implementCustomActions();
+
+
+
+}
+
+
+Constructor in abstract class:
+------------------------------
+abstract class Bear {
+   abstract CharSequence chew();
+   public Bear() {
+      System.out.println(chew());  // Does this compile?
+   }
+}
+ 
+public class Panda extends Bear {
+   String chew() { return "yummy!"; }
+   public static void main(String[] args) {
+      new Panda();
+   }
+}
+
+Rules:
+-------
+EVIEWING ABSTRACT CLASS RULES
+For the exam, you should know the following rules about abstract classes and abstract methods. While it may seem like a lot to remember, most of these rules are pretty straightforward. For example, marking a class or method abstract and final makes it unusable. Be sure you can spot contradictions such as these if you come across them on the exam.
+
+Abstract Class Definition Rules
+
+Abstract classes cannot be instantiated.
+All top-level types, including abstract classes, cannot be marked protected or private.
+Abstract classes cannot be marked final.
+Abstract classes may include zero or more abstract and nonabstract methods.
+An abstract class that extends another abstract class inherits all of its abstract methods.
+The first concrete class that extends an abstract class must provide an implementation for all of the inherited abstract methods.
+Abstract class constructors follow the same rules for initialization as regular constructors, except they can be called only as part of the initialization of a subclass.
+These rules for abstract methods apply regardless of whether the abstract method is defined in an abstract class or interface.
+
+Abstract Method Definition Rules
+
+Abstract methods can be defined only in abstract classes or interfaces.
+Abstract methods cannot be declared private or final.
+Abstract methods must not provide a method body/implementation in the abstract class in which they are declared.
+Implementing an abstract method in a subclass follows the same rules for overriding a method, including covariant return types, exception declarations, etc.
+

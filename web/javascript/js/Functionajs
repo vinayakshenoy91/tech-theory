@@ -1,0 +1,20 @@
+- VVIP:  map, reduce, and filter.
+- a functional programming language is one facilitating the use and creation of first-class functions.
+- The term “first-class” means that something is just a value.
+
+A higher-order function can do one or both of the following:
+- Take a function as an argument
+- Return a function as a result
+
+Paradigms of js:
+Metaprogramming
+Programming manipulating the basis of JavaScript’s execution model
+- Prototype-based object-oriented programming
+Programming based around prototypical objects and instances of them
+Imperative programming
+Programming based around describing actions in detail
+
+- Functional programming is about pulling programs apart 
+and reassembling them from the same parts, abstracted behind function boundaries
+
+- 

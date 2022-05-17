@@ -1,0 +1,132 @@
+- Determining which operators are evaluated in what order is referred to as operator precedence
+
+Negation of boolean:
+---------------------
+isAnimalAsleep = !isAnimalAsleep;
+
+Negation of integer:
+---------------------
+double zooTemperature = 1.21;
+System.out.println(zooTemperature);  // 1.21
+zooTemperature = -zooTemperature;
+System.out.println(zooTemperature);  // -1.21
+zooTemperature = -(-zooTemperature);
+
+-  in Java, 1 and true are not related in any way, just as 0 and false are not related.
+
+Note:
+
+For integer values, division results in the floor value of the nearest integer that fulfills the operation, whereas modulus is the remainder value. If you hear the phrase floor value, it just means the value without anything after the decimal point. For example, the floor value is 4 for each of the values 4.0, 4.5, and 4.9999999. 
+
+You need to memorize certain rules Java will follow when applying operators to data types:
+
+Numeric Promotion Rules
+If two values have different data types, Java will automatically promote one of the values to the larger of the two data types.
+If one of the values is integral and the other is floating-point, Java will automatically promote the integral value to the floating-point value’s data type.
+Smaller data types, namely, byte, short, and char, are first promoted to int any time they’re used with a Java binary arithmetic operator, even if neither of the operands is int.
+After all promotion has occurred and the operands have the same data type, the resulting value will have the same data type as its promoted operands.
+The last two rules are the ones most people have trouble with and the ones likely to trip you up on the exam. For the third rule, note that unary operators are excluded from this rule. For example, applying ++ to a short value results in a short value.
+
+
+
+
+What is the data type of x + y?
+double x = 39.21;
+float y = 2.1;
+var z = x + y;
+
+This is actually a trick question, as this code will not compile! As you may remember from 
+floating-point literals are assumed to be double, unless postfixed with an f, as in 2.1f. 
+
+Casting:
+--------
+Casting is performed by placing the data type, enclosed in parentheses, to the left of the value you want to cast. Here are some examples of casting:
+
+int fur = (int)5;
+int hair = (short) 2;
+String type = (String)  "Bird";
+short tail = (short)(4 + 10);
+long feathers = 10(long);  // DOES NOT COMPILE
+
+Applying Casting
+We can fix the previous set of examples by casting the results to a smaller data type. Remember, casting primitives is required any time you are going from a larger numerical data type to a smaller numerical data type, or converting from a floating-point number to an integral value.
+
+int trainer = (int)1.0;
+short ticketTaker = (short)1921222;  // Stored as 20678
+int usher = (int)9f;
+long manager = 192301398193810323L;
+ 
+
+OVERFLOW AND UNDERFLOW
+The expressions in the previous example now compile, although there’s a cost. The second value, 1,921,222, is too large to be stored as a short, so numeric overflow occurs and it becomes 20,678. Overflow is when a number is so large that it will no longer fit within the data type, so the system “wraps around” to the lowest negative value and counts up from there, similar to how modulus arithmetic works. There’s also an analogous underflow, when the number is too low to fit in the data type, such as storing -200 in a byte field.
+
+This is beyond the scope of the exam, but something to be careful of in your own code. For example, the following statement outputs a negative number:
+
+System.out.print(2147483647+1);  // -2147483648
+Since 2147483647 is the maximum int value, adding any strictly positive value to it will cause it to wrap to the smallest negative number.
+
+
+By casting a larger value into a smaller data type, you are instructing the compiler to ignore its default behavior. In other words, you are telling the compiler that you have taken additional steps to prevent overflow or underflow. 
+
+
+Using compound operator:
+------------------------
+We are trying to assign a long value to an int variable. This last line could be fixed with an explicit cast to (int), but there’s a better way using the compound assignment operator:
+
+long goat = 10;
+int sheep = 5;
+sheep *= goat;
+The compound operator will first cast sheep to a long, apply the multiplication of two long values, and then cast the result to an int.
+
+
+
+Equality operators:
+-------------------
+The equality operators are used in one of three scenarios:
+
+Comparing two numeric or character primitive types. If the numeric values are of different data types, the values are automatically promoted. For example, 5 == 5.00 returns true since the left side is promoted to a double.
+Comparing two boolean values
+Comparing two objects, including null and String values
+
+
+null and the instanceof operator:
+---------------------------------
+What happens if you call instanceof on a null variable? For the exam, you should know that calling instanceof on the null literal or a null reference always returns false.
+
+System.out.print(null instanceof Object);
+ 
+Object noObjectHere = null;
+System.out.print(noObjectHere instanceof String);
+The preceding examples both print false. It almost doesn’t matter what the right side of the expression is.
+
+System.out.print(null instanceof null);  // DOES NOT COMPILE
+
+
+Logical operators
+
+Operator	Description
+&	Logical AND is true only if both values are true.
+|	Inclusive OR is true if at least one of the values is true.
+^	Exclusive XOR is true only if one value is true and the other is false.
+
+
+SHORT-CIRCUIT OPERATORS
+Next, we present the conditional operators, && and ||, which are often referred to as short-circuit operators.
+Operator	Description
+&&	Short-circuit AND is true only if both values are true. If the left side is false, then the right side will not be evaluated.
+||	Short-circuit OR is true if at least one of the values is true. If the left side is true, then the right side will not be evaluated.
+
+
+Trick:
+------
+For the exam, you should know that there is no requirement that second and third expressions in ternary operations have the same data types, although it does come into play when combined with the assignment operator. Compare the two statements following the variable declaration:
+
+int stripes = 7;
+ 
+System.out.print((stripes > 5) ? 21 : "Zebra");
+ 
+int animal = (stripes < 9) ? 3 : "Horse";  // DOES NOT COMPILE
+Both expressions evaluate similar boolean values and return an int and a String, although only the first one will compile. System.out.print() does not care that the expressions are completely different types, because it can convert both to Object values and call toString() on them. On the other hand, the compiler does know that "Horse" is of the wrong data type and cannot be assigned to an int; therefore, it will not allow the code to be compiled.
+
+
+

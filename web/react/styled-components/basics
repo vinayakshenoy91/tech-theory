@@ -1,3 +1,138 @@
-- Back ticks are called tagged template literals. 
-- Any styled components underneath is a function that accepts css and other data.
+Features in styled components:
 
+- Back ticks are called Tagged template literals. 
+- Any styled components underneath is a function that accepts css and other data.
+- Takes in interpolated function
+
+
+
+
+
+Creating global styles:
+-----------------------
+import { createGlobalStyle } from 'styled-components';
+
+
+const GlobalStyle = createGlobalStyle`
+
+   body{
+     background:white;
+     margin:0;
+     min-height:100vh;
+     color:black;
+     font-family:'Kaushan Script'
+   }
+
+`;
+
+Refer in app.js as : <GlobalStyle /> and if you want to add google font, add the link tag in the public/index.html file.
+
+Conditional checks using props:
+-------------------------------
+background:${p => p.secondary ? 'black' : '#f8049c'};
+
+<Button secondary></Button>
+
+Bulk styles using css helper:
+-----------------------------
+import styled, { css } from 'styled-components';
+${p=>p.large?css`padding:10px;border-radius:5px;font-szie:1.5em`:css`padding:8px;border-radius:4px;font-szie:1em`}
+
+Themes and variables:
+---------------------
+- Import theme provider
+- All the variables in theme will be injected into styled components that are wrapped within theme provider.
+- In styled components, wherever you are referring variables in theme, you can use:
+${p=>p.theme.primaryColor}
+
+
+Reference styled component within another one:
+-----------------------------------------------
+${Button}:first-of-type{
+  margin-top:40px;
+}
+
+//This is to reference verty first child of parent class. If button is referenced from Form styled component, then it should be first direct
+child of form component.
+>${Button}:first-of-type{ 
+  margin-top:40px;
+}
+
+
+Removing interpolating functions:
+----------------------------------
+${largeStyles}
+
+
+const largeStyles = ({large})=>{
+  if(large){
+      return css`padding:10px; border-radius:5px;font-size:1.5em;`;
+  }else{
+       return css`padding:8px; border-radius:4px;font-size:1em;`;
+  }
+}
+
+Typesafety using prop-types:
+----------------------------
+npm install prop-types;
+
+import PropTypes from 'prop-types';
+
+Button.propTypes={
+   large: PropTypes.bool
+
+}
+
+Inhertiting a style or decorating a component:
+----------------------------------------------
+const PasswordStyled = styled(Input)``; //Input is already a styled component
+
+
+Adding repetitive attr to components:
+--------------------------------------
+const PasswordInputStyled = styled(Input).attrs(()=>{
+    type:'password',
+    placeholder: 'Password'
+})``;
+
+
+
+Targeting various level:
+--------------------------
+//Immediate child of parent
+>div{
+
+}
+
+//Sibling
+~div{
+  margin-bottom:8px
+}
+
+Targeting class:
+-----------------
+.alt-text{
+
+}
+
+div className="alt-text"
+
+Handle change on event:
+-----------------------
+
+function handleInputChange(e){
+  e.persist();
+  setFormFields(s=>({
+       ...s,
+       [e.target.name]: e.target.value
+  }))
+}
+
+
+Form submission:
+-----------------
+function handleSubmit(e){
+  e.preventDefault();
+  setLoading(true);
+  
+}

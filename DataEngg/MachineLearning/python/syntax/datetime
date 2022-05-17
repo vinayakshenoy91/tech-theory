@@ -1,0 +1,114 @@
+from datetime import datetime
+
+//Partse from string to date
+date_dt = datetime.strptime(parking_date, '%m/%d/%Y') //Uses format to convert datetime object to a string.
+
+//Format from date to string
+date_dt.strftime('%m/%d/%Y') //Formating date to a particular format.
+date_dt.isoformat()
+
+
+//Current time
+from datetime import datetime
+datetime.now() -> Current local datetime
+datetime.utcnow() ->current UTC datetime
+
+//Timezone
+from pytz import timezone
+
+record_dt = datetime.strptime('', format)
+ny_tz=timezone('US/Eastern')
+ny_dt = record_dt.replace(tzinfo=ny_tz) //Timezone aware date
+la_dt = ny_dt.astimezone(la_tz) //Convert from one to antoher
+
+//Usual looping usecase: get the count by date or group by day
+
+# Create a defaultdict of an integer: monthly_total_rides
+monthly_total_rides = defaultdict(int)
+
+# Loop over the list daily_summaries
+for daily_summary in daily_summaries:
+    # Convert the service_date to a datetime object
+    service_datetime = datetime.strptime(service_date,'%m/%d/%Y')
+
+    # Add the total rides to the current amount for the month
+    monthly_total_rides[service_datetime.month] += int(daily_summary[4])
+    
+# Print monthly_total_rides
+print(monthly_total_rides)
+
+//Timezone problem
+
+# Create a Timezone object for Chicago
+chicago_usa_tz = timezone('US/Central')
+
+# Create a Timezone object for New York
+ny_usa_tz = timezone('US/Eastern')
+
+# Iterate over the daily_summaries list
+for orig_dt, ridership in daily_summaries:
+
+    # Make the orig_dt timezone "aware" for Chicago
+    chicago_dt = record_dt.replace(tzinfo=chicago_usa_tz)
+    
+    # Convert chicago_dt to the New York Timezone
+    ny_dt = chicago_dt.astimezone(ny_usa_tz)
+    
+    # Print the chicago_dt, ny_dt, and ridership
+    print('Chicago: %s, NY: %s, Ridership: %s' % (chicago_dt, ny_dt, ridership))
+
+//Incrementing through time
+timedelta //is used to represent an amount of change in time.add or subtract a set amount of time from datetime object.
+
+from datetime import timedelta
+
+flashback = timedelta(days=90)
+print(dt+flashback)
+
+//Pendulam library for date time ops - PENDULUM
+Note: Pendulum provides a powerful way to convert strings to pendulum datetime objects via the .parse() method. Just pass it a date 
+string and it will attempt to convert into a valid pendulum datetime. 
+By default, .parse() can process dates in ISO 8601 format. To allow it to parse other date formats, pass strict = False.
+
+import pendulam
+.parse() -> Convert string to  pendulam object
+pendulum.parse(string_date,tz='US/Eastern')
+.in_timezone() -> Convert pendulam object to desired timezone.
+.now() -> Accepts a timezone you want to get  the current time in.// eg: pendulam.now('Asia/Tokyo')
+.in_XXX() or .in_words() //Generate in a chosen mannerLike: in_days, in_hours, in_words
+
+
+Pendulum Time Example(General):
+-------------------------------
+# Import the pendulum module
+import pendulum
+
+# Create a now datetime for Tokyo: tokyo_dt
+tokyo_dt = pendulum.now('Asia/Tokyo')
+
+# Covert the tokyo_dt to Los Angeles: la_dt
+la_dt = tokyo_dt.in_timezone('America/Los_Angeles')
+
+# Print the ISO 8601 string of la_dt
+print(la_dt.to_iso8601_string())
+
+Pendulum Time Example(Alternative to time delta):
+--------------------------------------------------
+# Iterate over date_ranges
+for start_date, end_date in date_ranges:
+
+    # Convert the start_date string to a pendulum date: start_dt 
+    start_dt = pendulum.parse(start_date, strict = False)
+    
+    # Convert the end_date string to a pendulum date: end_dt 
+    end_dt = pendulum.parse(end_date,strict = False)
+    
+    # Print the End and Start Date
+    print(end_dt, start_dt)
+    
+    # Calculate the difference between end_dt and start_dt: diff_period
+    diff_period = end_dt - start_dt
+    
+    # Print the difference in days
+    print(diff_period.in_days())
+

@@ -1,0 +1,37 @@
+Basic GC process:
+----------------
+- Mark - identify which objects are in use and which are not
+- Delete - Remove unreferenced object from memory
+- Compact - compact remaiing reference object
+
+All objects in running applicationa re like graph. We have special objects which are called GC roots.
+They can be local variables kept active by stack of thread, active java threads and static variables.
+Objects not reachable are elibile for deletion
+
+
+Calling System.gc():
+--------------------
+Java includes a built-in method to help support garbage collection that can be called at any time.
+
+public static void main(String[] args) {
+   System.gc();
+}
+What is the System.gc() command guaranteed to do? Nothing, actually. It merely suggests that the JVM kick off garbage collection. The JVM may perform garbage collection at that moment, or it might be busy and choose not to. The JVM is free to ignore the request.
+
+When is System.gc() guaranteed to be called by the JVM? Never, actually. While the JVM will likely run it over time as available memory decreases, it is not guaranteed to ever actually run. In fact, shortly before a program runs out of memory and throws an OutOfMemoryError, the JVM will try to perform garbage collection, but it’s not guaranteed to succeed.
+
+For the exam, you need to know that System.gc() is not guaranteed to run or do anything, and you should be able to recognize when objects become eligible for garbage collection
+
+
+
+Tracing:
+--------
+ An object will remain on the heap until it is no longer reachable. An object is no longer reachable when one of two situations occurs:
+
+The object no longer has any references pointing to it.
+All references to the object have gone out of scope.
+
+
+FINALIZE()
+Java allows objects to implement a method called finalize(). This feature can be confusing and hard to use properly. In a nutshell, the garbage collector would call the finalize() method once. If the garbage collector didn’t run, there was no call to finalize(). If the garbage collector failed to collect the object and tried again later, there was no second call to finalize().
+Just remember that finalize() can run zero or one times. It cannot run twice

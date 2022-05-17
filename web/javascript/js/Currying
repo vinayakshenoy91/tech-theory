@@ -1,0 +1,177 @@
+Currying transforms a function into a sequence of nesting functions. Basically, it converts a function from this:
+Currying converts a function taking n arguments into chains of n function calls. It always returns a function that takes one argument, 
+and we keep calling this function until all the arguments have been applied.
+
+f(a,b,c)
+to this:
+
+f(a)(b)(c)
+
+It involves taking a function with multiple arguments and returning a sequence of 
+nested functions, each taking a single argument, eventually resolving to a value.
+
+function multiply(a) {
+    return (b) => {
+        return (c) => {
+            return a * b * c
+        }
+    }
+}
+console.log(multiply(2)(3)(4))
+
+
+Currying example:
+
+(curried(2)(3)(4))	24	24	Succeeded
+(curried(2,3)(4))	24	24	Succeeded
+(curried(2,3,4))	24	24	Succeeded
+(curried(5)(6,7))	210	210	Succeeded
+
+function currying(func) {
+   return (a,b,c)=>{ 
+       if(b===undefined){
+           return (b,c)=>{
+             if(c===undefined){
+                 return (c)=>{
+                     return a*b*c;
+                 }
+             }
+             return a*b*c;
+           }
+       }else{
+             if(c===undefined){
+                 return (c)=>{
+                     return a*b*c;
+                 }
+             }
+             return a*b*c;
+       }
+   }
+}
+
+Simplified:
+
+function currying(func) {
+    function curriedfunc(...args) {
+        if(args.length >= func.length) {
+            return func(...args);
+        } else {
+            return function(...next) {
+                return curriedfunc(...args,...next);
+            }
+        }
+    }
+    return curriedfunc;
+}
+
+Partially applied functions:
+----------------------------
+
+Here we are implementing the concept of partially applied functions. This includes taking a 
+function with multiple arguments and fixing a number of those arguments to result in another function that takes fewer arguments.   
+
+
+Currying with bind:
+function addition(x, y, z) {
+   return x + y + z;
+}
+const plus5 = addition.bind(null, 5)
+console.log(plus5(10,3)) //18
+
+bind takes the arguments null and 5. It creates a new bound function and sets its this value equal to its first parameter, 
+null. The argument 5 precedes any new arguments provided to the bound function when it is invoked; now x is set equal to 5.
+
+Calling bind on the addition function wraps addition in the bound function created. 
+Calling the bound function executes the addition function as well.
+
+Partial function:
+------------------
+
+const sentence = (conjunction, ...otherWords) => {  
+    const commasJoiningWords = otherWords.slice(0,-1).join(", ");  
+    const lastWord = otherWords.pop();  
+    return `${commasJoiningWords} ${conjunction} ${lastWord}`;
+}
+
+const partialFnction = (func, conjunction) => {  
+    return (...otherWords) => {    
+        return func(conjunction, ...otherWords);  
+        }
+}
+
+function test(conjunction, ...otherWords){
+    const partialSentence = partialFnction(sentence, conjunction);
+    const ans = partialSentence(...otherWords);
+    return ans
+}
+console.log(test("and", "apple", "mango", "peach"))
+console.log(test("or" , "bike" , "car" , "train"))
+console.log(test("but" , "fish" , "potatoes" , "spicy"))    
+
+
+Club entry example: Toughest so far
+-------------------
+
+const filter = func => arr => arr.filter(func);
+const map = func => arr => arr.map(func);
+
+const funcCompose = (...funcs) => args => funcs.reduceRight((arg, fn) => fn(arg), args);
+
+function test(customers){
+  const ans = funcCompose(
+  map(x => x.name),
+  filter(x => x.age >= 18)
+  )(customers)
+  return ans
+}
+const customers = [ { name: "Hermoine", age: 15 },
+    { name: "Ron", age: 18 }, 
+    { name: "Harry", age: 24 },]
+console.log(test(customers))
+
+You were given two functions, filter and map (lines 1 & 2).
+
+filter applies the function, func, on each element of the array, arr, on which it is called.
+
+map applies the function, func, on each element of the array, arr, on which it is called.
+
+On line 4, we define our funcCompose function.
+
+const funcCompose = (...funcs) => args => funcs.reduceRight((arg, fn) => fn(arg), args);
+ 
+It accepts multiple functions, funcs. We use the spread operator here so that it can store any number of functions passed inside of an array. In our case, we are passing two functions, map and filter.
+
+In function composition, the result of one function is passed to another. We write this as follows in mathematical terms:
+
+h(x) = f(g(x))h(x)=f(g(x))
+
+Here the function execution happens from right to left, i.e., first g(x)g(x) executes; its result is passed to the function ff, which executes next.
+
+To implement this concept, we apply the reduceRight method to the functions in funcs. The implementation of the reduceRight method is similar to the reduce method. The only difference is that it applies the given function to each element of the array (funcs) in a right-to-left order.
+
+The first parameter of the reduceRight callback is the current value (arg), and the second element is the current function (fn) that we want to apply to the value. Each function is called for the current value; the result is then used for the next call. Here, args is the initial value.
+
+Let’s move to the test function now.
+
+
+function test(customers){
+  const ans = funcCompose(
+  map(x => x.name),
+  filter(x => x.age >= 18)
+  )(customers)
+  return ans
+}
+
+test takes customers as a parameter. As discussed, customers is an array of objects where each object has a name and age property.
+
+We call the funcCompose function and pass it in the form of arguments, the map, and filter functions. As discussed, both map and filter accept a function as an argument and apply it to the array elements. Hence, we pass an arrow function as a parameter in both these functions.
+
+map(x => x.name)
+This returns the name property of an object.
+
+filter(x => x.age >= 18)
+This checks whether the age of a customers object is greater than or equal to 18. We immediately invoke the funcCompose function with the input customers.
+
+Since funcCompose uses the reduceRight method, it will first execute the filter method for the elements of the array; this will return all objects that have an age property greater than or equal to 18. Next, it will call the map method on the array returned by filter; this will return the name property of these objects in an array.
+
+We store the final answer in the variable ans, which we return at the end.

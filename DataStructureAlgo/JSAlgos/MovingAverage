@@ -1,0 +1,124 @@
+Approach 3: Circular Queue with Array
+
+Other than the deque data structure, one could also apply another fun data structure called circular queue, 
+which is basically a queue with the circular shape.
+
+The major advantage of circular queue is that by adding a new element to a full circular queue, it automatically discards the oldest element. Unlike deque, we do not need to explicitly remove the oldest element.
+Another advantage of circular queue is that a single index suffices to keep track of both ends of the queue, unlike deque where we have to keep a pointer for each end.
+
+
+No need to resort to any library, one could easily implement a circular queue with a fixed-size array. The key to the implementation is the correlation between the index of head and tail elements, which we could summarize in the following formula:
+
+\text{tail} = (\text{head} + 1) \mod \text{size}tail=(head+1)modsize
+
+In other words, the tail element is right next to the head element. Once we move the head forward, we would overwrite the previous tail element.
+
+Complexity
+
+Time Complexity: \mathcal{O}(1)O(1), as we can see that there is no loop in the next(val) function.
+
+Space Complexity: \mathcal{O}(N)O(N), where NN is the size of the circular queue.
+
+
+
+class MovingAverage {
+  int size, head = 0, windowSum = 0, count = 0;
+  int[] queue;
+  public MovingAverage(int size) {
+    this.size = size;
+    queue = new int[size];
+  }
+
+  public double next(int val) {
+    ++count;
+    // calculate the new sum by shifting the window
+    int tail = (head + 1) % size;
+    windowSum = windowSum - queue[tail] + val;
+    // move on to the next head
+    head = (head + 1) % size;
+    queue[head] = val;
+    return windowSum * 1.0 / Math.min(size, count);
+  }
+}
+
+/* Optimise this like above Just a keep a fixed array size
+
+/**
+ * Initialize your data structure here.
+ * @param {number} size
+ */
+var MovingAverage = function(size) {
+    this.size=size;
+    this.arr=[];
+    this.count=0;
+};
+
+/** 
+ * @param {number} val
+ * @return {number}
+ */
+MovingAverage.prototype.next = function(val) {
+    ++this.count;
+    this.arr.push(val);
+    let avg=0;
+    if(this.count<=this.size){
+        for(let x=0;x<this.count;x++){
+             avg+=this.arr[x];
+        }
+        return avg/this.count;
+    }else{
+        for(let x=this.count-this.size;x<this.count;x++){
+             avg+=this.arr[x];
+        } 
+         return avg/this.size     
+    }
+      
+};
+
+
+
+
+*/
+
+--------
+Approach 2: Double-ended Queue
+Intuition
+We could do better than the first approach in both time and space complexity.
+First of all, one might notice that we do not need to keep all values from the data stream, but rather the last n values which falls into the moving window.
+By definition of the moving window, at each step, we add a new element to the window, and at the same time we remove the oldest element from the window. Here, we could apply a data structure called double-ended queue (a.k.a deque) to implement the moving window, which would have the constant time complexity (
+\mathcal{O}(1)
+O(1)) to add or remove an element from both its ends. With the deque, we could reduce the space complexity down to 
+\mathcal{O}(N)
+O(N) where 
+N
+N is the size of the moving window.
+
+Secondly, to calculate the sum, we do not need to reiterate the elements in the moving window.
+We could keep the sum of the previous moving window, then in order to obtain the sum of the new moving window, we simply add the new element and deduce the oldest element. With this measure, we then can reduce the time complexity to constant.
+Algorithm
+Here is the definition of the deque from Python. We have similar implementation of deque in other programming languages such as Java.
+Deques are a generalization of stacks and queues (the name is pronounced deck and is short for double-ended queue). Deques support thread-safe, memory efficient appends and pops from either side of the deque with approximately the same O(1) performance in either direction.
+
+
+Dequeue approach:
+
+class MovingAverage {
+  int size, windowSum = 0, count = 0;
+  Deque queue = new ArrayDeque<Integer>();
+
+  public MovingAverage(int size) {
+    this.size = size;
+  }
+
+  public double next(int val) {
+    ++count;
+    // calculate the new sum by shifting the window
+    queue.add(val);
+    int tail = count > size ? (int)queue.poll() : 0;
+
+    windowSum = windowSum - tail + val;
+
+    return windowSum * 1.0 / Math.min(size, count);
+  }
+}
+

@@ -1,0 +1,206 @@
+SDLC:
+
+- Reqt
+
+The requirements phase embraces the planning and requirements gathering and analysis processes. The information gathered is used to shape the project in terms of approach, feasibility study, and operational and technical aspects. In this phase, planning for quality of service (QoS) is also performed together with risk identification and their impact. As output of this phase, all the requirements (both functional and nonfunctional) are gathered into the software requirement specification (SRS) document.
+
+
+- Design
+
+The design phase aims at defining the software architecture, together with coding guidelines, languages, tools, frameworks, and platforms. It starts with the SRS document as input and produces a design document specification (DDS) document as output.
+
+
+- Dev
+- testing
+- release
+
+
+Code reviews : Work on exploring review tools
+---------------------------------------------
+Informal reviews are the more naïve way to check the code for defects. This kind of review usually involves no particular preparation nor planned metrics to measure the effectiveness of the review. They are usually performed by one or more peers, typically for brainstorming ideas.
+
+Walkthrough reviews are slightly more formal than informal reviews. They can be performed by a single person (e.g., the author of the code) or by multiple participants. Defects are usually pointed out and discussed. This type of review is more about querying for feedback and comments from participants rather than actually correcting defects.
+
+Inspection reviews are well planned and structured. It aims at finding and logging defects, gathering insights, and communicating them within the team. The process is supported by a checklist and metrics to gather the effectiveness of the review process. It is usually not performed by the author.
+
+- Do static code analysis
+- Check for long methods
+
+
+Let me give you the best recipe for spaghetti code in the world:
+-----------------------------------------------------------------
+Do not design your solution in advance, that is, no architecture, nothing.
+
+Use a bunch of global variables.
+
+Use an object-oriented (OO) language, but dismiss all the benefits (inheritance, polymorphism, etc.).
+
+Forget that someone told you that design patterns exist. They are your enemy.
+
+Write big classes with tons of different responsibilities.
+
+Write highly coupled components.
+
+Don’t think about APIs and just pick and choose your preferred names.
+
+If parallelization is required, just add a bunch of threads when you think it might somehow work.
+
+Don’t consider code reusability; someone else needs to reinvent the wheel in case needed.
+
+
+
+
+- Follow: KISS PRINCIPLE
+- REUSABILITY
+- READABILITY
+
+
+//Check style guides
+Other important aspects of a well-flowing (i.e., readable) code include
+Indentation
+
+Following the guidelines from the given programming language to implicitly express intentions (e.g., declaring a private variable or a global one)
+
+Functions, methods, and classes are short and on point
+
+Maintaining consistent conventions across the entire codebase (e.g., single quotes vs. double quotes)
+
+
+- MODULARITY
+Modularity is a basic principle of software systems. It means 
+that components in a software system should be cohesive and loosely coupled.
+
+A cohesive component has a clearly defined function. Multiple components are loosely coupled 
+if the dependencies between each other are minimal.
+
+
+- MAINTAINABILITY
+Maintainability is generally used to refer to how easy it is to maintain code over time.
+
+It involves
+How easy will it be to extend the code in the future (extensibility)?
+
+How easy will it be to rework or refactor the code?
+
+
+-TESTABILITY
+Testability refers to how easy it is to ensure correctness of code by means of writing tests for it.
+
+Composition vs Inheritance:
+
+Truth to be told, composition comes with minor drawbacks including forwarding methods. This happens when the behavior of the composer for a certain method needs to match the behavior of the composed object. In this case, the composer only needs to call the relative method from the composed object.
+
+As a rule of thumb, if too many forwarding methods are in the code, they may signal the—very few—cases where inheritance might be preferred in the current design. In this case, just reevaluate it.
+
+- PREMATURE OPTIMIZATION
+The premature optimization principle suggests that you resist the urge of speed up before it is necessary.
+
+
+Software architectures help in driving this major success goal. Good architectures are not only 
+linked to applying design patterns, designing APIs, and optimizing performances (which would make 
+your colleagues happy). It is also about finding the right trade-offs between maintainability, usability, 
+security, and any other requirements both internal (the company you work for) and external (stakeholders’ interests).
+
+
+- The biggest recommendation that I can give you to this regard is to always approach any piece of code from three 
+different angles:
+Customer driven
+
+Data driven
+
+Engineering driven
+
+
+- SMART, which stands for being specific, measurable, achievable/realistic, and time-bound. By following this guide, our architecture will be specific to requirements; measurable in terms of usability, maintainability, performances, and so on; achievable/realistic (simple is often better), time-bound (which would make others also happy).
+
+
+- Error handling:
+On the other end, building a solid API requires as much care as any other piece of software. As an example, error 
+handling is very critical for APIs too. A common mistake is to think about error handling later in the development 
+process. And it can easily become too late, 
+potentially leaving who calls the API confused about the response they get (if human calling up).
+
+- Error handling, as well as the format of the response, should be clear, documented, and uniform across the code. 
+In such way, any automation process 
+on top of the API will be easier, quicker, and cleaner.
+
+
+- BE MINDFUL OF CONTROL STRUCTURES
+
+
+
+PAY ATTENTION TO HEALTH STATUS
+Looking at the code quality goes beyond defects. Here are five health indicators to consider in order to avoid spaghetti architectures:
+1.	
+Problem definition: Everything starts with the problem definition. An unclear or not completely defined problem will surely lead to cluttered and bad smelling architectures and even worst code. Ensure that the overall problem that needs to be solved is clearly defined, what is in scope and what is not, and—when applicable—that a minimum viable product (MVP) and a road map to achieve it are defined and communicated.
+
+ 
+2.	
+Validate the architecture: The solution might be relatively fancy but won’t solve the problem. Take some time to go through requirements (functional and nonfunctional) to validate the proposed design.
+
+ 
+3.	
+Rethink technologies: Languages, tools, platforms, and frameworks need to be considered based on overall requirements. Don’t follow the approach “if all you have is a hammer, everything looks like a nail.”
+
+ 
+4.	
+Knowledge: As part of reaching the best possible product, human aspects also need to be considered. Does the team have proper domain knowledge? If not, training in all shapes and forms is the way to go. But once again, don’t look at everything as a nail.
+
+ 
+5.	
+Processes: Even the best team, with a well-rounded architecture, can’t work in the most productive way if there are no systematic processes to follow in order to obtain a manageable development.
+
+
+
+# Naming and formatting conventions:
+------------------------------------
+Long story short, keywords are reserved to the language. Do not use them.
+Choose meaningful names
+
+Python conventions:
+--------------------
+
+Variables, functions, and packages names should not use camel case, and words should be 
+separated by underscores:something_like_thisPrivate methods start with double 
+underscore:__i_am_a_secret_agent(self, params)
+Protected methods start with single underscore:_i_am_a_protected_method(self, params)
+
+Use CamelCase for classes and exceptions:
+BrandNewClass(object)
+Constants are always all caps separated by underscores:
+I_AM_A_CONSTANT = 'whatever whatever'
+
+Bonus Tip: If you can’t find a proper name for a new method, class, and so on, ensure 
+that you are not dealing with a bossy component.
+
+
+summary:
+
+Packages and modules names are all lower case. Underscores can be present for readability purposes if multiple words are present. Filenames are treated like a module; hence, same naming conventions apply.
+
+Classes are CamelCase. Exceptions are treated as classes and hence follow the same naming convention.
+
+Functions and variables are lower case, separated with underscore if multiple words are present. If a variable is local—by definition—it does not need any underscore to signal access type.
+
+Constants are all caps, separated with underscores if needed.
+
+
+
+Multiple parameters usecase:
+---------------------------
+It makes the code less readable and it might make testing trickier. The suggested options to solve this type of defect are
+1.	
+Use optional parameters if possible.
+ 
+2.	
+Consider—if it is sound—to create a new class that contains the input parameters. Thus, pass the single instance as input 
+to the function/method.
+
+it might be the case of having too many parameters because the code is breaking the single responsibility principle.
+
+# keep a check on access modifiers. Use it properly.
+
+
+
+Commitlint:
+------------

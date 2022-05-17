@@ -1,0 +1,221 @@
+- It is just a spec
+- Query is a type on a schema that defines operation clients can perform to access data 
+that resembles  the shape of the other types in the schema
+- Resolvers: Functiosn that are responsible for returning values for fields that exist on Types 
+ina  schema. Resolvers execution is dependent on incoming client.
+- No error response as part fo the endpoint. You nee dt drill down in the endpoint to understand the error.
+- Resolver name should match schema names
+- If we marked a field as not nullable but in response did not return that field, the gql will throw error
+- Resolvers can be async
+- Can retrive from any source
+- Server = Schema + Resolvers
+- Put typedefs in .gql file
+- Arguments: 
+  - Allows clients to pass variables alogn with Queries that can be used in your Resolvers to get data
+  - Must be defined in your schema
+  - Either have to eb Scalars or Input Types
+- Input Types:
+  - Just like types but used for arguments
+- Mutation:
+  - A Type on a schema  that defines operations clients can perform to mutate data( create, update, delete)
+   
+
+
+Variants of GQL:
+-----------------
+- A GQL server with a connected DB
+- A GQL server  as a layer infront of many 3rd party  services and connects them all with one GraphQL api.
+- GQL connected to DB + Interacting with 3rd party api -> Hybrid approach.
+
+Server-> Apollo server
+Services -> Amplify
+Tools -> prisma
+
+
+Schema:
+-------
+-> Using SDL(Shcema defn language)
+
+-> Basic parts:
+  1) Types - Construct definisng a shape with fields
+  2) Fields - Keys on type that have a name  and a value type
+  3) Scalar - primitive value type built into graphql 
+  4) Query - type that defines how clients can access data
+  5) Mutation -> type that defines how client can modify or create data
+
+
+
+Creating a GQL server:
+---------------------
+
+const gql = require('graphql-tag');
+const {ApolloServer} = require('apollo-server')
+
+const typeDefs = gql`
+  """
+    Show up in tools
+  """
+  type User {
+      email: String!    //! symbol indicates that it is required. Float, Int, Boolean, ID
+      friends:[User!]!
+  }
+
+  input PetInput{
+      name:String
+      type:String
+  }
+
+  type Query{
+      pets(type:String):[Pet]!
+      pets(input:PetInput!):[Pet]!
+  }
+
+  type Mutation{
+      settings(input: NewSettingsInput!):Settings!
+      createItem(task:String!):Item!
+  }
+
+  type Subscription{
+     newItem:Item //Another type
+  }
+`
+
+const resolvers = {
+    Query:{
+        pets(_,{type},ctx){
+
+        },
+        me(){
+            return{
+                email:'',
+
+            }
+        }
+    }
+    Mutation:{
+        newShoe(_, {input}){
+          return input
+        }
+    }
+    Shoe:{
+        __resolveType(shoe){
+            Do a type check on wha to impl
+            if(shoe.sport) return 'Sneaker'
+            return 'Boot'
+        }
+    }
+}
+
+
+const server = new ApolloServer({
+    typeDefs,
+    resolvers.
+    context(){
+        return {models, db}
+    }
+})
+
+server.listen(4000). then(()=> console.log("Resolving on port 4000"))
+Resolvers can also be written as :
+
+const resolvers = {
+    Query:{
+        pets(_,{type},ctx,info){ //info AST of incoming query, Used when you need to query for only those fields
+             return ctx.models.XYZX.findAll()
+        }
+    },
+    Pet:{
+        id(pet){  //This runs after pets, so you will get pet from the top level context
+            return '3'
+        }
+    }
+}
+
+--> Whatever comes from the pets in query field that will be overriden by individual field declaration if it is provided
+
+
+Subscriptions:
+---------------
+- A well supported GraphQl operation that's userful for notifying clients of events
+- Present in spec
+- More concerned about event observation
+- Use if manual refetching and polling have too high of a latency.
+- cost(chat apps)
+- Initial state is huge but changes are small
+- Adding subscription support:
+  - Subscription must be added to your Schemas like queries  and mutations
+  - Setup pubsub protocol server side
+  - Create subscripiton event resolvers
+  - Any needed auth and context
+  - Client side setup
+
+Live Queries:
+-------------
+- Client side implementation to be notified when data changes.
+- Experimental
+- Data observation
+
+
+
+Enums:
+------
+- Enum filed must resolve to one of the valus in the enum
+
+enum ShoeType{
+  JORDAN, TEST
+}
+
+Interfaces:
+-----------
+- Abstract types that can't be used as field values but instead used as foundations for explicit types.
+- Great when you have types that share common fields but differ slightly
+
+interface IShoe{
+    brand:ShoeType!
+    size:Int!
+}
+
+type Sneakers implements IShoe{
+    brand:ShoeType!
+    size:Int!
+    sport:string
+}
+
+
+Query it like:
+
+{
+    shoes{
+        brand
+        size
+        ... on Sneaker{
+            sport
+            __typename
+        }
+        ... on Boot{
+            hasGrip
+        }
+    }
+}
+
+Union:
+------
+- Like interface but without any defined common fields amongst the types.
+- Useful when you need to access more than one disjoint type from one Query like  a search.
+
+union Footwear = Sneaker | Boot   // Where sneaker and boot are two types that do not have anything in common 
+
+
+RElationships:
+---------------
+- Usually You will specify raw type to field in response like User. But if user has a field called shoes which requires
+data in a need basis, then under resolvers create a  
+
+Query:{
+
+}
+User:{
+    shoes(shoes,_,ctx){
+        return shoies
+    }
+}

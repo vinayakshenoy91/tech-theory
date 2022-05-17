@@ -1,0 +1,11 @@
+Definition:
+
+a closure is a function that can access the variables from another function’s scope. 
+This is possible by creating nested functions. The enclosing/outer function will, however, not have access to the inner scope.
+
+Closure usecase:
+
+- For Object Data Privacy
+- In Event Handlers
+- In Callback Functions
+- Currying

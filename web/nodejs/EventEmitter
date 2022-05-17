@@ -1,0 +1,86 @@
+// Require in the events module 
+const EventEmitter = require('events');
+const carEvent = new EventEmitter();
+
+
+//If multiple listeners declared with same listening events: All listeners for an event will be called 
+synchronously in the order in which they were registered.
+//Adding listener 
+carEvent.on('start', function(){
+  console.log('Started the car.');
+});
+
+carEvent.on('start', function(greeting){
+  console.log(greeting, 'Car started. Ready to go!');
+});
+
+
+//Event emitter
+carEvent.emit('start', 'Hello!');
+
+
+//Remving listeners:
+
+function a(){
+  console.log('Called listener function');
+}
+
+// Add listener to event
+carEvent.on('A', a);
+
+// Emit event
+carEvent.emit('A');
+// Called listener function
+
+// Remove listener
+carEvent.removeListener('A', a);
+
+// Emit event again
+// Nothing happens, event was removed
+carEvent.emit('A');
+
+
+// ONCE: Adds a listener to be executed once
+carEvent.once('stop', function(message){
+  console.log(message);
+});
+
+//Set max listeners
+carEvent.setMaxListeners(2);
+
+//listeners
+The listeners() method returns an array of the listeners registered for an event.
+const listeners = carEvent.listeners('start');
+console.log(listeners);
+
+//eventNames
+Returns an array listing the name of events for which the emitter has registered listeners.
+console.log(carEvent.eventNames());
+
+
+//Extending The EventEmitter Class
+
+const EventEmitter = require('events');
+
+class Car extends EventEmitter{
+  constructor(brand, year){
+    super();
+    this.brand = brand;
+    this.year = year;
+  }
+
+  turnRadioOn(){
+    console.log('radio turned on');
+  }
+}
+
+Use cases:
+---------
+Let's say, when your application starts, you are checking the connection to the database and/or doing some other operations which are in different files and you want to inform your app.js file about the connection or pass the information regarding certain operation in multiple files.
+You can send an event across the app and wherever you are listening for that event, you can then perform some other operation like retry if db connection fails.
+This is useful for communicating between multiple files, passing data between two js files etc.
+
+For people asking for real world application of the
+Event Emitter class, well it enables you to build abstractions like the event bus pattern which enables you to decouple parts of your system (components) or anything else that shouldn't be tightly coupled together.
+I've made one such library and wrote an article about it here on dev.
+Event Bus Pattern via Native EventEmmiter Class

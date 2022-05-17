@@ -1,0 +1,74 @@
+<script type="text/javascript" src="js/x.js"></script>
+
+Notes:
+-----
+
+- isNaN is used to examine whether a value is an illegal number or not.
+
+- What’s the difference between null, undefined or undeclared variables and how would you go about checking for these states?
+- All non-primitive variables in JavaScript are of the type Object.
+- Primitive and Reference types are the two basic groups of datatypes in JavaScript.
+-  it is more accurate to say == and === use the identical algorithm and work same in the backend. 
+The only difference is == allows coercion in the equality comparison and === don’t.
+
+- What are the differences between anonymous and named functions? 
+  - Named functions have a name whereas anonymous functions don’t have a name
+  - Named function can be called from inside itself whereas an anonymous function can’t
+  - Named function can be called before or after declaration whereas an anonymous function can only be called after declaration
+
+- typeof NaN -> is a Number
+-  isNaN(x)
+- 1/0 evaluates to infinity
+
+Hoisting:
+
+a variable can be declared after it has been used. This is because variable declarations using 
+var are hoisted to the top of their functional scope at compile time. 
+Hence, a variable can be initialized and used before it has been declared
+
+
+Arrow functions:
+---------------
+- Arrow function inherits this from enclosing scope. arrow functions do not bind their own this, meaning they inherit 
+the one from the parent scope; this is also known as lexical scoping.
+- Arrow functions bind the context statically hence, they should not be used if this is bound dynamically.
+- Using arrow functions in codes using promises or asynchronous callbacks makes the code easier to read and more concise. 
+This is because such codes tend to have a lot of function and return keywords, and with promises, these function expressions can 
+be used for chaining too. Hence, using arrow functions, the code is simplified.
+- Arrow functions should not be used to create object methods since they would create problems if you attempt 
+to subclass/use this object as a prototype.
+- One of the common operations you might need to perform on an array is to map or reduce them. 
+Doing this using arrow functions makes the code more concise and easier to read.
+- The this keyword works differently in arrow functions. None of the functions call, bind, or apply can change its value, 
+so it remains the same as when the function was first called
+
+Event listeners:
+----------------
+<style>
+button {font-size: 50px; }
+.on {background: #ff0000;}
+</style>
+
+<button id="pushy">Click me</button>
+
+const button = document.querySelector('#pushy');
+button.addEventListener('click', () => {
+    this.classList.toggle('on');
+});
+
+-- Answer
+const button = document.querySelector('#pushy');
+button.addEventListener('click', () => {
+    console.log(this); //`this` refers to window
+    this.classList.toggle('on');
+});
+this refers to window here and is not bound to the element clicked (the button). 
+However, if you were to use a regular function instead of an arrow function, this would bind 
+to the element clicked (the button):
+
+const button = document.querySelector('#pushy');
+button.addEventListener('click', function() {
+    console.log(this); //`this` refers to the button
+    this.classList.toggle('on');
+});
+

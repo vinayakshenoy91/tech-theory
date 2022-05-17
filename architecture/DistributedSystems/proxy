@@ -1,0 +1,13 @@
+Forward proxies (proxies):
+A server that sits between a client and a server  and acts on behalf of the client, typically used to 
+mask client's ip address
+- Hide identity of a client
+- That's how VPN is created to hide client identity. Only if you connect to VPN the request is going to be forwarded.
+
+Reverse proxy:
+- A server that sits between client and server and acts on behalf of the server.
+Used for logging, load balancing or caching.
+
+Nginx: Used as reverse proxy and LB
+
+

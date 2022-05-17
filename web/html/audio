@@ -1,0 +1,15 @@
+<audio controls>
+  <source src="audio/xyz.mp3" type="audio/mpeg">
+  <source src="audio/xyz.ogg" type="audio/ogg">
+  <a href="audio/xyz.mp3">XYZ audio recording</a>
+</audio>
+
+some browsers use .ogg
+
+which of the following sets or returns the volume of the audio/video -> volume
+following attributes adds audio controls, like play, pause, and volume -> controls
+which of the following sets or returns whether the audio/video should start playing as soon as it is loaded -> Autoplay
+which of the following sets or returns whether the audio/video should start over again when finished -> loop
+which of the following returns a MediaError object representing the error state of the audio/video -> error
+which of the following returns a TextTrackList object representing the available text tracks -> textTracks
+

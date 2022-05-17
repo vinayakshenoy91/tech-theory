@@ -1,0 +1,21 @@
+
+- Used to allow access directly to an element in DOM
+
+
+const ImageTogglerOnMouseOver = ({primaryIamge,SecondaryImage}) =>{
+    const imageRef = useRef(null);
+
+ 
+    return(<img onMouseOver={()=>{imageRef.current.src=im1}} onMouseOut={()=>{imageRef.current.src=im2}} 
+    src="" alt="" ref={imageRef}/>)
+
+}
+
+const numRef=useRef(); //This holds on to same object till the end
+
+
+Between render cycle -> 
+- Hold on to a div
+- hold on to a subscription
+
+useRef is a container and you can out anything in it, functions libraries, objects, etc

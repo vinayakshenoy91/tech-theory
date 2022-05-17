@@ -1,0 +1,59 @@
+- Error boundaries are React components that catch JavaScript errors anywhere in their child component tree, log those errors, 
+and display a fallback UI instead of the component tree that crashed. Till the date of writing this article, react boundaries 
+are supported as class components only. 
+Hence, while using React with hooks, this might be the only class component you will need.
+
+1) Create a class component as shown below:
+
+// ErrorBoundary Component
+class ErrorBoundary extends Component {
+    state = {
+        error: null,
+    };
+    static getDerivedStateFromError(error) {
+        return { error };
+    }
+    render() {
+        const { error } = this.state;
+
+        if (error) {
+            return <this.props.ErrorComponent error={error} />;
+        }
+        return this.props.children;
+    }
+}
+export default ErrorBoundary;
+
+
+2)  Add this as Error bounday aroubnd component: 
+
+const Users = ({ userData, handleMoreDetails }) => {
+    const ErrorMsg = (error) => {
+        return (
+            <div>
+                {/* You can use your own styling and methods of handling error */}
+                <p>Something went wrong!</p>
+                <p>{error.message}</p>
+            </div>
+        );
+    };
+
+    return (
+        <div>
+            <h1>Users List: </h1>
+            <ErrorBoundary ErrorComponent={ErrorMsg}>
+                <ul>
+                    {userData.map((user) => (
+                        <div key={user.id}>
+                            <p>Name: {user.name}</p>
+                            <p>Company: {user.company}</p>
+                            <button onClick={() => handleMoreDetails(user.id)}>
+                                More details
+                            </button>
+                        </div>
+                    ))}
+                </ul>
+            </ErrorBoundary>
+        </div>
+    );
+};

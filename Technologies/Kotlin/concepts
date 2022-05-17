@@ -1,0 +1,71 @@
+What is kotlin?
+---------------
+- Kotlin is a multi-paradigm programming language. You may write plain scripts in Kotlin, write object-oriented code, 
+functional style code, program asynchronously, and more.
+- Kotlin is one of the few languages that can be used for server-side, mobile/Android, and front-end development
+- Code, written appropriately, can compile down to Java bytecode or may be transpiled (compiled from the source code of one 
+language to the source code of another language) to JavaScript.
+- https://kotlinlang.org/
+kotlinc-jvm​​ ​​-version
+- kotlinc-jvm​​ ​​Hello.kt​​ ​​-d​​ ​​Hello.jar //Convert to bytecode and place in jar
+- java​​ ​​-classpath​​ ​​Hello.jar:$KOTLIN_PATH/lib/kotlin-stdlib.jar​​ //java tool will fail with a java.lang.NoClassDefFoundError exception. 
+To avoid this, include the kotlin-stdlib.jar file to the classpath
+
+- kotlinc-jvm​​ ​​-script​​ ​​listktsfiles.kts
+Running file: java.io.File(​"."​)
+​ 	  .walk()
+​ 	  .filter { file -> file.extension == ​"kts"​ }
+​ 	  .forEach { println(it) }
+
+OR
+
+	​#​!/usr/bin/env kotlinc-jvm -script
+​ 	
+​ 	println(​"hi"​)
+
+Print Snippets:
+----------------
+	println(Runtime.getRuntime().availableProcessors())
+    println("total price is $test")
+
+Types:
+--------
+var -> Mutable
+val -> Immutable
+String, Byte (8 bits), Short(16 bits), Int(32), Long(12_33_445) (64 bits)
+Float (32 bits) -> 13.37F, Double (64 bits)
+
+Logger:
+------
+Log.d("tag","msg"); //android.util.log
+
+Function declaration:
+---------------------
+fun main(args:Array<String>){
+    var test="Hello"; //or var test:String = "x"; No need to mention excplicitly, uses type inference
+    print("Hello"+test)
+}
+
+
+
+
+var Answer:String? //This question mark if value can be null
+var q=null;
+q?,Answer
+
+val number:Int = try{Integer.parseInt(q.Number)}catch(e:NumberFormatException){-1}
+
+String template:
+----------------
+println("You said $Answer") //${q.Answer}
+
+Conditional operator:
+---------------------
+var message = if(condiiton){"x"}else{"Y"}
+
+When statement instead of switch
+---------------------------------
+when(Answer){
+    CorrectAnswer -> print("You were correct")
+    else -> print("Try again?")
+}

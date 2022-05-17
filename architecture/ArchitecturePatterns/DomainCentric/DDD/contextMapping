@@ -1,0 +1,88 @@
+- This is the integration between core doamin and other bounded context.
+- Well-defined boundaries and contracts between them support controlled changes over time.
+- How bounded contexts connect to one another while supporting comm between teams.
+
+
+Kinds of mapping:
+-----------------
+1) Partnership:
+---------------
+- A Partnership relationship exists between two teams. Each team is responsible for one Bounded Context. 
+They create a Partnership to align the two teams with a dependent set of goals. It is said that the two 
+teams will succeed or fail together. Since they are so closely aligned, they will meet frequently to 
+synchronize schedules and dependent work, and they will have to use continuous integration to keep their 
+integrations in harmony. The synchronization is represented by the thick mapping line between the two teams. 
+
+2) Shared Kernel:
+-----------------
+-  Shared Kernel, depicted on page 54 by the intersection of the two Bounded Contexts, describes the relationship 
+between two (or more) teams that share a small but common model. The teams must agree on what model elements they 
+are to share. It’s possible that only one of the teams will maintain the code, build, and test for what is shared. 
+A Shared Kernel is often very difficult to conceive in the first place, and difficult to maintain, because you must 
+have open communication between teams and constant agreement on what constitutes the model to be shared. Still, it 
+is possible to be successful if all involved are committed to the idea that the kernel is better than going Separate Ways 
+
+3) Customer-Supplier:
+---------------------
+A Customer-Supplier describes a relationship between two Bounded Contexts and respective teams, where the Supplier 
+is upstream (the U in the diagram) and the Customer is downstream (the D in the diagram). The Supplier holds sway 
+in this relationship because it must provide what the Customer needs. It’s up to the Customer to plan with the Supplier 
+to meet various expectations, but in the end the Supplier determines what the Customer will get and when. This is a very 
+typical and practical relationship between teams, even within the same organization, as long as corporate 
+culture does not allow the Supplier to be completely autonomous and unresponsive to the real needs of Customers.
+
+4) Conformist:
+---------------
+Conformist
+A Conformist relationship exists when there are upstream and downstream teams, and the upstream team has no motivation 
+to support the specific needs of the downstream team. For various reasons the downstream team cannot sustain an effort 
+to translate the Ubiquitous Language of the upstream model to fit its specific needs, so the team conforms to the upstream 
+model as is. A team will often become a Conformist, for example, when integrating with a very large and complex model that 
+is well established. Example: Consider the need to conform to the Amazon.com model when integrating as one of Amazon’s 
+affiliate sellers.
+
+5) Anticorruption Layer:
+--------------------------
+Anticorruption Layer
+An Anticorruption Layer is the most defensive Context Mapping relationship, where the downstream team creates a 
+translation layer between its Ubiquitous Language (model) and the Ubiquitous Language (model) that is upstream to it. 
+The layer isolates the downstream model from the upstream model and translates between the two. Thus, this is also an 
+approach to integration.
+
+Whenever possible, you should try to create an Anticorruption Layer between your downstream model and an upstream 
+integration model, so that you can produce model concepts on your side of the integration that specifically fit your 
+business needs and that keep you completely isolated from foreign concepts. Yet, just like hiring a translator to act 
+between two teams speaking different languages, the cost could be too high in various ways for some cases.
+
+6) Open Host Service:
+--------------------
+An Open Host Service defines a protocol or interface that gives access to your Bounded Context as a set of services. 
+The protocol is “open” so that all who need to integrate with your Bounded Context can use it with relative ease. 
+The services offered by the application programming interface (API) are well documented and a pleasure to use. 
+Even if you were Team 2 in this diagram and could not take time to create an isolating Anticorruption Layer for 
+your side of the integration, it would be much more tolerable to be a Conformist to this model than many legacy 
+systems you may encounter. We might say that the language of 
+the Open Host Service is much easier to consume than that of other types of systems.
+
+7)Published Language:
+-----------------------
+A Published Language, illustrated in the image at the bottom of page 57, is a well-documented information exchange 
+language enabling simple consumption and translation by any number of consuming Bounded Contexts. Consumers who both 
+read and write can translate from and into the shared language with confidence that their integrations are correct. 
+Such a Published Language can be defined with XML Schema, JSON Schema, or a more optimal wire format, such as Protobuf 
+or Avro. Often an Open Host Service serves and consumes a Published Language, which provides the best integration 
+experience for third parties. This combination makes the translations between two Ubiquitous Languages very convenient.
+
+8)Separate ways:
+-----------------
+Separate Ways describes a situation where integration with one or more Bounded Contexts will not produce significant 
+payoff through the consumption of various Ubiquitous Languages. Perhaps the functionality that you seek is not fully 
+provided by any one Ubiquitous Language. In this case produce your own specialized solution in your Bounded Context and 
+forget integrating for this special case.
+
+
+Notes:
+------
+- While using rest, I mean that to the client the resources provided must have the shape and composition of what they need, 
+not what the actual domain model looks like. Sometimes the model will look just like what the client needs. 
+But what the client needs is what drives the design of the resources, and not the model’s current composition.

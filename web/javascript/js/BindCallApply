@@ -1,0 +1,162 @@
+call #:
+-------
+The call method allows for a method that was defined for one object to be assigned and called on by another object. 
+This allows for a method to get defined once and then get inherited by other objects without having to re-write it for other objects.
+animal.animalInfo.call(cat)
+
+call is used to used to invoke a method defined anywhere in the current context.
+
+var animal = {
+  animalInfo: function() {
+    return this.name + " is " + this.age + " years old"
+  }
+}
+
+var cat = {
+  name : "Tom",
+  age : 5
+}
+console.log(animal.animalInfo.call(cat))s
+
+Apply:
+------
+- Same as call but takes arguments
+- apply requires an array as its second argument whereas call requires the parameters to be listed explicitly
+
+var animal = {
+  animalInfo: function(sound,food) {
+    return this.name + " is " + this.age + " years old" + " . He makes the sound "+ sound + " and eats " + food
+  }
+}
+
+var cat = {
+  name : "Tom",
+  age : 5
+}
+console.log(animal.animalInfo.apply(cat,["meow", "fish"]))
+
+
+The only difference between the two is that call expects all parameters to be passed individually, whereas apply expects the second 
+sargument to be an array of all the parameters. Due to this, Option B is correct, whereas A is incorrect.
+
+Bind:
+-----
+The bind function creates a new function whose this value can be set to the value provided during the function call, 
+enabling the calling of a function with a specified this value (the first parameter to bind function). 
+Create a function, bind, that is equivalent to Function.protototype.bind.
+
+Function.protototype.bind returns a new function whose this value can be set to the value provided during the function call. Hence, 
+it enables calling a function with a specified this value (the first parameter to bind function).
+
+let changes the implementation so that the value of i is “held” until after the timeout finishes. 
+It creates a new binding (storage space) for each loop iteration; each i refers to the binding of one specific iteration and 
+preserves the value that was current at that time. Previously, using var, a single binding was created for i, each loop iteration 
+referred to the same binding hence returning the same value.
+
+Creates a new function from an existing function
+Changes the value of this in a new function created from an existing function
+Invokes a function later with a certain context
+
+var obj = {
+    name:"Tom"
+};
+
+var info = function(a,b,c){
+    return this.name + " likes to eat " + a + " " + b + " and " +c;
+};
+
+//creates a bound function that has same body and parameters 
+var bound = info.bind(obj,"Pasta"); 
+console.log(bound("Donuts","Chips","Cake")); //calling the bound function later
+
+As seen above, a new function, bound, is created when bind is called on the function info. 
+This new function is not invoked instantly; instead, it is returned with the context which gets invoked later
+We have to implement our own bind function. To do that, we need to know what the bind function does. It returns a new function that
+ wraps the original function. It has its this value set to the first parameter passed to bind. 
+The new function can be invoked later on with additional arguments passed to it.
+
+Implementing bind function:
+--------------------------
+const bind = (fn, obj) => (...args) => fn.apply(obj, args)
+
+function multiply(a) {
+  console.log(this.val * a.val2);
+}
+
+var obj = {val : 2}
+function callingBind(){
+  const bindFunc = bind(multiply, obj)
+  bindFunc.call(this,{val2 : 2}) 
+}
+callingBind()
+
+
+Call method
+-----------------------------
+When a function is invoked as an object’s method, this is set to the object, as shown in Listing 3-32.
+let myObject = {
+    greeting: "Hi, there",
+    writeMessage(message) {
+        console.log(`${this.greeting}, ${message}`);
+    }
+}
+greeting = "Hello";
+myObject.writeMessage("It is sunny today");
+Listing 3-32.Invoking a Function as a Method in the index.js File in the primer Folder
+When the function is invoked via the object, the statement that invokes the function is equivalent to using the call method with the object as the first argument, like this:
+...
+myObject.writeMessage.call(myObject, "It is sunny today");
+...
+Care is required because this is set differently if the function is accessed outside of its object, which can happen if the function is assigned to a variable, as shown in Listing 3-33.
+let myObject = {
+    greeting: "Hi, there",
+    writeMessage(message) {
+        console.log(`${this.greeting}, ${message}`);
+    }
+}
+greeting = "Hello";
+myObject.writeMessage("It is sunny today");
+let myFunction = myObject.writeMessage;
+myFunction("It is sunny today");
+Listing 3-33.Invoking a Function Outside of Its Object in the index.js File in the primer Folder
+Functions can be used like any other value, including assigning them to variables outside of the object in which they were defined, as shown in the listing. If the function is invoked through the variable, then this will be set to the global object. This often causes problems when functions are used as arguments to other methods or as callbacks to handle events, and the effect is that the same function will behave differently based on how it is invoked, as shown in the output produced by the code in Listing 3-33.
+Hi, there, It is sunny today
+Hello, It is sunny today
+
+Bind method:
+----------
+One way to control the this value is to invoke functions using the call method, but this is awkward and must be done every time the function is invoked. A more reliable method is to use the function’s bind method, which is used to set the value for this regardless of how the function is invoked, as shown in Listing 3-34.
+let myObject = {
+    greeting: "Hi, there",
+    writeMessage(message) {
+        console.log(`${this.greeting}, ${message}`);
+    }
+}
+myObject.writeMessage = myObject.writeMessage.bind(myObject);
+greeting = "Hello";
+myObject.writeMessage("It is sunny today");
+let myFunction = myObject.writeMessage;
+myFunction("It is sunny today");
+
+The bind method returns a new function that will have a persistent value for this when it is invoked. The function returned by the bind method is used to replace the original method, ensuring consistency when the writeMessage method is invoked. Using bind is awkward because the reference to the object isn’t available until after it has been created, which leads to a two-step process of creating the object and then calling bind to replace each of the methods for which a consistent this value is required. The code in Listing 3-34 produces the following output:
+Hi, there, It is sunny today
+Hi, there, It is sunny today
+The value of this is always set to myObject, even when the writeMessage function is invoked as a stand-alone function.
+
+
+
+Arrow function:
+-------------
+To add to the complexity of this, arrow functions don’t work in the same way as regular functions. Arrow functions don’t have their own this value and inherit the closest value of this they can find when they are executed. To demonstrate how this works, Listing 3-35 adds an arrow function to the example.
+let myObject = {
+    greeting: "Hi, there",
+    getWriter() {
+        return (message) => console.log(`${this.greeting}, ${message}`);
+    }
+}
+greeting = "Hello";
+let writer = myObject.getWriter();
+writer("It is raining today");
+let standAlone = myObject.getWriter;
+let standAloneWriter = standAlone();
+standAloneWriter("It is sunny today");

@@ -1,0 +1,16 @@
+arrayname.length -> get length of array
+arrayname.push(x) -> add element to end of array
+arrayname.unshift(x) -> add element to beginning of array
+You can add elements to the beginning and to the end of the array:
+
+Push adds elements to the end of the array
+Unshift adds elements to the beginning of the array
+
+You can also remove these elements from the array:
+
+Pop removes the last element from the array and returns it.
+Shift removes the first element from the array and returns it.
+
+delete days[2] 
+
+Similarly to objects, you can delete any element from the array. The value undefined will be placed in place of this element:
