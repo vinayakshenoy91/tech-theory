@@ -21,6 +21,7 @@ Filter blog out of this
 
 Web:
 ---
+https://engineering.udacity.com/
 https://dmitripavlutin.com/use-react-memo-wisely/
 https://kentcdodds.com/blog/optimize-react-re-renders
 https://blog.bitsrc.io/
