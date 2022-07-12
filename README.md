@@ -21,6 +21,7 @@ Filter blog out of this
 
 Web:
 ---
+https://www.debugbear.com/docs/metrics/largest-contentful-paint#how-to-optimize-largest-contentful-paint
 https://www.sohamkamani.com/blog/
 
 codewithdan.com
