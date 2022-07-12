@@ -21,6 +21,7 @@ Filter blog out of this
 
 Web:
 ---
+https://dmitripavlutin.com/use-react-memo-wisely/
 https://kentcdodds.com/blog/optimize-react-re-renders
 https://blog.bitsrc.io/
 https://www.debugbear.com/docs/metrics/largest-contentful-paint#how-to-optimize-largest-contentful-paint
