@@ -21,6 +21,7 @@ Filter blog out of this
 
 Web:
 ---
+https://blog.isquaredsoftware.com/2020/05/blogged-answers-a-mostly-complete-guide-to-react-rendering-behavior/
 https://engineering.udacity.com/
 https://dmitripavlutin.com/use-react-memo-wisely/
 https://kentcdodds.com/blog/optimize-react-re-renders
